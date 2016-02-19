@@ -1,0 +1,475 @@
+/*
+#########################################
+#
+# Copyright (C) 2014 EyesOfNetwork Team
+# DEV NAME : Jean-Philippe LEVY
+# VERSION 4.2
+# APPLICATION : eonweb for eyesofnetwork project
+#
+# LICENCE :
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+#########################################
+*/
+
+/************* Generics */
+* {
+	border:0;
+	margin:0;
+	padding:0
+}
+
+html {
+	overflow: auto;
+}
+
+body, table, tr, td, p, a,ul,li {
+	font-family: verdana, tahoma, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+}
+
+body.index {
+	height: 100%;
+}
+
+table {
+        border-collapse:collapse;
+        border-spacing:0;
+}
+
+/************* Error Message */
+ul.msg {
+	margin:0px;
+	padding:0px;
+	list-style: none;
+}
+
+li.msg_title {
+	border:1px solid black;
+	padding-top: 2px;
+	padding-bottom:2px;
+	padding-left:10px;
+	list-style: none;
+	background-color: #FFC0C0;
+	font-size: 11px;
+	text-transform:uppercase;
+	text-decoration:none;
+}
+
+li.msg_title_warning {
+	margin-left:-15px;
+        border:1px solid black;
+        padding-top: 2px;
+        padding-bottom:2px;
+        padding-left:10px;
+        list-style: none;
+        background-color: #FFFFC0;
+        font-size: 11px;
+        text-decoration:none;
+}
+
+li.msg_title_success {
+	margin-left:-15px;
+        border:1px solid black;
+        padding-top: 2px;
+        padding-bottom:2px;
+        padding-left:10px;
+        list-style: none;
+        background-color: #C0FFC0;
+        font-size: 11px;
+        text-decoration:none;
+}
+
+
+li.msg {
+	padding-top: 2px;
+	padding-bottom:2px;
+	padding-left:10px;
+	list-style: none;
+	font-size: 11px;
+	text-decoration:none;
+}
+
+/************* MAIN Style */
+#main {
+	margin-left:15px;
+	margin-top:5px;
+	margin-right:10px;
+        background-repeat: no-repeat;
+        background: rgb(209,220,226); /* Old browsers */
+        background: -moz-linear-gradient(top, rgba(209,220,226,1) 0%, rgba(242,245,250,1) 100%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(209,220,226,1)), color-stop(100%,rgba(242,245,250,1))); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top, rgba(209,220,226,1) 0%,rgba(242,245,250,1) 100%); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(top, rgba(209,220,226,1) 0%,rgba(242,245,250,1) 100%); /* Opera 11.10+ */
+        background: -ms-linear-gradient(top, rgba(209,220,226,1) 0%,rgba(242,245,250,1) 100%); /* IE10+ */
+        background: linear-gradient(top, rgba(209,220,226,1) 0%,rgba(242,245,250,1) 100%); /* W3C */
+        background-attachment:fixed;
+}
+
+#main h1 {
+	background: white;
+	background: -moz-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,0))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(left, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(left, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* IE10+ */
+	background: linear-gradient(left, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* W3C */
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+ 	ms-border-radius: 10px;
+	border-radius: 10px;
+	color: black;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	margin-bottom: 10px;
+	font-weight:bold;
+	text-transform:uppercase;
+	font-size: 10px;
+	vertical-align: middle;
+	border: 1px solid #fff;
+}
+
+#main h2 {
+	text-transform:uppercase;
+	color:#4477AA;
+	font-size: 10px;
+}
+
+#main p.change {
+	padding-top: 2px;
+	padding-bottom:2px;
+	padding-left:10px;
+	margin-bottom:10px;
+	font-size: 11px;
+	background-color: #C0FFC0;
+}
+
+#main textarea {
+        border: 1px solid #DDDDDD;
+        background-color: #FFFFFF;
+        margin-bottom:10px;
+}
+
+#main input {
+	border:1px solid #DDDDDD;
+	padding:1px;
+}
+
+#main input.checkbox { 
+	border: none; 
+	vertical-align: middle;
+}
+
+#main input.file {
+        vertical-align: middle;
+	cursor: pointer;
+}
+
+#main input.button {
+        color: #555555;
+        background: #e6e6e6 url(jquery/images/ui-bg_glass_75_e6e6e6_1x400.png) 0 50% repeat-x;
+        font-size: 10px;
+        border: 1px solid #d3d3d3;
+	padding: .2em .6em .3em .6em;
+        line-height: 1.4em;
+        vertical-align: middle;
+	margin: .5em .4em .5em 0; 
+	cursor: pointer;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        ms-border-radius: 4px;
+        border-radius: 4px;
+	width:auto; 
+	overflow:visible;
+	text-transform:capitalize;
+	font-family: Verdana,Arial,sans-serif/*{ffDefault}*/;
+}
+
+#main input.button:hover {
+        color: #212121;
+        background: #dadada url(jquery/images/ui-bg_glass_75_dadada_1x400.png) 0 50% repeat-x;
+        border: 1px solid #999999;
+}
+
+#main input.button:active {
+        color: #222222;
+        background: #ffffff url(jquery/images/ui-bg_glass_75_dadada_1x400.png)0 50% repeat-x;
+        border: 1px solid #dddddd;
+}
+
+#main table.table {
+	margin: 10px;
+	font-size: 10px;
+}
+
+#main table.table tr {
+	font-size: 10px;
+}
+
+#main table.table tr.blanc {
+	background-color: white;
+}
+
+#main table.table th {
+	padding:5px;
+	border: 1px solid #306AA8;
+	font-size: 10px;
+	background-color: #73AFE0;
+	text-transform:uppercase;	
+}
+
+#main table.table tr td {
+	padding:5px;
+	border: 1px solid #306AA8;
+	font-size: 10px;
+}
+
+#main table.table tr td.blanc{
+	margin:0;
+	font-size: 10px;
+	border: 0px;
+}
+
+#main select {
+	font-size: 10px;
+	border: 1px solid #DDDDDD;
+	vertical-align: middle;
+}
+
+#main option {
+	padding-right: 10px;
+}
+
+#main .select {
+	width: 95%;
+}
+
+#main .ul {
+	margin-left:15px;
+	margin-top:4px;
+}
+
+.ac_results {
+	padding: 0px;
+	border: 1px solid black;
+	background-color: white;
+	overflow: hidden;
+	z-index: 99999;
+}
+
+.ac_results ul {
+	width: 100%;
+	list-style-position: outside;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.ac_results li {
+	margin: 0px;
+	padding: 2px 5px;
+	cursor: default;
+	display: block;
+	/* 
+	if width will be 100% horizontal scrollbar will apear 
+	when scroll mode will be used
+	*/
+	/*width: 100%;*/
+	font: menu;
+	font-size: 12px;
+	/* 
+	it is very important, if line-height not setted or setted 
+	in relative units scroll will be broken in firefox
+	*/
+	line-height: 16px;
+	overflow: hidden;
+}
+
+.ac_loading {
+	background: white url('indicator.gif') right center no-repeat;
+}
+
+.ac_odd {
+	background-color: #eee;
+}
+
+.ac_over {
+	background-color: #0A246A;
+	color: white;
+}
+
+/************* TABLESORTER Style */
+#main table.tablesorter {
+        font-family:arial;
+        background-color: #CDCDCD;
+        width: 95%;
+        text-align: left;
+        margin:10px;
+        font-size: 10px;
+}
+
+#main table.tablesorter th {
+        padding:5px;
+        border: 1px solid #306AA8;
+        font-size: 10px;
+        background-color: #73AFE0;
+        text-transform:uppercase;
+}
+
+#main table.tablesorter tr { 
+	font-size: 10px; 
+}
+
+#main table.tablesorter tr.blanc { 
+	background-color: white; 
+}
+
+#main table.tablesorter thead tr .header {
+        background-image: url('/images/actions/bg.gif');
+        background-repeat: no-repeat;
+        background-position: center right;
+        cursor: pointer;
+	white-space: nowrap;
+	padding-right: 20px;
+}
+
+#main table.tablesorter tbody tr.odd td { 
+	background-color:#F0F0F6; 
+}
+
+#main table.tablesorter thead tr .headerSortUp { 
+	background-image: url('/images/actions/asc.gif'); 
+}
+
+#main table.tablesorter thead tr .headerSortDown { 
+	background-image: url('/images/actions/desc.gif'); 
+}
+
+#main table.tablesorter thead tr .headerSortDown, #main table.tablesorter thead tr .headerSortUp { 
+	background-color: #8dbdd8; 
+}
+
+/************* LOGIN Style */
+#login {
+        background-image: url('/images/bg_login.png');
+        background-repeat: no-repeat;
+        padding-right:50px;
+        padding-left:15px;
+        position: absolute;
+        cursor:move;
+        width:303px;
+        height:341px;
+}
+
+#login div {
+	margin-top:200px;
+}
+
+/************* EVENTBROWSER Style */
+#gedtable td {
+        padding:2px;
+        padding-left:5px;
+        padding-right:5px;
+        border: 1px solid #306AA8;
+        font-size: 10px;
+}
+
+#search { 
+	margin-bottom: 10px; 
+}
+
+#search img { 
+	vertical-align: middle; 
+}
+
+#search select {
+	vertical-align: middle;
+	width: 100px;
+}
+
+#search .value {
+	border:1px solid #DDDDDD;
+	font-size: 10px;
+	width:100px;
+	vertical-align: middle;
+}
+
+#search .offset {
+        border:1px solid #DDDDDD;
+        font-size: 10px;
+        width:40px;
+        vertical-align: middle;
+}
+
+#search .datepicker  {
+        border:1px solid #DDDDDD;
+        font-size: 10px;
+        width:130px;
+        vertical-align: middle;
+}
+
+#pager {
+	margin-left: 10px;
+	margin-bottom: 5px;
+}
+
+#pager select {
+	vertical-align: top;
+	width: auto;
+	margin-bottom: 5px;
+}
+
+#pager input.pagedisplay {
+	vertical-align: top;
+	width: 100px;
+	margin-bottom: 5px;
+}
+
+/************* STATUS Table */
+.status_up {
+	background-color:#C0FFC0;
+	vertical-align:middle;
+}
+
+.status_down {
+	background-color:#FFC0C0;
+	vertical-align:middle;
+}
+
+.status_testing {
+	background-color:#DDDDDD;
+	vertical-align:middle;
+}
+
+.status_unknow {
+	background-color:#C0C0FF;
+	vertical-align:middle;
+}
+
+.status_sleep {
+	background-color:#FFFFC0;
+	vertical-align:middle;
+}
+
+.status_notpresent {
+	background-color:#FFFFC0;
+	vertical-align:middle;
+}
+
+.status_lowlayerdown {
+	background-color:#FFFFC0;
+	vertical-align:middle;
+}
+
+.status_notdefined {
+	background-color:#C0C0FF;
+	vertical-align:middle;
+}

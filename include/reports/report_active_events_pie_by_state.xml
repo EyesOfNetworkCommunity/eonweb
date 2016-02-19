@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<report>
+        <zone>
+                <display_title>pie_active_ged</display_title>
+                <display_type>pie</display_type>
+		<value>
+                        <source>ged</source>
+                        <get_value>1</get_value>
+                        <color>#FFFF00</color>
+                        <legend>warning</legend>
+                </value>
+                <value>
+                        <source>ged</source>
+                        <get_value>2</get_value>
+                        <color>#EE0000</color>
+                        <legend>critical</legend>
+                </value>
+                <value>
+                        <source>ged</source>
+                        <get_value>3</get_value>
+                        <color>#3465A4</color>
+                        <legend>unknown</legend>
+                </value>
+        </zone>
+</report>

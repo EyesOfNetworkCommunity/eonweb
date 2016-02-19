@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eonweb lang="en_US">
+  
+  <about title="about EyesOfNetwork">
+  
+    <descriptions name="eyesofnetwork bundle">
+      <description>EyesOfNetwork is a network and system monitoring bundle.</description>
+      <description>This bundle is an integration of different opensource softwares that could help you to manage your IT.</description>
+      <description value1="manage disponibility" value2="manage capacity" value3="manage production" value4="manage reports">It's help you for</description>
+      <link name="more details" url="http://www.eyesofnetwork.com" target="_blank"></link>
+    </descriptions>
+  
+    <links name="the embedded projects">
+      <link name="centos" url="http://www.centos.org" target="_blank" description="Operating system"></link>
+      <link name="ged" url="http://generic-ed.sourceforge.net" target="_blank" description="Generic event dispatcher"></link>
+      <link name="thruk" url="http://thruk.org" target="_blank" description="Livestatus monitoring webinterface"></link>
+      <link name="nagios" url="http://www.nagios.org" target="_blank" description="Disponibiliy management solution"></link>
+      <link name="nagiosbp" url="http://bp-addon.monitoringexchange.org" target="_blank" description="Nagios Business Process AddOns"></link>
+      <link name="cacti" url="http://www.cacti.net" target="_blank" description="Capacity management solution"></link>
+      <link name="snmptt" url="http://www.snmptt.org" target="_blank" description="Snmp trap traductor"></link>
+      <link name="nagvis" url="http://www.nagvis.org" target="_blank" description="Nagios maps utility for nagios"></link>
+      <link name="weathermap" url="http://www.network-weathermap.com" target="_blank" description="Network maps utility"></link>
+      <link name="pnp4nagios" url="http://www.pnp4nagios.org/" target="_blank" description="Data collection and graphing for Nagios"></link>
+      <link name="glpi" url="http://www.glpi-project.org" target="_blank" description="Asset management"></link>
+      <link name="ocsinventory-ng" url="http://www.ocsinventory-ng.org" target="_blank" description="Inventory and deployment"></link>
+      <link name="fusioninventory" url="http://fusioninventory.org" target="_blank" description="Inventory"></link>
+    </links>
+  
+    <contacts name="contact us" description="before contacting us refer to the docs included" mail="eyesofnetwork@eyesofnetwork.com"></contacts>
+  
+  </about>
+
+  <dashboard title="dashboard"></dashboard>
+
+  <syslog title="syslog"></syslog> 
+
+  <weathermap title="networks map"></weathermap>
+
+  <active_events title="active events"></active_events>
+
+  <history_events title="history events"></history_events>
+
+  <option_events title="events filters"></option_events>
+
+  <capacity_per_device title="capacity per device"></capacity_per_device>
+
+  <capacity_per_label title="capacity per label"></capacity_per_label>
+  
+  <tools title="production tools"></tools>
+
+  <snmpwalk title="snmp test"></snmpwalk>
+
+  <admin_auth title="authentification settings"></admin_auth>
+
+  <admin_backupconf title="backup settings"></admin_backupconf>
+
+  <admin_user title="users management" new="new user" mod="user parameters"></admin_user>
+
+  <admin_group title="groups management" new="new group" mod="group parameters"></admin_group>
+
+  <admin_process title="process management"></admin_process>
+  
+  <admin_bp title="business processes management" mod="business parameters" new="new business" prop="business configuration" check="An important file is in use. This seems abnormal. Would you want to force access?"></admin_bp>
+
+  <admin_gedcfg title="ged settings"></admin_gedcfg>
+
+  <admin_gedhdb title="ged backend settings"></admin_gedhdb>
+
+  <admin_gedtcfg title="ged relay settings"></admin_gedtcfg>
+
+  <admin_gedqcfg title="ged queue settings"></admin_gedqcfg>
+
+  <admin_nagiosbpcfg title="business processes"></admin_nagiosbpcfg>
+
+  <admin_nagiosdowntime title="downtime scheduling"></admin_nagiosdowntime>
+
+  <admin_notification title="advanced notifications"></admin_notification>
+
+  <admin_snmpconf title="snmpd settings"></admin_snmpconf>
+
+  <admin_snmptrapconf title="snmptrapd settings"></admin_snmptrapconf>
+
+  <admin_logs title="logs view"></admin_logs>
+
+  <admin_conf title="nagios configuration reports"></admin_conf>
+
+  <admin_import title="upload to nagios"></admin_import>
+
+  <admin_device title="Synchronize hosts from Nagios to Cacti" title0="Remove Cacti hosts"></admin_device>
+
+  <report_event title="view events report" active="active events" history="history events" sla="service agreement">
+        <by_day>for last day</by_day>
+        <by_week>for last week</by_week>
+        <by_month>for last month</by_month>
+        <by_year>for last year</by_year>
+  </report_event>
+
+  <report_performance title="view capacity report"></report_performance>
+
+  <graphs>
+    <pie_host title="Nagios Hosts"></pie_host>
+    <pie_service title="Nagios Services"></pie_service>
+    <pie_event title="Active Events"></pie_event>
+    <bar_event title="Active Events"></bar_event>
+    <pie_active_ged title=""></pie_active_ged>
+    <pie_history_ged title=""></pie_history_ged>
+    <pie_history_sla title=""></pie_history_sla>
+    <bar_active_ged title=""></bar_active_ged>
+    <bar_history_ged title=""></bar_history_ged>
+    <bar_history_sla title=""></bar_history_sla>
+  </graphs>
+
+</eonweb>

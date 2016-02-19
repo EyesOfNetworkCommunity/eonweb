@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eonweb lang="fr_FR">
+
+  <about title="a propos de EyesOfNetwork">
+
+    <descriptions name="le bundle eyesofnetwork">
+      <description>EyesOfNetwork ("EON") est la solution Open Source réunissant de manière pragmatique les processus ITIL et l’interface technologique permettant leur application.</description>
+      <description>EyesOfNetwork Supervision est la première brique d’une gamme de produits bâtie autour de la gestion des évènements, de la disponibilité, des problèmes et de la capacité.</description>
+      <description value1="gestion de la disponibilité" value2="gestion de la capacité" value3="gestion de la production" value4="gestion des rapports">Parmi les fonctionnalités de la solution</description>
+      <link name="plus de détails" url="http://www.eyesofnetwork.com" target="_blank"></link>
+    </descriptions>
+
+    <links name="liste des produits inclus dans eyesofnetwork">
+      <link name="centos" url="http://www.centos.org" target="_blank" description="Système d'exploitation"></link>
+      <link name="ged" url="http://generic-ed.sourceforge.net" target="_blank" description="Gestion des évènements"></link>
+      <link name="thruk" url="http://thruk.org" target="_blank" description="Interface de supervision livestatus"></link>
+      <link name="nagios" url="http://www.nagios.org" target="_blank" description="Gestion de la disponibilité"></link>
+      <link name="nagiosbp" url="http://bp-addon.monitoringexchange.org" target="_blank" description="Gestion de la disponibilité applicative"></link>
+      <link name="cacti" url="http://www.cacti.net" target="_blank" description="Gestion de la capacité"></link>
+      <link name="snmptt" url="http://www.snmptt.org" target="_blank" description="Gestion des traps snmp"></link>
+      <link name="nagvis" url="http://www.nagvis.org" target="_blank" description="Outil de cartographie nagios"></link>
+      <link name="weathermap" url="http://www.network-weathermap.com" target="_blank" description="Outil de cartographie réseau"></link>
+      <link name="pnp4nagios" url="http://www.pnp4nagios.org/" target="_blank" description="Collecte et graphiques de performances Nagios"></link>
+      <link name="glpi" url="http://www.glpi-project.org" target="_blank" description="Gestion de parc"></link>
+      <link name="ocsinventory-ng" url="http://www.ocsinventory-ng.org" target="_blank" description="Inventaire et déploiement"></link>
+      <link name="fusioninventory" url="http://fusioninventory.org" target="_blank" description="Inventaire"></link>
+    </links>
+
+    <contacts name="contactez nous" description="avant de nous contacter référez vous aux documentations fournies" mail="eyesofnetwork@eyesofnetwork.com"></contacts>
+
+  </about>
+
+  <dashboard title="tableau de bord"></dashboard>
+
+  <syslog title="journaux systèmes"></syslog> 
+
+  <weathermap title="cartographie réseau"></weathermap> 
+  
+  <active_events title="evènements actifs"></active_events>
+
+  <history_events title="evènements résolus"></history_events>
+
+  <option_events title="filtres des evènements"></option_events>
+
+  <capacity_per_device title="capacité par équipement"></capacity_per_device>
+  
+  <capacity_per_label title="capacité par métrique"></capacity_per_label>
+ 
+  <tools title="outils de production"></tools>
+
+  <snmpwalk title="test snmp"></snmpwalk>
+
+  <admin_auth title="paramètres d'authentification"></admin_auth>
+
+  <admin_backupconf title="paramètres de sauvegarde"></admin_backupconf>
+
+  <admin_user title="gestion des utilisateurs" new="nouvel utilisateur" mod="modification utilisateur"></admin_user>
+
+  <admin_group title="gestion des groupes" new="nouveau groupe" mod="modification groupe"></admin_group>
+ 
+  <admin_process title="gestion des processus"></admin_process>
+
+  <admin_bp title="gestion des processus métiers" mod="modification processus métier" new="nouveau processus métier" prop="configuration processus métier" check="Un fichier important est en cours d'utilisation. Cela semble anormal. Voulez-vous forcer l'acces?"></admin_bp>
+
+  <admin_gedcfg title="paramètres du service ged"></admin_gedcfg>
+
+  <admin_gedhdb title="paramètres du stockage ged"></admin_gedhdb>
+
+  <admin_gedtcfg title="paramètres de relais ged"></admin_gedtcfg>
+
+  <admin_gedqcfg title="paramètres du client ged"></admin_gedqcfg>
+
+  <admin_nagiosbpcfg title="applications"></admin_nagiosbpcfg>
+
+  <admin_nagiosdowntime title="programmation des arrêts planifiés"></admin_nagiosdowntime>
+
+  <admin_notification title="notifications avancées"></admin_notification>
+
+  <admin_snmpconf title="paramètres du service snmpd"></admin_snmpconf>
+
+  <admin_snmptrapconf title="paramètre du service snmptrapd"></admin_snmptrapconf>
+
+  <admin_logs title="affichage des journaux"></admin_logs>
+
+  <admin_conf title="rapports de configuration nagios"></admin_conf>
+
+  <admin_import title="déploiement csv"></admin_import>
+
+  <admin_device title="Synchroniser équipements nagios avec cacti" title0="Supprimer dans cacti"></admin_device>
+
+  <report_event title="rapport des évènements" active="évènements actifs" history="évènements historisés" sla="temps moyens de résolution">
+  	<by_day>datant d'une journée</by_day>
+  	<by_week>datant d'une semaine</by_week>
+  	<by_month>datant d'un mois</by_month>
+  	<by_year>datant d'une année</by_year>
+  </report_event>
+   
+  <report_performance title="rapport de capacités"></report_performance>
+
+  <graphs>
+    <pie_host title="Equipements Nagios"></pie_host>
+    <pie_service title="Services Nagios"></pie_service>
+    <pie_event title="Evènements Actifs"></pie_event>
+    <bar_event title="Evènements Actifs"></bar_event>
+    <pie_active_ged title=""></pie_active_ged>
+    <pie_history_ged title=""></pie_history_ged>
+    <pie_history_sla title=""></pie_history_sla>
+    <bar_active_ged title=""></bar_active_ged>
+    <bar_history_ged title=""></bar_history_ged>
+    <bar_history_sla title=""></bar_history_sla>
+  </graphs>
+
+</eonweb>

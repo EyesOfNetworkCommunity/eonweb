@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<report>
+        <zone>
+                <display_title>pie_host</display_title>
+                <display_type>pie</display_type>
+                <value>
+                        <source>system</source>
+                        <get_value>/srv/eyesofnetwork/nagios/bin/nagiostats -m -d NUMHSTUP</get_value>
+                        <color>#00EE00</color>
+                        <legend>up</legend>
+                </value>
+                <value>
+                        <source>system</source>
+                        <get_value>/srv/eyesofnetwork/nagios/bin/nagiostats -m -d NUMHSTUNR</get_value>
+                        <color>#FF6363</color>
+                        <legend>unreachable</legend>
+                </value>
+                <value>
+                        <source>system</source>
+                        <get_value>/srv/eyesofnetwork/nagios/bin/nagiostats -m -d NUMHSTDOWN</get_value>
+                        <color>#EE0000</color>
+                        <legend>down</legend>
+                </value>
+        </zone>
+</report>
