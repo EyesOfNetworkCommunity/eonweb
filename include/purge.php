@@ -20,13 +20,16 @@
 #########################################
 */
 
-include("function.php");
+include(dirname(__FILE__)."/function.php");
+
 $database_username="root";
 $database_password="root66";
 $database_eonweb="eonweb";
+$database_notifier="notifier";
 $datepurge="-1 month";
 
 $date=strtotime($datepurge);
 sqlrequest($database_eonweb,"delete from logs where date < $date;");
+sqlrequest($database_notifier,"delete from sents_logs where epoc < $date;");
 
 ?>
