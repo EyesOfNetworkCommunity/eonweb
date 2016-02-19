@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<report>
+        <zone>
+                <display_title>pie_service</display_title>
+                <display_type>pie</display_type>
+                <value>
+                        <source>system</source>
+                        <get_value>/srv/eyesofnetwork/nagios/bin/nagiostats -m -d NUMSVCOK</get_value>
+                        <color>#00EE00</color>
+                        <legend>ok</legend>
+                </value>
+                <value>
+                        <source>system</source>
+                        <get_value>/srv/eyesofnetwork/nagios/bin/nagiostats -m -d NUMSVCWARN</get_value>
+                        <color>#FFFF00</color>
+                        <legend>warning</legend>
+                </value>
+		<value>
+                        <source>system</source>
+                        <get_value>/srv/eyesofnetwork/nagios/bin/nagiostats -m -d NUMSVCCRIT</get_value>
+                        <color>#EE0000</color>
+                        <legend>critical</legend>
+                </value>
+                <value>
+                        <source>system</source>
+                        <get_value>/srv/eyesofnetwork/nagios/bin/nagiostats -m -d NUMSVCUNKN</get_value>
+                        <color>#3465A4</color>
+                        <legend>unknown</legend>
+                </value>
+        </zone>
+</report>

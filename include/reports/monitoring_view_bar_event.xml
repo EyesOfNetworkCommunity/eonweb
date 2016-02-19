@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<report>
+        <zone>
+                <display_title>bar_event</display_title>
+                <display_type>bar</display_type>
+		<value>
+                        <source>ged</source>
+                        <get_value>1</get_value>
+                        <color>#FFFF00</color>
+                        <legend>warning</legend>
+                </value>
+                <value>
+                        <source>ged</source>
+                        <get_value>2</get_value>
+                        <color>#EE0000</color>
+                        <legend>critical</legend>
+                </value>
+                <value>
+                        <source>ged</source>
+                        <get_value>3</get_value>
+                        <color>#3465A4</color>
+                        <legend>unknown</legend>
+                </value>
+		<int>
+			<name>5m</name>
+			<time>- 300 seconds</time>
+		</int>
+	        <int>
+                        <name>15m</name>
+                        <time>- 900 seconds</time>
+                </int>
+                <int>
+                        <name>30m</name>
+                        <time>- 1800 seconds</time>
+                </int>
+                <int>
+                        <name>1h</name>
+                        <time>- 3600 seconds</time>
+                </int>
+        </zone>
+</report>

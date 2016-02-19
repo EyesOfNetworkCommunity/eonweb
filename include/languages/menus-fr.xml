@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eonweb lang="fr_FR">
+ 
+  <login login="identifiant" logout="vous êtes déconnecté" yet="vous êtes déjà connecté en tant que"  password="mot de passe" connect="connexion">Solution de Supervision Systèmes et Réseaux</login>
+
+  <header user="Utilisateur" logout="se déconnecter"></header>
+  <footer>produit sous GPL2 sponsorisé par APX</footer>
+
+  <search>Rechercher ...</search>
+
+  <menutab id="1" name="projet">
+    <menusubtab name="a propos de">
+      <link name="eyesofnetwork" url="./module/home_about/" target="main"></link>
+      <link name="site web" url="http://www.eyesofnetwork.com" target="_blank"></link>
+    </menusubtab>
+    <menusubtab name="composants">
+      <link name="centos" url="http://www.centos.org/" target="_blank"></link>
+      <link name="ged" url="http://generic-ed.sourceforge.net/" target="_blank"></link>
+      <link name="thruk" url="http://www.thruk.org/" target="_blank"></link>
+      <link name="nagios" url="http://www.nagios.org/" target="_blank"></link>
+      <link name="nagiosbp" url="http://bp-addon.monitoringexchange.org/" target="_blank"></link>
+      <link name="cacti" url="http://www.cacti.net/" target="_blank"></link>
+      <link name="snmptt" url="http://www.snmptt.org/" target="_blank"></link>
+      <link name="nagvis" url="http://www.nagvis.org/" target="_blank"></link>
+      <link name="weathermap" url="http://www.network-weathermap.com/" target="_blank"></link>
+      <link name="pnp4nagios" url="http://www.pnp4nagios.org/" target="_blank"></link>
+      <link name="glpi" url="http://www.glpi-project.org/" target="_blank"></link>
+      <link name="ocsinventory-ng" url="http://www.ocsinventory-ng.org/" target="_blank"></link>
+      <link name="fusioninventory" url="http://fusioninventory.org/" target="_blank"></link>
+    </menusubtab>
+  </menutab>
+
+  <menutab id="2" name="disponibilités">
+    <menusubtab name="vues globales">
+      <link name="tableau de bord" url="./module/monitoring_view/" target="main"></link>
+      <link name="tableau technique" url="./thruk/cgi-bin/tac.cgi" target="main"></link>
+      <link name="panorama" url="./thruk/cgi-bin/panorama.cgi" target="_blank"></link>
+      <link name="exécutions" url="./thruk/cgi-bin/extinfo.cgi?type=4" target="main"></link>
+      <link name="problèmes" url="/thruk/cgi-bin/status.cgi?style=combined&amp;hst_s0_hoststatustypes=4&amp;hst_s0_servicestatustypes=31&amp;hst_s0_hostprops=10&amp;hst_s0_serviceprops=0&amp;svc_s0_hoststatustypes=3&amp;svc_s0_servicestatustypes=28&amp;svc_s0_hostprops=10&amp;svc_s0_serviceprops=10&amp;svc_s0_hostprop=2&amp;svc_s0_hostprop=8&amp;title=All+Unhandled+Problems" target="main"></link>
+    </menusubtab>
+    <menusubtab name="cartographies">
+      <link name="thruk" url="./thruk/cgi-bin/statusmap.cgi" target="main"></link>
+      <link name="nagvis" url="./nagvis" target="main"></link>
+      <link name="réseau" url="./cacti/plugins/weathermap/weathermap-cacti-plugin.php?action=" target="_blank"></link>
+    </menusubtab>
+    <menusubtab name="evènements">
+      <link name="évènements actifs" url="./module/monitoring_ged/ged.php?q=active" target="main"></link>
+      <link name="évènements résolus" url="./module/monitoring_ged/ged.php?q=history" target="main"></link>
+      <link name="vue équipements" url="./thruk/cgi-bin/status.cgi?hostgroup=all&amp;style=hostdetail" target="main"></link>
+      <link name="vue services" url="./thruk/cgi-bin/status.cgi?host=all" target="main"></link>
+      <link name="groupes d'équipements" url="./thruk/cgi-bin/status.cgi?hostgroup=all&amp;style=summary" target="main"></link>
+      <link name="groupes de services" url="./thruk/cgi-bin/status.cgi?servicegroup=all&amp;style=summary" target="main"></link>
+      <link name="vue applications" url="./nagiosbp/cgi-bin/nagios-bp.cgi" target="main"></link>
+      <link name="vue impacts" url="./nagiosbp/cgi-bin/nagios-bp.cgi?mode=bi" target="main"></link>
+    </menusubtab>
+    <menusubtab name="incidents">
+      <link name="incidents équipements" url="./thruk/cgi-bin/status.cgi?hostgroup=all&amp;style=hostdetail&amp;hoststatustypes=12" target="main"></link>
+      <link name="incidents services" url="./thruk/cgi-bin/status.cgi?host=all&amp;servicestatustypes=28" target="main"></link>
+      <link name="arrêts planifiés" url="./thruk/cgi-bin/extinfo.cgi?type=6" target="main"></link>
+      <link name="arrêts planifiés récurrents" url="./thruk/cgi-bin/extinfo.cgi?type=6&amp;recurring" target="main"></link>
+    </menusubtab>
+  </menutab>
+
+  <menutab id="3" name="capacités">
+    <menusubtab name="vue graphiques">
+      <link name="cacti" url="./cacti/graph_view.php" target="_blank"></link>
+      <link name="pnp4nagios" url="./pnp4nagios/" target="_blank"></link>
+    </menusubtab>
+    <menusubtab name="performances cacti">
+      <link name="par équipement" url="./module/capacity_per_device/" target="main"></link>
+      <link name="par métrique" url="./module/capacity_per_label/" target="main"></link>
+    </menusubtab>
+  </menutab>
+
+  <menutab id="4" name="production">
+    <menusubtab name="outils">
+      <link name="équipements" url="./module/tool_all/index_hostlist.php" target="main"></link>
+      <link name="externes" url="./module/tool_all/index_hostname.php" target="main"></link>
+    </menusubtab>
+    <menusubtab name="journaux">
+      <link name="nagios" url="/thruk/cgi-bin/showlog.cgi" target="main"></link>
+      <link name="systèmes" url="/cacti/plugins/syslog/syslog.php" target="_blank"></link>
+    </menusubtab>
+    <menusubtab name="configurations">
+      <link name="gestion du parc" url="./module/index.php?module=glpi&amp;link=/glpi/index.php" target="_blank"></link>
+      <link name="inventaire" url="./module/index.php?module=ocsinventory-reports&amp;link=/ocsreports" target="_blank"></link>
+    </menusubtab>
+  </menutab>
+
+  <menutab id="5" name="rapports">
+    <menusubtab name="évènements">
+      <link name="volume d'incidents" url="./module/report_event/" target="main"></link>
+      <link name="sla technique" url="./module/report_event/index.php?type=sla" target="main"></link>
+    </menusubtab>
+    <menusubtab name="disponibilités">
+      <link name="disponibilités" url="./thruk/cgi-bin/avail.cgi" target="main"></link>
+      <link name="tendances" url="./thruk/cgi-bin/trends.cgi" target="main"></link>
+      <link name="résumés" url="./thruk/cgi-bin/summary.cgi" target="main"></link>
+      <link name="génération de rapports" url="/thruk/cgi-bin/reports2.cgi" target="main"></link>
+    </menusubtab>
+    <menusubtab name="capacités">
+      <link name="performances" url="./module/report_performance/" target="main"></link>
+    </menusubtab>
+  </menutab>
+
+  <menutab id="6" name="administration">
+    <menusubtab name="accès local">
+      <link name="accès ssh" url="./module/tool_remoteacces/index_ssh.php" target="main"></link>
+      <link name="snmpwalk" url="./module/tool_all/index_snmpwalk.php" target="main"></link>
+    </menusubtab>
+    <menusubtab name="généralités">
+      <link name="authentification" url="./module/admin_auth/" target="main"></link>
+      <link name="groupes" url="./module/admin_group" target="main"></link>
+      <link name="utilisateurs" url="./module/admin_user" target="main"></link>
+      <link name="processus" url="./module/admin_process/" target="main"></link>
+      <link name="snmp" url="./module/admin_files/index.php?file=snmpconf" target="main"></link>
+      <link name="snmptrapd" url="./module/admin_files/index.php?file=snmptrapconf" target="main"></link>
+      <link name="sauvegardes" url="./module/admin_files/index.php?file=backupconf" target="main"></link>
+      <link name="journaux" url="./module/admin_logs/logs.php" target="main"></link>
+    </menusubtab>
+    <menusubtab name="nagios">
+      <link name="configuration" url="./lilac/index.php" target="main"></link>
+      <link name="équipements" url="./lilac/hosts.php" target="main"></link>
+      <link name="modèles" url="./lilac/templates.php" target="main"></link>
+      <link name="applications" url="./module/admin_bp/index.php" target="main"></link>
+      <link name="arrêts planifiés" url="./module/admin_files/index.php?file=nagiosdowntime" target="main"></link>
+      <link name="notifications avancées" url="./module/admin_files/index.php?file=notification" target="main"></link>
+      <link name="déploiement csv" url="./module/admin_import_device/" target="main"></link>
+      <link name="synchronisation cacti" url="./module/admin_device/" target="main"></link>
+      <link name="appliquer la configuration" url="./lilac/export.php" target="main"></link>
+      <link name="rapports nagios" url="./module/admin_conf/" target="main"></link>
+    </menusubtab>
+    <menusubtab name="ged">
+      <link name="configuration" url="./module/admin_files/index.php?file=gedcfg" target="main"></link>
+      <link name="stockage" url="./module/admin_files/index.php?file=gedhdb" target="main"></link>
+      <link name="relais" url="./module/admin_files/index.php?file=gedtcfg" target="main"></link>
+      <link name="client" url="./module/admin_files/index.php?file=gedqcfg" target="main"></link>
+    </menusubtab>
+    <menusubtab name="cartographies">
+      <link name="nagvis" url="./nagvis" target="main"></link>
+      <link name="weathermap" url="./cacti/plugins/weathermap/weathermap-cacti-plugin-mgmt.php" target="_blank"></link>
+    </menusubtab>
+    <menusubtab name="liens externes">
+      <link name="thruk" url="./thruk/index.html" target="_blank"></link>
+      <link name="cacti" url="/cacti" target="_blank"></link>
+    </menusubtab>
+  </menutab>
+
+  <menutab id="7" name="aide">
+    <menusubtab name="eyesofnetwork">
+      <link name="installation" url="http://www.eyesofnetwork.com/?page_id=495" target="_blank"></link>
+      <link name="exploitation" url="http://www.eyesofnetwork.com/?page_id=495" target="_blank"></link>
+    </menusubtab>
+    <menusubtab name="composants">
+      <link name="centos" url="http://wiki.centos.org/Documentation" target="_blank"></link>
+      <link name="ged" url="http://generic-ed.sourceforge.net" target="_blank"></link>
+      <link name="thruk" url="./thruk/documentation.html" target="_blank"></link>
+      <link name="nagios" url="http://library.nagios.com/library/products/nagioscore/manuals/" target="_blank"></link>
+      <link name="nagiosbp" url="http://bp-addon.monitoringexchange.org/doc/" target="_blank"></link>
+      <link name="cacti" url="http://www.cacti.net/downloads/docs/html/" target="_blank"></link>
+      <link name="snmptt" url="http://snmptt.sourceforge.net/docs/snmptt.shtml" target="_blank"></link>
+      <link name="nagvis" url="http://www.nagvis.org/doc" target="_blank"></link>
+      <link name="weathermap" url="./cacti/plugins/weathermap/docs/" target="_blank"></link>
+      <link name="pnp4nagios" url="http://docs.pnp4nagios.org/fr/pnp-0.6/start" target="_blank"></link>
+      <link name="glpi" url="http://www.glpi-project.org/wiki/doku.php" target="_blank"></link>
+      <link name="ocsinventory-ng" url="http://wiki.ocsinventory-ng.org/" target="_blank"></link>
+      <link name="fusioninventory" url="http://fusioninventory.org/documentation/" target="_blank"></link>
+    </menusubtab>
+  </menutab>
+
+</eonweb>

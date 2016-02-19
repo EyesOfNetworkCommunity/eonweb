@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<report>
+        <zone>
+                <display_title>pie_history_sla</display_title>
+                <display_type>pie</display_type>
+                <value>
+                        <source>sla</source>
+                        <get_value>300</get_value>
+                        <color>#00EE00</color>
+                        <legend>0-5min</legend>
+                </value>
+		<value>
+                        <source>sla</source>
+                        <get_value>600</get_value>
+                        <color>#FFFF00</color>
+                        <legend>5-10min</legend>
+                </value>
+                <value>
+                        <source>sla</source>
+                        <get_value>1200</get_value>
+                        <color>#3465A4</color>
+                        <legend>10-20min</legend>
+                </value>
+                <value>
+                        <source>sla</source>
+                        <get_value>999999999999</get_value>
+                        <color>#EE0000</color>
+                        <legend>>=20min</legend>
+                </value>
+        </zone>
+</report>
