@@ -17,36 +17,72 @@ if( !empty($_GET["action"]) )
 	}
 }
 
+function checkHost($type, $address, $port, $path){
+	$host = false;
+        if($type == "unix"){
+                $socket_path_connexion = "unix://".$path;
+                $host = fsockopen($socket_path_connexion, $port, $errno, $errstr, 5);
+        }
+        else{
+                $host = fsockopen($address, $port, $errno, $errstr, 5);
+        }
+	return $host;
+	
+}
+
 /**
  * Get the number of services, ordered by state, and according to the logged user
  */
 function getServicesStateNbr()
 {
-	// create a new client with options
-	$options = array(
-		'socketType' => 'unix',
-		'socketAddress' => '',
-		'socketPort' => '',
-		'socketPath' => '/srv/eyesofnetwork/nagios/var/log/rw/live',
-	);
-	$client = new Client($options);
-	
-	// construct mklivestatus request, and get the response
-	$response = $client
-		->get('services')
-			->stat('state = 0')
-			->stat('state = 1')
-			->stat('state = 2')
-			->stat('state = 3')
-			->filter('contacts >= '. $_SERVER["REMOTE_USER"])
-		->execute();
-	
+global $sockets;
+
+$result = array();
+$nbr_services_ok = 0;
+$nbr_services_warning = 0;
+$nbr_services_critical = 0;
+$nbr_services_unknown = 0;
+
+foreach($sockets as $socket){
+	$socket_parts = explode(":", $socket);
+        $socket_type = $socket_parts[0];
+        $socket_address = $socket_parts[1];
+        $socket_port = $socket_parts[2];
+        $socket_path = $socket_parts[3];
+	if( checkHost($socket_type, $socket_address, $socket_port, $socket_path) ){
+		if($socket_port == -1){
+			$socket_port = "";
+			$socket_address = "";
+		}
+		$options = array(
+                	'socketType' => $socket_type,
+                	'socketAddress' => $socket_address,
+                	'socketPort' => $socket_port,
+                	'socketPath' => $socket_path,
+        	);
+		// construct mklivestatus request, and get the response
+        	$client = new Client($options);
+        	// construct mklivestatus request, and get the response
+		$response = $client
+                ->get('services')
+                        ->stat('state = 0')
+                        ->stat('state = 1')
+                        ->stat('state = 2')
+                        ->stat('state = 3')
+                        ->filter('contacts >= '. $_SERVER["REMOTE_USER"])
+                ->execute();
+                $nbr_services_ok += $response[0][0];
+                $nbr_services_warning += $response[0][1];
+                $nbr_services_critical += $response[0][2];
+                $nbr_services_unknown += $response[0][3];	
+	}
+}
+
 	// fill an empty array with previous response, in order to have a beautiful JSON to use
-	$result = array();
-	array_push($result, $response[0][0]);
-	array_push($result, $response[0][1]);
-	array_push($result, $response[0][2]);
-	array_push($result, $response[0][3]);
+	array_push($result, $nbr_services_ok);
+	array_push($result, $nbr_services_warning);
+	array_push($result, $nbr_services_critical);
+	array_push($result, $nbr_services_unknown);
 	
 	$client->command(
     array(
@@ -64,32 +100,55 @@ function getServicesStateNbr()
  */
 function getHostsStateNbr()
 {
-	// create a new client with options
-	$options = array(
-		'socketType' => 'unix',
-		'socketAddress' => '',
-		'socketPort' => '',
-		'socketPath' => '/srv/eyesofnetwork/nagios/var/log/rw/live',
-	);
-	$client = new Client($options);
-	
-	// construct mklivestatus request, and get the response
-	$response = $client
-		->get('hosts')
-			->stat('state = 0')
-			->stat('state = 1')
-			->stat('state = 2')
-			->stat('state = 3')
-			->filter('contacts >= '. $_SERVER["REMOTE_USER"])
-		->execute();
-	
+global $sockets;
+
+$result = array();
+$nbr_host_ok = 0;
+$nbr_host_warning = 0;
+$nbr_host_critical = 0;
+$nbr_host_unknown = 0;
+
+foreach($sockets as $socket){
+        $socket_parts = explode(":", $socket);
+        $socket_type = $socket_parts[0];
+        $socket_address = $socket_parts[1];
+        $socket_port = $socket_parts[2];
+        $socket_path = $socket_parts[3];
+        if( checkHost($socket_type, $socket_address, $socket_port, $socket_path) ){
+                if($socket_port == -1){
+                        $socket_port = "";
+                        $socket_address = "";
+                }
+                $options = array(
+                        'socketType' => $socket_type,
+                        'socketAddress' => $socket_address,
+                        'socketPort' => $socket_port,
+                        'socketPath' => $socket_path,
+                );
+                // construct mklivestatus request, and get the response
+                $client = new Client($options);
+                // construct mklivestatus request, and get the response
+                $response = $client
+                ->get('hosts')
+                        ->stat('state = 0')
+                        ->stat('state = 1')
+                        ->stat('state = 2')
+                        ->stat('state = 3')
+                        ->filter('contacts >= '. $_SERVER["REMOTE_USER"])
+                ->execute();
+                $nbr_host_ok += $response[0][0];
+                $nbr_host_warning += $response[0][1];
+                $nbr_host_critical += $response[0][2];
+                $nbr_host_unknown += $response[0][3];
+        }
+}	
+
+	array_push($result, $nbr_host_ok);
+	array_push($result, $nbr_host_warning);
+	array_push($result, $nbr_host_critical);
+	array_push($result, $nbr_host_unknown);
+
 	// fill an empty array with previous response, in order to have a beautiful JSON to use
-	$result = array();	
-	array_push($result, $response[0][0]);
-	array_push($result, $response[0][1]);
-	array_push($result, $response[0][2]);
-	array_push($result, $response[0][3]);
-	
 	$client->command(
     array(
         'ACKNOWLEDGE_SVC_PROBLEM',
