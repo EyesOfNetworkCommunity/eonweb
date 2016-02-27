@@ -15,3 +15,17 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+
+# Eonweb specifics
+*.eot binary
+*.EOT binary
+*.gif binary
+*.GIF binary
+*.jpeg binary
+*.JPEG binary
+*.png binary
+*.PNG binary
+*.ttf binary
+*.TTF binary
+*.woff binary
+*.WOFF binary
