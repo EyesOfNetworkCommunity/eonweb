@@ -21,6 +21,8 @@
 *.EOT binary
 *.gif binary
 *.GIF binary
+*.jar binary
+*.JAR binary
 *.jpeg binary
 *.JPEG binary
 *.png binary
