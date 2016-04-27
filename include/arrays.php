@@ -150,4 +150,11 @@ $array_serv_system = array (
                                 "reload" => "sudo /etc/init.d/snmptt reload")),
 );
 
+// sockets definition (for multi-backends !)
+$sockets = array(
+        "unix::-1:/srv/eyesofnetwork/nagios/var/log/rw/live"
+        //"tcp:192.168.197.100:6557:",
+        //"tcp:192.168.197.102:6557:"
+);
+
 ?>
