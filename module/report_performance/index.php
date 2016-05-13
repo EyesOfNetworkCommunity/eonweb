@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2014 EyesOfNetwork Team
-# DEV NAME : Jean-Philippe LEVY
-# VERSION 4.2
+# Copyright (C) 2016 EyesOfNetwork Team
+# DEV NAME : Quentin HOARAU
+# VERSION : 5.0
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -19,45 +19,57 @@
 #
 #########################################
 */
-?>
-<html>
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<?php include("../../include/include_module.php"); ?>
-        <script type="text/javascript" src="/js/jquery.js"></script>
-        <script type="text/javascript" src="/js/jquery.autocomplete.js"></script>
-</head>
-<body id="main">
 
-<h1><?php echo $xmlmodules->getElementsByTagName("report_performance")->item(0)->getAttribute("title")?></h1><br>
+include("../../header.php");
+include("../../side.php");
 
-<?php
-$timespan["end_now"] = time();
-$end_year = date("Y",$timespan["end_now"]);
-$end_month = date("m",$timespan["end_now"]);
-$end_day = date("d",$timespan["end_now"]);
-$end_hour = date("H",$timespan["end_now"]);
-$end_min = date("i",$timespan["end_now"]);
-$end_sec = 00;
 ?>
 
-
-<form action='display.php' method='GET'>
-	<div id="search">
-        <h2>Select the periode :</h2><br>
-	<select name='date'>
-		<option value='today'>Today</option>
-		<option value='lastday'>Last Day</option>
-                <option value='lastweek'>Last Week</option>
-                <option value='last2week'>Last 2 Week</option>
-                <option value='lastmonth'>Last Month</option>
-                <option value='last2month'>Last 2 Month</option>
-                <option value='lastyear'>Last Year</option>
-        </select><br><br>
-        <h2>Search for title :</h2><br>
-	<input type="text" name="title" class="value" autocomplete="off" onFocus='$(this).autocomplete(<?php echo get_title_list_from_cacti();?>)'><br><br>
-	<input class=button type=submit value=Display></input>
+<div id="page-wrapper">
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="page-header"><?php echo getLabel("label.report_performance.title"); ?></h1>
+		</div>
 	</div>
-<form>
-</body>
-</html>
+
+	<?php
+	$timespan["end_now"] = time();
+	$end_year = date("Y",$timespan["end_now"]);
+	$end_month = date("m",$timespan["end_now"]);
+	$end_day = date("d",$timespan["end_now"]);
+	$end_hour = date("H",$timespan["end_now"]);
+	$end_min = date("i",$timespan["end_now"]);
+	$end_sec = 00;
+	?>
+
+
+	<form id="report-performance-form" action='display.php' method='GET'>
+		<div id="search" class="row">
+			<div class="col-md-4 form-group">
+				<label><?php echo getLabel("label.report_performance.select_period"); ?></label>
+				<select id="date" class="form-control" name='date'>
+					<option value='today'><?php echo getLabel("label.report_performance.today"); ?></option>
+					<option value='lastday'><?php echo getLabel("label.report_performance.last_day"); ?></option>
+					<option value='lastweek'><?php echo getLabel("label.report_performance.last_week"); ?></option>
+					<option value='last2week'><?php echo getLabel("label.report_performance.last_2_week"); ?></option>
+					<option value='lastmonth'><?php echo getLabel("label.report_performance.last_month"); ?></option>
+					<option value='last2month'><?php echo getLabel("label.report_performance.last_2_month"); ?></option>
+					<option value='lastyear'><?php echo getLabel("label.report_performance.last_year"); ?></option>
+				</select>
+			</div>
+			<div class="col-md-4 form-group">
+				<label><?php echo getLabel("label.report_performance.search_title"); ?></label>
+				<div class="input-group">
+					<input id="title" type="text" name="title" class="form-control" autocomplete="off" onFocus='$(this).autocomplete({source: <?php echo get_title_list_from_cacti();?>})'>
+					<span class="input-group-btn">
+						<button class="btn btn-primary" type="submit" value="Display"><?php echo getLabel("action.display"); ?></button>
+					</span>
+				</div>
+			</div>
+		</div>
+	<form>
+	
+	<div id="response"></div>
+</div>
+
+<?php include("../../footer.php"); ?>

@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2014 EyesOfNetwork Team
-# DEV NAME : Jean-Philippe LEVY
-# VERSION 4.2
+# Copyright (C) 2016 EyesOfNetwork Team
+# DEV NAME : Quentin HOARAU
+# VERSION : 5.0
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -19,29 +19,32 @@
 #
 #########################################
 */
+
+include("../../header.php");
+include("../../side.php");
+
 ?>
-<html>
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<?php 
-		include("../../include/include_module.php"); 
+
+<div id="page-wrapper">
+	<?php
 		if(isset($_GET["file"])){
-        		$file=$_GET["file"];
-		        if(!isset(${"path_".$file}))
-                		die("");
+			$file=$_GET["file"];
+			if(!isset(${"path_".$file}))
+				die("");
 		}
 		else
-        		die("");
+			die("");
 	?>
-</head>
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="page-header"><?php echo getLabel("label.admin_files.title_$file"); ?></h1>
+		</div>
+	</div>
 
-<body id="main">
-	<h1><?php echo $xmlmodules->getElementsByTagName("admin_$file")->item(0)->getAttribute("title")?></h1>
-	
 	<?php
 		// Test if file is writable
 		filemodify(${"path_".$file},$file);
 	?>
-</body>
+</div>
 
-</html>
+<?php include("../../footer.php"); ?>

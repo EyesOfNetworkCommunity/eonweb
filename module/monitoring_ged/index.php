@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2014 EyesOfNetwork Team
+# Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION 4.2
+# VERSION : 5.0
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -19,28 +19,242 @@
 #
 #########################################
 */
+
+include("../../header.php");
+include("../../side.php");
+
 ?>
-<html>
 
-<head>
+<div id="page-wrapper">
 
-<?php
-include("../../include/include_module.php");
-$option_events=$xmlmodules->getElementsByTagName("option_events");
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="page-header"><?php echo getLabel("label.monitoring_ged.title"); ?></h1>
+		</div>
+	</div>
 
-// Verify if user limitation
-if(isset($file)){
-	$user_exist=mysqli_result(sqlrequest("$database_eonweb","SELECT count('user_name') from users where user_name='$user_name' and user_limitation='1';"),0);
-	if($user_exist==0)
-		message(0," : Not allowed","critical");
-}
-else {
-	$file="../../cache/".$_COOKIE["user_name"]."-ged.xml";
-	$file_url="/cache/".$_COOKIE["user_name"]."-ged.xml";
-	$user_id=false;
-	$user_name=false;
-}
-?>
+	<?php
+	// Verify if user limitation
+	if(isset($file)){
+		$user_exist=mysqli_result(sqlrequest("$database_eonweb","SELECT count('user_name') from users where user_name='$user_name' and user_limitation='1';"),0);
+		if($user_exist==0)
+			message(0," : Not allowed","critical");
+	}
+	else {
+		$file="../../cache/".$_COOKIE["user_name"]."-ged.xml";
+		$file_url="/cache/".$_COOKIE["user_name"]."-ged.xml";
+		$user_id=false;
+		$user_name=false;
+	}
+
+	// Open Xml function
+	function openXml($file=false){
+			$dom = new DOMDocument("1.0","UTF-8");
+			$dom->preserveWhiteSpace = false;
+			$dom->formatOutput = true;
+		if($file)
+			$dom->load($file);
+		return $dom;
+	}
+
+	// Define ged filters file if not exists
+	if(!file_exists($file)){
+		$dom = openXml();
+		$root = $dom->createElement("ged");
+			$root = $dom->appendChild($root);
+		$default = $dom->createElement("default");
+			$default = $root->appendChild($default);
+			$xml=$dom->saveXML();
+			$fp=@fopen($file,"w+");
+			if(fwrite($fp,$xml))
+					message(6," : Events filters file is created","ok");
+			fclose($fp);
+	}
+
+	// Define ged filters options
+	if(isset($_POST["save"])){
+		$dom = openXml($file);
+		$xpath = new DOMXPath($dom);
+			$filter_name = retrieve_form_data("filter_name",NULL);
+			$filter_choice = retrieve_form_data("filter_choice",NULL);
+			$filter_default = retrieve_form_data("filter_default",NULL);
+		if($filter_name=="")
+			message(0," : Events filter name must be set","warning");
+		else {
+			// search if filter exists
+			$root = $dom->getElementsByTagName("ged")->item(0);
+			$records = $xpath->query("//ged/filters[@name='$filter_name']");
+
+			// no filter name for creation
+				if($records->length!=0 && ($filter_choice=="" or $filter_choice!=$filter_name)){
+				message(0," : Events filter already exists","warning");
+			}
+			// creation or modification
+			else {
+				// filter renaming
+				if($filter_choice!="" && $filter_choice!=$filter_name){
+					$choice = $xpath->query("//ged/filters[@name='$filter_choice']");
+								$root->removeChild($choice->item(0));
+				}
+
+				// modification if filter exists
+							if($records->length!=0){
+									$root->removeChild($records->item(0));
+									$filters = $dom->createElement("filters");
+									$filters = $root->appendChild($filters);
+									$filters->setAttribute("name",$filter_name);
+									$dom->save($file);
+							}
+
+							// creation if filter not exists
+							else {
+									$filters = $dom->createElement("filters");
+									$filters = $root->appendChild($filters);
+									$filters->setAttribute("name",$filter_name);
+									$dom->save($file);
+							}
+
+				// search if filter is the default
+					$default = $xpath->query("//ged[.//default='$filter_name']");
+
+				// if default
+				if($default->length!=0){
+					if(!$filter_default){
+							$root->removeChild($root->getElementsByTagName('default')->item(0));
+							$default = $dom->createElement("default");
+							$default = $root->appendChild($default);
+						$default = $root->getElementsByTagName("default")->item(0);
+							$dom->save($file);
+					}
+				}
+				// if not default
+				elseif($filter_default){
+						$root->removeChild($root->getElementsByTagName('default')->item(0));
+									$default = $dom->createElement("default");
+									$default = $root->appendChild($default);
+									$default = $root->getElementsByTagName("default")->item(0);
+									$default->appendChild($dom->createTextNode($filter_name));
+									$dom->save($file);
+				}
+
+				// set the filter definition
+				$filter_name = retrieve_form_data("filter_name",NULL);
+				$values=retrieve_form_data("id",NULL);
+				for($i=0;$i<$values;$i++){
+					$field=retrieve_form_data("field".$i,NULL);
+					$value=retrieve_form_data("value".$i,NULL);
+					if($value!=""){
+						$filter=$filters->appendChild($dom->createElement("filter"));
+						$filter->setAttribute("name",$field);
+									$filter->appendChild($dom->createTextNode($value));
+					}
+				}
+					$dom->save($file);
+					message(6," : Events filter is set","ok");
+			}
+		}
+	}
+
+	// Delete selected filter
+	if(isset($_POST["delete"])){
+		$dom = openXml($file);
+			$xpath = new DOMXPath($dom);
+		$filter_name = retrieve_form_data("filter_name",NULL);
+			$records = $xpath->query("//ged/filters[@name='$filter_name']");
+		$root = $dom->getElementsByTagName("ged")->item(0);
+		if($records->length!=0){
+			$root->removeChild($records->item(0));
+					$default = $xpath->query("//ged[.//default='$filter_name']");
+					if($default->length!=0){
+				$default->item(0)->removeChild($default->item(0)->getElementsByTagName('default')->item(0));
+				$default = $dom->createElement("default");
+					$default = $root->appendChild($default);
+					}
+			$dom->save($file);
+					message(6," : Events filter deleted","ok");
+		}
+		else
+			message(0," : Please select a filter","warning");
+	}
+
+	// Get filters définitions
+	$dom = openXml($file);
+	$filters=$dom->getElementsByTagName('filters');
+	$filter=$dom->getElementsByTagName('filter');
+	$filter_nbr=$filter->length;
+
+	?>
+
+	<div id="loading">
+		<h2>Loading, please wait ...</h2><br>
+	</div>
+
+	<?php if($user_id) { ?>
+	<form action="/module/admin_user/filters.php?user_id=<?php echo $user_id?>&user_name=<?php echo $user_name?>" name="option_events" method="post">
+	<?php } else { ?>
+	<form action="/module/monitoring_ged/index.php" name="option_events" method="post">
+	<?php } ?>
+
+	<div id="search" align="center">
+
+	<table width="500px" class="table">
+		<tr>
+			<?php if(!$user_id) { ?>
+					<td width="200px"><h2>EVENTS VIEWS</h2></td>
+			<?php } else { ?>
+					<td width="200px"><h2>USERS VIEWS</h2></td>
+			<?php } ?>
+					<td>
+			<?php if(!$user_id) { ?>
+			[ <a href="ged.php?q=active">active events</a> ]
+			[ <a href="ged.php?q=history">history events</a> ]
+			<?php } else { ?>
+			[ <a href="/module/admin_user/index.php">all users</a> ]
+			[ <a href="/module/admin_user/add_modify_user.php?user_id=<?php echo $user_id?>">user <?php echo $user_name?></a> ]
+			<?php } ?>
+			</td>
+		</tr>
+		<tr>
+					<td width="200px"><h2>filter choice</h2></td>
+					<td>
+			<select id="filter_choice" name="filter_choice" style="width:100%;" onchange="updateFields('<?php echo $file_url?>')">
+				<option value="" selected>create your filter</option>
+				<?php
+				foreach($filters as $filter_name)
+					echo '<option name="'.$filter_name->getAttribute("name").'" value="'.$filter_name->getAttribute("name").'">'.$filter_name->getAttribute("name").'</option>';
+				?>
+			</select>
+			</td>
+			</tr>
+		 <tr>
+					<td width="200px"><h2>filter name</h2></td>
+					<td><input type="text" id="filter_name" name="filter_name" class="value" style="width:100%;" /></td>
+			</tr>
+		<tr>
+					<td width="200px"><h2>filter by default</h2></td>
+					<td><input type="checkbox" id="filter_default" name="filter_default" class="checkbox" /></td>
+			</tr>
+		<tr>
+			<td width="200px"><h2>events values</h2></td>
+			<td>
+			<input type="hidden" id="id" name="id" value="<?php echo $filter_nbr?>">
+					[ <a href="#" onClick="addFormField();">add</a> ]
+			<div id="allvalues">
+			</div>
+			</td>
+		</tr>
+	</table>
+
+	<input type="submit" class="button" value="save" name="save"> 
+	<input type="submit" class="button" value="delete" name="delete"> 
+	<input type="submit" class="button" value="cancel" name="cancel"> 
+
+	</div>
+
+</div>
+
+<?php include("../../footer.php"); ?>
+
 
 <script type="text/javascript" src="/js/jquery.js"></script>
 <script type="text/javascript" src="/js/jquery.autocomplete.js"></script>
@@ -120,222 +334,3 @@ else {
              	}); //close $.ajax(
         }
 </script>
-
-</head>
-
-<body id="main">
-
-<h1><?php echo $option_events->item(0)->getAttribute("title");?></h1>
-
-<?php
-
-// Open Xml function
-function openXml($file=false){
-        $dom = new DOMDocument("1.0","UTF-8");
-        $dom->preserveWhiteSpace = false;
-        $dom->formatOutput = true;
-	if($file)
-		$dom->load($file);
-	return $dom;
-}
-
-// Define ged filters file if not exists
-if(!file_exists($file)){
-	$dom = openXml();
-	$root = $dom->createElement("ged");
-        $root = $dom->appendChild($root);
-	$default = $dom->createElement("default");
-        $default = $root->appendChild($default);
-        $xml=$dom->saveXML();
-        $fp=@fopen($file,"w+");
-        if(fwrite($fp,$xml))
-                message(6," : Events filters file is created","ok");
-        fclose($fp);
-}
-
-// Define ged filters options
-if(isset($_POST["save"])){
-	$dom = openXml($file);
-	$xpath = new DOMXPath($dom);
-        $filter_name = retrieve_form_data("filter_name",NULL);
-        $filter_choice = retrieve_form_data("filter_choice",NULL);
-        $filter_default = retrieve_form_data("filter_default",NULL);
-	if($filter_name=="")
-		message(0," : Events filter name must be set","warning");
-	else {
-		// search if filter exists
-		$root = $dom->getElementsByTagName("ged")->item(0);
-		$records = $xpath->query("//ged/filters[@name='$filter_name']");
-
-		// no filter name for creation
-        	if($records->length!=0 && ($filter_choice=="" or $filter_choice!=$filter_name)){
-			message(0," : Events filter already exists","warning");
-		}
-		// creation or modification
-		else {
-			// filter renaming
-			if($filter_choice!="" && $filter_choice!=$filter_name){
-				$choice = $xpath->query("//ged/filters[@name='$filter_choice']");
-                        	$root->removeChild($choice->item(0));
-			}
-
-			// modification if filter exists
-                        if($records->length!=0){
-                                $root->removeChild($records->item(0));
-                                $filters = $dom->createElement("filters");
-                                $filters = $root->appendChild($filters);
-                                $filters->setAttribute("name",$filter_name);
-                                $dom->save($file);
-                        }
-
-                        // creation if filter not exists
-                        else {
-                                $filters = $dom->createElement("filters");
-                                $filters = $root->appendChild($filters);
-                                $filters->setAttribute("name",$filter_name);
-                                $dom->save($file);
-                        }
-
-			// search if filter is the default
-	        	$default = $xpath->query("//ged[.//default='$filter_name']");
-
-			// if default
-			if($default->length!=0){
-				if(!$filter_default){
-				        $root->removeChild($root->getElementsByTagName('default')->item(0));
-			      		$default = $dom->createElement("default");
-				      	$default = $root->appendChild($default);
-					$default = $root->getElementsByTagName("default")->item(0);
-				        $dom->save($file);
-				}
-			}
-			// if not default
-			elseif($filter_default){
-			        $root->removeChild($root->getElementsByTagName('default')->item(0));
-                                $default = $dom->createElement("default");
-                                $default = $root->appendChild($default);
-                                $default = $root->getElementsByTagName("default")->item(0);
-                                $default->appendChild($dom->createTextNode($filter_name));
-                                $dom->save($file);
-			}
-
-			// set the filter definition
-			$filter_name = retrieve_form_data("filter_name",NULL);
-			$values=retrieve_form_data("id",NULL);
-			for($i=0;$i<$values;$i++){
-				$field=retrieve_form_data("field".$i,NULL);
-				$value=retrieve_form_data("value".$i,NULL);
-				if($value!=""){
-		  			$filter=$filters->appendChild($dom->createElement("filter"));
-	 	 			$filter->setAttribute("name",$field);
-	        	                $filter->appendChild($dom->createTextNode($value));
-				}
-			}
-		        $dom->save($file);
-        		message(6," : Events filter is set","ok");
-		}
-	}
-}
-
-// Delete selected filter
-if(isset($_POST["delete"])){
-	$dom = openXml($file);
-        $xpath = new DOMXPath($dom);
-	$filter_name = retrieve_form_data("filter_name",NULL);
-        $records = $xpath->query("//ged/filters[@name='$filter_name']");
-	$root = $dom->getElementsByTagName("ged")->item(0);
-	if($records->length!=0){
-		$root->removeChild($records->item(0));
-                $default = $xpath->query("//ged[.//default='$filter_name']");
-                if($default->length!=0){
-			$default->item(0)->removeChild($default->item(0)->getElementsByTagName('default')->item(0));
-			$default = $dom->createElement("default");
-		        $default = $root->appendChild($default);
-                }
-		$dom->save($file);
-                message(6," : Events filter deleted","ok");
-	}
-	else
-		message(0," : Please select a filter","warning");
-}
-
-// Get filters définitions
-$dom = openXml($file);
-$filters=$dom->getElementsByTagName('filters');
-$filter=$dom->getElementsByTagName('filter');
-$filter_nbr=$filter->length;
-
-?>
-
-<div id="loading">
-        <h2>Loading, please wait ...</h2><br>
-        <img src="/images/actions/ajax-loader.gif" alt="ajax-loader">
-</div>
-
-<?php if($user_id) { ?>
-<form action="/module/admin_user/filters.php?user_id=<?php echo $user_id?>&user_name=<?php echo $user_name?>" name="option_events" method="post">
-<?php } else { ?>
-<form action="/module/monitoring_ged/index.php" name="option_events" method="post">
-<?php } ?>
-
-<div id="search" align="center">
-
-<table width="500px" class="table">
-	<tr>
-		<?php if(!$user_id) { ?>
-                <td width="200px"><h2>EVENTS VIEWS</h2></td>
-		<?php } else { ?>
-                <td width="200px"><h2>USERS VIEWS</h2></td>
-		<?php } ?>
-                <td>
-		<?php if(!$user_id) { ?>
-		[ <a href="ged.php?q=active">active events</a> ]
-		[ <a href="ged.php?q=history">history events</a> ]
-		<?php } else { ?>
-		[ <a href="/module/admin_user/index.php">all users</a> ]
-		[ <a href="/module/admin_user/add_modify_user.php?user_id=<?php echo $user_id?>">user <?php echo $user_name?></a> ]
-		<?php } ?>
-		</td>
-	</tr>
-	<tr>
-                <td width="200px"><h2>filter choice</h2></td>
-                <td>
-		<select id="filter_choice" name="filter_choice" style="width:100%;" onchange="updateFields('<?php echo $file_url?>')">
-			<option value="" selected>create your filter</option>
-			<?php
-			foreach($filters as $filter_name)
-				echo '<option name="'.$filter_name->getAttribute("name").'" value="'.$filter_name->getAttribute("name").'">'.$filter_name->getAttribute("name").'</option>';
-			?>
-		</select>
-		</td>
-        </tr>
-	 <tr>
-                <td width="200px"><h2>filter name</h2></td>
-                <td><input type="text" id="filter_name" name="filter_name" class="value" style="width:100%;" /></td>
-        </tr>
-	<tr>
-                <td width="200px"><h2>filter by default</h2></td>
-                <td><input type="checkbox" id="filter_default" name="filter_default" class="checkbox" /></td>
-        </tr>
-	<tr>
-		<td width="200px"><h2>events values</h2></td>
-		<td>
-		<input type="hidden" id="id" name="id" value="<?php echo $filter_nbr?>">
-                [ <a href="#" onClick="addFormField();">add</a> ]
-		<div id="allvalues">
-		</div>
-		</td>
-	</tr>
-</table>
-
-<input type="submit" class="button" value="save" name="save"> 
-<input type="submit" class="button" value="delete" name="delete"> 
-<input type="submit" class="button" value="cancel" name="cancel"> 
-
-</div>
-
-</form>
-
-</body>
-
-</html>

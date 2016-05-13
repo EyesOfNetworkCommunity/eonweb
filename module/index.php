@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2014 EyesOfNetwork Team
+# Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION 4.2
+# VERSION : 5.0
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -20,39 +20,42 @@
 #########################################
 */
 
-$module=exec("rpm -q ".$_GET["module"]." |grep '.eon' |wc -l");
-if($module!=0)
-	header('Location: '.$_GET["link"].'');
-else {
+# Check optionnal module to load
+if(isset($_GET["module"]) && isset($_GET["link"])) { 
+
+	$module=exec("rpm -q ".$_GET["module"]." |grep '.eon' |wc -l");
+	
+	# Redirect to module page if rpm installed
+	if($module!=0) { header('Location: '.$_GET["link"].''); }
+
+} 
+	
+include("../header.php"); 
+include("../side.php"); 
+
 ?>
-<html xmlns="http://www.w3.org/1999/xhtml">
 
-<head>
-        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-        <title>EyesOfNetwork</title>
+<div id="page-wrapper">
 
-	<?php
-	include("../include/config.php");
-	include("../include/arrays.php");
-	include("../include/function.php");
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="page-header"><?php echo getLabel("label.home_about.title"); ?></h1>
+		</div>
+	</div>
+
+	<div class="row">
+	<?php 
+		# Module not installed
+		if(isset($module)) {
+			message(0," : Module ".$_GET["module"]." is not installed",'warning'); 
+		} 
+		# Module or link not specified
+		else {
+			message(0," : Not allowed",'critical'); 
+		}
 	?>
+	</div>
+	
+</div>
 
-	<meta http-equiv="Cache-Control" content="no-cache" />
-	<meta http-equiv="Pragma" content="no-cache" />
-	<meta http-equiv="Cache" content="no store" />
-	<meta http-equiv="Expires" content="0" />
-
-	<link rel="stylesheet" type="text/css" href="../../css/menu.css" />
-	<link rel="stylesheet" type="text/css" href="../../css/style.css" />
-	<link rel="stylesheet" type="text/css" href="../../css/design.css" />
-</head>
-
-<body id="main">
-<h1>EyesOfNetwork Installation</h1>
-<?php message(0," : Module ".$_GET["module"]." is not installed",'warning'); ?>
-</body>
-
-</html>
-<?php
-}
-?>
+<?php include("../footer.php"); ?>

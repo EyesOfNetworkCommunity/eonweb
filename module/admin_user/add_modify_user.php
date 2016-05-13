@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2014 EyesOfNetwork Team
-# DEV NAME : Jean-Philippe Levy
-# VERSION 4.2
+# Copyright (C) 2016 EyesOfNetwork Team
+# DEV NAME : Quentin HOARAU
+# VERSION : 5.0
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -20,47 +20,16 @@
 #########################################
 */
 
+include("../../header.php");
+include("../../side.php");
+
 ?>
-<html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-		<script src="../../js/jquery.js"></script>
-		<link rel="stylesheet" href="../../css/jquery.autocomplete.css" type="text/css" />
-		<script type="text/javascript" src="../../js/jquery.autocomplete.js"></script>
-		<?php include("../../include/include_module.php"); ?>
-	</head>
 
-	<body id='main'>
+<div id="page-wrapper">
 
-		<script>
-			function disable(){
-				if(document.form_user.user_name.disabled){
-					document.form_user.user_name.disabled=false;
-					document.form_user.user_password1.disabled=false;
-					document.form_user.user_password2.disabled=false;
-					document.form_user.user_location.disabled=true;
-				}
-				else{
-					document.form_user.user_name.disabled=true;
-					document.form_user.user_password1.disabled=true;
-					document.form_user.user_password2.disabled=true;
-					document.form_user.user_location.disabled=false;
-				}
-			}
-			function disable_group(){
-				if(document.form_user.user_group.disabled){
-					document.form_user.user_group.disabled=false;
-				}
-				else{
-					document.form_user.user_group.disabled=true;
-				}
-			}
-		</script>
-
-		<?php
-		
+	<?php
 		/********************************************************
-		*		FUNCTIONS DECLARATIONS			*
+		*		FUNCTIONS DECLARATIONS			                *
 		********************************************************/
 
 		// Retrieve Group Information
@@ -145,7 +114,7 @@
 		// Global parameter
 		global $database_eonweb;
 		global $database_lilac;
-	
+
 		// Get parameter
 		$user_change_passord = retrieve_form_data("user_change_passord",null);
 		$user_id = retrieve_form_data("user_id",null);
@@ -182,7 +151,11 @@
 
 		if ($user_id == null) 
 		{
-			echo "<h1>".$xmlmodules->getElementsByTagName("admin_user")->item(0)->getAttribute("new")."</h1>";
+			echo '<div class="row">
+					<div class="col-lg-12">
+						<h1 class="page-header">'.getLabel("label.admin_user.title_new").'</h1>
+					</div>
+				</div>';
 			
 			//------------------------------------------------------------------------------------------------
 			// ACCOUNT CREATION (New user ID)
@@ -211,11 +184,15 @@
 		}
 		else
 		{
-			echo "<h1>".$xmlmodules->getElementsByTagName("admin_user")->item(0)->getAttribute("mod")."</h1>";
+			echo '<div class="row">
+					<div class="col-lg-12">
+						<h1 class="page-header">'.getLabel("label.admin_user.title_upd").'</h1>
+					</div>
+				</div>';
 
 			//------------------------------------------------------------------------------------------------
-                        // ACCOUNT UPDATE (and retrieve parameters)
-                        //------------------------------------------------------------------------------------------------
+						// ACCOUNT UPDATE (and retrieve parameters)
+						//------------------------------------------------------------------------------------------------
 			if (isset($_POST['update'])){
 				update_user($user_id, stripAccents($user_name), $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location, $user_mail, $user_limitation, $old_group_id, $old_name);	
 				//message(8,"Update: User location = $user_location",'ok');	// For debug pupose, to be removed
@@ -234,147 +211,118 @@
 			$user_password1="abcdefghijklmnopqrstuvwxyz";
 			$user_password2="abcdefghijklmnopqrstuvwxyz";
 			//message(8,"Mod: User location = $user_location",'ok');       // For debug pupose, to be removed
-                        //message(8,"Mod: User name =  $user_name",'ok');                      // For debug pupose, to be removed
+			//message(8,"Mod: User name =  $user_name",'ok');                      // For debug pupose, to be removed
 
 			//------------------------------------------------------------------------------------------------
 		}
+	?>
 
+	<form id="form_user" action='./add_modify_user.php' method='POST' name='form_user'>
+		<input type='hidden' name='user_id' value='<?php echo $user_id?>'>
+		<div class="row form-group">
+			<label class="col-md-3">User Name</label>
+			<div class="col-md-9">
+				<input class="form-control" type='text' name='user_name' value='<?php echo $user_name?>'>
+				<input type='hidden' name='user_name_old' value='<?php echo $user_name?>'>
+			</div>
+		</div>
+			
+		<?php if($user_id!="1"){ ?>
+			<div class="row form-group">
+				<label class="col-md-3">User Limited</label>
+				<div class="col-md-9">
+					<?php
+						if($user_limitation=="1") $checked="checked='yes'";
+						else $checked="";
+						echo "<input type='checkbox' class='checkbox' name='user_limitation' value='1' $checked onclick='disable_group()'>";
+					?>
+				</div>
+			</div>
+			
+			<div class="row form-group">
+				<label class="col-md-3">Ldap User</label>
+				<div class="col-md-9">
+					<?php
+						if($user_type=="1") $checked="checked='yes'";
+						else $checked="";
+						echo "<input type='checkbox' class='checkbox' name='user_type' value='1' $checked onclick='disable()'>";
+					?>
+				</div>
+			</div>
+			
+			<div class="row form-group">
+				<label class="col-md-3">Ldap Login</label>
+				<div class="col-md-9">
+					<?php
+						echo "<input class='form-control' id='user_location' name='user_location' type='text' value='".htmlspecialchars($user_location, ENT_QUOTES)."'>";
+					?>
+				</div>
+			</div>
+		<?php 
+		} 
+		else {
+			echo "<input type='hidden' name='user_type' value='0'>";
+			echo "<input type='hidden' name='user_group' value='1'>";
+		}
 		?>
+		<div class="row form-group">
+			<label class="col-md-3">User Mail</label>
+			<div class="col-md-9">
+				<input class="form-control" type='text' name='user_mail' value='<?php echo $user_mail?>'>
+			</div>
+		</div>
 
-		<form action='./add_modify_user.php' method='POST' name='form_user'>
-			<input type='hidden' name='user_id' value='<?php echo $user_id?>'>
-				<center>
-					<table class="table">
-						<tr>
-							<td><h2>User Name</h2></td>
-							<td>
-								<input type='textbox' name='user_name' value='<?php echo $user_name?>' style="width:300px;">
-								<input type='hidden' name='user_name_old' value='<?php echo $user_name?>'>
-							</td>
-						</tr>
-						<?php if($user_id!="1"){ ?>
-						<tr>
-							<td><h2>User Limited</h2></td>
-							<td>
-								<?php
-									if($user_limitation=="1") $checked="checked='yes'";
-									else $checked="";
-									echo "<input type='checkbox' class='checkbox' name='user_limitation' value='1' $checked onclick='disable_group()'>";
-								?>
-							</td>
-						</tr>
-						<tr>
-							<td><h2>Ldap User</h2></td>
-							<td>
-								<?php
-									if($user_type=="1") $checked="checked='yes'";
-									else $checked="";
-									echo "<input type='checkbox' class='checkbox' name='user_type' value='1' $checked onclick='disable()'>";
-								?>
-							</td>
-						</tr>
-						<tr>
-							<td><h2>Ldap Login</h2></td>
-							<td>
-								<?php
-									echo "<input id='user_location' name='user_location' type='text' style='width:300px;' value='".htmlspecialchars($user_location, ENT_QUOTES)."'>";
-								?>
-								<script type="text/javascript">
-								$(function() {
-									$("#user_location").autocomplete("search.php?request=search_user");
-									$("#user_location").result(function(event, data, formatted) {
-										if (data)
-											$(this).parent().find("input").val(data[1]);
-									});
-								});
-								</script>
-							</td>
-						</tr>
-						<?php 
-						} 
-						else {
-							echo "<input type='hidden' name='user_type' value='0'>";
-							echo "<input type='hidden' name='user_group' value='1'>";
+		<div class="row form-group">
+			<label class="col-md-3">User Description</label>
+			<div class="col-md-9">
+				<input class="form-control" type='text' name='user_descr' value='<?php echo $user_descr?>'>
+			</div>
+		</div>
+		
+		<div class="row form-group">
+			<label class="col-md-3">User Password</label>
+			<div class="col-md-9">
+				<input class="form-control" type='password' name='user_password1' value='<?php echo $user_password1?>'>
+			</div>
+		</div>
+		
+		<div class="row form-group">
+			<label class="col-md-3">User Password Confirmation</label>
+			<div class="col-md-9">
+				<input class="form-control" type='password' name='user_password2' value='<?php echo $user_password2?>'>
+			</div>
+		</div>
+		
+		<?php if($user_id!="1") { ?>
+		<div class="row form-group">
+			<label class="col-md-3">User Group</label>
+			<div class="col-md-9">
+				<select class="form-control" name='user_group' size=1>
+					<?php
+						$result=sqlrequest("$database_eonweb","SELECT group_id,group_name from groups");
+						while ($line = mysqli_fetch_array($result))
+						{
+							if ($user_group == $line[0])
+								echo "<OPTION value='$line[0]' SELECTED>$line[1] </OPTION>";
+							else
+								echo "<OPTION value='$line[0]'>$line[1] </OPTION>";					
 						}
-						?>
-						<tr>
-							<td><h2>User Mail</h2></td>
-							<td>
-								<input type='textbox' name='user_mail' value='<?php echo $user_mail?>' style="width:300px;">
-							</td>
-						</tr>
+					?>
+				</select>
+			</div>
+		</div>
+		<?php } ?>
+		<div class="form-group">
+			<?php
+				if ($user_id !=null)
+					echo "<button class='btn btn-primary' type='submit' name='update' value='update'>".getLabel("action.update")."</button>";
+				else
+					echo "<button class='btn btn-primary' type='submit' name='add' value='add'>".getLabel("action.add")."</button>";
+				echo "<button class='btn btn-default' style='margin-left: 10px;' type='button' name='back' value='back' onclick='location.href=\"index.php\"'>".getLabel("action.cancel")."</button>";
+			?>
+		</div>
+	</form>
 
-						<tr>
-							<td><h2>User Description</h2></td>
-							<td>
-								<input type='textbox' name='user_descr' value='<?php echo $user_descr?>' style="width:300px;">
-							</td>
-						</tr>
-						<tr>
-							<td><h2>User Password</h2></td>
-							<td>
-								<input type='password' name='user_password1' value='<?php echo $user_password1?>' style="width:300px;">
-							</td>
-						</tr>
-						<tr>
-							<td><h2>User Password Confirmation</h2></td>
-							<td>
-								<input type='password' name='user_password2' value='<?php echo $user_password2?>' style="width:300px;">
-							</td>
-						</tr>
-						<?php if($user_id!="1") { ?>
-						<tr>
-							<td><h2>User Group</h2></td>
-							<td>
-								<select name='user_group' size=1>
-									<?php
-										$result=sqlrequest("$database_eonweb","SELECT group_id,group_name from groups");
-										while ($line = mysqli_fetch_array($result))
-										{
-											if ($user_group == $line[0])
-												echo "<OPTION value='$line[0]' SELECTED>$line[1] </OPTION>";
-											else
-												echo "<OPTION value='$line[0]'>$line[1] </OPTION>";					
-										}
-									?>
-								</select>
-							</td>
-						</tr>
-						<?php } ?>
-						<tr>
-							<td class="blanc" align="center" colspan="2">
-								<?php
-									if ($user_id !=null)
-										echo "<input class='button' type='submit' name='update' value='update'>";
-									else
-										echo "<input class='button' type='submit' name='add' value='add'>";
-									echo "&nbsp;<input class='button' type='button' name='back' value='back' onclick='location.href=\"index.php\"'>";
-								?>
-							</td>
-						</tr>
-					</table>
-				</center>
-		</form>
+</div>
 
-		<?php
-			if($user_limitation=="1" && $user_id!="1"){
-				echo "<script>disable_group();</script>";
-			}
-			elseif($user_id!="1"){
-				echo "<script>disable_group();</script>";
-				echo "<script>disable_group();</script>";
-			}
-			if($user_type=="1" && $user_id!="1"){
-				echo "<script>disable();</script>";
-			}
-			elseif($user_id!="1"){
-				echo "<script>disable();</script>";
-				echo "<script>disable();</script>";
-			}
-			//message(8,"Mod2: User location = $user_location",'ok');       // For debug pupose, to be removed
-                        //message(8,"Mod2: User name =  $user_name",'ok');                      // For debug pupose, to be removed
-
-		?>
-
-	</body>
-</html>
+<?php include("../../footer.php"); ?>

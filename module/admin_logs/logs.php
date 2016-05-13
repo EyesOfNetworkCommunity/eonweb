@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2014 EyesOfNetwork Team
+# Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION 4.2
+# VERSION : 5.0
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -19,52 +19,65 @@
 #
 #########################################
 */
-?>
-<html>
 
-<head>
+include("../../header.php");
+include("../../side.php");
 
-<?php
-include("../../include/include_module.php");
-include("LogBrowser.php");
 ?>
 
-<script type="text/javascript" src="/js/jquery.js"></script>
-<script type="text/javascript" src="/js/jquery.ui.js"></script>
-<script type="text/javascript" src="/js/ui/i18n/ui.datepicker-<?php echo $langformat?>.js"></script>
-<script type="text/javascript" src="/js/jquery.date.js"></script>
-<script type="text/javascript" src="/js/jquery.metadata.js"></script>
-<script type="text/javascript" src="/js/jquery.tablesorter.js"></script>
-<script type="text/javascript" src="/js/jquery.tablesorter.pager.js"></script>
-<script type="text/javascript" src="/js/jquery.contextmenu.js"></script>
-<script type="text/javascript" src="logs.js"></script>
+<div id="page-wrapper">
 
-</head>
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="page-header"><?php echo getLabel("label.admin_logs.title"); ?></h1>
+		</div>
+	</div>
 
-<body id="main">
-
-<h1><?php echo $xmlmodules->getElementsByTagName("admin_logs")->item(0)->getAttribute("title")?></h1>
-<div id="logs_messages" align="right">
-        <i>no screen refresh</i>
-	<br><br>
+	<form id="logs-form" method="post" onsubmit="return submitFormAjax()">
+		<div class="row">
+			<div class="form-group col-md-4">
+				<label>Period</label>
+				<input type="text" class="daterangepicker-eonweb form-control" name="date">
+			</div>
+			
+			<div class="form-group col-md-4">
+				<label><?php echo getLabel("label.user"); ?></label>
+				<input type="text" id="user" name="user" class="form-control">
+			</div>
+		</div>
+		<div class="row">
+			<div class="form-group col-md-4">
+				<label>Module</label>
+				<input type="text" id="module" name="module" class="form-control">
+			</div>
+			
+			<div class="form-group col-md-4">
+				<label>Description</label>
+				<input type="text" id="description" name="description" class="form-control">
+			</div>
+		</div>
+		<div class="row">
+			<div class="form-group col-md-4">
+				<label>Source</label>
+				<div class="input-group">
+					<input type="text" id="source" name="source" class="form-control">
+					<span class="input-group-btn">
+						<button class="btn btn-primary"><?php echo getLabel("action.search"); ?></button>
+					</span>
+				</div>
+			</div>
+		</div>
+	</form>
+	<br>
+	<!-- Loading message -->
+	<div id="loading">
+		<h2>Loading, please wait ...</h2><br>
+		<!-- <img src="/images/actions/ajax-loader.gif" alt="ajax-loader"> -->
+	</div>
+	
+	<!-- Result here ! -->
+	<div id="result"></div>
+	
 </div>
 
-<form method="post" onsubmit="return submitFormAjax()">
-
-<!-- LOGBROWSER MODULE -->
-
-<?php
-$result=sqlrequest($database_eonweb,"select * from logs order by id desc;");
-$LogBrowser=new LogBrowser();
-$LogBrowser->showSearch($result);
-$LogBrowser->showMsg();
-$LogBrowser->showTable();
-$LogBrowser->showTablePager();
-?>
-
-<!-- END LOGBROWSER MODULE -->
-
-</form>
-</body>
-
-</html>
+<?php include("../../footer.php"); ?>
