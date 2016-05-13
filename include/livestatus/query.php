@@ -20,9 +20,9 @@
 #########################################
 */
 
-require_once("../function.php"); 
-require_once("../arrays.php"); 
 require_once("../config.php");
+require_once("../arrays.php"); 
+require_once("../function.php");
 require_once("Client.php");
 use Nagios\Livestatus\Client;
 
