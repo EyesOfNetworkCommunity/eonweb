@@ -22,7 +22,7 @@ try {
     }
 
 if($action == 'verify_services'){
-        verify_services($bp_name,$host_name,$bdd);
+    verify_services($bp_name,$host_name,$bdd);
 }
 
 elseif($action == 'delete_bp'){

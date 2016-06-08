@@ -179,7 +179,7 @@ include("../../footer.php");
 $list_new_services = [];
 
 $(document).ready(function () {
-	var element_bp_name = $('.bp_name').html();
+	var element_bp_name = $('.page-header').html();
     var bp_name = element_bp_name.split(" : ")[1];
 	var all_element_match = $('div[id^="' + bp_name + '::"');
 
