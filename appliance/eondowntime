@@ -1,1 +1,1 @@
-* * * * * root /srv/eyesofnetwork/nagios/plugins/Downtime/downtime_auto.sh > /dev/null 2>&1
+#* * * * * root /srv/eyesofnetwork/nagios/plugins/Downtime/downtime_auto.sh > /dev/null 2>&1
