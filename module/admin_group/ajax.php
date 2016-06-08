@@ -82,6 +82,11 @@ if($backend_selected=="1"){
 	message(0," : Aucune configuration LDAP trouvée...","warning"); die;
 }
 
+// search all nagvis groups
+$bdd = new PDO('sqlite:/srv/eyesofnetwork/nagvis/etc/auth.db');
+$req = $bdd->query("SELECT * FROM roles");
+$nagvis_groups = $req->fetchAll(PDO::FETCH_OBJ);
+
 ?>
 
 
@@ -94,7 +99,7 @@ if($backend_selected=="1"){
 				<div class="panel-heading"><?php echo getLabel("label.ldap_usr_list"); ?></div>
 				<div class="panel-body">
 					<div class="dataTable_wrapper">
-						<table class="table table-striped table-condensed datatable-eonweb">
+						<table class="table table-striped table-condensed datatable-eonweb-ajax">
 							<thead>
 								<tr>
 									<th><?php echo getLabel("label.user"); ?></th>
@@ -134,6 +139,30 @@ if($backend_selected=="1"){
 					<button class="btn btn-primary btn-xs" type="submit" name="action" value="import"><?php echo getLabel("action.import"); ?></button>
 				</div>
 				<div class="panel-body">
+					<div class="row form-group">
+						<label class="col-md-3">Nagvis</label>			
+						<div class="col-md-9">
+							<div class="input-group col-md-12">
+								<span class="input-group-addon">
+				                    <input type='checkbox' class='checkbox' name='create_user_in_nagvis' value='yes'>
+								</span>
+								<select class="form-control" name="nagvis_group">
+									<?php foreach ($nagvis_groups as $group):
+										$selected = "";
+										if($group->name == "Guests"){
+											$selected = "selected";
+										}
+									?>
+										<option value="<?php echo $group->roleId; ?>" <?php echo $selected; ?>><?php echo $group->name; ?></option>
+									<?php endforeach ?>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="row form-group">
+						<label class="col-md-3">Cacti</label>
+						<div class="col-md-9"><input name="import_cacti" type="checkbox" value="yes"></div>
+					</div>
 					<table class="table table-condensed table-striped">
 						<thead>
 							<tr>
@@ -153,4 +182,26 @@ if($backend_selected=="1"){
 
 </form>
 
-<?php include('admin_group.php'); ?>
+<script src="/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
+<script src="/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
+<script src="/bower_components/datatables-responsive/js/dataTables.responsive.js"></script>
+<script type="text/javascript">
+	$('.datatable-eonweb-ajax').DataTable({
+		responsive: true,
+		lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, dictionnary['label.all']] ],
+		language: {
+			lengthMenu: dictionnary['action.display'] + " _MENU_ " + dictionnary['label.entries'],
+			search: dictionnary['action.search']+":",
+			paginate: {
+				first:      dictionnary['action.first'],
+				previous:   dictionnary['action.previous'],
+				next:       dictionnary['action.next'],
+				last:       dictionnary['action.last']
+			},
+			info:           dictionnary['label.datatable.info'],
+			infoEmpty:      dictionnary['label.datatable.infoempty'],
+			infoFiltered:   dictionnary['label.datatable.infofiltered'],
+			zeroRecords: 	dictionnary['label.datatable.zerorecords']
+		}
+	});
+</script>

@@ -87,6 +87,12 @@ include("../../side.php");
 	}
 	if( isset($_POST['action']) && $_POST['action'] == "import" ){
 		if(!empty($_POST['import_list'])){
+			// define if we import in nagvis or cacti (or both)
+			if(isset($_POST['import_nagvis'])){ $in_nagvis = "yes"; }
+			else { $in_nagvis = false; }
+			if(isset($_POST['import_cacti'])){ $in_cacti = "yes"; }
+			else { $in_cacti = false; }
+
 			$errors_names = array();
 			$nbr_ok = 0;
 			foreach ($_POST['import_list'] as $key => $value) {
@@ -105,7 +111,18 @@ include("../../side.php");
 				$query = sqlrequest($database_eonweb, $sql);
 				$usergroup = mysqli_result($query,0,"group_id");
 
-				$test = insert_user(stripAccents($usrname), $userdesc, $usergroup, $user_password1, $user_password2, $usrtype, $usrlocation,$usrmail,$usrlimitation, false);
+				// will insert in nagvis, only if checked
+				if(isset($_POST["create_user_in_nagvis"])){
+					$nagvis_role_id = $_POST["nagvis_group"];
+					$in_nagvis = "yes";
+				}
+
+				// will insert in cacti, only if checked
+				if(isset($_POST["create_user_in_cacti"])){
+					$in_cacti = "yes";
+				}
+
+				$test = insert_user(stripAccents($usrname), $userdesc, $usergroup, $user_password1, $user_password2, $usrtype, $usrlocation,$usrmail,$usrlimitation, false, $in_nagvis, $in_cacti, $nagvis_role_id);
 				
 				if( is_null($test) ){
 					array_push($errors_names, $usrname);
@@ -114,6 +131,8 @@ include("../../side.php");
 				}
 			}
 			message(8, " : " . $nbr_ok . " import(s) OK", "ok");
+		} else {
+			message(8, " : Aucun user LDAP dans la liste d'imports...", "warning");
 		}
 	}
 
@@ -127,8 +146,8 @@ include("../../side.php");
 	?>
 
 	<form action="./index.php" method="GET" class="form-inline">
-		<div class="table-responsive">
-			<table class="table table-striped table-condensed">
+		<div class="dataTable_wrapper">
+			<table class="table table-striped datatable-eonweb table-condensed">
 				<thead>
 				<tr>
 					<th><?php echo getLabel("label.admin_group.group_name"); ?></th>

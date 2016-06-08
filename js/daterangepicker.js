@@ -22,6 +22,7 @@
 $('.daterangepicker-eonweb').daterangepicker({
 	autoUpdateInput: false,
 	locale: {
+		format: 'MMMM D, YYYY',
 		applyLabel: dictionnary['action.apply'],
 		cancelLabel: dictionnary['action.clear'],
 		customRangeLabel: dictionnary['label.custom'],

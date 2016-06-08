@@ -3,7 +3,7 @@
 #########################################
 #
 # Copyright (C) 2016 EyesOfNetwork Team
-# DEV NAME : Jean-Philippe LEVY
+# DEV NAME : Quentin HOARAU
 # VERSION : 5.0
 # APPLICATION : eonweb for eyesofnetwork project
 #
@@ -22,315 +22,242 @@
 
 include("../../header.php");
 include("../../side.php");
+include("ged_functions.php");
+
+$queue = "active";
+if(isset($_GET["q"]) && $_GET["q"] == "history"){
+	$queue = "history";
+}
+
+// test is gedd is working
+$gedd = true;
+if(exec($array_serv_system["Ged agent"]["status"])==NULL) {
+	$gedd = false;
+}
 
 ?>
 
 <div id="page-wrapper">
 
+	<?php
+	echo "<pre>";
+	var_dump($_GET, $_POST);
+	echo "</pre>";
+	?>
+
 	<div class="row">
 		<div class="col-lg-12">
-			<h1 class="page-header"><?php echo getLabel("label.monitoring_ged.title"); ?></h1>
+			<?php
+			$title_label = "label.monitoring_ged.title_".$queue;
+			?>
+			<h1 class="page-header"><?php echo getLabel($title_label); ?></h1>
 		</div>
 	</div>
 
-	<?php
-	// Verify if user limitation
-	if(isset($file)){
-		$user_exist=mysqli_result(sqlrequest("$database_eonweb","SELECT count('user_name') from users where user_name='$user_name' and user_limitation='1';"),0);
-		if($user_exist==0)
-			message(0," : Not allowed","critical");
-	}
-	else {
-		$file="../../cache/".$_COOKIE["user_name"]."-ged.xml";
-		$file_url="/cache/".$_COOKIE["user_name"]."-ged.xml";
-		$user_id=false;
-		$user_name=false;
-	}
-
-	// Open Xml function
-	function openXml($file=false){
-			$dom = new DOMDocument("1.0","UTF-8");
-			$dom->preserveWhiteSpace = false;
-			$dom->formatOutput = true;
-		if($file)
-			$dom->load($file);
-		return $dom;
-	}
-
-	// Define ged filters file if not exists
-	if(!file_exists($file)){
-		$dom = openXml();
-		$root = $dom->createElement("ged");
-			$root = $dom->appendChild($root);
-		$default = $dom->createElement("default");
-			$default = $root->appendChild($default);
-			$xml=$dom->saveXML();
-			$fp=@fopen($file,"w+");
-			if(fwrite($fp,$xml))
-					message(6," : Events filters file is created","ok");
-			fclose($fp);
-	}
-
-	// Define ged filters options
-	if(isset($_POST["save"])){
-		$dom = openXml($file);
-		$xpath = new DOMXPath($dom);
-			$filter_name = retrieve_form_data("filter_name",NULL);
-			$filter_choice = retrieve_form_data("filter_choice",NULL);
-			$filter_default = retrieve_form_data("filter_default",NULL);
-		if($filter_name=="")
-			message(0," : Events filter name must be set","warning");
-		else {
-			// search if filter exists
-			$root = $dom->getElementsByTagName("ged")->item(0);
-			$records = $xpath->query("//ged/filters[@name='$filter_name']");
-
-			// no filter name for creation
-				if($records->length!=0 && ($filter_choice=="" or $filter_choice!=$filter_name)){
-				message(0," : Events filter already exists","warning");
-			}
-			// creation or modification
-			else {
-				// filter renaming
-				if($filter_choice!="" && $filter_choice!=$filter_name){
-					$choice = $xpath->query("//ged/filters[@name='$filter_choice']");
-								$root->removeChild($choice->item(0));
-				}
-
-				// modification if filter exists
-							if($records->length!=0){
-									$root->removeChild($records->item(0));
-									$filters = $dom->createElement("filters");
-									$filters = $root->appendChild($filters);
-									$filters->setAttribute("name",$filter_name);
-									$dom->save($file);
-							}
-
-							// creation if filter not exists
-							else {
-									$filters = $dom->createElement("filters");
-									$filters = $root->appendChild($filters);
-									$filters->setAttribute("name",$filter_name);
-									$dom->save($file);
-							}
-
-				// search if filter is the default
-					$default = $xpath->query("//ged[.//default='$filter_name']");
-
-				// if default
-				if($default->length!=0){
-					if(!$filter_default){
-							$root->removeChild($root->getElementsByTagName('default')->item(0));
-							$default = $dom->createElement("default");
-							$default = $root->appendChild($default);
-						$default = $root->getElementsByTagName("default")->item(0);
-							$dom->save($file);
-					}
-				}
-				// if not default
-				elseif($filter_default){
-						$root->removeChild($root->getElementsByTagName('default')->item(0));
-									$default = $dom->createElement("default");
-									$default = $root->appendChild($default);
-									$default = $root->getElementsByTagName("default")->item(0);
-									$default->appendChild($dom->createTextNode($filter_name));
-									$dom->save($file);
-				}
-
-				// set the filter definition
-				$filter_name = retrieve_form_data("filter_name",NULL);
-				$values=retrieve_form_data("id",NULL);
-				for($i=0;$i<$values;$i++){
-					$field=retrieve_form_data("field".$i,NULL);
-					$value=retrieve_form_data("value".$i,NULL);
-					if($value!=""){
-						$filter=$filters->appendChild($dom->createElement("filter"));
-						$filter->setAttribute("name",$field);
-									$filter->appendChild($dom->createTextNode($value));
-					}
-				}
-					$dom->save($file);
-					message(6," : Events filter is set","ok");
-			}
+	<!-- display messages here -->
+	<div id="messages">
+		<?php 
+		if(!$gedd) {
+			message(0," : ged daemon must be dead","critical");
 		}
-	}
-
-	// Delete selected filter
-	if(isset($_POST["delete"])){
-		$dom = openXml($file);
-			$xpath = new DOMXPath($dom);
-		$filter_name = retrieve_form_data("filter_name",NULL);
-			$records = $xpath->query("//ged/filters[@name='$filter_name']");
-		$root = $dom->getElementsByTagName("ged")->item(0);
-		if($records->length!=0){
-			$root->removeChild($records->item(0));
-					$default = $xpath->query("//ged[.//default='$filter_name']");
-					if($default->length!=0){
-				$default->item(0)->removeChild($default->item(0)->getElementsByTagName('default')->item(0));
-				$default = $dom->createElement("default");
-					$default = $root->appendChild($default);
-					}
-			$dom->save($file);
-					message(6," : Events filter deleted","ok");
-		}
-		else
-			message(0," : Please select a filter","warning");
-	}
-
-	// Get filters définitions
-	$dom = openXml($file);
-	$filters=$dom->getElementsByTagName('filters');
-	$filter=$dom->getElementsByTagName('filter');
-	$filter_nbr=$filter->length;
-
-	?>
-
-	<div id="loading">
-		<h2>Loading, please wait ...</h2><br>
+		?>
 	</div>
 
-	<?php if($user_id) { ?>
-	<form action="/module/admin_user/filters.php?user_id=<?php echo $user_id?>&user_name=<?php echo $user_name?>" name="option_events" method="post">
-	<?php } else { ?>
-	<form action="/module/monitoring_ged/index.php" name="option_events" method="post">
+	<?php if($gedd){ ?>
+	<!-- filter form -->
+	<form id="events-filter">
+		<input id="queue" type="hidden" value="<?php echo $queue?>" name="q" />
+		
+		<div id="form-container" class="row">
+			
+			<div class="col-md-8">
+			
+				<div class="row">
+					<div class="form-group col-md-6">
+						<label>Type</label>
+						<select class="form-control focus-to-search" id="type" name="type">
+						<?php
+						for($i=0;$i<count($array_ged_types);$i++)
+							echo "<option value='".$i."'>".$array_ged_types[$i]."</option>";
+						?>
+						</select>
+					</div>
+					
+					<div class="form-group col-md-6">
+						<label>Owner</label>
+						<select class="form-control focus-to-search" id="owner" name="owner">
+								<option>All</option>
+								<option>owned</option>
+								<option>not owned</option>
+						</select>
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="form-group col-md-6">
+						<label>Filter</label>
+						<select class="form-control focus-to-search" id="filter" name="field">
+						<?php
+						foreach($array_ged_filters as $key => $value){
+							echo "<option>$value</option>";
+						}
+						?>
+						</select>
+					</div>
+					
+					<div class="form-group col-md-6">
+						<label>date range</label>
+						<input id="daterange" name="datepicker" class="daterangepicker-eonweb form-control" type="text" autocomplete="off" />
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-md-4">
+				<label>State</label>
+				<div class="checkbox">
+					<?php 
+					foreach($array_ged_states as $col => $val){
+					echo '
+						<div class="checkbox">
+							<label>
+							<input type="checkbox" class="checkbox focus-to-search" id="'.$col.'" name="'.$col.'" checked />
+							'.$col.'
+							</label>
+						</div>';
+					}
+					?>
+				</div>
+			</div>
+			
+			<div class="col-md-12">
+				<div class="row">
+					<?php if($queue=="history") { ?>
+					<div class="form-group col-md-3">
+						<label>Ack time</label>
+						<select class="form-control focus-to-search" id="duration" name="duration">
+								<option value="" selected>Ack time</option>
+								<option value="300">>=5min</option>
+								<option value="600">>=10min</option>
+								<option value="1200">>=20min</option>
+								<option value="3600">>=1h</option>
+						</select>
+					</div>
+					<?php } ?>
+					<div class="form-group col-md-4">
+						<label>Search</label>
+						<div class="input-group">
+							<input id="search" name="search" class="form-control" placeholder="Rechercher..." type="text" autocomplete="off" onFocus='$(this).autocomplete({source:<?php echo get_host_list_from_nagios();?>})' />
+							<span class="input-group-btn">
+								<input type="submit" class="btn btn-primary" value="search" />
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+
+	<div id="result">
+		<?php if($queue == "active"){ ?>
+		<form id="ged-table" method="POST" onsubmit="return false;">
+			<div class="dataTable_wrapper">
+				<table class="table table-striped datatable-eonweb table-condensed table-hover">
+					<thead>
+						<tr>
+							<?php
+							foreach ($array_ged_packets as $key => $value) {
+								if($value["col"] == true && $key != "state"){
+									echo "<th>".ucfirst($key)."</th>";
+								}
+							}
+							?>
+							<th class="col-md-1">Select</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php
+							$gedsql_result1=sqlrequest($database_ged,"SELECT pkt_type_id,pkt_type_name FROM pkt_type WHERE pkt_type_id!='0' AND pkt_type_id<'100';");
+							while($ged_type = mysqli_fetch_assoc($gedsql_result1)){
+								// request for ged events according to queue and filters
+								$sql = createSelectClause($ged_type["pkt_type_name"], $queue);
+								
+								$request = sqlrequest($database_ged, $sql);
+
+								while($event = mysqli_fetch_object($request)){
+									$event_state = getEventState($event);
+									$row_class = getClassRow($event_state);
+
+									echo '<tr class="'.$row_class.'" name="'.$ged_type["pkt_type_name"].'">';
+									createTableRow($event, $event_state);
+									echo "</tr>";
+								}
+							}
+						?>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="row">
+				<div class="form-group col-md-3">
+					<select id="ged-action" class="form-control" name="ged_actions">
+						<?php
+							if($queue == "active"){
+								$actions = $array_action_option;
+							} else {
+								$actions = $array_resolve_action_option;
+							}
+							foreach ($actions as $key => $value) {
+								echo "<option value='$value'>$value</option>";
+							}
+						?>
+					</select>
+				</div>
+				<button id="exec-ged-action" class="btn btn-primary" type="submit" name="action" value="submit"><?php echo getLabel("action.submit"); ?></button>
+			</div>
+		</form>
+		<?php } ?>
+	</div>
 	<?php } ?>
 
-	<div id="search" align="center">
-
-	<table width="500px" class="table">
-		<tr>
-			<?php if(!$user_id) { ?>
-					<td width="200px"><h2>EVENTS VIEWS</h2></td>
-			<?php } else { ?>
-					<td width="200px"><h2>USERS VIEWS</h2></td>
-			<?php } ?>
-					<td>
-			<?php if(!$user_id) { ?>
-			[ <a href="ged.php?q=active">active events</a> ]
-			[ <a href="ged.php?q=history">history events</a> ]
-			<?php } else { ?>
-			[ <a href="/module/admin_user/index.php">all users</a> ]
-			[ <a href="/module/admin_user/add_modify_user.php?user_id=<?php echo $user_id?>">user <?php echo $user_name?></a> ]
-			<?php } ?>
-			</td>
-		</tr>
-		<tr>
-					<td width="200px"><h2>filter choice</h2></td>
-					<td>
-			<select id="filter_choice" name="filter_choice" style="width:100%;" onchange="updateFields('<?php echo $file_url?>')">
-				<option value="" selected>create your filter</option>
-				<?php
-				foreach($filters as $filter_name)
-					echo '<option name="'.$filter_name->getAttribute("name").'" value="'.$filter_name->getAttribute("name").'">'.$filter_name->getAttribute("name").'</option>';
-				?>
-			</select>
-			</td>
-			</tr>
-		 <tr>
-					<td width="200px"><h2>filter name</h2></td>
-					<td><input type="text" id="filter_name" name="filter_name" class="value" style="width:100%;" /></td>
-			</tr>
-		<tr>
-					<td width="200px"><h2>filter by default</h2></td>
-					<td><input type="checkbox" id="filter_default" name="filter_default" class="checkbox" /></td>
-			</tr>
-		<tr>
-			<td width="200px"><h2>events values</h2></td>
-			<td>
-			<input type="hidden" id="id" name="id" value="<?php echo $filter_nbr?>">
-					[ <a href="#" onClick="addFormField();">add</a> ]
-			<div id="allvalues">
-			</div>
-			</td>
-		</tr>
-	</table>
-
-	<input type="submit" class="button" value="save" name="save"> 
-	<input type="submit" class="button" value="delete" name="delete"> 
-	<input type="submit" class="button" value="cancel" name="cancel"> 
-
+	<div id="loader" style="visibility: hidden;">
+		<img src="/images/loader.gif" alt="loading">
 	</div>
 
+	<!-- modal for GED actions -->
+	<div id="ged-modal" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header panel-heading">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">Modal title</h4>
+				</div>
+				<div class="modal-body">
+					<div id="event-message">huhuihui</div>
+					<div id="content"></div>
+				</div>
+				<div class="modal-footer">
+					<button id="details-prev" type="button" class="btn btn-primary">
+						<i class="fa fa-arrow-circle-left"> </i> <?php echo getLabel("label.prev"); ?>
+					</button>
+					<button id="details-next" type="button" class="btn btn-primary">
+						<?php echo getLabel("label.next"); ?> <i class="fa fa-arrow-circle-right"> </i>
+					</button>
+					<button id="edit-event" type="button" class="btn btn-primary">
+						<?php echo getLabel("action.edit"); ?>
+					</button>
+					<button id="edit-all-event" type="button" class="btn btn-primary">
+						<?php echo getLabel("action.edit_all"); ?>
+					</button>
+					<button id="event-validation" type="button" class="btn btn-primary">
+						<?php echo getLabel("action.apply"); ?>
+					</button>
+					<button id="action-cancel" type="button" class="btn btn-default" data-dismiss="modal">
+						<?php echo getLabel("action.cancel"); ?>
+					</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 </div>
 
 <?php include("../../footer.php"); ?>
-
-
-<script type="text/javascript" src="/js/jquery.js"></script>
-<script type="text/javascript" src="/js/jquery.autocomplete.js"></script>
-
-<script type="text/javascript">
-	// on page load
-        $(document).ready(function() {
-                $('#loading').hide();
-		var filter = "<?php echo (isset($_GET["filter"])) ? $_GET["filter"] : false ?>";
-		$("#filter_choice option[name='"+filter+"']").attr("selected","yes");
-		updateFields("<?php echo $file_url?>");
-        });
-	// add form filter definition
-	function addFormField() {
-		var id = document.getElementById("id").value;
-		var filters = <?php echo json_encode($array_ged_filters)?>;
-		$("#allvalues").append('<div id="row'+id+'" style="margin-top:5px;"><select id="field'+id+'" name="field'+id+'">');
-		for(var i in filters)
-			$("#field"+id).append("<option>"+filters[i]+"</option>");
-		$("#row"+id).append('</select>&nbsp;<input id="value'+id+'" name="value'+id+'" class="value" type="text" onFocus=\'$(this).autocomplete(<?php echo get_host_list_from_nagios();?>)\' /> [ <a href="#" onClick="delFormField(\'#row'+id+'\');">remove</a> ]');
-		 $("#allvalues").append('</div>');
-		id = (id - 1) + 2;
-		document.getElementById("id").value = id;
-	}
-	// delete form filter definition
-	function delFormField(id) {
-		$(id).remove();
-	}
-	// update form filter definition
-	function updateFields(file) {
-		if($("#filter_choice").val()==""){
-			$("#allvalues").empty();
-			$("#filter_name").attr("value","");
-			$("#filter_name").removeAttr("readonly");
-			$("#filter_default").removeAttr("checked");
-			return 0;
-		}
-	   	$.ajax({
-			beforeSend: function(){
-                		$('#loading').show();
-			},
-			type: "GET",
-			url: file,
-                 	dataType: "xml",
-			cache: false,
-                 	success: function(xml) {
-                		$("#filter_name").attr("value",$("#filter_choice").val());
-                     		$(xml).find('default').each(function(){
-                        		if($(this).text() == $("#filter_choice").val()){
-						$("#filter_default").attr("checked","yes");
-					}
-					else{
-						$("#filter_default").removeAttr("checked");
-					}
-                     		});
-				$("#allvalues").empty();
-				$(xml).find('filters').each(function(){
-					if($(this).attr("name") == $("#filter_choice").val()){
-						var nbr=0;
-						var filters = <?php echo json_encode($array_ged_filters)?>;
-						$(this).find('filter').each(function(){
-							$("#allvalues").append("<div id='row"+ nbr +"' style='margin-top:5px;'>");
-							$("#row"+nbr).append("<select id='field"+ nbr +"' name='field"+ nbr +"'>");
-							for(var i in filters)
-								$("#field"+nbr).append("<option name='"+filters[i]+"'>"+filters[i]+"</option>");
-							$("#row"+nbr).append("</select>");
-							$("#row"+nbr).append("&nbsp;<input id='value"+ nbr +"' name='value"+ nbr +"' class='value' type='text' value='"+ $(this).text() +"' />");
-							$("#row"+nbr).append("&nbsp;[ <a href='#' onClick='delFormField(\"#row"+ nbr +"\");'>remove</a> ]");
-							$("#allvalues").append("</div>");
-							$("#field"+nbr+" option[name="+$(this).attr("name")+"]").attr("selected","yes");
-							nbr++;
-						});
-					}
-				});
-                		$('#loading').hide();
-                 	}
-             	}); //close $.ajax(
-        }
-</script>

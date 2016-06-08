@@ -716,7 +716,12 @@ function ldap_escape ($str){
 }
 
 // User creation
-function insert_user($user_name, $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location, $user_mail, $user_limitation, $message){
+function insert_user($user_name, $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location, $user_mail, $user_limitation, $message, $in_nagvis = false, $in_cacti = false, $nagvis_group){
+	global $database_host;
+	global $database_cacti;
+	global $database_username;
+	global $database_password;
+
 	global $database_eonweb;
 	global $database_lilac;
 	$user_id=null;
@@ -759,6 +764,42 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 			$lilac_contactid=mysqli_result(sqlrequest("$database_lilac","SELECT id FROM nagios_contact where name='$user_name'"),0,"id");
 			if($lilac_contactgroupid!="" and $lilac_contactid!="" and $user_limitation!="1")
 				sqlrequest("$database_lilac","INSERT INTO nagios_contact_group_member (contactgroup, contact) VALUES ('$lilac_contactgroupid', '$lilac_contactid')");
+
+			// Insert into nagvis
+			if($in_nagvis == "yes"){
+				$bdd = new PDO('sqlite:/srv/eyesofnetwork/nagvis/etc/auth.db');
+
+				$req = $bdd->query("SELECT count(*) FROM users WHERE name = '$user_name'");
+				$nagvis_user_exist = $req->fetch();
+
+				if ($nagvis_user_exist["count(*)"] == 0){
+					// this is nagvis default salt for password encryption security
+					$nagvis_salt = '29d58ead6a65f5c00342ae03cdc6d26565e20954';
+					
+					// insert user in nagvis SQLite DB
+					$sql = "INSERT INTO users (name, password) VALUES ('$user_name', '".sha1($nagvis_salt.$user_password1)."')";
+					$bdd->exec($sql);
+
+					// insert user's right as "Guest" by default
+					$sql = "SELECT userId FROM users WHERE name = '$user_name'";
+					$req = $bdd->query($sql);
+					$result = $req->fetch();
+					$nagvis_id = $result['userId'];
+
+					$sql = "INSERT INTO users2roles (userId, roleId) VALUES ($nagvis_id, $nagvis_group)";
+					$bdd->exec($sql);
+				}
+			}
+
+			// Insert into cacti
+			if($in_cacti == "yes"){
+				$bdd = new PDO('mysql:host='.$database_host.';dbname='.$database_cacti, $database_username, $database_password);
+				$req = $bdd->query("SELECT count(*) FROM user_auth WHERE username='$user_name'");
+				$cacti_user_exist = $req->fetch();
+				if ($cacti_user_exist["count(*)"] == 0){
+					$bdd->exec("INSERT INTO user_auth (username,password,realm,full_name,show_tree,show_list,show_preview,graph_settings,login_opts,policy_graphs,policy_trees,policy_hosts,policy_graph_templates,enabled) VALUES ('$user_name','',2,'$user_descr','on','on','on','on',3,2,2,2,2,'on')");
+				}
+			}
 
 			// Messages
 			logging("admin_user","INSERT : $user_name $user_descr $user_limitation $user_group $user_type $user_location");

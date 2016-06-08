@@ -20,6 +20,16 @@
 #########################################
 */
 
+?>
+
+<!-- DataTables JavaScript -->
+<script src="/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
+<script src="/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
+<script src="/bower_components/datatables-responsive/js/dataTables.responsive.js"></script>
+<script src="/js/datatable.js"></script>
+
+<?php
+
 if( isset($user_limitation) || isset($user_id) || isset($user_type) ){
 	if($user_limitation=="1" && $user_id!="1"){
 		echo "<script>disable_group();</script>";
