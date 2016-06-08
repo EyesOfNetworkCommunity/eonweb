@@ -43,7 +43,13 @@ if(isset($action) && $action != "" && isset($selected_events) && count($selected
 			editAllEvents($selected_events, $queue, $comments);
 			break;
 		case 'confirm':
-			ownDisown($selected_events, $queue, $global_action);
+			if($global_action == "acknowledge"){
+				acknowledge($selected_events, $queue, $global_action);
+			} elseif($global_action == "delete") {
+				delete($selected_events, $queue);
+			} else {
+				ownDisown($selected_events, $queue, $global_action);
+			}
 			break;
 	}
 }

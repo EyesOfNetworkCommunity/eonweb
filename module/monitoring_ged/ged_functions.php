@@ -301,12 +301,14 @@ function ownDisown($selected_events, $queue, $global_action)
 		$value_parts = explode(":", $value);
 		$id = $value_parts[0];
 		$ged_type = $value_parts[1];
+		if($ged_type == "nagios"){ $ged_type_nbr = 1; }
+		if($ged_type == "snmptrap"){ $ged_type_nbr = 2; }
 
 		$sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = $id";
 		$result = sqlrequest($database_ged, $sql);
 		$event = mysqli_fetch_assoc($result);
 
-		$ged_command = "-update -type 1 ";
+		$ged_command = "-update -type $ged_type_nbr ";
 		foreach ($array_ged_packets as $key => $value) {
 			if($value["type"] == true){
 				if($key == "owner"){
@@ -320,10 +322,102 @@ function ownDisown($selected_events, $queue, $global_action)
 		shell_exec($path_ged_bin." ".$ged_command);
 		logging("ged_update",$ged_command);
 	}
-	
-	//-update -type 1 "test" "memory" "3" "admin@192.168.83.133" "ERROR: netsnmp : Send failure: Network is unreachable." "12.14.15.13" "fefefefrfrfr" "LINUX-BDD,LINUX" "" ""
-	//-update -type 1 "test" "HOST DOWN" "2" "admin@192.168.83.133" "CRITICAL - Network Unreachable (12.14.15.13)" "12.14.15.13" "fefefefrfrfr" "LINUX-BDD,LINUX" "" ""
-	//-drop -id 121 -queue history
+}
+
+function acknowledge($selected_events, $queue)
+{
+	global $database_ged;
+	global $array_ged_packets;
+	global $path_ged_bin;
+	global $array_serv_system;
+
+	if(exec($array_serv_system["Ged agent"]["status"])==NULL) {
+		return message(0," : ged daemon must be dead","critical");
+	}
+
+	$owner = $_COOKIE['user_name']."@".getenv("SERVER_NAME");
+
+	foreach ($selected_events as $value) {
+		$value_parts = explode(":", $value);
+		$id = $value_parts[0];
+		$ged_type = $value_parts[1];
+		if($ged_type == "nagios"){ $ged_type_nbr = 1; }
+		if($ged_type == "snmptrap"){ $ged_type_nbr = 2; }
+
+		$event_to_delete = [];
+		array_push($event_to_delete, $value);
+
+		$sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = $id";
+		$result = sqlrequest($database_ged, $sql);
+		$event = mysqli_fetch_assoc($result);
+
+		$ged_command = "-update -type $ged_type_nbr ";
+		foreach ($array_ged_packets as $key => $value) {
+			if($value["type"] == true){
+				if($key == "owner"){
+					$event[$key] = $owner;
+				}
+				$ged_command .= "\"".$event[$key]."\" ";
+			}
+		}
+		$ged_command = trim($ged_command, " ");
+
+		shell_exec($path_ged_bin." ".$ged_command);
+		logging("ged_update",$ged_command);
+		echo "<pre>";
+		var_dump($ged_command);
+		echo "</pre>";
+		delete($event_to_delete, $queue);
+	}
+}
+
+function delete($selected_events, $queue)
+{
+	global $database_ged;
+	global $array_ged_packets;
+	global $path_ged_bin;
+	global $array_serv_system;
+
+	if(exec($array_serv_system["Ged agent"]["status"])==NULL) {
+		return message(0," : ged daemon must be dead","critical");
+	}
+
+	$id_list = "";
+	foreach ($selected_events as $value) {
+		$value_parts = explode(":", $value);
+		$id = $value_parts[0];
+		$ged_type = $value_parts[1];
+		$ged_type_nbr = 0;
+		if($ged_type == "nagios"){ $ged_type_nbr = 1; }
+		if($ged_type == "snmptrap"){ $ged_type_nbr = 2; }
+
+		$sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = $id";
+		$result = sqlrequest($database_ged, $sql);
+		$event = mysqli_fetch_assoc($result);
+
+		if($queue == "active"){
+			$ged_command = "-drop -type $ged_type_nbr -queue $queue ";
+			foreach ($array_ged_packets as $key => $value) {
+				if($value["key"] == true){
+					$ged_command .= "\"".$event[$key]."\" ";
+				}
+			}
+			$ged_command = trim($ged_command, " ");
+
+			shell_exec($path_ged_bin." ".$ged_command);
+			logging("ged_update",$ged_command);
+		} else {
+			$id_list .= $id.",";
+		}
+	}
+
+	if($queue == "history"){
+		$id_list = trim($id_list, ",");
+		$ged_command = "-drop -id ".$id_list." -queue history";
+
+		shell_exec($path_ged_bin." ".$ged_command);
+		logging("ged_update",$ged_command);
+	}
 }
 
 ?>

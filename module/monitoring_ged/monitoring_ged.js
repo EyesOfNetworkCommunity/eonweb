@@ -84,7 +84,6 @@ function changeModalState(e)
 
 $(document).ready(function(){
 	$(".focus-to-search").on('change', function(){
-		console.log($("#search"));
 		$('#search').focus();
 	});
 
@@ -278,23 +277,21 @@ $(document).ready(function(){
 		});
 	});
 
-	// click to valid the own/disown/ack
+	// click to valid the own/disown/ack/delete
 	$(document).on("click", "#event-validation", function(){
+		var queue = $("#queue").val();
 		var global_action = $("#ged-action").val();
 
-		
-		console.log(global_action);
-		console.log(selected_events);
 		$.ajax({
 			url: "ged_actions.php",
 			data: {
-				queue: "active",
+				queue: queue,
 				action: "confirm",
 				global_action: global_action,
 				selected_events: selected_events
 			},
 			success: function(response){
-				//console.log(response.length);
+				console.log();
 				if(response.length > 0){
 					$("#messages").html(response);
 					$("#result").empty();
