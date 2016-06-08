@@ -79,7 +79,27 @@ include("../../side.php");
 						foreach (glob("$user_files_path-*.png") as $filename){
 							@unlink($filename);
 						}
-					
+
+						// delete user in nagvis
+						$bdd = new PDO('sqlite:/srv/eyesofnetwork/nagvis/etc/auth.db');
+						$req = $bdd->query("SELECT userId FROM users WHERE name = '$user_name'");
+						$nagvis_user_exist = $req->fetch();
+						if($nagvis_user_exist > 0){
+							$userId = $nagvis_user_exist['userId'];
+							$bdd->exec("DELETE FROM users2roles WHERE userId = $userId");
+							$bdd->exec("DELETE FROM users WHERE userId = $userId");
+
+						}
+
+						// delete user in cacti
+						$bdd = new PDO('mysql:host='.$database_host.';dbname='.$database_cacti, $database_username, $database_password);
+						$req = $bdd->query("SELECT id FROM user_auth WHERE username = '$user_name'");
+						$cacti_user_exist = $req->fetch();
+						if ($cacti_user_exist["id"] > 0){
+							$userId = $cacti_user_exist["id"];
+							$bdd->exec("DELETE FROM user_auth WHERE id = $userId");
+						}
+
 						// Logging action
 						logging("admin_user","DELETE : $user_selected[$i]");
 						message(8," : User $user_name removed",'ok');
@@ -94,8 +114,8 @@ include("../../side.php");
 	?>
 
 	<form action="./index.php" method="GET" class="form-inline">
-		<div class="table-responsive">
-			<table class="table table-striped">
+		<div class="dataTable_wrapper">
+			<table class="table table-striped datatable-eonweb table-condensed">
 				<thead>
 				<tr>
 					<th><?php echo getLabel("label.admin_user.user_name"); ?></th>

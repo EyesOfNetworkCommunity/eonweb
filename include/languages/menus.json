@@ -64,12 +64,12 @@
                     "link":[
                         {
                             "name":"menu.link.active_events",
-                            "url":"/module/monitoring_ged/ged.php?q=active",
+                            "url":"/module/monitoring_ged/index.php?q=active",
                             "target":"main"
                         },
                         {
                             "name":"menu.link.history_events",
-                            "url":"/module/monitoring_ged/ged.php?q=history",
+                            "url":"/module/monitoring_ged/index.php?q=history",
                             "target":"main"
                         },
                         {
@@ -90,16 +90,6 @@
                         {
                             "name":"menu.link.service_group",
                             "url":"/thruk/cgi-bin/status.cgi?servicegroup=all&style=summary",
-                            "target":"frame"
-                        },
-                        {
-                            "name":"menu.link.application_view",
-                            "url":"/nagiosbp/cgi-bin/nagios-bp.cgi",
-                            "target":"frame"
-                        },
-                        {
-                            "name":"menu.link.impact_view",
-                            "url":"/nagiosbp/cgi-bin/nagios-bp.cgi?mode=bi",
                             "target":"frame"
                         }
                     ]
@@ -178,6 +168,23 @@
                     "url":"/module/tool_all/index.php",
                     "target":"main"
                 }
+            ],
+            "menusubtab":[
+                {
+                    "name":"menu.subtab.configuration",
+                    "link":[
+                        {
+                            "name":"menu.link.park_management",
+                            "url":"/module/index.php?module=glpi&link=/glpi/index.php",
+                            "target":"_blank"
+                        },
+                        {
+                            "name":"menu.link.inventory",
+                            "url":"/module/index.php?module=ocsinventory-reports&link=/ocsreports",
+                            "target":"_blank"
+                        }
+                    ]
+                }
             ]
         },
         {
@@ -250,16 +257,6 @@
                     "target":"frame"
                 },
                 {
-                    "name":"menu.link.equipments",
-                    "url":"/lilac/hosts.php",
-                    "target":"frame"
-                },
-                {
-                    "name":"menu.link.models",
-                    "url":"/lilac/templates.php",
-                    "target":"frame"
-                },
-                {
                     "name":"menu.link.app",
                     "url":"/module/admin_bp/index.php",
                     "target":"main"
@@ -327,7 +324,7 @@
                         {
                             "name":"menu.link.execution",
                             "url":"/thruk/cgi-bin/extinfo.cgi?type=4",
-                            "target":"main"
+                            "target":"frame"
                         }
                     ]
                 },

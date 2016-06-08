@@ -26,15 +26,15 @@
 */
 
 @media {
+	body {
+		overflow-x: hidden;
+	}
 	#page-wrapper {
 		padding-bottom: 40px;
 	}
 }
 
 @media(min-width:768px) {
-	body {
-		overflow-x: hidden;
-	}
 	#page-wrapper {
 		margin: 0 0 0 200px;
 	}
@@ -67,8 +67,8 @@
 }
 
 .navbar-logo {
-	width: 210px;
-	height: 40px;
+	width: 180px;
+	height: 35px;
 	margin-top: -10px;
 }
 
@@ -143,7 +143,7 @@
  * ------------------------------------------------------------------------
 */
 
-.datatable-eonweb {
+.datatable-eonweb, .datatable-eonweb-ajax {
 	border-spacing : 0 !important;
 	width: 100% !important;
 }

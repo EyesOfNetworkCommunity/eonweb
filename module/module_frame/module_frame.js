@@ -23,15 +23,15 @@ if (window !=top ) {top.location=window.location;}
 	
 $(function() {
 	$(window).bind("load resize", function() {
-		topOffset = 51;
+		topOffset = $(".navbar-static-top").height() + 1;
 		leftOffset = 200;
 		width = (this.window.innerWidth > 0) ? this.window.innerWidth : this.screen.width;
-		if (width < 768) {
-			topOffset = 100; // 2-row-menu
+		if (width <= 768) {
+			height = $("body")[0].scrollHeight;
 			leftOffset=0
-		} 
-		
-		height = ((this.window.innerHeight > 0) ? this.window.innerHeight : this.screen.height) - 1;
+		} else { 
+			height = ((this.window.innerHeight > 0) ? this.window.innerHeight : this.screen.height) - 1;
+		}
 		height = height - topOffset;
 		if (height < 1) height = 1;
 		$(".iframe").css("top",topOffset);

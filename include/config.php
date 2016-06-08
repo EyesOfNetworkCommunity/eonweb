@@ -96,6 +96,8 @@ $path_messages="$path_languages/messages";
 $path_messages_custom="$path_languages/custom.messages";
 $path_menus="$path_languages/menus";
 $path_menus_custom="$path_languages/custom.menus";
+$path_menu_limited="$path_languages/menus-limited";
+$path_menu_limited_custom="$path_languages/custom.menus-limited";
 $path_reports="$path_eonweb/include/reports";
 
 // # Backup Manager

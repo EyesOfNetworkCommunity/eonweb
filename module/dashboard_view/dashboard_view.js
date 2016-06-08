@@ -159,8 +159,9 @@ function drawPieChart(div_id, title, datas, column_type, link)
 							if(link == "with_link"){
 								if(column_type == "eventState"){
 									location.href = this.options.url;
+								} else {
+									window.location = path_frame+encodeURIComponent(this.options.url);
 								}
-								window.location = path_frame+encodeURIComponent(this.options.url);
 							}
 						}
 					}

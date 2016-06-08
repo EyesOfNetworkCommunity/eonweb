@@ -89,7 +89,7 @@ if(isset($_COOKIE['user_name'])){
 else {
 	if( isset($_POST['login']) && isset($_POST['mdp']) ){
 		// Get login information
-		$login=$_POST['login'];
+		$login=strtolower($_POST['login']);
 		$mdp=$_POST['mdp'];
 		$_POST[]=array();
 		
@@ -106,11 +106,11 @@ else {
 			exit;
 		}
 
-		$usersql=sqlrequest($database_eonweb,"select * from users where user_name = '$login'");
+		$usersql=sqlrequest($database_eonweb,"select * from users where user_name like '$login'");
 		$username = mysqli_result($usersql,0,"user_name");
 		
 		// if not in eonweb DB
-		if ($login != $username) {
+		if ($login != strtolower($username)) {
 			// check if there is a LDAP conf
 			$ldapsql=sqlrequest($database_eonweb,"SELECT * FROM auth_settings WHERE auth_type=1");
 			

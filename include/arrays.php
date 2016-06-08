@@ -34,7 +34,8 @@ $array_msg = array (
 	7 => "EON - Form error ",
 	8 => "EON - User / Group ",
 	9 => "EON - Graph ",
-	10 => "EON - Name Error");
+	10 => "EON - Name Error",
+	11 => "EON - GED");
 
 $array_tools = array (
 	"snmpwalk"		 => "tools/snmpwalk.php",
@@ -77,11 +78,11 @@ $array_ged_packets = array (
 	"hostgroups"		=>	array("type"=>true,"key"=>false,"col"=>false),
 	"servicegroups"		=>	array("type"=>true,"key"=>false,"col"=>false),
 	"comments"			=>	array("type"=>true,"key"=>false,"col"=>false),
-	"original-time"		=>	array("type"=>false,"key"=>false,"col"=>true),
-	"last-time"			=>	array("type"=>false,"key"=>false,"col"=>true),
-	"acknowledge-time"	=>	array("type"=>false,"key"=>false,"col"=>false),
-	"occurences"		=>	array("type"=>false,"key"=>false,"col"=>true),
-	"source"			=>	array("type"=>false,"key"=>false,"col"=>false),
+	"original-time"		=>	array("type"=>false,"key"=>false,"col"=>true,"db_col"=>"o_sec"),
+	"last-time"			=>	array("type"=>false,"key"=>false,"col"=>true,"db_col"=>"l_sec"),
+	"acknowledge-time"	=>	array("type"=>false,"key"=>false,"col"=>false,"db_col"=>"a_sec"),
+	"occurences"		=>	array("type"=>false,"key"=>false,"col"=>true,"db_col"=>"occ"),
+	"source"			=>	array("type"=>false,"key"=>false,"col"=>false,"db_col"=>"src"),
 	"type"				=>	array("type"=>false,"key"=>false,"col"=>false),
 	"id"				=>	array("type"=>false,"key"=>false,"col"=>false)
 );
