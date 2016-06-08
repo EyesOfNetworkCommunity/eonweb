@@ -39,12 +39,6 @@ if(exec($array_serv_system["Ged agent"]["status"])==NULL) {
 
 <div id="page-wrapper">
 
-	<?php
-	echo "<pre>";
-	var_dump($_GET, $_POST);
-	echo "</pre>";
-	?>
-
 	<div class="row">
 		<div class="col-lg-12">
 			<?php
@@ -65,97 +59,110 @@ if(exec($array_serv_system["Ged agent"]["status"])==NULL) {
 
 	<?php if($gedd){ ?>
 	<!-- filter form -->
-	<form id="events-filter">
-		<input id="queue" type="hidden" value="<?php echo $queue?>" name="q" />
-		
-		<div id="form-container" class="row">
-			
-			<div class="col-md-8">
-			
-				<div class="row">
-					<div class="form-group col-md-6">
-						<label>Type</label>
-						<select class="form-control focus-to-search" id="type" name="type">
-						<?php
-						for($i=0;$i<count($array_ged_types);$i++)
-							echo "<option value='".$i."'>".$array_ged_types[$i]."</option>";
-						?>
-						</select>
-					</div>
+	<div class="panel panel-default">
+		<div class="panel-heading" role="tab" id="headingOne">
+			<h4 class="panel-title">
+				<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+					<?php echo getLabel("label.ged_filter"); ?>
+				</a>
+			</h4>
+		</div>
+		<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+			<div class="panel-body">
+				<form id="events-filter">
+					<input id="queue" type="hidden" value="<?php echo $queue?>" name="q" />
 					
-					<div class="form-group col-md-6">
-						<label>Owner</label>
-						<select class="form-control focus-to-search" id="owner" name="owner">
-								<option>All</option>
-								<option>owned</option>
-								<option>not owned</option>
-						</select>
-					</div>
-				</div>
-				
-				<div class="row">
-					<div class="form-group col-md-6">
-						<label>Filter</label>
-						<select class="form-control focus-to-search" id="filter" name="field">
-						<?php
-						foreach($array_ged_filters as $key => $value){
-							echo "<option>$value</option>";
-						}
-						?>
-						</select>
-					</div>
-					
-					<div class="form-group col-md-6">
-						<label>date range</label>
-						<input id="daterange" name="datepicker" class="daterangepicker-eonweb form-control" type="text" autocomplete="off" />
-					</div>
-				</div>
-			</div>
-			
-			<div class="col-md-4">
-				<label>State</label>
-				<div class="checkbox">
-					<?php 
-					foreach($array_ged_states as $col => $val){
-					echo '
-						<div class="checkbox">
-							<label>
-							<input type="checkbox" class="checkbox focus-to-search" id="'.$col.'" name="'.$col.'" checked />
-							'.$col.'
-							</label>
-						</div>';
-					}
-					?>
-				</div>
-			</div>
-			
-			<div class="col-md-12">
-				<div class="row">
-					<?php if($queue=="history") { ?>
-					<div class="form-group col-md-3">
-						<label>Ack time</label>
-						<select class="form-control focus-to-search" id="duration" name="duration">
-								<option value="" selected>Ack time</option>
-								<option value="300">>=5min</option>
-								<option value="600">>=10min</option>
-								<option value="1200">>=20min</option>
-								<option value="3600">>=1h</option>
-						</select>
-					</div>
-					<?php } ?>
-					<div class="form-group col-md-4">
-						<label>Search</label>
-						<div class="input-group">
-							<input id="search" name="search" class="form-control" placeholder="Rechercher..." type="text" autocomplete="off" onFocus='$(this).autocomplete({source:<?php echo get_host_list_from_nagios();?>})' />
-							<span class="input-group-btn">
-								<input type="submit" class="btn btn-primary" value="search" />
-							</span>
+					<div id="form-container" class="row">
+						
+						<div class="col-md-8">
+						
+							<div class="row">
+								<div class="form-group col-md-6">
+									<label>Type</label>
+									<select class="form-control focus-to-search" id="type" name="type">
+									<?php
+									for($i=0;$i<count($array_ged_types);$i++)
+										echo "<option value='".$i."'>".$array_ged_types[$i]."</option>";
+									?>
+									</select>
+								</div>
+								
+								<div class="form-group col-md-6">
+									<label>Owner</label>
+									<select class="form-control focus-to-search" id="owner" name="owner">
+											<option>All</option>
+											<option>owned</option>
+											<option>not owned</option>
+									</select>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="form-group col-md-6">
+									<label>Filter</label>
+									<select class="form-control focus-to-search" id="filter" name="field">
+									<?php
+									foreach($array_ged_filters as $key => $value){
+										echo "<option>$value</option>";
+									}
+									?>
+									</select>
+								</div>
+								
+								<div class="form-group col-md-6">
+									<label>date range</label>
+									<input id="daterange" name="datepicker" class="daterangepicker-eonweb form-control" type="text" autocomplete="off" />
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-md-4">
+							<label>State</label>
+							<div class="checkbox">
+								<?php 
+								foreach($array_ged_states as $col => $val){
+								echo '
+									<div class="checkbox">
+										<label>
+										<input type="checkbox" class="checkbox focus-to-search" id="'.$col.'" name="'.$col.'" checked />
+										'.$col.'
+										</label>
+									</div>';
+								}
+								?>
+							</div>
+						</div>
+						
+						<div class="col-md-12">
+							<div class="row">
+								<?php if($queue=="history") { ?>
+								<div class="form-group col-md-3">
+									<label>Ack time</label>
+									<select class="form-control focus-to-search" id="duration" name="duration">
+											<option value="" selected>Ack time</option>
+											<option value="300">>=5min</option>
+											<option value="600">>=10min</option>
+											<option value="1200">>=20min</option>
+											<option value="3600">>=1h</option>
+									</select>
+								</div>
+								<?php } ?>
+								<div class="form-group col-md-4">
+									<label>Search</label>
+									<div class="input-group">
+										<input id="search" name="search" class="form-control" placeholder="Rechercher..." type="text" autocomplete="off" onFocus='$(this).autocomplete({source:<?php echo get_host_list_from_nagios();?>})' />
+										<span class="input-group-btn">
+											<input type="submit" class="btn btn-primary" value="search" />
+										</span>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
-				</div>
+				</form>
 			</div>
 		</div>
-	</form>
+	</div>
 
 	<div id="result">
 		<?php if($queue == "active"){ ?>
