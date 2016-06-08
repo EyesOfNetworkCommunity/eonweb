@@ -108,6 +108,7 @@ $(document).ready(function(){
 	var event_index = 0;
 	var selected_events = [];
 	var event_state = "";
+	var global_action = "";
 	// ajax when we execute an action into the ged table
 	$(document).on("submit", "#ged-table", function(event){
 		event.preventDefault();
@@ -151,19 +152,18 @@ $(document).ready(function(){
 				selected_events: events
 			},
 			beforeSend: function(){
-				$(".modal-footer button").hide();
+				$("#modal-nav, #edit-btns, #ack-btns, #event-validation").hide();
 
 				// configure modal footer according to action selected
 				switch(action){
 					case "details":
-						$("#details-next, #details-prev").show(); break;
+						$("#modal-nav, #ack-btns").show(); break;
 					case "edit":
-						$("#details-next, #details-prev, #edit-event, #edit-all-event").show(); break;
+						$("#modal-nav, #edit-btns, #ack-btns").show(); break;
 					default:
 						$("#event-validation").show(); break;
 				}
 
-				$("#action-cancel").show();
 				$("#event-message").empty();
 			},
 			success: function(response){
@@ -172,7 +172,7 @@ $(document).ready(function(){
 					var event_infos = selected_events[event_index].split(":");
 					var host_name = event_infos[3];
 					var service_name = event_infos[4];
-					$(".modal-title").html(host_name+" / "+service_name);
+					$(".modal-title").html(host_name+" / "+service_name+ " ("+ (event_index + 1) +"/"+selected_events.length+")");
 					$(".modal-body #content").html(response);
 				} else {
 					removeModalState();
@@ -195,6 +195,10 @@ $(document).ready(function(){
 		var queue = $("#queue").val();
 		var action= $("#ged-action").val();
 
+		var event_infos = selected_events[event_index].split(":");
+		var host_name = event_infos[3];
+		var service_name = event_infos[4];
+		
 		$.ajax({
 			url: "ged_actions.php",
 			data: {
@@ -207,6 +211,7 @@ $(document).ready(function(){
 			},
 			success: function(response){
 				changeModalState(selected_events[event_index]);
+				$(".modal-title").html(host_name+" / "+service_name+ " ("+ (event_index + 1) +"/"+selected_events.length+")");
 				$(".modal-body #content").html(response);
 			}
 		});
@@ -222,6 +227,10 @@ $(document).ready(function(){
 		var queue = $("#queue").val();
 		var action= $("#ged-action").val();
 
+		var event_infos = selected_events[event_index].split(":");
+		var host_name = event_infos[3];
+		var service_name = event_infos[4];
+
 		$.ajax({
 			url: "ged_actions.php",
 			data: {
@@ -234,22 +243,33 @@ $(document).ready(function(){
 			},
 			success: function(response){
 				changeModalState(selected_events[event_index]);
+				$(".modal-title").html(host_name+" / "+service_name+ " ("+ (event_index + 1) +"/"+selected_events.length+")");
 				$(".modal-body #content").html(response);
 			}
 		});
 	});
 
 	// click to edit an event
-	$(document).on("click", "#edit-event", function(){
+	$(document).on("click", "#edit-event, #edit-all-event", function(){
 		var queue = $("#queue").val();
 		var comments = $("#event-comments").val();
+		var action = "";
+
+		var events = [];
+		if(this.id == "edit-event"){
+			events = selected_events[event_index];
+			action = "edit_event";
+		} else {
+			events = selected_events;
+			action = "edit_all_event";
+		}
 
 		$.ajax({
 			url: "ged_actions.php",
 			data: {
 				queue: queue,
-				action: "edit_event",
-				selected_events: selected_events[event_index],
+				action: action,
+				selected_events: events,
 				comments: comments
 			},
 			success: function(response){
@@ -258,29 +278,54 @@ $(document).ready(function(){
 		});
 	});
 
-	// click to edit ALL events
-	$(document).on("click", "#edit-all-event", function(){
+	$(document).on("click", "#ack-event, #ack-all-event", function(){
+		console.log(this.id);
+		global_action = this.id;
+		$(".confirmation-modal-title").html(global_action);
+		$("#confirmation-modal").modal();
+	});
+
+	$(document).on("click", "#confirmation-event-validation", function(){
 		var queue = $("#queue").val();
-		var comments = $("#event-comments").val();
+
+		console.log(global_action);
+		var events = [];
+		if(global_action == "ack-event"){
+			events.push(selected_events[event_index]);
+		} else {
+			events = selected_events;
+		}
 
 		$.ajax({
-			url: "ged_actions.php",
+			url: 'ged_actions.php',
 			data: {
 				queue: queue,
-				action: "edit_all_event",
-				selected_events: selected_events,
-				comments: comments
+				action: "confirm",
+				global_action: "acknowledge",
+				selected_events: events
 			},
 			success: function(response){
-				$(".modal-body #event-message").html(response);
+				console.log(response);
+				$("#confirmation-modal").modal('hide');
+				$("#ged-modal").modal('hide');
+				loadTable();
 			}
 		});
+	});
+
+	$(document).on("click", "#confirmation-action-cancel", function(){
+		$("#confirmation-modal").modal('hide');
 	});
 
 	// click to valid the own/disown/ack/delete
 	$(document).on("click", "#event-validation", function(){
 		var queue = $("#queue").val();
-		var global_action = $("#ged-action").val();
+
+		if(global_action.length == 0){
+			global_action = $("#ged-action").val();
+		}
+
+		console.log(global_action);
 
 		$.ajax({
 			url: "ged_actions.php",
@@ -291,6 +336,7 @@ $(document).ready(function(){
 				selected_events: selected_events
 			},
 			success: function(response){
+				global_action = "";
 				console.log();
 				if(response.length > 0){
 					$("#messages").html(response);

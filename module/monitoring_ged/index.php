@@ -67,7 +67,7 @@ if(exec($array_serv_system["Ged agent"]["status"])==NULL) {
 				</a>
 			</h4>
 		</div>
-		<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+		<div id="collapseOne" class="panel-collapse collapse out" role="tabpanel" aria-labelledby="headingOne">
 			<div class="panel-body">
 				<form id="events-filter">
 					<input id="queue" type="hidden" value="<?php echo $queue?>" name="q" />
@@ -239,26 +239,63 @@ if(exec($array_serv_system["Ged agent"]["status"])==NULL) {
 					<h4 class="modal-title">Modal title</h4>
 				</div>
 				<div class="modal-body">
-					<div id="event-message">huhuihui</div>
+					<div id="event-message"></div>
 					<div id="content"></div>
 				</div>
 				<div class="modal-footer">
-					<button id="details-prev" type="button" class="btn btn-primary">
-						<i class="fa fa-arrow-circle-left"> </i> <?php echo getLabel("label.prev"); ?>
-					</button>
-					<button id="details-next" type="button" class="btn btn-primary">
-						<?php echo getLabel("label.next"); ?> <i class="fa fa-arrow-circle-right"> </i>
-					</button>
-					<button id="edit-event" type="button" class="btn btn-primary">
-						<?php echo getLabel("action.edit"); ?>
-					</button>
-					<button id="edit-all-event" type="button" class="btn btn-primary">
-						<?php echo getLabel("action.edit_all"); ?>
-					</button>
+					<div class="btn-group" id="modal-nav">
+						<button id="details-prev" type="button" class="btn btn-primary">
+							<i class="fa fa-arrow-circle-left"> </i> <?php //echo getLabel("label.prev"); ?>
+						</button>
+						<button id="details-next" type="button" class="btn btn-primary">
+							<?php //echo getLabel("label.next"); ?> <i class="fa fa-arrow-circle-right"> </i>
+						</button>
+					</div>
+					<div id="edit-btns" class="btn-group">
+						<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<?php echo getLabel("action.edit"); ?> <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li id="edit-event"><a href="#"><?php echo getLabel("label.this"); ?></a></li>
+							<li id="edit-all-event"><a href="#"><?php echo getLabel("label.all"); ?></a></li>
+						</ul>
+					</div>
+					<div id="ack-btns" class="btn-group">
+						<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<?php echo getLabel("action.ack"); ?> <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li id="ack-event"><a href="#"><?php echo getLabel("label.this"); ?></a></li>
+							<li id="ack-all-event"><a href="#"><?php echo getLabel("label.all"); ?></a></li>
+						</ul>
+					</div>
 					<button id="event-validation" type="button" class="btn btn-primary">
 						<?php echo getLabel("action.apply"); ?>
 					</button>
 					<button id="action-cancel" type="button" class="btn btn-default" data-dismiss="modal">
+						<?php echo getLabel("action.cancel"); ?>
+					</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+	<!-- modal for confirmation -->
+	<div id="confirmation-modal" class="modal fade" tabindex="-1" role="dialog">
+		<div id="confirmation-modal-dialog" class="modal-dialog">
+			<div id)"confirmation-modal-content" class="modal-content">
+				<div id="confirmation-modal-header" class="modal-header panel-heading">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">Modal title</h4>
+				</div>
+				<div id="confirmation-modal-body" class="modal-body">
+					Are you sure ?
+				</div>
+				<div id="confirmation-modal-footer" class="modal-footer">
+					<button id="confirmation-event-validation" type="button" class="btn btn-primary">
+						<?php echo getLabel("action.apply"); ?>
+					</button>
+					<button id="confirmation-action-cancel" type="button" class="btn btn-default" data-dismiss="modal">
 						<?php echo getLabel("action.cancel"); ?>
 					</button>
 				</div>

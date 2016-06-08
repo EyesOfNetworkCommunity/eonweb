@@ -223,13 +223,16 @@ function edit($selected_events, $queue)
 	<form id='edit-event-form'>
 		<div class='form-group'>
 			<label>".getLabel("label.add_comment")."</label>
-			<textarea id='event-comments' class='form-control'>".$event["comments"]."</textarea>
+			<textarea id='event-comments' class='form-control textarea'>".$event["comments"]."</textarea>
 		</div>
 	</form>";
 }
 
 function editEvent($selected_events, $queue, $comments)
 {
+	echo "<pre>";
+	var_dump($selected_events);
+	echo "</pre>";
 	global $database_ged;
 
 	// get all needed infos into variables
@@ -252,10 +255,13 @@ function editEvent($selected_events, $queue, $comments)
 
 function editAllEvents($selected_events, $queue, $comments)
 {
+	echo "<pre>";
+	var_dump($selected_events);
+	echo "</pre>";
 	global $database_ged;
 
 	$success = true;
-	foreach ($selected_events as $value) {
+	foreach ($selected_events as $key => $value) {
 		// get all needed infos into variables
 		$value_parts = explode(":", $value);
 		$id = $value_parts[0];
@@ -326,6 +332,7 @@ function ownDisown($selected_events, $queue, $global_action)
 
 function acknowledge($selected_events, $queue)
 {
+	var_dump($selected_events);
 	global $database_ged;
 	global $array_ged_packets;
 	global $path_ged_bin;
