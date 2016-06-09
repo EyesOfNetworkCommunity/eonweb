@@ -65,6 +65,12 @@ if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 	<!-- /.navbar-header -->
 	
 	<ul class="nav navbar-top-links navbar-right">
+		<!--menu toggle button -->
+		<li>
+			<button id="menu-toggle" type="button" data-toggle="button" class="btn btn-default btn-xs">
+				<i class="fa fa-exchange fa-fw"></i>
+			</button>
+		</li>
 		<?php
 		// create the top navbar menu
 		if(isset($navbar_menus["navbarlink"])){
@@ -115,7 +121,7 @@ if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 		<!-- /.dropdown -->
 	</ul>
 	<!-- /.navbar-top-links -->
-	
+
 	<div id="sidebar-wrapper">
 		<div class="navbar-default sidebar masked" role="navigation">
 			<div class="sidebar-nav navbar-collapse">
