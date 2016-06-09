@@ -23,13 +23,9 @@
 include("../../header.php");
 include("../../side.php");
 
-$url=retrieve_form_data("url",null);
-
 ?>
 
 <div id="page-wrapper">
-	<iframe style="display:none;"></iframe>
-	<iframe class="iframe" src="<?php echo $url; ?>"></iframe>
 </div>
 	
 <?php include("../../footer.php"); ?>
