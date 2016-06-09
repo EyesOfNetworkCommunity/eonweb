@@ -153,8 +153,6 @@
 
 .iframe {
 	position: absolute;
-	left: 200px;
-	top: 51px;
 	bottom: 0;
 	border:0;
 	overflow: hidden;
