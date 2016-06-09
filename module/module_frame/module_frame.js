@@ -24,7 +24,7 @@ if (window !=top ) {top.location=window.location;}
 $(function() {
 	$(window).bind("load resize", function() {
 		topOffset = $(".navbar-static-top").height() + 1;
-		leftOffset = 200;
+		leftOffset = $(".navbar-default.sidebar").width();
 		width = (this.window.innerWidth > 0) ? this.window.innerWidth : this.screen.width;
 		if (width <= 768) {
 			height = $("body")[0].scrollHeight;
@@ -39,5 +39,11 @@ $(function() {
 		$(".iframe").height(height-$(".footer").height());
 		$(".iframe").width(width-leftOffset);
 		$(".iframe").css("display","block");
+	});
+	$("#menu-toggle").on("click", function() {
+		leftOffset = $(".navbar-default.sidebar").width() + 5;
+		width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+		$(".iframe").css("left",leftOffset);
+		$(".iframe").width(width-leftOffset);
 	});
 });
