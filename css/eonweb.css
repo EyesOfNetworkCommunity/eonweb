@@ -86,6 +86,30 @@
 
 /*
  * ------------------------------------------------------------------------
+ * Sidebar toggle
+ * ------------------------------------------------------------------------
+*/
+
+#wrapper.toggled #sidebar-wrapper .sidebar {
+    width: 0px;
+}
+
+#wrapper.toggled #sidebar-wrapper .masked {
+    display: none;
+}
+
+#wrapper.toggled #page-wrapper {
+    margin: 0 0 0 0px;
+}
+
+@media(max-width:768px) {
+	#menu-toggle {
+		display: none;
+	}
+}
+
+/*
+ * ------------------------------------------------------------------------
  * Footer
  * ------------------------------------------------------------------------
 */
