@@ -33,9 +33,10 @@ extract($_GET);
 
 <form id="ged-table" method="POST" onsubmit="return false;">
 	<div class="dataTable_wrapper">
-		<table class="table table-striped datatable-eonweb-ajax table-condensed table-hover">
+		<table id="events-table" class="table table-striped datatable-eonweb-ajax table-condensed table-hover">
 			<thead>
 				<tr>
+					<th class="col-md-1">Select</th>
 					<?php
 					foreach ($array_ged_packets as $key => $value) {
 						if($value["col"] == true && $key != "state"){
@@ -43,7 +44,6 @@ extract($_GET);
 						}
 					}
 					?>
-					<th class="col-md-1">Select</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -53,16 +53,49 @@ extract($_GET);
 					while($ged_type = mysqli_fetch_assoc($gedsql_result1)){
 						// request for ged events according to queue and filters
 						$sql = createSelectClause($ged_type["pkt_type_name"], $queue);
-						$sql .= createWhereClause($owner,$filter,$search,$daterange,$ok,$warning,$critical,$unknown);
 						
-						$request = sqlrequest($database_ged, $sql);
+						
+						// time periods (only in active events);
+						if($time_period != ""){
+							// define all times needed (for each range)
+							$actual_time = time();
+							$five_minutes = $actual_time - (60 * 5);
+							$fifteen_minutes = $actual_time - (60 * 15);
+							$thirty_minutes = $actual_time - (60 * 30);
+							$one_hour = $actual_time - (60 * 60);
 
+							switch ($time_period) {
+								case '0-5m':
+									$sql .= " AND o_sec <= ". $actual_time ." AND o_sec > ". $five_minutes;
+									break;
+								case '5-15m':
+									$sql .= " AND o_sec <= ". $five_minutes ." AND o_sec > ". $fifteen_minutes;
+									break;
+								case '15-30m':
+									$sql .= " AND o_sec <= ". $fifteen_minutes ." AND o_sec > ". $thirty_minutes;
+									break;
+								case '30m-1h':
+									$sql .= " AND o_sec <= ". $thirty_minutes ." AND o_sec > ". $one_hour;
+									break;
+								case 'more':
+									$sql .= " AND o_sec <= ". $one_hour;
+									break;
+							}
+						}
+
+						if($ack_time != ""){ 
+							$sql .= " AND a_sec - o_sec >= $ack_time";
+						}
+
+						$sql .= createWhereClause($owner,$filter,$search,$daterange,$ok,$warning,$critical,$unknown);
+
+						$request = sqlrequest($database_ged, $sql);
 						while($event = mysqli_fetch_object($request)){
 							$event_state = getEventState($event);
 							$row_class = getClassRow($event_state);
 
 							echo '<tr class="'.$row_class.'" name="'.$ged_type["pkt_type_name"].'">';
-							createTableRow($event, $event_state);
+							createTableRow($event, $event_state, $queue);
 							echo "</tr>";
 						}
 					}
@@ -81,12 +114,14 @@ extract($_GET);
 						$actions = $array_resolve_action_option;
 					}
 					foreach ($actions as $key => $value) {
-						echo "<option value=\"$value\">$value</option>";
+						echo "<option value=\"$key\">".getLabel("$value")."</option>";
 					}
 				?>
 			</select>
 		</div>
-		<button id="exec-ged-action" class="btn btn-primary" type="submit" name="action" value="submit"><?php echo getLabel("action.submit"); ?></button>
+		<div class="col-md-3">
+			<button id="exec-ged-action" class="btn btn-primary" type="submit" name="action" value="submit"><?php echo getLabel("action.submit"); ?></button>
+		</div>
 	</div>
 </form>
 
