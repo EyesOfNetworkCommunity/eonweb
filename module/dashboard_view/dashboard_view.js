@@ -122,7 +122,7 @@ function drawPieChart(div_id, title, datas, column_type, link)
 	}
 	else if(column_type == "eventState")
 	{
-		var begin_url = '/module/monitoring_ged/index.php?';
+		var begin_url = '/module/monitoring_ged/ged.php?';
 		var columns = [ 
 			["ok", "warning", "critical", "unknown"],
 			['#00CC33', '#FFA500', '#FF3300', '#CC77C6'],
@@ -242,7 +242,7 @@ function drawPieChart(div_id, title, datas, column_type, link)
  */
 function drawColumnChart(div_id, title, datas)
 {
-	var begin_url = "/module/monitoring_ged/index.php?q=active";
+	var begin_url = "/module/monitoring_ged/ged.php?q=active";
 	$('#'+div_id).highcharts({
 		chart: {
 			type: 'column',
@@ -315,7 +315,7 @@ function drawColumnChart(div_id, title, datas)
 			color: '#00CC33',
 		}, {
 			name: 'incidents',
-			data: [{y:datas[0][1], url:begin_url+'&status=1-2-3&time=0-5m'}, {y:datas[1][1], url:begin_url+'&status=1-2-3&time=5-15m'}, {y:datas[2][1], url:begin_url+'&status=1-2-3&time=15-30m'}, {y:datas[3][1], url:begin_url+'&status=1-2-3&time=30m-1h'}, {y:datas[4][1], url:begin_url+'&status=1-2-3&time=more'}],
+			data: [{y:datas[0][1], url:begin_url+'&status=incident&time=0-5m'}, {y:datas[1][1], url:begin_url+'&status=incident&time=5-15m'}, {y:datas[2][1], url:begin_url+'&status=incident&time=15-30m'}, {y:datas[3][1], url:begin_url+'&status=incident&time=30m-1h'}, {y:datas[4][1], url:begin_url+'&status=incident&time=more'}],
 			color: '#FFA500'
 		}, {
 			name: 'incidents not owned',
