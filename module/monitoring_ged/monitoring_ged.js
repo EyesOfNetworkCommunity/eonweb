@@ -29,6 +29,15 @@ function loadTable()
 	var search 	  = $("#search").val();
 	var daterange = $("#daterange").val();
 
+	var time_period = "";
+	if(queue == "active"){
+		time_period = $("#time").val();
+	}
+	var ack_time = "";
+	if(queue == "history"){
+		ack_time = $("#duration").val();
+	}
+
 	// get all states
 	var ok = "";
 	if($("#ok").prop("checked") == true){ ok = "on"; }
@@ -51,7 +60,9 @@ function loadTable()
 			warning: warning,
 			critical: critical,
 			unknown: unknown,
-			daterange: daterange
+			daterange: daterange,
+			time_period: time_period,
+			ack_time: ack_time
 		},
 		beforeSend: function(){
 			$("#result").empty();
@@ -82,18 +93,84 @@ function changeModalState(e)
 	$(".modal-content").addClass("panel-"+event_state);
 }
 
+function startTimer()
+{
+	var queue = $("#queue").val();
+	if(queue == "active"){
+		timer =  setInterval(loadTable, 60000);
+	}
+}
+
+function stopTimer(timer)
+{
+	var queue = $("#queue").val();
+	if(queue == "active"){
+		clearInterval(timer);
+	}
+}
+
+function previousNext(direction){
+	if(direction == "next"){
+		event_index++;
+		if(event_index == selected_events.length){
+			event_index = 0;
+		}
+	} else {
+		event_index--;
+		if(event_index < 0){
+			event_index = selected_events.length - 1;
+		}
+	}
+
+	var queue = $("#queue").val();
+	var action= $("#ged-action").val();
+
+	var event_infos = selected_events[event_index].split(":");
+	var host_name = event_infos[3];
+	var service_name = event_infos[4];
+	
+	$.ajax({
+		url: "ged_actions.php",
+		data: {
+			queue: queue,
+			action: action,
+			selected_events: selected_events[event_index]
+		},
+		beforeSend: function(){
+			$("#event-message").empty();
+		},
+		success: function(response){
+			changeModalState(selected_events[event_index]);
+			$(".modal-title").html(host_name+" / "+service_name+ " ("+ (event_index + 1) +"/"+selected_events.length+")");
+			$(".modal-body #content").html(response);
+		}
+	});
+}
+
+var event_index = 0;
+var selected_events = [];
+var event_state = "";
+var global_action = "";
+var timer;
 $(document).ready(function(){
+	startTimer();
+	$('#ged-modal').on('hidden.bs.modal', function (e) {
+		startTimer();
+	})
+
 	$(".focus-to-search").on('change', function(){
 		$('#search').focus();
 	});
 
-	$(document).on('click', "tbody tr", function(){
-		if($(this).hasClass("active")){
-			$(this).removeClass("active");
-			$(this).find("td input[type='checkbox']").prop("checked", false);
-		} else {
-			$(this).addClass("active");
-			$(this).find("td input[type='checkbox']").prop("checked", true);
+	$(document).on('click', "#events-table tbody tr", function(){
+		if($(this).find("td:first").hasClass("dataTables_empty") == false){
+			if($(this).hasClass("active")){
+				$(this).removeClass("active");
+				$(this).find("td input[type='checkbox']").prop("checked", false);
+			} else {
+				$(this).addClass("active");
+				$(this).find("td input[type='checkbox']").prop("checked", true);
+			}
 		}
 	});
 
@@ -105,10 +182,7 @@ $(document).ready(function(){
 		loadTable();
 	});
 
-	var event_index = 0;
-	var selected_events = [];
-	var event_state = "";
-	var global_action = "";
+
 	// ajax when we execute an action into the ged table
 	$(document).on("submit", "#ged-table", function(event){
 		event.preventDefault();
@@ -122,8 +196,8 @@ $(document).ready(function(){
 		$("input:checkbox[name=events_selected]:checked").each(function(){
 			var event_type = $(this).parent().parent().attr("name");
 			var parent_row = $(this).parent().parent();
-			var host_name = parent_row.find("td:first a").html();
-			var service_name = parent_row.find("td:nth-child(2) a").html();
+			var host_name = parent_row.find("td.host a").html();
+			var service_name = parent_row.find("td.service a").html();
 			
 			if(parent_row.hasClass("success")){ event_state = "success"; }
 			else if(parent_row.hasClass("warning")){ event_state = "warning"; }
@@ -137,12 +211,20 @@ $(document).ready(function(){
 			return;
 		}
 
+		stopTimer(timer);
+
 		var events = [];
-		if( action == "details" || action == "edit" ){
+		if( action == "0" || action == "1" ){
 			events = selected_events[event_index];
 		} else {
 			events = selected_events;
 		}
+
+		var action_name = "";
+		if(action == 2){ action_name = "action.own"; }
+		if(action == 3){ action_name = "action.disown"; }
+		if(action == 4){ action_name = "action.ack"; }
+		if(action == 5){ action_name = "action.delete"; }
 
 		$.ajax({
 			url: "ged_actions.php",
@@ -153,12 +235,12 @@ $(document).ready(function(){
 			},
 			beforeSend: function(){
 				$("#modal-nav, #edit-btns, #ack-btns, #event-validation").hide();
-
+				console.log(action);
 				// configure modal footer according to action selected
 				switch(action){
-					case "details":
+					case "0":
 						$("#modal-nav, #ack-btns").show(); break;
-					case "edit":
+					case "1":
 						$("#modal-nav, #edit-btns, #ack-btns").show(); break;
 					default:
 						$("#event-validation").show(); break;
@@ -167,7 +249,7 @@ $(document).ready(function(){
 				$("#event-message").empty();
 			},
 			success: function(response){
-				if(action == "details" || action == "edit"){
+				if(action == 0 || action == 1){
 					changeModalState(selected_events[event_index]);
 					var event_infos = selected_events[event_index].split(":");
 					var host_name = event_infos[3];
@@ -176,7 +258,7 @@ $(document).ready(function(){
 					$(".modal-body #content").html(response);
 				} else {
 					removeModalState();
-					$(".modal-title").html(action);
+					$(".modal-title").html(dictionnary[action_name]);
 					$(".modal-body #content").html("Are you sure ?");
 				}
 				
@@ -187,67 +269,26 @@ $(document).ready(function(){
 
 	// click for the next event
 	$(document).on("click", "#details-next", function(){
-		event_index++;
-		if(event_index == selected_events.length){
-			event_index = 0;
-		}
-		
-		var queue = $("#queue").val();
-		var action= $("#ged-action").val();
-
-		var event_infos = selected_events[event_index].split(":");
-		var host_name = event_infos[3];
-		var service_name = event_infos[4];
-		
-		$.ajax({
-			url: "ged_actions.php",
-			data: {
-				queue: queue,
-				action: action,
-				selected_events: selected_events[event_index]
-			},
-			beforeSend: function(){
-				$("#event-message").empty();
-			},
-			success: function(response){
-				changeModalState(selected_events[event_index]);
-				$(".modal-title").html(host_name+" / "+service_name+ " ("+ (event_index + 1) +"/"+selected_events.length+")");
-				$(".modal-body #content").html(response);
-			}
-		});
+		previousNext("next");
 	});
 
 	// click for the previous event
 	$(document).on("click", "#details-prev", function(){
-		event_index--;
-		if(event_index < 0){
-			event_index = selected_events.length - 1;
-		}
-
-		var queue = $("#queue").val();
-		var action= $("#ged-action").val();
-
-		var event_infos = selected_events[event_index].split(":");
-		var host_name = event_infos[3];
-		var service_name = event_infos[4];
-
-		$.ajax({
-			url: "ged_actions.php",
-			data: {
-				queue: queue,
-				action: action,
-				selected_events: selected_events[event_index]
-			},
-			beforeSend: function(){
-				$("#event-message").empty();
-			},
-			success: function(response){
-				changeModalState(selected_events[event_index]);
-				$(".modal-title").html(host_name+" / "+service_name+ " ("+ (event_index + 1) +"/"+selected_events.length+")");
-				$(".modal-body #content").html(response);
-			}
-		});
+		previousNext("previous");
 	});
+
+	$(document).keyup(function(e) {
+    switch(e.which) {
+        case 37: // left
+        	previousNext("previous");
+        	break;
+        case 39: // right
+        	previousNext("next");
+        	break;
+        default: return; // exit this handler for other keys
+    }
+    e.preventDefault(); // prevent the default action (scroll / move caret)
+});
 
 	// click to edit an event
 	$(document).on("click", "#edit-event, #edit-all-event", function(){
@@ -281,7 +322,8 @@ $(document).ready(function(){
 	$(document).on("click", "#ack-event, #ack-all-event", function(){
 		console.log(this.id);
 		global_action = this.id;
-		$(".confirmation-modal-title").html(global_action);
+		console.log("test : "+global_action);
+		$(".confirmation-modal-title").html(dictionnary["action.ack"]);
 		$("#confirmation-modal").modal();
 	});
 
@@ -301,7 +343,7 @@ $(document).ready(function(){
 			data: {
 				queue: queue,
 				action: "confirm",
-				global_action: "acknowledge",
+				global_action: 4,
 				selected_events: events
 			},
 			success: function(response){
