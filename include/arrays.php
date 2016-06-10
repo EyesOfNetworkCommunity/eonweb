@@ -61,7 +61,7 @@ $array_bp_mgt = array (
 	"back-up file" 		=> "backup");
 
 $array_ged_types = array(
-	0 => "all",
+	0 => "label.all",
 	1 => "services",
 	2 => "snmp trap",
 	/* 3 => "performances"); */
@@ -105,16 +105,16 @@ $array_ged_states = array (
 );
 
 $array_action_option = array(
-	0 => "details",
-	1 => "edit",
-	2 => "own",
-	3 => "disown",
-	4 => "acknowledge",
+	0 => "action.details",
+	1 => "action.edit",
+	2 => "action.own",
+	3 => "action.disown",
+	4 => "action.ack",
 );
 
 $array_resolve_action_option = array(
-	0 => "details",
-	4 => "delete",
+	0 => "action.details",
+	5 => "action.delete",
 );
 
 $array_serv_system = array (

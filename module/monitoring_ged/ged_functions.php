@@ -48,7 +48,7 @@ function getClassRow($event_state)
 	return $row_class;
 }
 
-function createTableRow($event, $event_state)
+function createTableRow($event, $event_state, $queue)
 {
 	global $dateformat;
 
@@ -58,20 +58,31 @@ function createTableRow($event, $event_state)
 		if($key == "equipment"){
 			$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=1&host=$value");
 			$value = '<a href="../module_frame/index.php?url='.$thruk_url.'">'.$value.'</a>';
+			$class = 'class="host"';
 		}
 		if($key == "service"){
 			$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=2&host=".$event->equipment."&service=$value");
 			$value = '<a href="../module_frame/index.php?url='.$thruk_url.'">'.$value.'</a>';
+			$class = 'class="service"';
 		}
-		if ($key == "state") {
+		if ($key == "state" || $key == "comments") {
 			continue;
 		}
 		if($key == "o_sec" || $key == "l_sec"){
-			$value = date($dateformat, $value);
+			if($queue == "active"){
+				$value = time() - $value;
+				$value = round($value/60);
+				$value .= " min";
+			} else {
+				$value = date($dateformat, $value);
+			}
 		}
 		if($key == "id"){
 			$value = "<input type='checkbox' name='events_selected' value='".$event->id."'>";
 			$class = 'class="text-center"';
+			if($event->comments != ""){
+				$value = $value.' <i class="fa fa-comment"></i>';
+			}
 		}
 
 		echo "<td $class>$value</td>";
@@ -83,7 +94,7 @@ function createSelectClause($ged_type, $queue)
 	global $array_ged_packets;
 	global $database_ged;
 
-	$sql = "SELECT ";
+	$sql = "SELECT id,";
 	foreach ($array_ged_packets as $key => $value) {
 		if($value["col"] == true){
 			if(isset($value["db_col"])){
@@ -93,16 +104,18 @@ function createSelectClause($ged_type, $queue)
 			}
 		}
 	}
-	$sql .= "id";
+	$sql .= "comments";
+	//$sql = trim($sql, ",");
 	$sql .= " FROM ".$ged_type."_queue_".$queue;
+	$sql .= " WHERE id > 0";
 
 	return $sql;
 }
 
 function createWhereClause($owner, $filter, $search, $daterange, $ok, $warning, $critical, $unknown)
 {
-	$where_clause = " WHERE id > 0";
-
+	$where_clause = "";
+	
 	// owner
 	if($owner == "owned"){ $where_clause .= " AND owner != ''"; }
 	elseif($owner == "not owned"){ $where_clause .= " AND owner = ''"; }
@@ -174,7 +187,7 @@ function createDetailRow($event, $db_col_name, $row_name)
 function details($selected_events, $queue)
 {
 	global $database_ged;
-	
+
 	// get all needed infos into variables
 	$value_parts = explode(":", $selected_events);
 	$id = $value_parts[0];
@@ -219,20 +232,20 @@ function edit($selected_events, $queue)
 	$result = sqlrequest($database_ged, $sql);
 	$event = mysqli_fetch_assoc($result);
 
+	$event["comments"] = str_replace("\'", "'", $event["comments"]);
+	$event["comments"] = str_replace("\#", "#'", $event["comments"]);
+
 	echo "
 	<form id='edit-event-form'>
 		<div class='form-group'>
 			<label>".getLabel("label.add_comment")."</label>
-			<textarea id='event-comments' class='form-control textarea'>".$event["comments"]."</textarea>
+			<textarea id='event-comments' class='form-control textarea' rows='10'>".$event["comments"]."</textarea>
 		</div>
 	</form>";
 }
 
 function editEvent($selected_events, $queue, $comments)
 {
-	echo "<pre>";
-	var_dump($selected_events);
-	echo "</pre>";
 	global $database_ged;
 
 	// get all needed infos into variables
@@ -255,9 +268,6 @@ function editEvent($selected_events, $queue, $comments)
 
 function editAllEvents($selected_events, $queue, $comments)
 {
-	echo "<pre>";
-	var_dump($selected_events);
-	echo "</pre>";
 	global $database_ged;
 
 	$success = true;
@@ -297,7 +307,7 @@ function ownDisown($selected_events, $queue, $global_action)
 		return message(0," : ged daemon must be dead","critical");
 	}
 
-	if($global_action == "own"){
+	if($global_action == 2){
 		$owner = $_COOKIE['user_name']."@".getenv("SERVER_NAME");
 	} else {
 		$owner = "";
@@ -332,7 +342,6 @@ function ownDisown($selected_events, $queue, $global_action)
 
 function acknowledge($selected_events, $queue)
 {
-	var_dump($selected_events);
 	global $database_ged;
 	global $array_ged_packets;
 	global $path_ged_bin;
