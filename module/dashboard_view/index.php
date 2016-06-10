@@ -66,7 +66,7 @@ include("../../side.php");
 		<div class="col-lg-6">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<a style="text-decoration:none;" href="/module/monitoring_ged/ged.php?q=active">
+					<a style="text-decoration:none;" href="/module/monitoring_ged/index.php?q=active">
 						<i class="fa fa-bar-chart-o fa-fw"></i>
 						<?php echo getLabel("label.monitoring_view.act_event"); ?>
 					</a>
@@ -79,7 +79,7 @@ include("../../side.php");
 		<div class="col-lg-6">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<a style="text-decoration:none;" href="/module/monitoring_ged/ged.php?q=active">
+					<a style="text-decoration:none;" href="/module/monitoring_ged/index.php?q=active">
 						<i class="fa fa-bar-chart-o fa-fw"></i>
 						<?php echo getLabel("label.monitoring_view.act_event"); ?>
 					</a>
