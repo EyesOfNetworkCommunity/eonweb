@@ -30,10 +30,10 @@ extract($_GET);
 
 if(isset($action) && $action != "" && isset($selected_events) && count($selected_events) > 0){
 	switch ($action) {
-		case 'details':
+		case "0":
 			details($selected_events, $queue);
 			break;
-		case 'edit':
+		case "1":
 			edit($selected_events, $queue);
 			break;
 		case 'edit_event':
@@ -43,9 +43,9 @@ if(isset($action) && $action != "" && isset($selected_events) && count($selected
 			editAllEvents($selected_events, $queue, $comments);
 			break;
 		case 'confirm':
-			if($global_action == "acknowledge"){
+			if($global_action == "4"){
 				acknowledge($selected_events, $queue, $global_action);
-			} elseif($global_action == "delete") {
+			} elseif($global_action == "5") {
 				delete($selected_events, $queue);
 			} else {
 				ownDisown($selected_events, $queue, $global_action);
