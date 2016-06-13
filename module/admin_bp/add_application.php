@@ -1,9 +1,38 @@
 <?php
+/*
+#########################################
+#
+# Copyright (C) 2016 EyesOfNetwork Team
+# DEV NAME : Jean-Philippe LEVY
+# VERSION : 5.0
+# APPLICATION : eonweb for eyesofnetwork project
+#
+# LICENCE :
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+#########################################
+*/
 
-include("../../include/config.php");
 include("../../header.php");
 include("../../side.php");
+?>
 
+<div id="page-wrapper">
+
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="page-header"><?php echo getLabel("label.admin_bp.title"); ?></h1>
+		</div>
+	</div>
+
+<?php
 if(isset($_GET['bp_name'])){
     $bp_name = $_GET['bp_name'];
 }
@@ -27,13 +56,6 @@ if(! empty($bp_name)){
 	$bp_command = $info['command'];
 	$bp_minvalue = $info['min_value'];
 }
-
-print "<div id=\"page-wrapper\" class=\"container-background\">";
-	print "<p class=\"text-right\">";
-        print "<label style=\"font-weight:lighter;\" class=\"control-label\">Les champs marqués d'une </label>";
-        print " <span class=\"glyphicon glyphicon-asterisk\" style=\"font-size:10px;color:#707070;\"></span> ";
-        print "<label style=\"font-weight:lighter;\" class=\"control-label\"> sont obligatoires</label>";
-	print "</p>";
 
     print "<div class=\"panel panel-default\">"; // panel start here
         print "<div class=\"panel-heading\">";
@@ -186,70 +208,12 @@ print "<div id=\"page-wrapper\" class=\"container-background\">";
         	print "</form>";
         print "</div>";
     print "</div>";
-
+	print "<p class=\"text-right\">";
+        print "<label style=\"font-weight:lighter;\" class=\"control-label\">Les champs marqués d'une </label>";
+        print " <span class=\"glyphicon glyphicon-asterisk\" style=\"font-size:10px;color:#707070;\"></span> ";
+        print "<label style=\"font-weight:lighter;\" class=\"control-label\"> sont obligatoires</label>";
+	print "</p>";
+	
 include("../../footer.php");
+
 ?>
-
-<script src="./bootstrap-select.min.js"></script>
-
-<script>
-$(document).ready(function() {
-	$("input").change(function(){
-		if($("#uniq_name").val() != "" && $("#process_name").val() != "" && $('select[name="type"]').val() != "" && $('select[name="display"]').val() != "None"){
-			$('#submit').prop('disabled', false);
-		}
-		else{
-			$('#submit').prop('disabled', true);
-		}
-		if($('select[name="type"]').val() == "MIN" && $('select[name="min_value"]').val() == ""){
-            $('#submit').prop('disabled', true);
-        }
-	});
-
-	$('select').change(function(){
-        if($("#uniq_name").val() != "" && $("#process_name").val() != "" && $('select[name="type"]').val() != "" && $('select[name="display"]').val() != "None"){
-            $('#submit').prop('disabled', false);
-        }
-        else{
-            $('#submit').prop('disabled', true);
-        }
-		if($('select[name="type"]').val() == "MIN" && $('select[name="min_value"]').val() == ""){
-			$('#submit').prop('disabled', true);
-		}
-    });
-
-	$('#submit').click(function(event){
-		event.preventDefault();
-
-		var uniq_name = $("#uniq_name").val();
-		var process_name = $("#process_name").val();
-		var display = $('select[name="display"]').val();
-		var url = $("#url").val();
-		var command = $("#command").val();
-		var type = $('select[name="type"]').val();
-		var min_value = $('select[name="min_value"]').val();
-
-		$.get(
-			'php/function_bp.php',
-			{
-				action: "add_application",
-				uniq_name: uniq_name,
-				process_name: process_name,
-				display: display,
-				url: url,
-				command: command,
-				type: type,
-				min_value: min_value
-			},
-			function return_value(value){
-				setTimeout(function(){
-                	$(location).attr('href',"add_services.php?bp_name=" + uniq_name + "&display=" + display + "");
-                	},
-                	500
-            	);
-			}
-		);
-	});
-});
-
-</script>

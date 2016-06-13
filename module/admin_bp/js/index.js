@@ -51,7 +51,7 @@ function findIt(){
     $('.tree-toggle').jmHighlight($search_text);
 	var offset = $("ul:contains('" + $search_text +"')").offset();
 	//var offset = $('ul[id^="' + $search_text +'"]').offset();
-	console.log(offset);
+	//console.log(offset);
 	offset.left -= 20;
 	offset.top -= 20;
 
@@ -183,7 +183,7 @@ function ApplyConfiguration(){
 			action: 'build_file'
 		},
 		function ReturnValue(value){
-			console.log(value);
+			//console.log(value);
 		}
 	);
 

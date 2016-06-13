@@ -244,3 +244,8 @@ background-color: yellow;
 .container-drop_zone {
 width: 300px;
 }
+
+.autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
+.autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
+.autocomplete-selected { background: #F0F0F0; cursor: pointer; }
+.autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
