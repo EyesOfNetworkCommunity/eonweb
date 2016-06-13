@@ -36,7 +36,7 @@ catch(Exception $e) {
 
 print "<div id=\"page-wrapper\">";
 	print "<div class=\"col-lg-12\">";
-		print "<h1 class=\"page-header\">Business Process : $bp_name</h1>";
+		print "<h1 class=\"page-header bp_name\">Business Process : $bp_name</h1>";
     print "</div>";
 
 	print "<form class=\"col-xs-6\">";
