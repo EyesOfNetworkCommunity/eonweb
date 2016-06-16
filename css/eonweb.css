@@ -61,15 +61,17 @@
     border-bottom: 1px solid #eee;
 }
 
+.login-panel {
+	margin-bottom: 60px;
+}
+
 .login-logo {
 	margin-top: 5px;
 	margin-bottom: 5px;
 }
 
 .navbar-logo {
-	width: 180px;
-	height: 35px;
-	margin-top: -10px;
+	margin-top: -8px;
 }
 
 .form-inline {
@@ -173,4 +175,3 @@
 .dataTables_filter .form-control {
 	width: auto !important;
 }
-
