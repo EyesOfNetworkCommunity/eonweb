@@ -59,7 +59,7 @@ if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 			<span class="icon-bar"></span>
 		</button>
 		<a class="navbar-brand" href="/index.php">
-			<img id="logo_eon" class="navbar-logo" src="/images/logo.png" alt="logo eyesofnetwork">
+			<img id="logo_eon" class="navbar-logo" src="/images/logo-navbar.png" alt="logo eyesofnetwork">
 		</a>
 	</div>
 	<!-- /.navbar-header -->
