@@ -65,7 +65,7 @@ if(! empty($bp_name)){
         	print "<form class=\"form-horizontal col-md-8 col-md-offset-2\">";
                 print "<div class=\"row\">";
                 	print "<div class=\"form-group\">";
-                    	print "<label style=\"font-weight:normal\" for=\"uniq_name\" class=\"col-xs-3 control-label\">Uniq Name : </label>";
+                    	print "<label style=\"font-weight:normal\" for=\"uniq_name\" class=\"col-xs-3 control-label\">Uniq Name</label>";
                         print "<div class=\"col-xs-8\">";
                         	print "<input type=\"text\" class=\"form-control\" id=\"uniq_name\" onkeyup=\"this.value=this.value.replace(/[^éèàêâç0-9a-zA-Z-_ \/\*]/g,'')\" value=\""; echo (isset($bp_name)?$bp_name:'');
         					print "\">";
@@ -78,7 +78,7 @@ if(! empty($bp_name)){
 
         		print "<div class=\"row\">";
                     print "<div class=\"form-group\">";
-                        print "<label style=\"font-weight:normal\" for=\"process_name\" class=\"col-xs-3 control-label\">Process Name : </label>";
+                        print "<label style=\"font-weight:normal\" for=\"process_name\" class=\"col-xs-3 control-label\">Process Name</label>";
                         print "<div class=\"col-xs-8\">";
                             print "<input type=\"text\" class=\"form-control\" id=\"process_name\" onkeyup=\"this.value=this.value.replace(/[^éèàêâç0-9a-zA-Z-_ \/\*]/g,'')\" value=\""; echo (isset($bp_desc)?$bp_desc:'');
         					print "\">";
@@ -91,7 +91,7 @@ if(! empty($bp_name)){
 
         		print "<div class=\"row\">";
                     print "<div class=\"form-group\">";
-                        print "<label style=\"font-weight:normal\" for=\"display\" class=\"col-xs-3 control-label\">Display : </label>";
+                        print "<label style=\"font-weight:normal\" for=\"display\" class=\"col-xs-3 control-label\">Display</label>";
                         print "<div class=\"col-xs-8\">";
         					$disabled = "";
         					if(isset($bp_prior)){
@@ -124,7 +124,7 @@ if(! empty($bp_name)){
 
         		print "<div class=\"row\">";
                     print "<div class=\"form-group\">";
-                        print "<label style=\"font-weight:normal\" for=\"url\" class=\"col-xs-3 control-label\">Url : </label>";
+                        print "<label style=\"font-weight:normal\" for=\"url\" class=\"col-xs-3 control-label\">Url</label>";
                         print "<div class=\"col-xs-8\">";
                             print "<input type=\"text\" class=\"form-control\" id=\"url\" value=\""; echo (isset($bp_url)?$bp_url:'');
         					print "\">";
@@ -134,7 +134,7 @@ if(! empty($bp_name)){
 
         		print "<div class=\"row\">";
                     print "<div class=\"form-group\">";
-                        print "<label style=\"font-weight:normal\" for=\"command\" class=\"col-xs-3 control-label\">Command : </label>";
+                        print "<label style=\"font-weight:normal\" for=\"command\" class=\"col-xs-3 control-label\">Command</label>";
                         print "<div class=\"col-xs-8\">";
                             print "<input type=\"text\" class=\"form-control\" id=\"command\" value=\""; echo (isset($bp_command)?$bp_command:'');
         					print "\">";
@@ -144,7 +144,7 @@ if(! empty($bp_name)){
 
         		print "<div class=\"row\">";
                     print "<div class=\"form-group\">";
-                        print "<label style=\"font-weight:normal\" for=\"type\" class=\"col-xs-3 control-label\">Type : </label>";
+                        print "<label style=\"font-weight:normal\" for=\"type\" class=\"col-xs-3 control-label\">Type</label>";
                         print "<div class=\"col-xs-8\">";
                             print "<select class=\"form-control\" name=\"type\">";
         						if(isset($bp_type)){
@@ -172,7 +172,7 @@ if(! empty($bp_name)){
 
         		print "<div class=\"row\" id=\"container_select_minimum\">";
                     print "<div class=\"form-group\">";
-                        print "<label style=\"font-weight:normal\" for=\"select_mininum\" class=\"col-xs-3 control-label\">Minimum Value : </label>";
+                        print "<label style=\"font-weight:normal\" for=\"select_mininum\" class=\"col-xs-3 control-label\">Minimum Value</label>";
                         print "<div class=\"col-xs-8\">";
                             print "<select class=\"form-control\" name=\"min_value\">";
         						print "<option>"; echo (isset($bp_minvalue)?$bp_minvalue:'None');
@@ -196,7 +196,12 @@ if(! empty($bp_name)){
         		print "<div class=\"row\" style=\"margin:auto;\">";
                     print "<div class=\"form-group\">";
         				print "<button class=\"btn btn-primary col-xs-offset-3\" type=\"submit\" id=\"submit\" "; echo (isset($bp_name)?'':'disabled');
-        				print ">Créer";
+        				if(empty($bp_name)) {
+							print ">Créer";
+						}
+						else {
+							print ">Modifier";
+						}
             			print "</button>";
                         print " ";
                         print "<a href=\"index.php\" class=\"btn btn-default\" ";

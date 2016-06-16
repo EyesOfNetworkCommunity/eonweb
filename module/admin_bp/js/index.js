@@ -49,16 +49,19 @@ function findIt(){
 	$search_text = $('#SearchFor').val();
 	$('.tree-toggle').jmRemoveHighlight();
     $('.tree-toggle').jmHighlight($search_text);
+	
 	var offset = $("ul:contains('" + $search_text +"')").offset();
 	//var offset = $('ul[id^="' + $search_text +'"]').offset();
 	//console.log(offset);
-	offset.left -= 20;
-	offset.top -= 20;
+	if(offset) {
+		offset.left -= 20;
+		offset.top -= 20;
 
-	$('html, body').animate({
-    	scrollTop: offset.top,
-    	scrollLeft: offset.left
-	});
+		$('html, body').animate({
+			scrollTop: offset.top,
+			scrollLeft: offset.left
+		});
+	}
 }
 
 var n = 0;

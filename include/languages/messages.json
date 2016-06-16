@@ -92,6 +92,7 @@
 	"label.admin_auth.search_group_filter": "Group filter",
 	"label.admin_auth.search_user_filter": "User filter",
 	"label.admin_auth.title": "Authentification settings",
+	"label.admin_bp.title": "Business processes configuration",
 	"label.admin_conf.title": "Nagios configuration reports",
 	"label.admin_device.import_host": "Nagios hosts to import",
 	"label.admin_device.import_settings_title": "Import settings",
