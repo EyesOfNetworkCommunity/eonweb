@@ -136,6 +136,5 @@ $path_snmptrapconf="/etc/snmp/snmptrapd.conf";
 // # NetCAT
 $default_minport=1;
 $default_maxport=1024;
-$path_netcat="/usr/bin/nc";
 
 ?>

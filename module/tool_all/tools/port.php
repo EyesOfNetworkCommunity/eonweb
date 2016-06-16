@@ -28,12 +28,21 @@ if($max_port<2) message(4,"max_port must be >1","critical");
 if($min_port>$max_port) message(4,"min_port must be < max_port","critical");
 if($min_port==$max_port) message(4,"min_port must be different than max_port","critical");
 
-// Execute Netcat command
-$cmd_netcat_ports="$path_netcat -w 1 -v -z $host_name $min_port-$max_port 2>&1 | grep succeeded! | cut -d ' ' -f 4";
-$cmd_netcat_services="$path_netcat -w 1 -v -z $host_name $min_port-$max_port 2>&1 | grep succeeded! | cut -d ' ' -f 6 | tr -s '[' ' ' | tr -s ']' ' '";
+// Execute fsockopen
+$result_cmd_netcat_ports=array();
+$result_cmd_netcat_services=array();
 
-exec("$cmd_netcat_ports",$result_cmd_netcat_ports);
-exec("$cmd_netcat_services",$result_cmd_netcat_services);
+$port_num=0;
+for($i=$min_port;$i<=$max_port;$i++) {
+	$connection = @fsockopen($host_name, $i,$errno, $errstr, 1);
+	if (is_resource($connection))
+	{
+		$result_cmd_netcat_ports[$port_num]=$i;
+		$result_cmd_netcat_services[$port_num]=getservbyport($i, 'tcp');
+		$port_num++;
+		fclose($connection);
+	}
+}
 	
 // Count the Number of Ports
 $count_ports=count($result_cmd_netcat_ports);
