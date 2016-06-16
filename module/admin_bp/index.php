@@ -81,16 +81,20 @@ include("../../side.php");
 		$result_type->free();
 		mysqli_close($db);
 
-		print "\n";
-		print "<label class=\"tree-toggle nav-header glyphicon-link glyphicon\" id=\"$desc_bp\"><font size=\"3\" color=\"black\">\n";
-		print "<font size=\"1\" color=\"#262635\"> Display:".$priority."</font> <b class=\"condition_presentation\">".$rule_type.$min_value."</b> ".$bp."</font>&nbsp;&nbsp;\n";
+		print "<li>";
+		print "<div class=\"tree-toggle nav-header\" id=\"$desc_bp\">";
+		print "<i class=\"glyphicon-link glyphicon\"></i>";
+		print "Display:".$priority."&nbsp;&nbsp;<b class=\"condition_presentation\">".$rule_type.$min_value."</b> ".$bp."&nbsp;&nbsp;";
 		//if($priority == 0){
-		print "<a href=\"add_services.php?bp_name=$bp&display=$priority\"><img src=\"./images/add_list.png\" height=\"18\" width=\"18\"></a>&nbsp;\n";
-		print "<font size=\"2\" color=\"#262635\">(".$desc_bp.")</font></label>&nbsp;\n";
+		print "(".$desc_bp.")";
+		print "<div class='float-right'>";
+		print "<a href=\"add_services.php?bp_name=$bp&display=$priority\"><button type=\"button\" class=\"btn-group light-round btn-success marge-left\"><i class=\"glyphicon glyphicon-plus\"></i></button></a>";
+		print "<button type=\"button\" class=\"btn-group light-round btn-info\" onclick=\"editApplication('$bp');\"><i class=\"glyphicon glyphicon-pencil\"></i></button>";
+		print "<button type=\"button\" class=\"light-round btn-group btn-danger\" onclick=\"ShowModalDeleteBP('$bp');\"><i class=\"glyphicon glyphicon-trash\"></i></button>";
+		print "</div>";
+		print "</div>";
 		//print "<a class=\"img-hover\" onclick=\"DeleteBP('$bp');\"><img src=\"./images/link_delete.png\" height=\"25\" width=\"25\"></a>&nbsp;\n";
-		print "<button type=\"button\" class=\"btn-group light-round btn-info marge-left\" onclick=\"editApplication('$bp');\"><span class=\"glyphicon glyphicon-pencil\"></span></button>";
-		print "<button type=\"button\" class=\"light-round btn-group btn-danger\" onclick=\"ShowModalDeleteBP('$bp');\"><span class=\"glyphicon glyphicon-trash\"></span></button>";
-		echo "\n";
+		print "</li>";
 	}
 
 	function display_service($host_service,$bp_racine)
@@ -99,9 +103,8 @@ include("../../side.php");
 		$service_name = strtolower($service_name[1]);
 
 		print "\n";
-		print "<ul id=\"$bp_racine::$host_service\"><label class=\"tree-toggle nav-header glyphicon glyphicon-eye-open\"> ".$host_service;
-
-		print "</label></ul>";
+		print "<div id=\"$bp_racine::$host_service\" class=\"tree-toggle\"><i class=\"nav-header glyphicon glyphicon-eye-open\"></i> ".$host_service;
+		print "</div>";
 		print "\n";
 	}
 
@@ -166,7 +169,9 @@ include("../../side.php");
 		if(sizeof($t_service_son) > 0 ) {
 			for ($i = 0; $i < sizeof($t_service_son); $i++) {
 				echo "<li>";
+				echo "<ul>";
 				display_service($t_service_son[$i],$bp_racine);
+				echo "</ul>";
 				echo "</li>\n";
 			}
 		}
@@ -227,7 +232,7 @@ include("../../side.php");
 		<div id="body" class="pad-top">
 		<?php 
 			for ($i = 0; $i < sizeof($t_bp_racine); $i++) {
-				echo "<div class=\"well well-sm\" id=\"$t_bp_racine[$i]\">";
+				echo "<div class=\"well well-sm\">";
 					echo "<ul class=\"nav nav-list tree\">";
 						display_bp($t_bp_racine[$i],$t_bp_racine[$i]);
 						display_son($t_bp_racine[$i]);

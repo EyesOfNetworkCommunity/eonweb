@@ -184,7 +184,7 @@ print "<div id=\"page-wrapper\">";
 		print "<br>";
 		print "<button type=\"button\" class=\"btn btn-success btn-block\" onclick=\""; echo (($display_actually_bp == 0)?'ApplyService();':'ApplyProcess();');
 		print "\">";
-    		print "<span class=\"glyphicon glyphicon-ok\" style=\"color:#4f4;\"></span>Appliquer les modifications";
+    	print "Appliquer les modifications";
     	print "</button>";
 	print "</form>";
 

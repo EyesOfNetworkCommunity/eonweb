@@ -177,10 +177,11 @@ function add_application($uniq_name,$process_name,$display,$url,$command,$type,$
 	if($type != 'MIN'){
 		$min_value = "";
 	}
-	$sql = "select count(*) from bp where name = '" . $uniq_name . "'";
+	$sql = "select count(*) from bp where name = '" . $uniq_name . "';";
 	$req = $bdd->query($sql);
 	$bp_exist = $req->fetch();
-	if($bp_exist["count"] == 0){
+
+	if($bp_exist[0] == 0){
 		$sql = "insert into bp (name,description,priority,type,command,url,min_value) values('" . $uniq_name ."','" . $process_name ."','" . $display . "','" . $type . "','" . $command . "','" . $url . "','" . $min_value . "')";
 	}
 	else{

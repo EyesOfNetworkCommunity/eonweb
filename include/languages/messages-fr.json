@@ -92,6 +92,7 @@
 	"label.admin_auth.search_group_filter": "Filtre groupe",
 	"label.admin_auth.search_user_filter": "Filtre utilisateur",
 	"label.admin_auth.title": "Paramètres d'authentification",
+	"label.admin_bp.title": "Configuration des processus métiers",
 	"label.admin_conf.title": "Rapports de configuration nagios",
 	"label.admin_device.import_host": "Hosts nagios à importer",
 	"label.admin_device.import_settings_title": "Paramètres d'imports",
