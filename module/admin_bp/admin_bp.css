@@ -19,18 +19,28 @@
 #########################################
 */
 
-/* 1st level */
-.well > ul > label {
-	margin-left:25px;
+/* BP Layer 1 */
+.tree > li.end {
+	margin-left:40px;
+	margin-bottom: 5px;
 }
 
-/* BP Layer 1 */
-.tree > ul {
-	margin-left:35px;
+.tree > li > ul {
+	margin-left:15px;
+}
+
+/* BP Layer 2 */
+.tree > li > ul > li {
+	margin-left:15px;
+}
+
+.tree > li > ul > li.end {
+	margin-left:55px;
+	margin-bottom: 5px;
 }
 
 .nav-header {
-	margin-top: 5px;
+	margin-top: 10px;
 	margin-bottom: 5px;
 }
 
@@ -38,6 +48,10 @@
 .glyphicon-link {
 	cursor:pointer;
 	margin-right:20px;
+}
+
+.tree-toggle {
+	cursor:pointer;
 }
 
 /* X bp level */
@@ -111,8 +125,10 @@
     padding-top: 20px;
 }
 
-.marge-left {
-	margin-left: 10px;
+.marge-buttons {
+	margin-left: 35px;
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 .float-right {
