@@ -81,20 +81,19 @@ include("../../side.php");
 		$result_type->free();
 		mysqli_close($db);
 
-		print "<li>";
-		print "<div class=\"tree-toggle nav-header\" id=\"$desc_bp\">";
-		print "<i class=\"glyphicon-link glyphicon\"></i>";
-		print "Display:".$priority."&nbsp;&nbsp;<b class=\"condition_presentation\">".$rule_type.$min_value."</b> ".$bp."&nbsp;&nbsp;";
-		//if($priority == 0){
-		print "(".$desc_bp.")";
-		print "<div class='float-right'>";
-		print "<a href=\"add_services.php?bp_name=$bp&display=$priority\"><button type=\"button\" class=\"btn-group light-round btn-success marge-left\"><i class=\"glyphicon glyphicon-plus\"></i></button></a>";
-		print "<button type=\"button\" class=\"btn-group light-round btn-info\" onclick=\"editApplication('$bp');\"><i class=\"glyphicon glyphicon-pencil\"></i></button>";
-		print "<button type=\"button\" class=\"light-round btn-group btn-danger\" onclick=\"ShowModalDeleteBP('$bp');\"><i class=\"glyphicon glyphicon-trash\"></i></button>";
-		print "</div>";
-		print "</div>";
-		//print "<a class=\"img-hover\" onclick=\"DeleteBP('$bp');\"><img src=\"./images/link_delete.png\" height=\"25\" width=\"25\"></a>&nbsp;\n";
-		print "</li>";
+?>	
+					<li>
+						<div id="<?php echo $bp; ?>" class="tree-toggle">
+							<i class="glyphicon-link glyphicon"></i>Display:<?php echo $priority; ?>&nbsp;
+							<b class="condition_presentation"><?php echo $rule_type.".".$min_value."</b>&nbsp;&nbsp;".$bp."&nbsp;&nbsp;(".$desc_bp.")"; ?>
+							<div class="list-inline marge-buttons">
+								<button type="button" class="btn-group light-round btn-success" onclick="location.href='add_services.php?bp_name=<?php echo $bp; ?>&display=<? echo $priority; ?>'"><i class="glyphicon glyphicon-plus"></i></button>
+								<button type="button" class="btn-group light-round btn-info" onclick="editApplication('<?php echo $bp; ?>');"><i class="glyphicon glyphicon-pencil"></i></button>
+								<button type="button" class="light-round btn-group btn-danger" onclick="ShowModalDeleteBP('<?php echo $bp; ?>');"><i class="glyphicon glyphicon-trash"></i></button>
+							</div>
+						</div>
+					</li>				
+<?php
 	}
 
 	function display_service($host_service,$bp_racine)
@@ -102,10 +101,14 @@ include("../../side.php");
 		$service_name = split(";", $host_service);
 		$service_name = strtolower($service_name[1]);
 
-		print "\n";
-		print "<div id=\"$bp_racine::$host_service\" class=\"tree-toggle\"><i class=\"nav-header glyphicon glyphicon-eye-open\"></i> ".$host_service;
-		print "</div>";
-		print "\n";
+?>
+					<li class="end">
+						<div id="<?php echo $bp_racine."::".$host_service; ?>" class="tree-toggle">
+							<i class="nav-header glyphicon glyphicon-eye-open"></i>
+							<?php echo $host_service."\n"; ?>
+						</div>
+					</li>	
+<?php
 	}
 
 	function display_son($bp_racine)
@@ -158,21 +161,21 @@ include("../../side.php");
 
 		if(sizeof($t_bp_son) > 0 ) {
 			for ($i = 0; $i < sizeof($t_bp_son); $i++) {
-				echo "<ul class=\"nav nav-list tree\">";
-				echo "\n";
-				display_bp($t_bp_son[$i],$bp_racine);
-				display_son($t_bp_son[$i]);
-				echo "</ul>";
-				echo "\n";
+?>
+					<li>
+						<ul class="nav nav-list tree">
+<?php
+							display_bp($t_bp_son[$i],$bp_racine);
+							display_son($t_bp_son[$i]);
+?>
+						</ul>
+					</li>
+<?php
 			}
 		}
 		if(sizeof($t_service_son) > 0 ) {
 			for ($i = 0; $i < sizeof($t_service_son); $i++) {
-				echo "<li>";
-				echo "<ul>";
 				display_service($t_service_son[$i],$bp_racine);
-				echo "</ul>";
-				echo "</li>\n";
 			}
 		}
 	}
@@ -230,16 +233,16 @@ include("../../side.php");
 		</div>
 
 		<div id="body" class="pad-top">
-		<?php 
-			for ($i = 0; $i < sizeof($t_bp_racine); $i++) {
-				echo "<div class=\"well well-sm\">";
-					echo "<ul class=\"nav nav-list tree\">";
-						display_bp($t_bp_racine[$i],$t_bp_racine[$i]);
-						display_son($t_bp_racine[$i]);
-					echo "</ul>";
-				echo "</div>";
-			}
-		?>
+<?php for ($i = 0; $i < sizeof($t_bp_racine); $i++) { ?>
+			<div class="well well-sm">
+				<ul class="nav nav-list tree">
+			<?php
+				display_bp($t_bp_racine[$i],$t_bp_racine[$i]);
+				display_son($t_bp_racine[$i]);
+			?>
+				</ul>
+			</div>
+<?php } ?>
 		</div>
 	</form>
 

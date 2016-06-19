@@ -72,15 +72,15 @@ print "<div id=\"page-wrapper\">";
 		print "<div id=\"container_service\" style=\"display:none\">";
 			print "<div>";
 				print "<div class=\"input-group col-xs-6\">";
-	  				print "<span class=\"input-group-addon\" id=\"sizing-addon1\"><img src=\"./images/server.png\" height=\"20\" width=\"25\"></span>";
+	  				print "<span class=\"input-group-addon\" id=\"sizing-addon1\"><img src=\"./images/server.png\" height=\"20\" width=\"25\" alt=\"server\"></span>";
 	  				print "<input type=\"text\" class=\"form-control\" id=\"host\" placeholder=\"Hostname\" aria-describedby=\"sizing-addon1\">";
 				print "</div>";
 			print "</div>";
 
 			print "<br>";
-			print "<div>";
+			print "<div class=\"row\">";
 	           	print "<div class=\"form-group\">";
-	               	print "<label style=\"font-weight:lighter;font-size:16px;\" for=\"services\" class=\"col-xs-8 control-label pad-top text-primary\">Services linked to this host</label>";
+	               	print "<label style=\"font-weight:lighter;font-size:16px;\" class=\"col-xs-8 control-label pad-top text-primary\">Services linked to this host</label>";
 				print "</div>";
 			print "</div>";
 
@@ -94,10 +94,10 @@ print "<div id=\"page-wrapper\">";
 
 		print "<div id=\"container_process\" style=\"display:none\">";
             print "<div class=\"form-group row\">";
-                print "<label class=\"col-xs-3\" for=\"display\"> Display : </label>";
+                print "<label class=\"col-xs-3\"> Display : </label>";
                 print "<div class=\"col-xs-8\">";
                     print "<select class=\"form-control\" name=\"display\">";
-                        print "<option> </option>";
+                        print "<option data-hidden=\"true\">Select display</option>";
                         print "<option>0</option>";
                         print "<option>1</option>";
                         print "<option>2</option>";
@@ -127,7 +127,7 @@ print "<div id=\"page-wrapper\">";
 
 	print "<form id=\"form_drop\" class=\"form-horizontal col-xs-5 pull-right\" style=\"top:0px\">";
 		$text_display = ($display_actually_bp > 0 ? "Process" : "Services");
-		print "<label style=\"font-size:16px;\" for=\"services\" class=\"col-xs-8 control-label\">$text_display linked to BP $bp_name</label>";
+		print "<label style=\"font-size:16px;\" class=\"col-xs-8 control-label\">$text_display linked to BP $bp_name</label>";
 		print "<br>";
 		print "<div id=\"container-drop_zone\" class=\"pad-top container-drop_zone\">";
 
@@ -188,5 +188,6 @@ print "<div id=\"page-wrapper\">";
     	print "</button>";
 	print "</form>";
 
+print "</div>";
 include("../../footer.php");
 ?>

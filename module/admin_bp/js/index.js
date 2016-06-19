@@ -20,9 +20,11 @@
 */
 
 $(document).ready(function () {
-	$('.tree-toggle').parent().children('ul.tree').hide();
+	$('.tree li ul').hide();
+	$('.tree li.end').hide();
 	$('.tree-toggle').click(function () {
-		$(this).parent().children('ul.tree').toggle(200);
+		$(this).parent().parent().children('.tree li.end').toggle(200);
+		$(this).parent().parent().children('.tree').toggle(200);
 	});
 	$("[data-toggle=tooltip]").tooltip();
 
@@ -67,11 +69,13 @@ function findIt(){
 var n = 0;
 
 function ShowAll(){
-	$('.tree-toggle').parent().children('ul.tree').show();
+	$('.tree li ul').show();
+	$('.tree li.end').show();
 }
 
 function HideAll(){
-	$('.tree-toggle').parent().children('ul.tree').hide();
+	$('.tree li ul').hide();
+	$('.tree li.end').hide();
 }
 
 function AddingApplication(){
