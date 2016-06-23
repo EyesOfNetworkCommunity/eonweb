@@ -28,6 +28,7 @@ include("ged_functions.php");
 extract($_GET);
 
 // get all GED filters
+$default = "";
 $file="../../cache/".$_COOKIE["user_name"]."-ged.xml";
 if(file_exists($file)){
 	$xmlfilters = new DOMDocument("1.0","UTF-8");
