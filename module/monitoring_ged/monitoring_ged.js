@@ -172,13 +172,16 @@ $(document).ready(function(){
 				filter_name: filter_selection
 			},
 			success: function(response){
-				console.log(response);
+				if(filter_selection == ""){
+					$("#filter-link").html("none");
+					$("#filter-link").attr("href", "filters.php");
+				} else {
+					$("#filter-link").html(filter_selection);
+					$("#filter-link").attr("href", "filters.php?filter="+filter_selection);
+				}
 			}
 		});
 	});
-
-	var col_nbr = $("#events-table thead tr th").length;
-	alert(col_nbr);
 
 	$(document).on('click', "#events-table tbody tr", function(){
 		if($(this).find("td:first").hasClass("dataTables_empty") == false){
@@ -194,14 +197,20 @@ $(document).ready(function(){
 		}
 	});
 
-	$("#events-table tbody tr").on('change', function(){
-		console.log("ca change !!!!");
-	});
-
+	//var col_nbr = $("#events-table thead tr th").length;
 	/*$(window).bind('resize', function(){
-		$("#events-table tbody tr").each(function(index){
-			console.log()
-		});
+		var actual_col_nbr = $("#events-table thead tr th").length;
+		if(actual_col_nbr < col_nbr){
+			$("#events-table tbody tr").each(function(){
+				console.log($(this));
+				if($(this).next().hasClass('child') == true){
+					console.log($(this).hasClass('active') == false);
+					if($(this).hasClass('active') == false){
+						$(this).next().hide();
+					}
+				}
+			});
+		}
 	});*/
 
 	// ajax when we submit filters form
@@ -229,6 +238,10 @@ $(document).ready(function(){
 			var host_name = parent_row.find("td.host a").html();
 			var service_name = parent_row.find("td.service a").html();
 			
+			if(service_name === undefined){
+				service_name = parent_row.next().find("td ul li:first span.dtr-data a").html();
+			}
+
 			if(parent_row.hasClass("success")){ event_state = "success"; }
 			else if(parent_row.hasClass("warning")){ event_state = "warning"; }
 			else if(parent_row.hasClass("danger")){ event_state = "danger"; }

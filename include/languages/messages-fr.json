@@ -48,6 +48,8 @@
 	"calendar.thursday": "Je",
 	"calendar.tuesday": "Ma",
 	"calendar.wednesday": "Me",
+	"label.using_filter": "filtre utilisé",
+	"label.none": "aucun",
 	"label.events_views": "Vues évènements",
 	"label.users_views": "Vues utilisateurs",
 	"label.act_event": "Evènements actifs",
