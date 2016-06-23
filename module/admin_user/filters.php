@@ -24,6 +24,6 @@ $user_id=$_GET["user_id"];
 $user_name=$_GET["user_name"];
 $file="../../cache/".$user_name."-ged.xml";
 $file_url="/cache/".$user_name."-ged.xml";
-include("../monitoring_ged/index.php");
+include("../monitoring_ged/filters.php");
 
 ?>

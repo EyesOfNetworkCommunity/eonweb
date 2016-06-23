@@ -46,6 +46,27 @@ if(isset($_GET["status"])){
 	$list_status = trim($list_status, ",");
 }
 
+// get all GED filters
+$file="../../cache/".$_COOKIE["user_name"]."-ged.xml";
+
+$filters_list = [];
+if(file_exists($file)){
+	$xmlfilters = new DOMDocument("1.0","UTF-8");
+	$xmlfilters->load($file);
+
+	$xpath = new DOMXPath($xmlfilters);
+	$filter_names = $xpath->query("//ged/filters");
+	
+	foreach ($filter_names as $filter_name) {
+		array_push($filters_list, $filter_name->getAttribute("name"));
+	}
+
+	$g=$xmlfilters->getElementsByTagName("ged")->item(0);
+
+	//Default filter detection
+	$default=$g->getElementsByTagName("default")->item(0)->nodeValue;
+}
+
 ?>
 
 <div id="page-wrapper">
@@ -128,21 +149,30 @@ if(isset($_GET["status"])){
 						</div>
 						
 						<div class="col-md-4">
-							<label><?php echo getLabel("label.state") ?></label></label>
-							<div class="checkbox">
-								<?php 
-								foreach($array_ged_states as $col => $val){
-								$checked = "";
-								if(count($status_parts) > 0 && in_array($val, $status_parts)){ $checked = "checked"; }
-								echo '
-									<div class="checkbox">
-										<label>
-										<input type="checkbox" class="checkbox focus-to-search" id="'.$col.'" name="'.$col.'" '.$checked.' />
-										'.$col.'
-										</label>
-									</div>';
-								}
-								?>
+							<div class="form-group">
+								<label><?php echo getLabel("label.state") ?></label></label>
+								<select id="filter-state" class="selectpicker form-control" multiple>
+									<?php 
+									foreach($array_ged_states as $col => $val){
+										$selected = "";
+										if(count($status_parts) > 0 && in_array($val, $status_parts)){ $selected = "selected"; }
+										echo '<option '.$selected.'>'.$col.'</option>';
+									}
+									?>
+								</select>
+							</div>
+							<div class="form-group">
+								<label><?php echo getLabel("label.ged_filter") ?></label></label>
+								<select id="filter-selection" class="selectpicker form-control">
+									<option value=""><?php echo getLabel("label.no_filter") ?></option>
+									<?php 
+									foreach($filters_list as $key => $val){
+										$selected = "";
+										if($val == $default){ $selected = "selected"; }
+										echo '<option '.$selected.' value="'.$val.'">'.$val.'</option>';
+									}
+									?>
+								</select>
 							</div>
 						</div>
 						
@@ -214,6 +244,37 @@ if(isset($_GET["status"])){
 					</thead>
 					<tbody>
 						<?php
+							// detect GED filter by default
+							$query="";
+							$array_filters = [];
+
+							if(file_exists($file)){
+								$xmlfilters = new DOMDocument("1.0","UTF-8");
+								$xmlfilters->load($file);
+
+								$xpath = new DOMXPath($xmlfilters);
+								if($default!=""){
+									//echo "<script>$('#ged_filter').empty();$('#ged_filter').append('<i><a href=\'index.php?filter=".$default."\'>filter : ".$default."</a></i>');</script>";
+									
+									$g_filters = $xpath->query("//ged/filters[@name='$default']/filter");
+
+									foreach($g_filters as $g_filter){
+										$query=$query."|//r[.//".$g_filter->getAttribute("name")."[contains(translate(.,'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'),'".strtoupper($g_filter->nodeValue)."')]]";
+										$array_filters[$g_filter->getAttribute("name")] = $g_filter->nodeValue;
+									}
+
+									$query=substr($query,1);
+									if($query=="")
+										$query="//r";
+								} else {
+									//echo "<script>$('#ged_filter').empty();$('#ged_filter').append('<i><a href=\'index.php\'>no default filter</a></i>');</script>";
+									$query="//r";
+								}
+							} else {
+								//echo "<script>$('#ged_filter').empty();$('#ged_filter').append('<i><a href=\'index.php\'>no default filter</a></i>');</script>";
+								$query="//r";
+							}
+
 							$gedsql_result1=sqlrequest($database_ged,"SELECT pkt_type_id,pkt_type_name FROM pkt_type WHERE pkt_type_id!='0' AND pkt_type_id<'100';");
 							while($ged_type = mysqli_fetch_assoc($gedsql_result1)){
 								// request for ged events according to queue and filters
@@ -257,7 +318,26 @@ if(isset($_GET["status"])){
 											break;
 									}
 								}
-								
+
+								// XML filters if activated for the user
+								if( count($array_filters) > 0 ){
+									foreach ($array_filters as $key => $value) {
+										if($key == "host"){ $key = "equipment"; }
+										if($key == "service_group"){ $key = "servicegroups"; }
+										
+										// advanced search (with *)
+										$like = "";
+										if( substr($value, 0, 1) === '*' ){
+											$like .= "%";
+										}
+										$like .= trim($value, '*');
+										if ( substr($value, -1) === '*' ) {
+											$like .= "%";
+										}
+										
+										$sql .= " AND $key LIKE '$like'";
+									}
+								}
 								
 								$request = sqlrequest($database_ged, $sql);
 

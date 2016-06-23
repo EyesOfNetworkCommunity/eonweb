@@ -28,7 +28,7 @@ include("ged_functions.php");
 // create variables from $_GET
 extract($_GET);
 
-if(isset($action) && $action != "" && isset($selected_events) && count($selected_events) > 0){
+if(isset($action) && $action != "" && (isset($selected_events) && count($selected_events) > 0) || isset($filter_name) ){
 	switch ($action) {
 		case "0":
 			details($selected_events, $queue);
@@ -50,6 +50,9 @@ if(isset($action) && $action != "" && isset($selected_events) && count($selected
 			} else {
 				ownDisown($selected_events, $queue, $global_action);
 			}
+			break;
+		case 'changeGedFilter':
+			changeGedFilter($filter_name);
 			break;
 	}
 }
