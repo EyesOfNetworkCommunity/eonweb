@@ -415,7 +415,7 @@ include("../../side.php");
 				<div class="input-group col-md-5">
 					<span class="input-group-addon">
 		                <?php
-							if($nagvis_user=="yes") $checked="checked='yes'";
+							if(isset($nagvis_user) && $nagvis_user=="yes") $checked="checked='yes'";
 		                    else $checked="";
 		                    echo "<input type='checkbox' class='checkbox' name='create_user_in_nagvis' value='yes' $checked>";
 						?>
@@ -441,7 +441,7 @@ include("../../side.php");
 			<label class="col-md-3">Cacti User</label>
 			<div class="col-md-9">
 				<?php
-					if($cacti_user == "yes") $checked = "checked='checked'";
+					if(isset($cacti_user) && $cacti_user == "yes") $checked = "checked='checked'";
                     else $checked = "";
                     echo "<input type='checkbox' class='checkbox' name='create_user_in_cacti' value='yes' $checked>";
 				?>

@@ -26,43 +26,45 @@
  */
 function ajaxCharts(link)
 {
-	// get the number of host ordered by state (first pie chart)
-	$.ajax({
-		url: "/include/livestatus/query.php",
-		data: {
-			action: "hosts_state"
-		},
-		dataType: "JSON",
-		success: function(response){
-			var title = '<a style="font-size:18px;color:#333333;text-decoration:none;" class="graph_title" style="text-decoration:none;" href="'+path_nagios_status+'?hostgroup=all&style=hostdetail">Equipements Nagios</a>';
-			if(link == "with_link"){
-				drawPieChart("container_hosts_state", title, response, "hostState", "with_link");
-			}
-			else{
-				drawPieChart("container_hosts_state", title, response, "hostState", false);
-			}
-		},
-		error: function(){}
-	});
-	
-	// get the number of services ordered by state (second pie chart)
-	$.ajax({
-		url: "/include/livestatus/query.php",
-		data: {
-			action: "services_state"
-		},
-		dataType: "JSON",
-		success: function(response){
-			var title = '<a style="font-size:18px;color:#333333;text-decoration:none;" class="graph_title" style="text-decoration:none;" href="'+path_nagios_status+'/thruk/cgi-bin/status.cgi?host=all">Services Nagios</a>';
-			if(link == "with_link"){
-				drawPieChart("container_services_state", title, response, "serviceState", "with_link");
-			}
-			else{
-				drawPieChart("container_services_state", title, response, "serviceState", false);
-			}
-		},
-		error: function(){}
-	});
+	if($("#sideMenuSearch").length > 0){
+		// get the number of host ordered by state (first pie chart)
+		$.ajax({
+			url: "/include/livestatus/query.php",
+			data: {
+				action: "hosts_state"
+			},
+			dataType: "JSON",
+			success: function(response){
+				var title = '<a style="font-size:18px;color:#333333;text-decoration:none;" class="graph_title" style="text-decoration:none;" href="'+path_nagios_status+'?hostgroup=all&style=hostdetail">Equipements Nagios</a>';
+				if(link == "with_link"){
+					drawPieChart("container_hosts_state", title, response, "hostState", "with_link");
+				}
+				else{
+					drawPieChart("container_hosts_state", title, response, "hostState", false);
+				}
+			},
+			error: function(){}
+		});
+		
+		// get the number of services ordered by state (second pie chart)
+		$.ajax({
+			url: "/include/livestatus/query.php",
+			data: {
+				action: "services_state"
+			},
+			dataType: "JSON",
+			success: function(response){
+				var title = '<a style="font-size:18px;color:#333333;text-decoration:none;" class="graph_title" style="text-decoration:none;" href="'+path_nagios_status+'/thruk/cgi-bin/status.cgi?host=all">Services Nagios</a>';
+				if(link == "with_link"){
+					drawPieChart("container_services_state", title, response, "serviceState", "with_link");
+				}
+				else{
+					drawPieChart("container_services_state", title, response, "serviceState", false);
+				}
+			},
+			error: function(){}
+		});
+	}
 	
 	// get the number of event ordrered by state (third pie chart)
 	$.ajax({
@@ -75,7 +77,7 @@ function ajaxCharts(link)
 			var title = '<a style="font-size:18px;color:#333333;text-decoration:none;" class="graph_title" style="text-decoration:none;" href="/module/monitoring_ged/ged.php?q=active">Evenements actifs</a>';
 			drawPieChart("container_event_state_nbr", title, response, "eventState", "with_link");
 		},
-		error: function(){}
+		error: function(response){console.log(response)}
 	});
 	
 	// get the number of event ordrered by state, time and owner (column chart)

@@ -7,12 +7,12 @@
 		},
 		{
 			"name":"menu.link.active_events",
-			"url":"/module/monitoring_ged/ged.php?q=active",
+			"url":"/module/monitoring_ged/index.php?q=active",
 			"target":"main"
 		},
 		{
 			"name":"menu.link.history_events",
-			"url":"/module/monitoring_ged/ged.php?q=history",
+			"url":"/module/monitoring_ged/index.php?q=history",
 			"target":"main"
 		}
 	]

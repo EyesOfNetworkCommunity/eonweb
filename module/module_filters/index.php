@@ -22,7 +22,7 @@
 
 include("../../header.php");
 include("../../side.php");
-include("ged_functions.php");
+include("../monitoring_ged/ged_functions.php");
 
 ?>
 
@@ -35,7 +35,13 @@ include("ged_functions.php");
 	</div>
 
 	<?php
-
+	if(isset($_GET["user_id"]) && isset($_GET["user_name"])){
+		$user_id = isset($_GET["user_id"]) ? $_GET["user_id"] : false;
+		$user_name = isset($_GET["user_name"]) ? $_GET["user_name"] : false;
+		$file="../../cache/".$user_name."-ged.xml";
+		$file_url="/cache/".$user_name."-ged.xml";
+	}
+	
 	// Verify if user limitation
 	if(isset($file)){
 		$user_exist=mysqli_result(sqlrequest("$database_eonweb","SELECT count('user_name') from users where user_name='$user_name' and user_limitation='1';"),0);
@@ -184,9 +190,9 @@ include("ged_functions.php");
 	</div>
 
 	<?php if($user_id) { ?>
-	<form action="/module/admin_user/filters.php?user_id=<?php echo $user_id?>&user_name=<?php echo $user_name?>" name="option_events" method="post">
+	<form action="/module/module_filters/index.php?user_id=<?php echo $user_id?>&user_name=<?php echo $user_name?>" name="option_events" method="post">
 	<?php } else { ?>
-	<form action="/module/monitoring_ged/filters.php" name="option_events" method="post">
+	<form action="/module/module_filters/index.php" name="option_events" method="post">
 	<?php } ?>
 		<div class="row form-group">
 			<?php
@@ -197,8 +203,8 @@ include("ged_functions.php");
 			<label class="col-md-3"><?php echo getLabel($label); ?></label>
 			<div class="col-md-9">
 				<?php if(!$user_id) { ?>
-				<a class="btn btn-primary" href="index.php?q=active"><?php echo getLabel("label.act_event") ?></a>
-				<a class="btn btn-primary" href="index.php?q=history"><?php echo getLabel("label.his_event") ?></a>
+				<a class="btn btn-primary" href="/module/monitoring_ged/index.php?q=active"><?php echo getLabel("label.act_event") ?></a>
+				<a class="btn btn-primary" href="/module/monitoring_ged/index.php?q=history"><?php echo getLabel("label.his_event") ?></a>
 				<?php } else { ?>
 				<a class="btn btn-primary" href="/module/admin_user/index.php"><?php echo getLabel("label.all_users") ?></a>
 				<a class="btn btn-primary" href="/module/admin_user/add_modify_user.php?user_id=<?php echo $user_id?>"><?php echo getLabel("label.user")." ".$user_name?></a>

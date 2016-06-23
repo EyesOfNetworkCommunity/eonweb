@@ -141,7 +141,7 @@ include("../../side.php");
 						if($line[5]=="0")
 								$type="NO";
 						else
-								$type="<a href='filters.php?user_id=$line[2]&user_name=$line[0]'>YES</a>";
+								$type="<a href='../module_filters/index.php?user_id=$line[2]&user_name=$line[0]'>YES</a>";
 						echo "$type";
 						?>
 					</td>
