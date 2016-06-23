@@ -415,7 +415,7 @@ function getNumberEventByStateAndTime()
 		UNION ALL SELECT COUNT(*) FROM ".$row[0]."_queue_active WHERE ".$milieu_requete." state IN (1,2,3) AND owner!='' AND o_sec <= ". $one_hour;
 
 		$query_result = sqlrequest($database_ged, $sql);
-		//var_dump($sql);
+		
 		if($cpt == 0)
 		{
 			for($i = 0; $i < $query_result->num_rows; $i++)

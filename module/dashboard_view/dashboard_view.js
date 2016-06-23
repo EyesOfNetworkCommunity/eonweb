@@ -77,7 +77,7 @@ function ajaxCharts(link)
 			var title = '<a style="font-size:18px;color:#333333;text-decoration:none;" class="graph_title" style="text-decoration:none;" href="/module/monitoring_ged/ged.php?q=active">Evenements actifs</a>';
 			drawPieChart("container_event_state_nbr", title, response, "eventState", "with_link");
 		},
-		error: function(response){console.log(response)}
+		error: function(){}
 	});
 	
 	// get the number of event ordrered by state, time and owner (column chart)
