@@ -71,9 +71,7 @@
 
 <?php
 	}
-	echo "<pre>";
-	var_dump($module_path);
-	echo "</pre>";
+	
 	$module_php=$module_path.".php";
 	if(file_exists($module_php)) { 
 		include($module_php);
