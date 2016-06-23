@@ -27,9 +27,21 @@ include("ged_functions.php");
 
 extract($_GET);
 
+// get all GED filters
+$file="../../cache/".$_COOKIE["user_name"]."-ged.xml";
+if(file_exists($file)){
+	$xmlfilters = new DOMDocument("1.0","UTF-8");
+	$xmlfilters->load($file);
+
+	$xpath = new DOMXPath($xmlfilters);
+
+	$g=$xmlfilters->getElementsByTagName("ged")->item(0);
+
+	//Default filter detection
+	$default=$g->getElementsByTagName("default")->item(0)->nodeValue;
+}
+
 ?>
-
-
 
 <form id="ged-table" method="POST" onsubmit="return false;">
 	<div class="dataTable_wrapper">
@@ -53,7 +65,6 @@ extract($_GET);
 					while($ged_type = mysqli_fetch_assoc($gedsql_result1)){
 						// request for ged events according to queue and filters
 						$sql = createSelectClause($ged_type["pkt_type_name"], $queue);
-						
 						
 						// time periods (only in active events);
 						if($time_period != ""){
@@ -85,6 +96,36 @@ extract($_GET);
 
 						if($ack_time != ""){ 
 							$sql .= " AND a_sec - o_sec >= $ack_time";
+						}
+
+						// if there's a default filter
+						$array_filters = [];
+						if($default!=""){
+							$g_filters = $xpath->query("//ged/filters[@name='$default']/filter");
+
+							foreach($g_filters as $g_filter){
+								$array_filters[$g_filter->getAttribute("name")] = $g_filter->nodeValue;
+							}
+						}
+
+						// XML filters if activated for the user
+						if( count($array_filters) > 0 ){
+							foreach ($array_filters as $key => $value) {
+								if($key == "host"){ $key = "equipment"; }
+								if($key == "service_group"){ $key = "servicegroups"; }
+								
+								// advanced search (with *)
+								$like = "";
+								if( substr($value, 0, 1) === '*' ){
+									$like .= "%";
+								}
+								$like .= trim($value, '*');
+								if ( substr($value, -1) === '*' ) {
+									$like .= "%";
+								}
+								
+								$sql .= " AND $key LIKE '$like'";
+							}
 						}
 
 						$sql .= createWhereClause($owner,$filter,$search,$daterange,$ok,$warning,$critical,$unknown);

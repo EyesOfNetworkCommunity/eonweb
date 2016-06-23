@@ -54,6 +54,8 @@ include("include/function.php");
 	<link href="/bower_components/jquery-ui/themes/start/jquery-ui.min.css" rel="stylesheet">
 	<!-- DateRangePicker CSS -->
 	<link href="/bower_components/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+	<!-- BootstrapSelect CSS -->
+	<link href="/bower_components/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
 	
 	<!-- EonWeb Custom CSS -->
 	<link href="/css/eonweb.css" rel="stylesheet">

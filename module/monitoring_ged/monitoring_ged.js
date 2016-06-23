@@ -40,13 +40,14 @@ function loadTable()
 
 	// get all states
 	var ok = "";
-	if($("#ok").prop("checked") == true){ ok = "on"; }
 	var warning = "";
-	if($("#warning").prop("checked") == true){ warning = "on"; }
 	var critical = "";
-	if($("#critical").prop("checked") == true){ critical = "on"; }
 	var unknown = "";
-	if($("#unknown").prop("checked") == true){ unknown = "on"; }
+	var selected_states = $("#filter-state").val();
+	if( $.inArray("ok", selected_states) >= 0 ){ ok = "on" }
+	if( $.inArray("warning", selected_states) >= 0 ){ warning = "on" }
+	if( $.inArray("critical", selected_states) >= 0 ){ critical = "on" }
+	if( $.inArray("unknown", selected_states) >= 0 ){ unknown = "on" }
 	
 	$.ajax({
 		url: "ajax.php",
@@ -162,17 +163,46 @@ $(document).ready(function(){
 		$('#search').focus();
 	});
 
+	$("#filter-selection").on('change', function(){
+		var filter_selection = $(this).val();
+		$.ajax({
+			url: 'ged_actions.php',
+			data: {
+				action: 'changeGedFilter',
+				filter_name: filter_selection
+			},
+			success: function(response){
+				console.log(response);
+			}
+		});
+	});
+
+	var col_nbr = $("#events-table thead tr th").length;
+	alert(col_nbr);
+
 	$(document).on('click', "#events-table tbody tr", function(){
 		if($(this).find("td:first").hasClass("dataTables_empty") == false){
 			if($(this).hasClass("active")){
-				$(this).removeClass("active");
-				$(this).find("td input[type='checkbox']").prop("checked", false);
+				if($(this).next().hasClass("child") == false){
+					$(this).removeClass("active");
+					$(this).find("td input[type='checkbox']").prop("checked", false);
+				}
 			} else {
 				$(this).addClass("active");
 				$(this).find("td input[type='checkbox']").prop("checked", true);
 			}
 		}
 	});
+
+	$("#events-table tbody tr").on('change', function(){
+		console.log("ca change !!!!");
+	});
+
+	/*$(window).bind('resize', function(){
+		$("#events-table tbody tr").each(function(index){
+			console.log()
+		});
+	});*/
 
 	// ajax when we submit filters form
 	$("#events-filter").on("submit", function(event){

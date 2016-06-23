@@ -152,7 +152,7 @@ function createWhereClause($owner, $filter, $search, $daterange, $ok, $warning, 
 		$where_clause .= " AND state IN ($states_list)";
 	}
 
-	$where_clause .= " LIMIT 500";
+	$where_clause .= " ORDER BY o_sec ASC LIMIT 500";
 	return $where_clause;
 }
 
@@ -433,6 +433,35 @@ function delete($selected_events, $queue)
 
 		shell_exec($path_ged_bin." ".$ged_command);
 		logging("ged_update",$ged_command);
+	}
+}
+
+// Open Xml function
+function openXml($file=false)
+{
+	$dom = new DOMDocument("1.0","UTF-8");
+	$dom->preserveWhiteSpace = false;
+	$dom->formatOutput = true;
+	if($file)
+		$dom->load($file);
+	return $dom;
+}
+
+function changeGedFilter($filter_name)
+{
+	$file="../../cache/".$_COOKIE["user_name"]."-ged.xml";
+
+	if(file_exists($file)){
+		$xmlfilters = new DOMDocument("1.0","UTF-8");
+		$xmlfilters->load($file);
+
+		$root = $xmlfilters->getElementsByTagName("ged")->item(0);
+		$root->removeChild($root->getElementsByTagName('default')->item(0));
+		$default = $xmlfilters->createElement("default");
+		$default = $root->appendChild($default);
+		$default = $root->getElementsByTagName("default")->item(0);
+		$default->appendChild($xmlfilters->createTextNode($filter_name));
+		$xmlfilters->save($file);
 	}
 }
 
