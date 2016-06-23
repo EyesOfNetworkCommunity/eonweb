@@ -97,6 +97,17 @@ if(file_exists($file)){
 				<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
 					<?php echo getLabel("label.ged_sorter"); ?>
 				</a>
+				<?php
+				echo getLabel("label.ged_sorter");
+				?>
+				<?php
+				if($default == ""){
+					$link = '<a id="filter-link" href="filters.php">'.getLabel("label.none").'</a>';
+				} else {
+					$link = '<a id="filter-link" href="filters.php?filter='.$default.'">'.$default.'</a>';
+				}
+				?>
+				<span id="filter-info">(<?php echo getLabel("label.using_filter"); ?> : <?php echo $link ?>)</span>
 			</h4>
 		</div>
 		<div id="collapseOne" class="panel-collapse collapse out" role="tabpanel" aria-labelledby="headingOne">
@@ -122,9 +133,9 @@ if(file_exists($file)){
 								<div class="form-group col-md-6">
 									<label><?php echo getLabel("label.owner") ?></label>
 									<select class="form-control focus-to-search" id="owner" name="owner">
-											<option><?php echo getLabel("label.all"); ?></option>
-											<option <?php if(isset($_GET["own"]) && $_GET["own"] == "yes"){ echo "selected='selected'";} ?>><?php echo getLabel("label.owned"); ?></option>
-											<option <?php if(isset($_GET["own"]) && $_GET["own"] == "no"){ echo "selected='selected'";} ?>><?php echo getLabel("label.not_owned"); ?></option>
+										<option><?php echo getLabel("label.all"); ?></option>
+										<option <?php if(isset($_GET["own"]) && $_GET["own"] == "yes"){ echo "selected='selected'";} ?>><?php echo getLabel("label.owned"); ?></option>
+										<option <?php if(isset($_GET["own"]) && $_GET["own"] == "no"){ echo "selected='selected'";} ?>><?php echo getLabel("label.not_owned"); ?></option>
 									</select>
 								</div>
 							</div>
@@ -182,29 +193,29 @@ if(file_exists($file)){
 								<div class="form-group col-md-4">
 									<label><?php echo getLabel("label.ack_time") ?></label></label>
 									<select class="form-control focus-to-search" id="duration" name="duration">
-											<option value=""><?php echo getLabel("label.ack_time") ?></option>
-											<option value="300">>=5min</option>
-											<option value="600">>=10min</option>
-											<option value="1200">>=20min</option>
-											<option value="3600">>=1h</option>
+										<option value=""><?php echo getLabel("label.ack_time") ?></option>
+										<option value="300">>=5min</option>
+										<option value="600">>=10min</option>
+										<option value="1200">>=20min</option>
+										<option value="3600">>=1h</option>
 									</select>
 								</div>
 								<?php } else { ?>
 								<div class="form-group col-md-4">
 									<label><?php echo getLabel("label.o_time") ?></label>
 									<select class="form-control focus-to-search" id="time" name="duration">
-											<?php
-											$time = false;
-											if(isset($_GET["time"])){
-												$time = $_GET["time"];
-											}
-											?>
-											<option value=""><?php echo getLabel("label.all") ?></option>
-											<option <?php if($time && $time == "0-5m"){echo "selected";} ?> value="0-5m">0 - 5min</option>
-											<option <?php if($time && $time == "5-15m"){echo "selected";} ?> value="5-15m">5 - 15min</option>
-											<option <?php if($time && $time == "15-30m"){echo "selected";} ?> value="15-30m">15 - 30min</option>
-											<option <?php if($time && $time == "30m-1h"){echo "selected";} ?> value="30m-1h">30min - 1h</option>
-											<option <?php if($time && $time == "more"){echo "selected";} ?> value="more"><?php echo getLabel("label.more"); ?></option>
+										<?php
+										$time = false;
+										if(isset($_GET["time"])){
+											$time = $_GET["time"];
+										}
+										?>
+										<option value=""><?php echo getLabel("label.all") ?></option>
+										<option <?php if($time && $time == "0-5m"){echo "selected";} ?> value="0-5m">0 - 5min</option>
+										<option <?php if($time && $time == "5-15m"){echo "selected";} ?> value="5-15m">5 - 15min</option>
+										<option <?php if($time && $time == "15-30m"){echo "selected";} ?> value="15-30m">15 - 30min</option>
+										<option <?php if($time && $time == "30m-1h"){echo "selected";} ?> value="30m-1h">30min - 1h</option>
+										<option <?php if($time && $time == "more"){echo "selected";} ?> value="more"><?php echo getLabel("label.more"); ?></option>
 									</select>
 								</div>
 								<?php } ?>

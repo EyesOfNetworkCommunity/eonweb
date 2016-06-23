@@ -48,6 +48,8 @@
 	"calendar.thursday": "Th",
 	"calendar.tuesday": "Tu",
 	"calendar.wednesday": "We",
+	"label.using_filter": "using filter",
+	"label.none": "none",
 	"label.events_views": "Events views",
 	"label.users_views": "Users views",
 	"label.act_event": "Active events",
