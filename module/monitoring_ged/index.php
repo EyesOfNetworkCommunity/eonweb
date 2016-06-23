@@ -50,6 +50,7 @@ if(isset($_GET["status"])){
 $file="../../cache/".$_COOKIE["user_name"]."-ged.xml";
 
 $filters_list = [];
+$default = "";
 if(file_exists($file)){
 	$xmlfilters = new DOMDocument("1.0","UTF-8");
 	$xmlfilters->load($file);
@@ -98,13 +99,19 @@ if(file_exists($file)){
 					<?php echo getLabel("label.ged_sorter"); ?>
 				</a>
 				<?php
-				echo getLabel("label.ged_sorter");
-				?>
-				<?php
 				if($default == ""){
-					$link = '<a id="filter-link" href="filters.php">'.getLabel("label.none").'</a>';
+					if($_COOKIE["user_limitation"] == 0){
+						$link = '<a id="filter-link" href="../module_filters/index.php">'.getLabel("label.none").'</a>';
+					} else {
+						$link = getLabel("label.none");
+					}
 				} else {
-					$link = '<a id="filter-link" href="filters.php?filter='.$default.'">'.$default.'</a>';
+					if($_COOKIE["user_limitation"] == 0){
+						$link = '<a id="filter-link" href="../module_filters/index.php?filter='.$default.'">'.$default.'</a>';
+					} else {
+						$link = $default;
+					}
+					
 				}
 				?>
 				<span id="filter-info">(<?php echo getLabel("label.using_filter"); ?> : <?php echo $link ?>)</span>
@@ -172,11 +179,12 @@ if(file_exists($file)){
 									?>
 								</select>
 							</div>
+							<?php if($_COOKIE["user_limitation"] == 0){ ?>
 							<div class="form-group">
 								<label><?php echo getLabel("label.ged_filter") ?></label></label>
 								<select id="filter-selection" class="selectpicker form-control">
 									<option value=""><?php echo getLabel("label.no_filter") ?></option>
-									<?php 
+									<?php
 									foreach($filters_list as $key => $val){
 										$selected = "";
 										if($val == $default){ $selected = "selected"; }
@@ -185,6 +193,7 @@ if(file_exists($file)){
 									?>
 								</select>
 							</div>
+							<?php } ?>
 						</div>
 						
 						<div class="col-md-12">

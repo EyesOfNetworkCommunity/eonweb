@@ -222,7 +222,19 @@ function getEventStateNbr()
 			foreach($filters as $filter)
 			{
 				$name = $filter->getAttribute('name');
-				$text = $filter->nodeValue;
+				$filter_value = $filter->nodeValue;
+				if($name == "host"){ $name = "equipment"; }
+				if($name == "service_group"){ $name = "servicegroups"; }
+
+				//advanced search value (with *)
+				$text = "";
+				if( substr($filter_value, 0, 1) === '*' ){
+					$text .= "%";
+				}
+				$text .= trim($filter_value, '*');
+				if ( substr($filter_value, -1) === '*' ) {
+					$text .= "%";
+				}
 				
 				if($i < $filters->length){
 					switch($name){
@@ -318,29 +330,41 @@ function getNumberEventByStateAndTime()
 		foreach($filters as $filter)
 		{
 			$name = $filter->getAttribute('name');
-			$text = $filter->nodeValue;
+			$filter_value = $filter->nodeValue;
+			if($name == "host"){ $name = "equipment"; }
+			if($name == "service_group"){ $name = "servicegroups"; }
+
+			//advanced search value (with *)
+			$text = "";
+			if( substr($filter_value, 0, 1) === '*' ){
+				$text .= "%";
+			}
+			$text .= trim($filter_value, '*');
+			if ( substr($filter_value, -1) === '*' ) {
+				$text .= "%";
+			}
 			
 			// construct the WHERE clause
 			if($i < $filters->length){
 				switch($name){
-					case 'not_equipment': $name = "equipment"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-					case 'not_service': $name = "service"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-					case 'not_description': $name = "description"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-					case 'not_hostgroups': $name = "hostgroups"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-					case 'not_servicegroups': $name = "servicegroups"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-					case 'not_owner': $name = "owner"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-					default: $milieu_requete .= $name . " LIKE '%".$text."%' AND ";
+					case 'not_equipment': $name = "equipment"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
+					case 'not_service': $name = "service"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
+					case 'not_description': $name = "description"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
+					case 'not_hostgroups': $name = "hostgroups"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
+					case 'not_servicegroups': $name = "servicegroups"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
+					case 'not_owner': $name = "owner"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
+					default: $milieu_requete .= $name . " LIKE '".$text."' AND ";
 				}
 			}
 			else{
 				switch($name){
-					case 'not_equipment': $name = "equipment"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND"; break;
-					case 'not_service': $name = "service"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND"; break;
-					case 'not_description': $name = "description"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND"; break;
-					case 'not_hostgroups': $name = "hostgroups"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND"; break;
-					case 'not_servicegroups': $name = "servicegroups"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND"; break;
-					case 'not_owner': $name = "owner"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND"; break;
-					default: $milieu_requete .= $name . " LIKE '%".$text."%' AND";
+					case 'not_equipment': $name = "equipment"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
+					case 'not_service': $name = "service"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
+					case 'not_description': $name = "description"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
+					case 'not_hostgroups': $name = "hostgroups"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
+					case 'not_servicegroups': $name = "servicegroups"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
+					case 'not_owner': $name = "owner"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
+					default: $milieu_requete .= $name . " LIKE '".$text."' AND";
 				}
 			}
 			$i++;
@@ -391,7 +415,7 @@ function getNumberEventByStateAndTime()
 		UNION ALL SELECT COUNT(*) FROM ".$row[0]."_queue_active WHERE ".$milieu_requete." state IN (1,2,3) AND owner!='' AND o_sec <= ". $one_hour;
 
 		$query_result = sqlrequest($database_ged, $sql);
-		
+		//var_dump($sql);
 		if($cpt == 0)
 		{
 			for($i = 0; $i < $query_result->num_rows; $i++)

@@ -32,7 +32,8 @@ include("../../side.php");
 			<h1 class="page-header"><?php echo getLabel("label.monitoring_view.title"); ?></h1>
 		</div>
 	</div>
-
+	
+	<?php if($_COOKIE["user_limitation"] == 0){ ?>
 	<div class="row">
 		<div class="col-lg-6">
 			<div class="panel panel-default">
@@ -61,6 +62,7 @@ include("../../side.php");
 			</div>
 		</div>
 	</div>
+	<?php } ?>
 
 	<div class="row">
 		<div class="col-lg-6">

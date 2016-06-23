@@ -174,10 +174,10 @@ $(document).ready(function(){
 			success: function(response){
 				if(filter_selection == ""){
 					$("#filter-link").html("none");
-					$("#filter-link").attr("href", "filters.php");
+					$("#filter-link").attr("href", "/module/module_filters/index.php");
 				} else {
 					$("#filter-link").html(filter_selection);
-					$("#filter-link").attr("href", "filters.php?filter="+filter_selection);
+					$("#filter-link").attr("href", "/module/module_filters/index.php?filter="+filter_selection);
 				}
 			}
 		});

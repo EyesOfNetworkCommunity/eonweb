@@ -114,4 +114,8 @@ function check_reload() {
 		}
 	});
 }
-check_reload();
+//console.log($("#sideMenuSearch").length);
+if($("#sideMenuSearch").length > 0){
+	check_reload();
+}
+
