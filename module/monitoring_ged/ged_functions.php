@@ -380,9 +380,6 @@ function acknowledge($selected_events, $queue)
 
 		shell_exec($path_ged_bin." ".$ged_command);
 		logging("ged_update",$ged_command);
-		echo "<pre>";
-		var_dump($ged_command);
-		echo "</pre>";
 		delete($event_to_delete, $queue);
 	}
 }
