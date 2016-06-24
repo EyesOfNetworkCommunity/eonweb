@@ -49,7 +49,7 @@ if(file_exists($file)){
 		<table id="events-table" class="table table-striped datatable-eonweb-ajax table-condensed table-hover">
 			<thead>
 				<tr>
-					<th class="col-md-1">Select</th>
+					<th class="col-md-1">State</th>
 					<?php
 					foreach ($array_ged_packets as $key => $value) {
 						if($value["col"] == true && $key != "state"){

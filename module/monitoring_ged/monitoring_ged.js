@@ -154,10 +154,16 @@ var event_state = "";
 var global_action = "";
 var timer;
 $(document).ready(function(){
-	startTimer();
+	var queue = $("#queue").val();
+
+	if(queue == "active"){
+		loadTable();
+		startTimer();
+	}
+	
 	$('#ged-modal').on('hidden.bs.modal', function (e) {
 		startTimer();
-	})
+	});
 
 	$(".focus-to-search").on('change', function(){
 		$('#search').focus();
@@ -185,33 +191,18 @@ $(document).ready(function(){
 
 	$(document).on('click', "#events-table tbody tr", function(){
 		if($(this).find("td:first").hasClass("dataTables_empty") == false){
+			if($(this).hasClass("child")){
+				return;
+			}
 			if($(this).hasClass("active")){
 				if($(this).next().hasClass("child") == false){
 					$(this).removeClass("active");
-					$(this).find("td input[type='checkbox']").prop("checked", false);
 				}
 			} else {
 				$(this).addClass("active");
-				$(this).find("td input[type='checkbox']").prop("checked", true);
 			}
 		}
 	});
-
-	//var col_nbr = $("#events-table thead tr th").length;
-	/*$(window).bind('resize', function(){
-		var actual_col_nbr = $("#events-table thead tr th").length;
-		if(actual_col_nbr < col_nbr){
-			$("#events-table tbody tr").each(function(){
-				console.log($(this));
-				if($(this).next().hasClass('child') == true){
-					console.log($(this).hasClass('active') == false);
-					if($(this).hasClass('active') == false){
-						$(this).next().hide();
-					}
-				}
-			});
-		}
-	});*/
 
 	// ajax when we submit filters form
 	$("#events-filter").on("submit", function(event){
@@ -232,11 +223,12 @@ $(document).ready(function(){
 
 		// empty the event selected array before filling it
 		selected_events = [];
-		$("input:checkbox[name=events_selected]:checked").each(function(){
-			var event_type = $(this).parent().parent().attr("name");
-			var parent_row = $(this).parent().parent();
+		$("#events-table tbody tr.active").each(function(){
+			var event_type = $(this).attr("name");
+			var parent_row = $(this);
 			var host_name = parent_row.find("td.host a").html();
 			var service_name = parent_row.find("td.service a").html();
+			var event_id = parent_row.find("td:first input").val();
 			
 			if(service_name === undefined){
 				service_name = parent_row.next().find("td ul li:first span.dtr-data a").html();
@@ -246,7 +238,7 @@ $(document).ready(function(){
 			else if(parent_row.hasClass("warning")){ event_state = "warning"; }
 			else if(parent_row.hasClass("danger")){ event_state = "danger"; }
 			else if(parent_row.hasClass("info")){ event_state = "info"; }
-			selected_events.push($(this).val()+":"+event_type+":"+event_state+":"+host_name+":"+service_name);
+			selected_events.push(event_id+":"+event_type+":"+event_state+":"+host_name+":"+service_name);
 		});
 
 		// stop here if no event selected
@@ -278,7 +270,7 @@ $(document).ready(function(){
 			},
 			beforeSend: function(){
 				$("#modal-nav, #edit-btns, #ack-btns, #event-validation").hide();
-				console.log(action);
+				
 				// configure modal footer according to action selected
 				switch(action){
 					case "0":
@@ -363,9 +355,7 @@ $(document).ready(function(){
 	});
 
 	$(document).on("click", "#ack-event, #ack-all-event", function(){
-		console.log(this.id);
 		global_action = this.id;
-		console.log("test : "+global_action);
 		$(".confirmation-modal-title").html(dictionnary["action.ack"]);
 		$("#confirmation-modal").modal();
 	});
@@ -373,7 +363,6 @@ $(document).ready(function(){
 	$(document).on("click", "#confirmation-event-validation", function(){
 		var queue = $("#queue").val();
 
-		console.log(global_action);
 		var events = [];
 		if(global_action == "ack-event"){
 			events.push(selected_events[event_index]);
@@ -390,7 +379,6 @@ $(document).ready(function(){
 				selected_events: events
 			},
 			success: function(response){
-				console.log(response);
 				$("#confirmation-modal").modal('hide');
 				$("#ged-modal").modal('hide');
 				loadTable();
@@ -410,8 +398,6 @@ $(document).ready(function(){
 			global_action = $("#ged-action").val();
 		}
 
-		console.log(global_action);
-
 		$.ajax({
 			url: "ged_actions.php",
 			data: {
@@ -422,7 +408,7 @@ $(document).ready(function(){
 			},
 			success: function(response){
 				global_action = "";
-				console.log();
+
 				if(response.length > 0){
 					$("#messages").html(response);
 					$("#result").empty();
