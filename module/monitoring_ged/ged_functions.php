@@ -22,7 +22,6 @@
 
 include("../../include/config.php");
 include("../../include/arrays.php");
-//require_once("../../include/function.php"); 
 
 function getEventState($event)
 {
@@ -51,7 +50,7 @@ function getClassRow($event_state)
 function createTableRow($event, $event_state, $queue)
 {
 	global $dateformat;
-
+	
 	foreach ($event as $key => $value) {
 		$class = "";
 
@@ -78,7 +77,7 @@ function createTableRow($event, $event_state, $queue)
 			}
 		}
 		if($key == "id"){
-			$value = "<input type='checkbox' name='events_selected' value='".$event->id."'>";
+			$value = "<input type='hidden' value='".$value."'>";
 			$class = 'class="text-center"';
 			if($event->comments != ""){
 				$value = $value.' <i class="fa fa-comment"></i>';
@@ -152,7 +151,7 @@ function createWhereClause($owner, $filter, $search, $daterange, $ok, $warning, 
 		$where_clause .= " AND state IN ($states_list)";
 	}
 
-	$where_clause .= " ORDER BY o_sec ASC LIMIT 500";
+	$where_clause .= " ORDER BY o_sec DESC LIMIT 500";
 	return $where_clause;
 }
 
