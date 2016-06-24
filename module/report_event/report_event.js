@@ -286,7 +286,6 @@ function drawSlaPieChart(div_id, datas)
 function drawSlaBarChart(div_id, datas)
 {
 	var categories = barChart_history_categories;
-	// console.log(datas);
 	$('#'+div_id).highcharts({
 		chart: {
 			type: 'column',
