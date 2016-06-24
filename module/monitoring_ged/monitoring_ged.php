@@ -43,8 +43,6 @@
 		var filter = "<?php echo (isset($_GET["filter"])) ? $_GET["filter"] : false ?>";
 		$("#filter_choice option[name='"+filter+"']").attr("selected","yes");
 		updateFields("<?php echo isset($file_url) ? $file_url : false ?>");
-		console.log("<?php echo (isset($_GET["filter"])) ? $_GET["filter"] : false ?>");
-		console.log("<?php echo isset($file_url) ? $file_url : false ?>");
     });
 	// add form filter definition
 	function addFormField() {
