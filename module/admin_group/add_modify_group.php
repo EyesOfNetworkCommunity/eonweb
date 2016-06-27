@@ -143,9 +143,9 @@ function update_group($count_menu_item,$group_id,$group_name,$group_descr,$group
 		
 		// get the DN of the ldap group !
 		$group_dn = "";
-		$group_ldap=sqlrequest("$database_eonweb","SELECT * from ldap_groups_extended where group_name='$group_name';");
+		$group_ldap=sqlrequest("$database_eonweb","SELECT dn from ldap_groups_extended where group_name='$group_name';");
 		if(mysqli_num_rows($group_ldap) > 0){
-			$group_dn = mysqli_result($group_ldap, "dn");
+			$group_dn = mysqli_result($group_ldap, 0);
 		}
 		if($group_dn == ""){
 			$group_type = 0;
@@ -186,9 +186,9 @@ function insert_group($group_name,$group_descr,$group_type,$ldap_group_name)
 	{
 		// get the DN of the ldap group !
 		$group_dn = "";
-		$group_ldap=sqlrequest("$database_eonweb","SELECT * from ldap_groups_extended where group_name='$group_name';");
+		$group_ldap=sqlrequest("$database_eonweb","SELECT dn from ldap_groups_extended where group_name='$group_name';");
 		if(mysqli_num_rows($group_ldap) > 0){
-			$group_dn = mysqli_result($group_ldap, "dn");
+			$group_dn = mysqli_result($group_ldap,0);
 		}
 		if($group_dn == ""){
 			$group_type = 0;
