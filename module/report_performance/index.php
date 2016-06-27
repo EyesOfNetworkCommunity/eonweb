@@ -67,7 +67,7 @@ include("../../side.php");
 				</div>
 			</div>
 		</div>
-	<form>
+	</form>
 	
 	<div id="response"></div>
 </div>
