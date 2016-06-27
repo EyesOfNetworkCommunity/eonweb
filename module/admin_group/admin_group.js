@@ -163,7 +163,6 @@ function getSelectedGroups()
 {
 	var grp_names = [];
 	$("input:checkbox:checked").each(function(index){
-		//console.log($(this));
 		var grp_name = $(this).parent().parent().find('td').find('a').html();
 		grp_names.push(grp_name);
 	});
