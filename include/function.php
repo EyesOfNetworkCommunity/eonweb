@@ -226,6 +226,7 @@ function get_host_listbox_from_cacti(){
 	
 	global $database_cacti;
 	
+	$ref = "";
 	if( isset($_GET['host']) ){
 		$ref = $_GET['host'];
 	}
