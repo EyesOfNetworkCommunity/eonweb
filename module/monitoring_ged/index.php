@@ -149,7 +149,7 @@ if(file_exists($file)){
 							
 							<div class="row">
 								<div class="form-group col-md-6">
-									<label><?php echo getLabel("label.filter") ?></label></label>
+									<label><?php echo getLabel("label.filter") ?></label>
 									<select class="form-control focus-to-search" id="filter" name="field">
 									<?php
 									foreach($array_ged_filters as $key => $value){
@@ -160,7 +160,7 @@ if(file_exists($file)){
 								</div>
 								
 								<div class="form-group col-md-6">
-									<label><?php echo getLabel("label.date_range") ?></label></label>
+									<label><?php echo getLabel("label.date_range") ?></label>
 									<input id="daterange" name="datepicker" class="daterangepicker-eonweb form-control" type="text" autocomplete="off" />
 								</div>
 							</div>
@@ -168,7 +168,7 @@ if(file_exists($file)){
 						
 						<div class="col-md-4">
 							<div class="form-group">
-								<label><?php echo getLabel("label.state") ?></label></label>
+								<label><?php echo getLabel("label.state") ?></label>
 								<select id="filter-state" class="selectpicker form-control" multiple>
 									<?php 
 									foreach($array_ged_states as $col => $val){
@@ -181,7 +181,7 @@ if(file_exists($file)){
 							</div>
 							<?php if($_COOKIE["user_limitation"] == 0){ ?>
 							<div class="form-group">
-								<label><?php echo getLabel("label.ged_filter") ?></label></label>
+								<label><?php echo getLabel("label.ged_filter") ?></label>
 								<select id="filter-selection" class="selectpicker form-control">
 									<option value=""><?php echo getLabel("label.no_filter") ?></option>
 									<?php
@@ -200,7 +200,7 @@ if(file_exists($file)){
 							<div class="row">
 								<?php if($queue=="history") { ?>
 								<div class="form-group col-md-4">
-									<label><?php echo getLabel("label.ack_time") ?></label></label>
+									<label><?php echo getLabel("label.ack_time") ?></label>
 									<select class="form-control focus-to-search" id="duration" name="duration">
 										<option value=""><?php echo getLabel("label.ack_time") ?></option>
 										<option value="300">>=5min</option>
@@ -229,7 +229,7 @@ if(file_exists($file)){
 								</div>
 								<?php } ?>
 								<div class="form-group col-md-4">
-									<label><?php echo getLabel("action.search") ?></label></label>
+									<label><?php echo getLabel("action.search") ?></label>
 									<div class="input-group">
 										<input id="search" name="search" class="form-control" placeholder="<?php echo getLabel("label.input.placeholder.search"); ?>" type="text" autocomplete="off" onFocus='$(this).autocomplete({source:<?php echo get_host_list_from_nagios();?>})' />
 										<span class="input-group-btn">

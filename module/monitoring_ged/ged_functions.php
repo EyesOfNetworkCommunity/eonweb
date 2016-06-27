@@ -83,7 +83,7 @@ function createTableRow($event, $event_state, $queue)
 				$value .= ' <i class="glyphicon glyphicon-comment"></i>';
 			}
 			if($event->owner != ""){
-				$value .= ' <i class="glyphicon glyphicon-floppy-saved"></i>';
+				$value .= ' <i class="glyphicon glyphicon-floppy-disk"></i>';
 			}
 		}
 
