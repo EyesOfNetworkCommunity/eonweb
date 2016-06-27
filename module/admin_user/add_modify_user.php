@@ -317,7 +317,7 @@ include("../../side.php");
 	<form id="form_user" action='./add_modify_user.php' method='POST' name='form_user'>
 		<input type='hidden' name='user_id' value='<?php echo $user_id?>'>
 		<div class="row form-group">
-			<label class="col-md-3">User Name</label>
+			<label class="col-md-3"><?php echo getLabel("label.admin_user.user_name") ?></label>
 			<div class="col-md-9">
 				<input class="form-control" type='text' name='user_name' value='<?php echo $user_name?>'>
 				<input type='hidden' name='user_name_old' value='<?php echo $user_name?>'>
@@ -326,7 +326,7 @@ include("../../side.php");
 			
 		<?php if($user_id!="1"){ ?>
 			<div class="row form-group">
-				<label class="col-md-3">User Limited</label>
+				<label class="col-md-3"><?php echo getLabel("label.admin_user.user_limit"); ?></label>
 				<div class="col-md-9">
 					<?php
 						if($user_limitation=="1") $checked="checked='yes'";
@@ -337,10 +337,10 @@ include("../../side.php");
 			</div>
 			
 			<div class="row form-group">
-				<label class="col-md-3">Ldap User</label>
+				<label class="col-md-3"><?php echo getLabel("label.admin_user.user_ldap"); ?></label>
 				<div class="col-md-9">
 					<?php
-						if($user_type=="1") $checked="checked='yes'";
+						if($user_type=="1") $checked="checked='checked'";
 						else $checked="";
 						echo "<input type='checkbox' class='checkbox' name='user_type' value='1' $checked onclick='disable()'>";
 					?>
@@ -348,7 +348,7 @@ include("../../side.php");
 			</div>
 			
 			<div class="row form-group">
-				<label class="col-md-3">Ldap Login</label>
+				<label class="col-md-3"><?php echo getLabel("label.admin_user.ldap_log"); ?></label>
 				<div class="col-md-9">
 					<?php
 						echo "<input class='form-control' id='user_location' name='user_location' type='text' value='".htmlspecialchars($user_location, ENT_QUOTES)."'>";
@@ -363,28 +363,28 @@ include("../../side.php");
 		}
 		?>
 		<div class="row form-group">
-			<label class="col-md-3">User Mail</label>
+			<label class="col-md-3"><?php echo getLabel("label.admin_user.user_mail"); ?></label>
 			<div class="col-md-9">
 				<input class="form-control" type='text' name='user_mail' value='<?php echo $user_mail?>'>
 			</div>
 		</div>
 
 		<div class="row form-group">
-			<label class="col-md-3">User Description</label>
+			<label class="col-md-3"><?php echo getLabel("label.admin_user.user_desc"); ?></label>
 			<div class="col-md-9">
 				<input class="form-control" type='text' name='user_descr' value='<?php echo $user_descr?>'>
 			</div>
 		</div>
 		
 		<div class="row form-group">
-			<label class="col-md-3">User Password</label>
+			<label class="col-md-3"><?php echo getLabel("label.admin_user.user_pwd"); ?></label>
 			<div class="col-md-9">
 				<input class="form-control" type='password' name='user_password1' value='<?php echo $user_password1?>'>
 			</div>
 		</div>
 		
 		<div class="row form-group">
-			<label class="col-md-3">User Password Confirmation</label>
+			<label class="col-md-3"><?php echo getLabel("label.admin_user.user_pwd2"); ?></label>
 			<div class="col-md-9">
 				<input class="form-control" type='password' name='user_password2' value='<?php echo $user_password2?>'>
 			</div>
@@ -392,7 +392,7 @@ include("../../side.php");
 		
 		<?php if($user_id!="1") { ?>
 		<div class="row form-group">
-			<label class="col-md-3">User Group</label>
+			<label class="col-md-3"><?php echo getLabel("label.admin_user.user_group"); ?></label>
 			<div class="col-md-9">
 				<select class="form-control" name='user_group' size=1>
 					<?php
@@ -410,12 +410,12 @@ include("../../side.php");
 		</div>
 
 		<div class="row form-group">
-			<label class="col-md-3">Nagvis User</label>
+			<label class="col-md-3"><?php echo getLabel("label.admin_user.user_nagvis"); ?></label>
 			<div class="col-md-9">
 				<div class="input-group col-md-5">
 					<span class="input-group-addon">
 		                <?php
-							if(isset($nagvis_user) && $nagvis_user=="yes") $checked="checked='yes'";
+							if(isset($nagvis_user) && $nagvis_user=="yes") $checked="checked='checked'";
 		                    else $checked="";
 		                    echo "<input type='checkbox' class='checkbox' name='create_user_in_nagvis' value='yes' $checked>";
 						?>
@@ -438,7 +438,7 @@ include("../../side.php");
 		</div>
 
 		<div class="row form-group">
-			<label class="col-md-3">Cacti User</label>
+			<label class="col-md-3"><?php echo getLabel("label.admin_user.user_cacti"); ?></label>
 			<div class="col-md-9">
 				<?php
 					if(isset($cacti_user) && $cacti_user == "yes") $checked = "checked='checked'";
