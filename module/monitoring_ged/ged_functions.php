@@ -80,7 +80,10 @@ function createTableRow($event, $event_state, $queue)
 			$value = "<input type='hidden' value='".$value."'>";
 			$class = 'class="text-center"';
 			if($event->comments != ""){
-				$value = $value.' <i class="fa fa-comment"></i>';
+				$value .= ' <i class="glyphicon glyphicon-comment"></i>';
+			}
+			if($event->owner != ""){
+				$value .= ' <i class="glyphicon glyphicon-floppy-saved"></i>';
 			}
 		}
 

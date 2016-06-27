@@ -44,12 +44,12 @@ if(file_exists($file)){
 
 ?>
 
-<form id="ged-table" method="POST" onsubmit="return false;">
+<form id="ged-table" method="POST" onsubmit="return false;" class="form-inline">
 	<div class="dataTable_wrapper">
 		<table id="events-table" class="table table-striped datatable-eonweb-ajax table-condensed table-hover">
 			<thead>
 				<tr>
-					<th class="col-md-1">State</th>
+					<th class="col-md-1"><?php echo getLabel("label.state") ?></th>
 					<?php
 					foreach ($array_ged_packets as $key => $value) {
 						if($value["col"] == true && $key != "state"){
@@ -61,9 +61,15 @@ if(file_exists($file)){
 			</thead>
 			<tbody>
 				<?php
-					$gedsql_result1=sqlrequest($database_ged,"SELECT pkt_type_id,pkt_type_name FROM pkt_type WHERE pkt_type_id!='0' AND pkt_type_id<'100';");
+					if($_GET["type"] == 0){
+						$ged_where = "WHERE pkt_type_id!='0'";
+					} else {
+						$ged_where = "WHERE pkt_type_id='".$_GET["type"]."'";
+					}
+					$gedsql_result1=sqlrequest($database_ged,"SELECT pkt_type_id,pkt_type_name FROM pkt_type $ged_where AND pkt_type_id<'100';");
 					
 					while($ged_type = mysqli_fetch_assoc($gedsql_result1)){
+
 						// request for ged events according to queue and filters
 						$sql = createSelectClause($ged_type["pkt_type_name"], $queue);
 						
@@ -95,7 +101,7 @@ if(file_exists($file)){
 							}
 						}
 
-						if($ack_time != ""){ 
+						if($ack_time != ""){
 							$sql .= " AND a_sec - o_sec >= $ack_time";
 						}
 
@@ -146,25 +152,23 @@ if(file_exists($file)){
 		</table>
 	</div>
 
-	<div class="row">
-		<div class="form-group col-md-3">
-			<select id="ged-action" class="form-control" name="ged_actions">
-				<?php
-					if($queue == "active"){
-						$actions = $array_action_option;
-					} else {
-						$actions = $array_resolve_action_option;
-					}
-					foreach ($actions as $key => $value) {
-						echo "<option value=\"$key\">".getLabel("$value")."</option>";
-					}
-				?>
-			</select>
-		</div>
-		<div class="col-md-3">
-			<button id="exec-ged-action" class="btn btn-primary" type="submit" name="action" value="submit"><?php echo getLabel("action.submit"); ?></button>
-		</div>
+	<div class="form-group">
+		<select id="ged-action" class="form-control" name="ged_actions">
+			<?php
+				if($queue == "active"){
+					$actions = $array_action_option;
+				} else {
+					$actions = $array_resolve_action_option;
+				}
+				foreach ($actions as $key => $value) {
+					echo "<option value=\"$key\">".getLabel("$value")."</option>";
+				}
+			?>
+		</select>
 	</div>
+	<button id="exec-ged-action" class="btn btn-primary" type="submit" name="action" value="submit"><?php echo getLabel("action.submit"); ?></button>
+	<button id="select-all" class="btn btn-primary"><?php echo getLabel("action.select_all"); ?></button>
+	<button id="unselect-all" class="btn btn-primary hidden"><?php echo getLabel("action.unselect_all"); ?></button>
 </form>
 
 <script src="/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
@@ -187,6 +191,7 @@ if(file_exists($file)){
 			infoEmpty:      dictionnary['label.datatable.infoempty'],
 			infoFiltered:   dictionnary['label.datatable.infofiltered'],
 			zeroRecords: 	dictionnary['label.datatable.zerorecords']
-		}
+		},
+		aaSorting: []
 	});
 </script>

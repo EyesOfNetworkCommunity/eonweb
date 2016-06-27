@@ -140,9 +140,9 @@ if(file_exists($file)){
 								<div class="form-group col-md-6">
 									<label><?php echo getLabel("label.owner") ?></label>
 									<select class="form-control focus-to-search" id="owner" name="owner">
-										<option><?php echo getLabel("label.all"); ?></option>
-										<option <?php if(isset($_GET["own"]) && $_GET["own"] == "yes"){ echo "selected='selected'";} ?>><?php echo getLabel("label.owned"); ?></option>
-										<option <?php if(isset($_GET["own"]) && $_GET["own"] == "no"){ echo "selected='selected'";} ?>><?php echo getLabel("label.not_owned"); ?></option>
+										<option value=""><?php echo getLabel("label.all"); ?></option>
+										<option value="owned" <?php if(isset($_GET["own"]) && $_GET["own"] == "yes"){ echo "selected='selected'";} ?>><?php echo getLabel("label.owned"); ?></option>
+										<option value="not owned" <?php if(isset($_GET["own"]) && $_GET["own"] == "no"){ echo "selected='selected'";} ?>><?php echo getLabel("label.not_owned"); ?></option>
 									</select>
 								</div>
 							</div>

@@ -204,6 +204,31 @@ $(document).ready(function(){
 		}
 	});
 
+	// select all events in one shot
+	$(document).on('click', "#select-all, #unselect-all", function(event){
+		event.preventDefault();
+		if($(this).attr('id') == "select-all"){
+			$("#events-table tbody tr").each(function(){
+				if($(this).hasClass("active") == false && $(this).hasClass("child") == false){
+					$(this).addClass("active");
+				}
+			});
+			// display the right button
+			$("#select-all").addClass("hidden");
+			$("#unselect-all").removeClass("hidden");
+		} else if($(this).attr('id') == "unselect-all"){
+			$("#events-table tbody tr").each(function(){
+				if($(this).hasClass("active") == true && $(this).hasClass("child") == false){
+					$(this).removeClass("active");
+				}
+			});
+			// display the right button
+			$("#unselect-all").addClass("hidden");
+			$("#select-all").removeClass("hidden");
+		}
+		
+	});
+
 	// ajax when we submit filters form
 	$("#events-filter").on("submit", function(event){
 		// cancel form's submission
@@ -350,6 +375,8 @@ $(document).ready(function(){
 			},
 			success: function(response){
 				$(".modal-body #event-message").html(response);
+				$("#ged-modal").modal('hide');
+				loadTable();
 			}
 		});
 	});
