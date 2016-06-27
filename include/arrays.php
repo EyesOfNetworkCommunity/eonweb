@@ -92,7 +92,7 @@ $array_ged_filters = array (
 	"service" 		=> "service",
 	"description" 	=> "description",
 	"hostgroups" 	=> "hostgroup",
-	"servicegroups" => "service_group",
+	"servicegroups" => "servicegroup",
 	"owner" 		=> "owner",
 	/* "s" */
 );
