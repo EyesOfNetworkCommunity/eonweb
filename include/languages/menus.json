@@ -165,7 +165,7 @@
                 },
                 {
                     "name":"menu.link.tools",
-                    "url":"/module/tool_all/index.php",
+                    "url":"/module/tool_all/",
                     "target":"main"
                 }
             ],
@@ -258,7 +258,7 @@
                 },
                 {
                     "name":"menu.link.app",
-                    "url":"/module/admin_bp/index.php",
+                    "url":"/module/admin_bp/",
                     "target":"main"
                 },
                 {
@@ -278,12 +278,12 @@
                         },
                         {
                             "name":"menu.link.groups",
-                            "url":"/module/admin_group",
+                            "url":"/module/admin_group/",
                             "target":"main"
                         },
                         {
                             "name":"menu.link.users",
-                            "url":"/module/admin_user",
+                            "url":"/module/admin_user/",
                             "target":"main"
                         },
                         {
@@ -293,7 +293,7 @@
                         },
                         {
                             "name":"menu.link.logs",
-                            "url":"/module/admin_logs/index.php",
+                            "url":"/module/admin_logs/",
                             "target":"main"
                         }
                     ]
