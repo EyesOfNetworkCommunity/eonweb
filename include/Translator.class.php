@@ -65,6 +65,7 @@ class Translator
 		elseif(file_exists($path_tmp_custom)) { $file=$path_tmp_custom; }
 		
 		Translator::$dictionnary_content = file_get_contents($file);
+		
 		return Translator::$dictionnary_content;
 	}
 	 

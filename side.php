@@ -39,11 +39,14 @@ if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 		$ref_url = trim($ref_url, "/");
 		$ref_url_parts = explode("/", $ref_url);
 		$test_url = $ref_url_parts[0];
-
+		
 		// we test the module name in lower case (that is easier)
-		if($m::initFile($path_menus."-".$test_url,$path_menus_custom."-".$test_url)){
-			$navbar_menus = $m::createPHPDictionnary();
+		if(file_exists($path_menus."-".$test_url.".json")){
+			if($m::initFile($path_menus."-".$test_url,$path_menus_custom."-".$test_url)){
+				$navbar_menus = $m::createPHPDictionnary();
+			}
 		}
+		
 	}
 }
 
