@@ -1,25 +1,25 @@
 <?php
 
-$action = $_GET['action'];
-$bp_name = $_GET['bp_name'];
-$host_name = $_GET['host_name'];
-$service = $_GET['service'];
-$new_services = $_GET['new_services'];
+$action = isset($_GET['action']) ? $_GET['action'] : false;
+$bp_name = isset($_GET['bp_name']) ? $_GET['bp_name'] : false;
+$host_name = isset($_GET['host_name']) ? $_GET['host_name'] : false;
+$service = isset($_GET['service']) ? $_GET['service'] : false;
+$new_services = isset($_GET['new_services']) ? $_GET['new_services'] : false;
 
-$uniq_name = $_GET['uniq_name'];
-$process_name = $_GET['process_name'];
-$display = $_GET['display'];
-$url = $_GET['url'];
-$command = $_GET['command'];
-$type = $_GET['type'];
-$min_value = $_GET['min_value'];
+$uniq_name = isset($_GET['uniq_name']) ? $_GET['uniq_name'] : false;
+$process_name = isset($_GET['process_name']) ? $_GET['process_name'] : false;
+$display = isset($_GET['display']) ? $_GET['display'] : false;
+$url = isset($_GET['url']) ? $_GET['url'] : false;
+$command = isset($_GET['command']) ? $_GET['command'] : false;
+$type = isset($_GET['type']) ? $_GET['type'] : false;
+$min_value = isset($_GET['min_value']) ? $_GET['min_value'] : false;
 
 try {
-        $bdd = new PDO('mysql:host=localhost;dbname=nagiosbp', 'root', 'root66');
-    } catch(Exception $e) {
-		 echo "Connection failed: " . $e->getMessage();
-        exit('Impossible de se connecter à la base de données.');
-    }
+	$bdd = new PDO('mysql:host=localhost;dbname=nagiosbp', 'root', 'root66');
+} catch(Exception $e) {
+	echo "Connection failed: " . $e->getMessage();
+	exit('Impossible de se connecter à la base de données.');
+}
 
 if($action == 'verify_services'){
     verify_services($bp_name,$host_name,$bdd);
@@ -164,16 +164,16 @@ function add_process($bp,$process,$bdd){
     if(count($process) > 0){
         $sql = "update bp set is_define = 1 where name = '" . $bp . "'";
         $bdd->exec($sql);
-    }
 
-    foreach($process as $values){
-        $value = explode("::", $values);
-        $bp_link = $value[1];
+		foreach($process as $values){
+			$value = explode("::", $values);
+			$bp_link = $value[1];
 
-        $sql = "insert into bp_links (bp_name,bp_link) values('" . $bp . "','" . $bp_link . "')";
+			$sql = "insert into bp_links (bp_name,bp_link) values('" . $bp . "','" . $bp_link . "')";
 
-        $bdd->exec($sql);
-    }
+			$bdd->exec($sql);
+		}
+	}
 }
 
 function add_application($uniq_name,$process_name,$display,$url,$command,$type,$min_value,$bdd){
@@ -195,6 +195,9 @@ function add_application($uniq_name,$process_name,$display,$url,$command,$type,$
 }
 
 function build_file($bdd){
+	
+	$bp_sons=array();
+	
 	$sql = "SELECT * FROM bp where is_define ='1'";
 	$req = $bdd->query($sql);
 	$bps_informations = $req->fetchall();
@@ -205,63 +208,96 @@ function build_file($bdd){
 	fputs($bp_file, "#\n");
 	fputs($bp_file, "# EyesOfNetwork\n");
 	fputs($bp_file, "#\n");
+	
 	foreach($bps_informations as $bp_informations){
-		fputs($bp_file, $bp_informations['name'] . " = ");
-		if($bp_informations['type'] == 'ET'){
-			$type = "&";
+		if(!in_array($bp_informations['name'],$bp_sons,true)) {
+			$bp_sons=build_file_recursive($bdd,$bp_file,$bp_informations,$bp_sons);
 		}
-		elseif($bp_informations['type'] == 'OU'){
-			$type = "|";
-		}
-		else{
-			$type = "+";
-			fputs($bp_file, $bp_informations['min_value'] . " of: ");
-		}
-		$sql = "select host,service from bp_services where bp_name = '" . $bp_informations['name'] . "'";
-		$req = $bdd->query($sql);
-		$host_services = $req->fetchall();
-
-		$counter1 = count($host_services);
-		$counter2 = 0;
-
-		foreach($host_services as $services){
-			fputs($bp_file,$services['host'] . ";" . $services['service']);
-			$counter2 += 1;
-
-			if($counter2 < $counter1){
-				fputs($bp_file, " " . $type . " ");
-			}
-		}
-
-		$sql = "select bp_link from bp_links where bp_name = '" .$bp_informations['name'] . "'";
-        $req = $bdd->query($sql);
-        $link_informations = $req->fetchall();
-
-        $counter1 = count($link_informations);
-        $counter2 = 0;
-
-        foreach($link_informations as $link_infos){
-            fputs($bp_file,$link_infos['bp_link']);
-            $counter2 += 1;
-
-            if($counter2 < $counter1){
-                fputs($bp_file, " " . $type . " ");
-			}
-        }
-
-		fputs($bp_file, "\n");
-
-		fputs($bp_file, "display " . $bp_informations['priority'] . ";" . $bp_informations['name'] . ";" . $bp_informations['description'] . "\n");
-
-		if(! empty($bp_informations['url'])){
-			fputs($bp_file, "info_url " . $bp_informations['name'] . ";" . $bp_informations['url']);
-		}
-
-		if(! empty($bp_informations['command'])){
-            fputs($bp_file, "external_info " . $bp_informations['name'] . ";" . $bp_informations['command']);
-        }
 	}
 	fclose($bp_file);
+}
+
+function build_file_recursive($bdd,$bp_file,$bp_informations,$bp_sons){
+
+	$sql = "SELECT bp_link FROM bp_links where bp_name='".$bp_informations['name']."'";
+	$req = $bdd->query($sql);
+	if($req->rowCount() == 0) {
+		build_file_bp($bdd,$bp_file, $bp_informations);
+		$bp_sons[]=$bp_informations['name'];
+		build_file_bp($bdd,$bp_file, $bp_informations);
+	} else {
+		$bp_links = $req->fetchall();
+		foreach($bp_links as $bp_link){
+			$sql = "SELECT * FROM bp where is_define ='1' and name='".$bp_link["bp_link"]."'";
+			$req = $bdd->query($sql);
+			$bps_sons_informations = $req->fetchall();
+			foreach($bps_sons_informations as $bp_sons_informations){
+				if(!in_array($bp_sons_informations['name'],$bp_sons,true)) {
+					$bp_sons=build_file_recursive($bdd,$bp_file,$bp_sons_informations,$bp_sons);
+				}
+			}
+		}
+		$bp_sons[]=$bp_informations['name'];
+		build_file_bp($bdd,$bp_file, $bp_informations);
+	}
+	return $bp_sons;
+}
+
+function build_file_bp($bdd,$bp_file, $bp_informations){
+	fputs($bp_file, $bp_informations['name'] . " = ");
+	if($bp_informations['type'] == 'ET'){
+		$type = "&";
+	}
+	elseif($bp_informations['type'] == 'OU'){
+		$type = "|";
+	}
+	else{
+		$type = "+";
+		fputs($bp_file, $bp_informations['min_value'] . " of: ");
+	}
+	$sql = "select host,service from bp_services where bp_name = '" . $bp_informations['name'] . "'";
+	$req = $bdd->query($sql);
+	$host_services = $req->fetchall();
+
+	$counter1 = count($host_services);
+	$counter2 = 0;
+
+	foreach($host_services as $services){
+		fputs($bp_file,$services['host'] . ";" . $services['service']);
+		$counter2 += 1;
+
+		if($counter2 < $counter1){
+			fputs($bp_file, " " . $type . " ");
+		}
+	}
+
+	$sql = "select bp_link from bp_links where bp_name = '" .$bp_informations['name'] . "'";
+	$req = $bdd->query($sql);
+	$link_informations = $req->fetchall();
+
+	$counter1 = count($link_informations);
+	$counter2 = 0;
+
+	foreach($link_informations as $link_infos){
+		fputs($bp_file,$link_infos['bp_link']);
+		$counter2 += 1;
+
+		if($counter2 < $counter1){
+			fputs($bp_file, " " . $type . " ");
+		}
+	}
+
+	fputs($bp_file, "\n");
+
+	fputs($bp_file, "display " . $bp_informations['priority'] . ";" . $bp_informations['name'] . ";" . $bp_informations['description'] . "\n");
+
+	if(! empty($bp_informations['url'])){
+		fputs($bp_file, "info_url " . $bp_informations['name'] . ";" . $bp_informations['url']);
+	}
+
+	if(! empty($bp_informations['command'])){
+		fputs($bp_file, "external_info " . $bp_informations['name'] . ";" . $bp_informations['command']);
+	}
 }
 
 function info_application($bp_name, $bdd){

@@ -100,7 +100,7 @@ include("../../side.php");
 
 	function display_service($host_service,$bp_racine)
 	{
-		$service_name = split(";", $host_service);
+		$service_name = explode(";", $host_service);
 		$service_name = strtolower($service_name[1]);
 
 ?>
