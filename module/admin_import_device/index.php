@@ -108,11 +108,11 @@ include("../../side.php");
 				# --- Build the result table header
 				echo '<table class="table table-striped">';
 				echo "<thead><tr>";
-				echo "<th>Hostname</td>";
-				echo "<th>IP</td>";
-				echo "<th>Description</td>";
-				echo "<th>Template Name</td>";
-				echo "<th>Import Status</td>";
+				echo "<th>Hostname</th>";
+				echo "<th>IP</th>";
+				echo "<th>Description</th>";
+				echo "<th>Template Name</th>";
+				echo "<th>Import Status</th>";
 				echo "</tr></thead>";
 				
 				$fichier = $_FILES['filename']['tmp_name'];
