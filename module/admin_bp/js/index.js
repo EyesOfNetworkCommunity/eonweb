@@ -20,11 +20,11 @@
 */
 
 $(document).ready(function () {
-	$('.tree li ul').hide();
-	$('.tree li.end').hide();
-	$('.tree-toggle').click(function () {
-		$(this).parent().parent().children('.tree li.end').toggle(200);
-		$(this).parent().parent().children('.tree').toggle(200);
+	$('.tree li.son').toggle();
+	$('.tree li.end').toggle();
+	$('.tree-line').click(function () {
+		$(this).parent().parent().parent().children('.tree li.end').toggle(200);
+		$(this).parent().parent().parent().children('.tree li.son').toggle(200);
 	});
 	$("[data-toggle=tooltip]").tooltip();
 
@@ -47,7 +47,7 @@ $(document).ready(function () {
 $('#FindIt').on('click', findIt());
 
 function findIt(){
-	$('.tree-toggle').parent().children('ul.tree').show();
+	ShowAll();
 	$search_text = $('#SearchFor').val();
 	$('.tree-toggle').jmRemoveHighlight();
     $('.tree-toggle').jmHighlight($search_text);
@@ -69,12 +69,12 @@ function findIt(){
 var n = 0;
 
 function ShowAll(){
-	$('.tree li ul').show();
+	$('.tree li.son').show();
 	$('.tree li.end').show();
 }
 
 function HideAll(){
-	$('.tree li ul').hide();
+	$('.tree li.son').hide();
 	$('.tree li.end').hide();
 }
 

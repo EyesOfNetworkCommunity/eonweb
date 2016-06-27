@@ -84,10 +84,12 @@ include("../../side.php");
 ?>	
 					<li>
 						<div id="<?php echo $bp; ?>" class="tree-toggle">
-							<i class="glyphicon-link glyphicon"></i>Display:<?php echo $priority; ?>&nbsp;
-							<b class="condition_presentation"><?php echo $rule_type.".".$min_value."</b>&nbsp;&nbsp;".$bp."&nbsp;&nbsp;(".$desc_bp.")"; ?>
+							<div class="tree-line">
+								<i class="glyphicon-link glyphicon"></i>Display:<?php echo $priority; ?>&nbsp;
+								<b class="condition_presentation"><?php echo $rule_type.".".$min_value."</b>&nbsp;&nbsp;".$bp."&nbsp;&nbsp;(".$desc_bp.")"; ?>
+							</div>
 							<div class="list-inline marge-buttons">
-								<button type="button" class="btn-group light-round btn-success" onclick="location.href='add_services.php?bp_name=<?php echo $bp; ?>&display=<? echo $priority; ?>'"><i class="glyphicon glyphicon-plus"></i></button>
+								<button type="button" class="btn-group light-round btn-success" onclick="location.href='add_services.php?bp_name=<?php echo $bp; ?>&display=<?php echo $priority; ?>'"><i class="glyphicon glyphicon-plus"></i></button>
 								<button type="button" class="btn-group light-round btn-info" onclick="editApplication('<?php echo $bp; ?>');"><i class="glyphicon glyphicon-pencil"></i></button>
 								<button type="button" class="light-round btn-group btn-danger" onclick="ShowModalDeleteBP('<?php echo $bp; ?>');"><i class="glyphicon glyphicon-trash"></i></button>
 							</div>
@@ -162,7 +164,7 @@ include("../../side.php");
 		if(sizeof($t_bp_son) > 0 ) {
 			for ($i = 0; $i < sizeof($t_bp_son); $i++) {
 ?>
-					<li>
+					<li class="son">
 						<ul class="nav nav-list tree">
 <?php
 							display_bp($t_bp_son[$i],$bp_racine);

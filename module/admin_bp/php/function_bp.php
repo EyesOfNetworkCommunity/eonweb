@@ -76,6 +76,9 @@ function delete_bp($bp,$bdd){
 
 	$sql = "delete from bp_links where bp_name = '" . $bp . "'";
 	$bdd->exec($sql);
+	
+	$sql = "delete from bp_links where bp_link = '" . $bp . "'";
+	$bdd->exec($sql);
 }
 
 function list_services($host_name){
