@@ -157,6 +157,8 @@
 	"label.admin_user.user_pwd2": "Password confirmation",
 	"label.admin_user.user_pwd": "User password",
 	"label.admin_user.user_type": "User type",
+	"label.admin_user.user_nagvis": "Nagvis user",
+	"label.admin_user.user_cacti": "Cacti user",
 	"label.all": "All",
 	"label.capacity_per_device.day": "Day",
 	"label.capacity_per_device.month": "Month",

@@ -106,6 +106,7 @@ include("../../side.php");
 			}
 			else {
 				# --- Build the result table header
+				echo "<div class='table-responsive'>";
 				echo '<table class="table table-striped">';
 				echo "<thead><tr>";
 				echo "<th>Hostname</th>";
@@ -147,6 +148,7 @@ include("../../side.php");
 					}
 				}
 				echo '</table>';
+				echo "</div>";
 			}
 		}
 	?>

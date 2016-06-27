@@ -285,7 +285,7 @@ if($group_type == 0){
 			<label class="col-md-3"><?php echo getLabel("label.admin_group.ldap_group"); ?></label>
 			<div class="col-md-9">
 				<?php
-					if($group_type=="1") $checked="checked='yes'";
+					if($group_type=="1") $checked="checked='checked'";
 					else $checked="";
 					echo "<input type='checkbox' class='checkbox' name='group_type' value='1' $checked onclick='disable()'>";
 				?>

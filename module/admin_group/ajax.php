@@ -102,10 +102,10 @@ $nagvis_groups = $req->fetchAll(PDO::FETCH_OBJ);
 						<table class="table table-striped table-condensed datatable-eonweb-ajax">
 							<thead>
 								<tr>
+									<th class="col-md-3 text-center"><?php echo getLabel("label.admin_group.select"); ?></th>
 									<th><?php echo getLabel("label.user"); ?></th>
 									<th>Email</th>
 									<th><?php echo getLabel("label.group"); ?></th>
-									<th class="col-md-3 text-center"><?php echo getLabel("label.admin_group.select"); ?></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -113,13 +113,13 @@ $nagvis_groups = $req->fetchAll(PDO::FETCH_OBJ);
 								foreach ($ldap_users as $group_name => $ldap_user) {
 									foreach ($ldap_user as $user) {
 										echo "<tr>";
+										echo "<td class='text-center'>
+												<input type='checkbox' name='user_import[]' value='".$user['samaccountname'][0]."'>
+											  </td>";
 										echo '<input type="hidden" value="' . $user["dn"] . '">';
 										echo "<td>" . $user['samaccountname'][0] . "</td>";
 										echo "<td>"; if(isset($user['mail'])){echo $user['mail'][0];} echo "</td>";
 										echo "<td>" . $group_name . "</td>";
-										echo "<td class='text-center'>
-												<input type='checkbox' name='user_import[]' value='".$user['samaccountname'][0]."'>
-											  </td>";
 										echo "</tr>";
 									}	
 								}

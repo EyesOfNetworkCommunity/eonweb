@@ -111,6 +111,7 @@ include("../../side.php");
 				$query = sqlrequest($database_eonweb, $sql);
 				$usergroup = mysqli_result($query,0,"group_id");
 
+				$nagvis_role_id = "";
 				// will insert in nagvis, only if checked
 				if(isset($_POST["create_user_in_nagvis"])){
 					$nagvis_role_id = $_POST["nagvis_group"];
@@ -150,10 +151,10 @@ include("../../side.php");
 			<table class="table table-striped datatable-eonweb table-condensed">
 				<thead>
 				<tr>
+					<th class="col-md-2 text-center"><?php echo getLabel("label.admin_group.select"); ?></th>
 					<th><?php echo getLabel("label.admin_group.group_name"); ?></th>
 					<th><?php echo getLabel("label.admin_group.group_type"); ?></th>
 					<th><?php echo getLabel("label.admin_group.group_desc"); ?></th>
-					<th class="col-md-2 text-center"><?php echo getLabel("label.admin_group.select"); ?></th>
 				</tr>
 				</thead>
 				<tbody>
@@ -163,6 +164,14 @@ include("../../side.php");
 				$type = ($line[3] == "0") ? "MySQL" : "LDAP";
 				?>
 				<tr class="<?php echo $type; ?>">
+					<td class="text-center">
+						<?php
+						if($line[2]=="1")
+							echo "<input type='checkbox' name='group_selected[]' value='$line[2]' disabled>";
+						else
+							echo "<input type='checkbox' name='group_selected[]' value='$line[2]'>";
+						?>
+					</td>
 					<td>
 						<?php
 						if($line[2]=="1")
@@ -176,14 +185,6 @@ include("../../side.php");
 					</td>
 					<td>
 						<?php echo "$line[1]";?>
-					</td>
-					<td class="text-center">
-						<?php
-						if($line[2]=="1")
-							echo "<input type='checkbox' name='group_selected[]' value='$line[2]' disabled>";
-						else
-							echo "<input type='checkbox' name='group_selected[]' value='$line[2]'>";
-						?>
 					</td>
 				</tr>
 				<?php

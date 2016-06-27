@@ -62,10 +62,10 @@ include("../../side.php");
 			<div class="form-group col-md-6">
 				<label>Date :</label>
 				<select class="form-control" name='date'>
-					<option value="1" <?php if($_GET['date']==1){echo 'selected="selected"';} ?>><?php echo getLabel("label.capacity_per_device.day"); ?></option>
-					<option value="2" <?php if($_GET['date']==2){echo 'selected="selected"';} ?>><?php echo getLabel("label.capacity_per_device.week"); ?></option>
-					<option value="3" <?php if($_GET['date']==3){echo 'selected="selected"';} ?>><?php echo getLabel("label.capacity_per_device.month"); ?></option>
-					<option value="4" <?php if($_GET['date']==4){echo 'selected="selected"';} ?>><?php echo getLabel("label.capacity_per_device.year"); ?></option>
+					<option value="1" <?php if(isset($_GET['date']) && $_GET['date']==1){echo 'selected="selected"';} ?>><?php echo getLabel("label.capacity_per_device.day"); ?></option>
+					<option value="2" <?php if(isset($_GET['date']) && $_GET['date']==2){echo 'selected="selected"';} ?>><?php echo getLabel("label.capacity_per_device.week"); ?></option>
+					<option value="3" <?php if(isset($_GET['date']) && $_GET['date']==3){echo 'selected="selected"';} ?>><?php echo getLabel("label.capacity_per_device.month"); ?></option>
+					<option value="4" <?php if(isset($_GET['date']) && $_GET['date']==4){echo 'selected="selected"';} ?>><?php echo getLabel("label.capacity_per_device.year"); ?></option>
 				</select><br><br>
 				<input class="btn btn-primary" type="submit" name="submit" value="<?php echo getLabel("action.show_graph"); ?>">
 			</div>
@@ -86,7 +86,6 @@ include("../../side.php");
 					echo "<img class='img-responsive center-block' src='../../../cacti/graph_image.php?local_graph_id=$graph_id&rra_id=$graphlocal_dateid' alt='graph_cacti'/>";
 				}
 			}
-			echo '</div>';
 		}
 	?>
 </div>
