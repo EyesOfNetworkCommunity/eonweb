@@ -139,9 +139,6 @@ function get_host_list_from_nagios($field=false, $queue = false){
 	global $database_ged;
 	$hosts=array();
 
-	//var_dump($field);
-
-
 	if($field && $field != 'owner'){
 		switch ($field) {
 			case 'service': $column = 'description'; break;
