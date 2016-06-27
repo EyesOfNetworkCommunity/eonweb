@@ -34,7 +34,7 @@ elseif($action == 'list_services'){
 }
 
 elseif($action == 'list_process'){
-	list_process($display,$bdd);
+	list_process($bp_name,$display,$bdd);
 }
 
 elseif ($action == 'add_services'){
@@ -101,8 +101,8 @@ function list_services($host_name){
 	echo json_encode($tabServices);
 }
 
-function list_process($display,$bdd){
-	$sql = "select name from bp where is_define = 1 and priority = '" . $display . "'";
+function list_process($bp,$display,$bdd){
+	$sql = "select name from bp where is_define = 1 and name!='".$bp."' and priority = '" . $display . "'";
 	$req = $bdd->query($sql);
 	$process = $req->fetchall();
 
@@ -113,10 +113,12 @@ function add_services($bp,$services,$bdd){
 	$list_services = array();
 	$old_list_services = array();
 
-	foreach($services as $values){
-        $value = explode("::", $values);
-        $service = $value[1];
-		$list_services[] = $service;
+	if(is_array($services)) {
+		foreach($services as $values){
+			$value = explode("::", $values);
+			$service = $value[1];
+			$list_services[] = $service;
+		}
 	}
 	$sql = "select service,host from bp_services where bp_name = '" . $bp . "'";
 	$req = $bdd->query($sql);
@@ -142,17 +144,19 @@ function add_services($bp,$services,$bdd){
         $bdd->exec($sql);
     }
 
-	foreach($services as $values){
-		$value = explode("::", $values);
-		$host = $value[0];
-		$service = $value[1];
+	if(is_array($services)) {
+		foreach($services as $values){
+			$value = explode("::", $values);
+			$host = $value[0];
+			$service = $value[1];
 
-		if(! in_array($service, $old_list_services)){
-			echo $service;
+			if(! in_array($service, $old_list_services)){
+				echo $service;
 
-			$sql = "insert into bp_services (bp_name,host,service) values('" . trim($bp) . "','" . $host . "','" . $service . "')";
+				$sql = "insert into bp_services (bp_name,host,service) values('" . trim($bp) . "','" . $host . "','" . $service . "')";
 
-			$bdd->exec($sql);
+				$bdd->exec($sql);
+			}
 		}
 	}
 }
@@ -160,11 +164,13 @@ function add_services($bp,$services,$bdd){
 function add_process($bp,$process,$bdd){
     $sql = "delete from bp_links where bp_name = '" . $bp . "'";
     $bdd->exec($sql);
+	$sql = "update bp set is_define = 0 where name = '" . $bp . "'";
+	$bdd->exec($sql);	
 
-    if(count($process) > 0){
+    if(count($process) > 0 and is_array($process)){
         $sql = "update bp set is_define = 1 where name = '" . $bp . "'";
         $bdd->exec($sql);
-
+	
 		foreach($process as $values){
 			$value = explode("::", $values);
 			$bp_link = $value[1];
@@ -172,7 +178,7 @@ function add_process($bp,$process,$bdd){
 			$sql = "insert into bp_links (bp_name,bp_link) values('" . $bp . "','" . $bp_link . "')";
 
 			$bdd->exec($sql);
-		}
+		}	
 	}
 }
 
