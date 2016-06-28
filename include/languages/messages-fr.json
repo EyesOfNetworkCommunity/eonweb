@@ -412,6 +412,7 @@
 	"menu.tab.report": "Rapports",
 	"menu.user.disconnect": "Se déconnecter",
 	"menu.user.profile": "Mon profil",
+	"message.advanced_search_info": "* permet de faire une recherche sur tout",
 	"message.confirmation": "Etes-vous sûr ?",
 	"message.ajax_error": "Erreur lors du chargement du résultat...",
 	"message.error.missing_host": "Impossible de déterminer le host",

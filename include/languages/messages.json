@@ -412,6 +412,7 @@
 	"menu.tab.report": "Reports",
 	"menu.user.disconnect": "Logout",
 	"menu.user.profile": "My profile",
+	"message.advanced_search_info": "with * we can search for all values",
 	"message.confirmation": "Are you sure ?",
 	"message.ajax_error": "Erreur while loading result...",
 	"message.error.missing_host": "Could not determine host",

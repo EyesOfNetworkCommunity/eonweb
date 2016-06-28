@@ -76,7 +76,7 @@ include("../../side.php");
 				<div class="form-group">
 					<label>
 						Rechercher
-						<i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="* permet de faire une recherche sur tout" style="cursor: pointer;"></i>
+						<i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="<?php echo getLabel("message.advanced_search_info"); ?>" style="cursor: pointer;"></i>
 					</label>
 					<div class="input-group">
 						<input class="form-control col-md-3" id="value" name="value" type="text" placeholder="*<?php echo getLabel('action.search'); ?>*"/>
