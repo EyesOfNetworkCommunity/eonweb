@@ -122,9 +122,18 @@ function createWhereClause($owner, $filter, $search, $daterange, $ok, $warning, 
 	if($owner == "owned"){ $where_clause .= " AND owner != ''"; }
 	elseif($owner == "not owned"){ $where_clause .= " AND owner = ''"; }
 
-	// filter and search
+	// advanced search (with *)
 	if($search != ""){
-		$where_clause .= " AND $filter LIKE '%$search%'";
+		$like = "";
+		if( substr($search, 0, 1) === '*' ){
+			$like .= "%";
+		}
+		$like .= trim($search, '*');
+		if ( substr($search, -1) === '*' ) {
+			$like .= "%";
+		}
+
+		$where_clause .= " AND $filter LIKE '$like'";
 	}
 
 	// daterange
@@ -164,6 +173,9 @@ function createDetailRow($event, $db_col_name, $row_name)
 
 	// display a good date format
 	if($db_col_name == "o_sec" || $db_col_name == "l_sec" || $db_col_name == "a_sec"){
+		if($db_col_name == "a_sec" && $event["queue"] == "a"){
+			return false;
+		}
 		if($db_col_name == "a_sec" && $event[$db_col_name] == 0){
 			$event[$db_col_name] = "";
 		}

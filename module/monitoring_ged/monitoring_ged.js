@@ -319,7 +319,7 @@ $(document).ready(function(){
 				} else {
 					removeModalState();
 					$(".modal-title").html(dictionnary[action_name]);
-					$(".modal-body #content").html("Are you sure ?");
+					$(".modal-body #content").html(dictionnary["message.confirmation"]);
 				}
 				
 				$("#ged-modal").modal();

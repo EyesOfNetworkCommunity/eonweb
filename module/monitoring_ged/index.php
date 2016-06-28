@@ -172,7 +172,8 @@ if(file_exists($file)){
 								<select id="filter-state" class="selectpicker form-control" multiple>
 									<?php 
 									foreach($array_ged_states as $col => $val){
-										$selected = "";
+										if(isset($_GET["status"])) { $selected = ""; }
+										else { $selected = "selected"; }
 										if(count($status_parts) > 0 && in_array($val, $status_parts)){ $selected = "selected"; }
 										echo '<option '.$selected.'>'.$col.'</option>';
 									}
