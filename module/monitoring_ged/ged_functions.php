@@ -476,4 +476,32 @@ function changeGedFilter($filter_name)
 	}
 }
 
+// advanced search autocomplete
+function advancedFilterSearch($queue, $filter)
+{
+	global $database_ged;
+	$datas = array();
+
+	if($filter == "description"){
+		echo json_encode($datas);
+		return false;
+	}
+
+	$gedsql_result1=sqlrequest($database_ged,"SELECT pkt_type_id,pkt_type_name FROM pkt_type WHERE pkt_type_id!='0' AND pkt_type_id<'100';");
+	
+	
+	while($ged_type = mysqli_fetch_assoc($gedsql_result1)){
+		$sql = "SELECT DISTINCT $filter FROM ".$ged_type["pkt_type_name"]."_queue_".$queue;
+
+		$results = sqlrequest($database_ged, $sql);
+		while($result = mysqli_fetch_array($results)){
+			if( !in_array($result[$filter], $datas) && $result[$filter] != "" ){
+				array_push($datas, $result[$filter]);
+			}
+		}
+	}
+
+	echo json_encode($datas);
+}
+
 ?>

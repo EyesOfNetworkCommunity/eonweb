@@ -233,7 +233,7 @@ if(file_exists($file)){
 									<label><?php echo getLabel("action.search") ?></label>
 									<i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="<?php echo getLabel("message.advanced_search_info"); ?>" style="cursor: pointer;"></i>
 									<div class="input-group">
-										<input id="search" name="search" class="form-control" placeholder="*<?php echo getLabel("action.search"); ?>*" type="text" autocomplete="off" onFocus='$(this).autocomplete({source:<?php echo get_host_list_from_nagios();?>})' />
+										<input id="ged-search" name="search" class="form-control" placeholder="*<?php echo getLabel("action.search"); ?>*" type="text" autocomplete="off" />
 										<span class="input-group-btn">
 											<input type="submit" class="btn btn-primary" value="<?php echo getLabel("action.search"); ?>" />
 										</span>

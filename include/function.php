@@ -159,11 +159,9 @@ function get_host_list_from_nagios($field=false, $queue = false){
 		$db = $database_lilac;
 	}
 
-	//echo $request;
 	$result=sqlrequest($db,$request);
  	while ($line = mysqli_fetch_array($result)){ 
 		array_push($hosts, $line[0]);
-		//$hosts[]=$line[0];
 	}
 	echo json_encode($hosts);
 }
