@@ -41,7 +41,7 @@ if($date != ""){
 }
 
 
-$sql = "SELECT * FROM logs WHERE id!=0".$where_clause." ORDER BY id DESC";
+$sql = "SELECT * FROM logs WHERE id!=0".$where_clause." ORDER BY date DESC";
 $results = sqlrequest($database_eonweb,$sql);
 
 ?>
@@ -50,10 +50,10 @@ $results = sqlrequest($database_eonweb,$sql);
 	<table class="table table-striped datatable-eonweb table-condensed">
 		<thead>
 			<tr>
-				<th class="col-md-4">Date</th>
+				<th>Date</th>
 				<th class="col-md-2"><?php echo getLabel("label.user"); ?></th>
 				<th class="col-md-2">Module</th>
-				<th>Description</th>
+				<th class="col-md-4">Description</th>
 				<th>Source</th>
 			</tr>
 		</thead>

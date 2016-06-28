@@ -35,5 +35,6 @@ $('.datatable-eonweb').DataTable({
 		infoEmpty:      dictionnary['label.datatable.infoempty'],
 		infoFiltered:   dictionnary['label.datatable.infofiltered'],
 		zeroRecords: 	dictionnary['label.datatable.zerorecords']
-	}
+	},
+	aaSorting: []
 });
