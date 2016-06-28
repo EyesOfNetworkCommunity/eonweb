@@ -89,9 +89,6 @@ $(document).ready(function() {
 		var dn = $(this).parent().parent().find('input[type="hidden"]').val();
 		var mail = $(this).parent().next().next().next().html();
 		var value = username+"::"+group+"::"+dn+"::"+mail;
-		console.log("dn: "+ dn);
-		console.log("mail: "+ mail);
-		console.log("value: "+ value);
 
 		if( $(this).prop('checked') == true ){
 			import_list.push(value);
