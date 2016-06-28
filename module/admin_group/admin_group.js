@@ -85,10 +85,13 @@ $(document).ready(function() {
 		
 	$(document).on('click', "[name='user_import[]']", function(){
 		var username = $(this).val();
-		var group = $(this).parent().prev().html();
+		var group = $(this).parent().parent().find('td:last').html();
 		var dn = $(this).parent().parent().find('input[type="hidden"]').val();
-		var mail = $(this).parent().prev().prev().html();
+		var mail = $(this).parent().next().next().next().html();
 		var value = username+"::"+group+"::"+dn+"::"+mail;
+		console.log("dn: "+ dn);
+		console.log("mail: "+ mail);
+		console.log("value: "+ value);
 
 		if( $(this).prop('checked') == true ){
 			import_list.push(value);
