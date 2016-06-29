@@ -35,101 +35,79 @@ catch(Exception $e) {
 }
 
 print "<div id=\"page-wrapper\">";
-	print "<div class=\"col-lg-12\">";
-		print "<h1 class=\"page-header bp_name\">Business Process : $bp_name</h1>";
+
+	print "<div class=\"row\">";
+		print "<div class=\"col-lg-12\">";
+			print "<h1 class=\"page-header bp_name\">Business Process : $bp_name</h1>";
+		print "</div>";
     print "</div>";
 
-	print "<form class=\"col-xs-6\">";
+	print "<div class=\"row\">";
+	print "<form class=\"col-md-6\" onsubmit=\"return false;\">";
 
-		print "<div class=\"row col-xs-8 form-group\">";
-			if($display_actually_bp == 0){
-				$disabled = "";
-			}
-			else{
-				$disabled = "disabled";
-			}
-            print "<button type=\"button\" id=\"button_service\" class=\"btn btn-primary\" onclick=\"HideShowService();\" $disabled>";
-                print "Adding Services";
-            print "</button>";
-        print "</div>";
+		if($display_actually_bp == 0) {	
+			print "<div id=\"container_service\">";
+				print "<label>Specify host</label>";
+				print "<div>";
+					print "<div class=\"row col-md-12\">";
+						print "<div class=\"input-group\">";
+							print "<span class=\"input-group-addon\" id=\"sizing-addon1\"><img src=\"./images/server.png\" height=\"20\" width=\"25\" alt=\"server\"></span>";
+							print "<input type=\"text\" class=\"form-control\" id=\"host\" placeholder=\"Hostname\" aria-describedby=\"sizing-addon1\">";
+						print "</div>";
+					print "</div>";
+				print "</div>";
 
-		if($display_actually_bp > 0){
-            $disabled = "";
-        }
-        else{
-        	$disabled = "disabled";
-        }
-
-        print "<div class=\"row col-xs-8 form-group\">";
-            print "<button type=\"button\" id=\"button_process\" class=\"btn btn-primary\" onclick=\"HideShowProcess();\" $disabled>";
-                print "Adding Process";
-            print "</button>";
-        print "</div>";
-
-        print "<div style=\"clear: both;\"></div>";
-
-        print "<div>";
-		print "<div id=\"container_service\" style=\"display:none\">";
-			print "<div>";
-				print "<div class=\"input-group col-xs-6\">";
-	  				print "<span class=\"input-group-addon\" id=\"sizing-addon1\"><img src=\"./images/server.png\" height=\"20\" width=\"25\" alt=\"server\"></span>";
-	  				print "<input type=\"text\" class=\"form-control\" id=\"host\" placeholder=\"Hostname\" aria-describedby=\"sizing-addon1\">";
+				print "<div class=\"row col-md-12\">";
+					print "<div class=\"form-group\">";
+						print "<label style=\"font-weight:lighter;font-size:16px;\" class=\"control-label pad-top text-primary\" id=\"process\"></label>";
+					print "</div>";
+				print "</div>";
+				
+				print "<div class=\"row col-md-12\">";
+					print "<div class=\"form-group\">";
+						print "<ul id=\"draggablePanelList\" class=\"list-unstyled\">";
+						print "</ul>";
+					print "</div>";
 				print "</div>";
 			print "</div>";
-
-			print "<br>";
-			print "<div class=\"row\">";
-	           	print "<div class=\"form-group\">";
-	               	print "<label style=\"font-weight:lighter;font-size:16px;\" class=\"col-xs-8 control-label pad-top text-primary\">Services linked to this host</label>";
+		}
+		else {
+			print "<div id=\"container_process\">";
+				print "<label>Specify display</label>";
+				print "<div>";
+					print "<div class=\"row col-md-12\">";
+						print "<select class=\"form-control\" name=\"display\">";
+							print "<option data-hidden=\"true\">Select display</option>";
+							print "<option>0</option>";
+							print "<option>1</option>";
+							print "<option>2</option>";
+							print "<option>3</option>";
+							print "<option>4</option>";
+							print "<option>5</option>";
+						print "</select>";
+					print "</div>";
+				print "</div>";
+				
+				print "<div class=\"row col-md-12\">";
+					print "<div class=\"form-group\">";
+						print "<label style=\"font-weight:lighter;font-size:16px;\" class=\"control-label pad-top text-primary\" id=\"process\"></label>";
+					print "</div>";
+				print "</div>";
+				
+				print "<div class=\"row col-md-12\">";
+					print "<div class=\"form-group\">";
+						print "<ul id=\"draggablePanelListProcess\" class=\"list-unstyled\">";
+						print "</ul>";
+					print "</div>";
 				print "</div>";
 			print "</div>";
-
-			print "<div>";
-	            print "<div class=\"form-group\">";
-					print "<ul id=\"draggablePanelList\" class=\"list-unstyled\">";
-					print "</ul>";
-	            print "</div>";
-	       	print "</div>";
-        print "</div>";
-
-		print "<div id=\"container_process\" style=\"display:none\">";
-            print "<div class=\"form-group row\">";
-                print "<label class=\"col-xs-3\"> Display : </label>";
-                print "<div class=\"col-xs-8\">";
-                    print "<select class=\"form-control\" name=\"display\">";
-                        print "<option data-hidden=\"true\">Select display</option>";
-                        print "<option>0</option>";
-                        print "<option>1</option>";
-                        print "<option>2</option>";
-                        print "<option>3</option>";
-                        print "<option>4</option>";
-                        print "<option>5</option>";
-                    print "</select>";
-                print "</div>";
-            print "</div>";
-        print "</div>";
-        print "</div>";
-
-        print "<div class=\"row\">";
-            print "<div class=\"form-group\">";
-                print "<label style=\"font-weight:lighter;font-size:16px;\" id=\"process\" class=\"col-xs-8 control-label pad-top text-primary\">Process for display</label>";
-            print "</div>";
-        print "</div>";
-
-        print "<div class=\"row\">";
-            print "<div class=\"form-group\">";
-                print "<ul id=\"draggablePanelListProcess\" class=\"list-unstyled\">";
-                print "</ul>";
-            print "</div>";
-        print "</div>";
-
+		}
     print "</form>";
 
-	print "<form id=\"form_drop\" class=\"form-horizontal col-xs-5 pull-right\" style=\"top:0px\">";
+	print "<form id=\"form_drop\" class=\"form-horizontal col-md-6\" style=\"top:0px\">";
 		$text_display = ($display_actually_bp > 0 ? "Process" : "Services");
-		print "<label style=\"font-size:16px;\" class=\"col-xs-8 control-label\">$text_display linked to BP $bp_name</label>";
-		print "<br>";
-		print "<div id=\"container-drop_zone\" class=\"pad-top container-drop_zone\">";
+		print "<label>$text_display linked to BP $bp_name</label>";
+		print "<div id=\"container-drop_zone\" class=\"container-drop_zone\">";
 
 			if($display_actually_bp > 0){
 				$sql = "select bp_link from bp_links where bp_name = '" . $bp_name . "'";
@@ -142,7 +120,7 @@ print "<div id=\"page-wrapper\">";
 					$count += 1;
 				}
 				if($count == 0){
-					print "<div id=\"primary_drop_zone\" class=\"ui-widget-content panel panel-info\" style=\"width:300px;height:50px\"><div class=\"panel-body text-center\">Drop Element Here</div></div>";
+					print "<div id=\"primary_drop_zone\" class=\"ui-widget-content panel panel-info\"><div class=\"panel-body text-center\">Drop Element Here</div></div>";
 				}
 			}
 
@@ -182,12 +160,17 @@ print "<div id=\"page-wrapper\">";
 			}
 		print "</div>"; //fermeture du div container-drop_zone
 		print "<br>";
-		print "<button type=\"button\" class=\"btn btn-success btn-block\" onclick=\""; echo (($display_actually_bp == 0)?'ApplyService();':'ApplyProcess();');
+		print "<div class=\"btn-group btn-group-justified\">";
+		print "<a class=\"btn btn-success\" onclick=\""; echo (($display_actually_bp == 0)?'ApplyService();':'ApplyProcess();');
 		print "\">";
-    	print "Appliquer les modifications";
-    	print "</button>";
+    	print "Appliquer";
+    	print "</a>";
+		print "<a class=\"btn btn-primary\" onclick=\"window.location = '/module/admin_bp/index.php';\">Annuler</a>";
+		print "</div>";
 	print "</form>";
+	print "</div>";
 
 print "</div>";
+
 include("../../footer.php");
 ?>

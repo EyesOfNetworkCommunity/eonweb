@@ -94,7 +94,7 @@ $array_ged_filters = array (
 	"hostgroups" 	=> "hostgroup",
 	"servicegroups" => "servicegroup",
 	"owner" 		=> "owner",
-	"src"				=> "source"
+	"src"			=> "source"
 );
 
 $array_ged_states = array (

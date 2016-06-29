@@ -51,13 +51,14 @@ $(document).ready(function () {
 				function ReturnValue(list_services){
 					$services = list_services['service'];
 					$('#draggablePanelList').children().remove();
+					$('#process').html('Services linked to host ' + $('#host').val());
 					for(i=0;i<$services.length;i++){
 						var element = $('div[id$="::' + $("#host").val() + ';;' + $services[i] + '"]');
 						//console.log(element.length);
 						//console.log(element);
 
 						if(! element.length){
-							$('#draggablePanelList').append($('<div class="col-xs-6"><li id="' + $('#host').val() + '::' + $services[i] +'" class="draggable panel panel-warning ui-front" style=\"position:relative\"><div class="panel-heading">' + $services[i] + '</div></li></div>').draggable({ snap: true, revert: "invalid" }));
+							$('#draggablePanelList').append($('<li id="' + $('#host').val() + '::' + $services[i] +'" class="draggable panel panel-warning ui-front" style=\"position:relative\"><div class="panel-heading">' + $services[i] + '</div></li>').draggable({ snap: true, revert: "invalid" }));
 						}
 					}
 				},
@@ -73,7 +74,7 @@ $(document).ready(function () {
 			var element_bp_name = $('.bp_name').html();
             var bp_name = element_bp_name.split(" : ")[1];
 
-			if($('#button_process').prop('disabled')){
+			if($("#container_service").length){
 				$element = $('div[id="drop_zone::' + $('#host').val() + '"]');
             	var id_panel = "" + bp_name + '::' + $("#host").val() + ';;' + ui.draggable.text() + "";
 
@@ -103,13 +104,20 @@ $(document).ready(function () {
 	});
 
 	$('select').change(function(){
+		var element_bp_name = $('.bp_name').html();
+        var bp_name = element_bp_name.split(" : ")[1];
 		var nb_display = $('select[name="display"]').val();
-		$('#process').html('Process for display ' + nb_display + '');
-
+		if(nb_display % 1 === 0) {
+			$('#process').html('Process for display ' + nb_display + '');
+		} else {
+			$('#process').html('');
+		}
+		
 		$.get(
 			'./php/function_bp.php',
             {
             	action: 'list_process',
+				bp_name: bp_name,
 				display: nb_display
 			},
             function ReturnValue(list_process){
@@ -119,7 +127,7 @@ $(document).ready(function () {
 					var element = $('div[id$=";;' + $process + '"]');
 
 					if(! element.length){
-						$('#draggablePanelListProcess').append($('<div class="col-xs-6"><li id="' + $process +'" class="draggable panel panel-warning ui-front" style=\"position:relative\"><div class="panel-heading">' + $process + '</div></li></div>').draggable({ snap: true, revert: "invalid" }));
+						$('#draggablePanelListProcess').append($('<li id="' + $process +'" class="draggable panel panel-warning ui-front" style=\"position:relative\"><div class="panel-heading">' + $process + '</div></li>').draggable({ snap: true, revert: "invalid" }));
 					}
                 }
             },

@@ -25,6 +25,10 @@
 	margin-bottom: 5px;
 }
 
+.tree > li.son {
+	margin-top: 15px;
+}
+
 .tree > li > ul {
 	margin-left:15px;
 }
@@ -141,7 +145,7 @@
 }
 
 .pad-top {
-	padding-top: 40px;
+	padding-top: 20px;
 }
 
 .maxi-pad-top {
@@ -184,8 +188,10 @@ table.tablesorter .odd {
 	background-color: #c2d1f0;
 }
 
-#draggablePanelList .panel-heading {
+#draggablePanelList .panel-heading, #draggablePanelListProcess .panel-heading {
 	cursor: grabbing;
+	cursor: -moz-grabbing;
+	cursor: -webkit-grabbing;
 }
 
 .img-hover {
@@ -290,10 +296,6 @@ ul.target {
 
 .highlight {
 	background-color: yellow;
-}
-
-.container-drop_zone {
-	width: 300px;
 }
 
 .autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
