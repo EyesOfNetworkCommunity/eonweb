@@ -122,9 +122,18 @@ function createWhereClause($owner, $filter, $search, $daterange, $ok, $warning, 
 	if($owner == "owned"){ $where_clause .= " AND owner != ''"; }
 	elseif($owner == "not owned"){ $where_clause .= " AND owner = ''"; }
 
-	// filter and search
+	// advanced search (with *)
 	if($search != ""){
-		$where_clause .= " AND $filter LIKE '%$search%'";
+		$like = "";
+		if( substr($search, 0, 1) === '*' ){
+			$like .= "%";
+		}
+		$like .= trim($search, '*');
+		if ( substr($search, -1) === '*' ) {
+			$like .= "%";
+		}
+
+		$where_clause .= " AND $filter LIKE '$like'";
 	}
 
 	// daterange
@@ -164,6 +173,9 @@ function createDetailRow($event, $db_col_name, $row_name)
 
 	// display a good date format
 	if($db_col_name == "o_sec" || $db_col_name == "l_sec" || $db_col_name == "a_sec"){
+		if($db_col_name == "a_sec" && $event["queue"] == "a"){
+			return false;
+		}
 		if($db_col_name == "a_sec" && $event[$db_col_name] == 0){
 			$event[$db_col_name] = "";
 		}
@@ -462,6 +474,34 @@ function changeGedFilter($filter_name)
 		$default->appendChild($xmlfilters->createTextNode($filter_name));
 		$xmlfilters->save($file);
 	}
+}
+
+// advanced search autocomplete
+function advancedFilterSearch($queue, $filter)
+{
+	global $database_ged;
+	$datas = array();
+
+	if($filter == "description"){
+		echo json_encode($datas);
+		return false;
+	}
+
+	$gedsql_result1=sqlrequest($database_ged,"SELECT pkt_type_id,pkt_type_name FROM pkt_type WHERE pkt_type_id!='0' AND pkt_type_id<'100';");
+	
+	
+	while($ged_type = mysqli_fetch_assoc($gedsql_result1)){
+		$sql = "SELECT DISTINCT $filter FROM ".$ged_type["pkt_type_name"]."_queue_".$queue;
+
+		$results = sqlrequest($database_ged, $sql);
+		while($result = mysqli_fetch_array($results)){
+			if( !in_array($result[$filter], $datas) && $result[$filter] != "" ){
+				array_push($datas, $result[$filter]);
+			}
+		}
+	}
+
+	echo json_encode($datas);
 }
 
 ?>

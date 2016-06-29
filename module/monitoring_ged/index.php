@@ -172,7 +172,8 @@ if(file_exists($file)){
 								<select id="filter-state" class="selectpicker form-control" multiple>
 									<?php 
 									foreach($array_ged_states as $col => $val){
-										$selected = "";
+										if(isset($_GET["status"])) { $selected = ""; }
+										else { $selected = "selected"; }
 										if(count($status_parts) > 0 && in_array($val, $status_parts)){ $selected = "selected"; }
 										echo '<option '.$selected.'>'.$col.'</option>';
 									}
@@ -230,8 +231,9 @@ if(file_exists($file)){
 								<?php } ?>
 								<div class="form-group col-md-4">
 									<label><?php echo getLabel("action.search") ?></label>
+									<i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="<?php echo getLabel("message.advanced_search_info"); ?>" style="cursor: pointer;"></i>
 									<div class="input-group">
-										<input id="search" name="search" class="form-control" placeholder="<?php echo getLabel("label.input.placeholder.search"); ?>" type="text" autocomplete="off" onFocus='$(this).autocomplete({source:<?php echo get_host_list_from_nagios();?>})' />
+										<input id="ged-search" name="search" class="form-control" placeholder="*<?php echo getLabel("action.search"); ?>*" type="text" autocomplete="off" />
 										<span class="input-group-btn">
 											<input type="submit" class="btn btn-primary" value="<?php echo getLabel("action.search"); ?>" />
 										</span>

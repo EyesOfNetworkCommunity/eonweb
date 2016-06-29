@@ -26,7 +26,7 @@ function loadTable()
 	var type 	  = $("#type").val();
 	var owner 	  = $("#owner").val();
 	var filter 	  = $("#filter").val();
-	var search 	  = $("#search").val();
+	var search 	  = $("#ged-search").val();
 	var daterange = $("#daterange").val();
 
 	var time_period = "";
@@ -166,7 +166,7 @@ $(document).ready(function(){
 	});
 
 	$(".focus-to-search").on('change', function(){
-		$('#search').focus();
+		$('#ged-search').focus();
 	});
 
 	$("#filter-selection").on('change', function(){
@@ -319,7 +319,7 @@ $(document).ready(function(){
 				} else {
 					removeModalState();
 					$(".modal-title").html(dictionnary[action_name]);
-					$(".modal-body #content").html("Are you sure ?");
+					$(".modal-body #content").html(dictionnary["message.confirmation"]);
 				}
 				
 				$("#ged-modal").modal();
@@ -446,5 +446,27 @@ $(document).ready(function(){
 				}
 			}
 		});
+	});
+
+
+	// form search auto complete by category (according to filter's value)
+	$("#filter").on('change', function(){
+		var queue = $("#queue").val();
+		var category = $("#filter").val();
+		
+		var datas;
+		$.ajax({
+			url: 'ged_actions.php',
+			async: false,
+			data: {
+				action: 'advancedFilterSearch',
+				filter: category,
+				queue: queue
+			},
+			success: function(response){
+				datas = response;
+			}
+		});
+		$("#ged-search").attr('onFocus', '$(this).autocomplete({source: ' + datas + '})');
 	});
 });

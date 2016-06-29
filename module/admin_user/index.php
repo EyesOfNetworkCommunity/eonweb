@@ -118,13 +118,13 @@ include("../../side.php");
 			<table class="table table-striped datatable-eonweb table-condensed">
 				<thead>
 				<tr>
+					<th class="col-md-2 text-center"><?php echo getLabel("label.admin_user.select"); ?></th>
 					<th><?php echo getLabel("label.admin_user.user_name"); ?></th>
 					<th><?php echo getLabel("label.admin_user.user_limit"); ?></th>
 					<th><?php echo getLabel("label.admin_user.user_type"); ?></th>
 					<th><?php echo getLabel("label.admin_user.user_mail"); ?></th>
 					<th><?php echo getLabel("label.admin_user.user_desc"); ?></th>
 					<th><?php echo getLabel("label.admin_user.user_group"); ?></th>
-					<th class="col-md-2 text-center"><?php echo getLabel("label.admin_user.select"); ?></th>
 				</tr>
 				</thead>
 				<tbody>
@@ -133,6 +133,14 @@ include("../../side.php");
 					$user_mail=mysqli_result(sqlrequest("$database_lilac","SELECT email FROM nagios_contact WHERE name='$line[0]'"),0,"email");
 				?>
 				<tr>
+					<td class="text-center">
+						<?php
+						if($line[2]=="1")
+							echo "<input type='checkbox' name='user_selected[]' value='$line[2]' disabled>";
+						else
+							echo "<input type='checkbox' name='user_selected[]' value='$line[2]'>";
+						?>
+					</td>
 					<td>
 						<?php echo"<a href='./add_modify_user.php?user_id=$line[2]'> $line[0] </a>";?>
 					</td>
@@ -162,14 +170,6 @@ include("../../side.php");
 					</td>
 					<td>
 						<?php echo "$line[3]";?>
-					</td>
-					<td class="text-center">
-						<?php
-						if($line[2]=="1")
-							echo "<input type='checkbox' name='user_selected[]' value='$line[2]' disabled>";
-						else
-							echo "<input type='checkbox' name='user_selected[]' value='$line[2]'>";
-						?>
 					</td>
 				</tr>
 				<?php
