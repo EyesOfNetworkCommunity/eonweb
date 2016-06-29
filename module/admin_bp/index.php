@@ -82,19 +82,19 @@ include("../../side.php");
 		mysqli_close($db);
 
 ?>	
-					<li>
-						<div id="<?php echo $bp; ?>" class="tree-toggle">
-							<div class="tree-line">
-								<i class="glyphicon-link glyphicon"></i>Display:<?php echo $priority; ?>&nbsp;
-								<b class="condition_presentation"><?php echo $rule_type.".".$min_value."</b>&nbsp;&nbsp;".$bp."&nbsp;&nbsp;(".$desc_bp.")"; ?>
-							</div>
-							<div class="list-inline marge-buttons">
-								<button type="button" class="btn-group light-round btn-success" onclick="location.href='add_services.php?bp_name=<?php echo $bp; ?>&display=<?php echo $priority; ?>'"><i class="glyphicon glyphicon-plus"></i></button>
-								<button type="button" class="btn-group light-round btn-info" onclick="editApplication('<?php echo $bp; ?>');"><i class="glyphicon glyphicon-pencil"></i></button>
-								<button type="button" class="light-round btn-group btn-danger" onclick="ShowModalDeleteBP('<?php echo $bp; ?>');"><i class="glyphicon glyphicon-trash"></i></button>
-							</div>
-						</div>
-					</li>				
+		<li>
+			<div id="<?php echo $bp; ?>" class="tree-toggle">
+				<div class="tree-line">
+					<i class="glyphicon-link glyphicon"></i><?php echo getLabel("label.admin_bp.display") ?>:<?php echo $priority; ?>&nbsp;
+					<b class="condition_presentation"><?php echo $rule_type.".".$min_value."</b>&nbsp;&nbsp;".$bp."&nbsp;&nbsp;(".$desc_bp.")"; ?>
+				</div>
+				<div class="list-inline marge-buttons">
+					<button type="button" class="btn-group light-round btn-success" onclick="location.href='add_services.php?bp_name=<?php echo $bp; ?>&display=<?php echo $priority; ?>'"><i class="glyphicon glyphicon-plus"></i></button>
+					<button type="button" class="btn-group light-round btn-info" onclick="editApplication('<?php echo $bp; ?>');"><i class="glyphicon glyphicon-pencil"></i></button>
+					<button type="button" class="light-round btn-group btn-danger" onclick="ShowModalDeleteBP('<?php echo $bp; ?>');"><i class="glyphicon glyphicon-trash"></i></button>
+				</div>
+			</div>
+		</li>				
 <?php
 	}
 
@@ -209,27 +209,31 @@ include("../../side.php");
 
 	?>
     
-	<form class="form-vertical">
-		<div class="row">
-			<div class="form-group col-md-4">
+	<form class="form-inline">
+		<div class="">
+			<div class="form-group">
+				<div class="btn-group">
+					<button class="btn btn-info" type="button" onclick="ShowAll();"><?php echo getLabel("action.show_all") ?></button>
+					<button class="btn btn-info" type="button" onclick="HideAll();"><?php echo getLabel("action.hide_all") ?></button>
+				</div><!-- /btn-group -->
+				
+			</div>
+			
+			<div class="form-group">
 				<div class="input-group">
+					<input type="text" class="form-control" id="SearchFor" placeholder="<?php echo getLabel("action.search"); ?>...">
 					<span class="input-group-btn">
-						<button class="btn btn-info" type="button" onclick="ShowAll();">Show All</button>
-						<button class="btn btn-info" type="button" onclick="HideAll();">Hide All</button>
-					</span>
-					<input type="text" class="form-control" id="SearchFor" placeholder="Search for...">
-					<span class="input-group-btn">
-						<button class="btn btn-info" id="FindIt" type="button">Find it!</button>
+						<button class="btn btn-info" id="FindIt" type="button"><?php echo getLabel("action.search"); ?></button>
 					</span>
 				</div><!-- /input-group -->
 			</div>
 
-			<div class="form-group col-md-8">		                   
+			<div class="form-group">		                   
 				<button type="button" class="btn btn-success" onclick="AddingApplication();">
-					Add new application
+					<?php echo getLabel("action.add_new_app"); ?>
 				</button>
 				<button type="button" class="btn btn-primary" onclick="ShowModalApplyConfiguration();">
-					Apply Configuration
+					<?php echo getLabel("action.apply_conf"); ?>
 				</button>
 			</div> 
 		</div>
@@ -254,7 +258,7 @@ include("../../side.php");
 			<div class="modal-content panel-info">
 				<div class="modal-header panel-heading">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title">Suppression</h4>
+					<h4 class="modal-title"><?php echo getLabel("action.delete"); ?></h4>
 				</div>
 				<div class="modal-body">
 				</div>

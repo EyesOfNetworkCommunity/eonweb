@@ -33,7 +33,6 @@ $(document).ready(function () {
 		var service_name = information.split(";;")[1];
 
 		$list_new_services.push(host_name + "::" + service_name);
-		//console.log($list_new_services);
 	}
 
 	$('#host').autocomplete({
@@ -50,15 +49,17 @@ $(document).ready(function () {
 				},
 				function ReturnValue(list_services){
 					$services = list_services['service'];
+
+					// add Hoststatus if necessary
+					$services.unshift("Hoststatus");
+
 					$('#draggablePanelList').children().remove();
-					$('#process').html('Services linked to host ' + $('#host').val());
+					$('#process').html(dictionnary["label.admin_bp.serv_linked_to_host"]+' ' + $('#host').val());
 					for(i=0;i<$services.length;i++){
 						var element = $('div[id$="::' + $("#host").val() + ';;' + $services[i] + '"]');
-						//console.log(element.length);
-						//console.log(element);
-
+						
 						if(! element.length){
-							$('#draggablePanelList').append($('<li id="' + $('#host').val() + '::' + $services[i] +'" class="draggable panel panel-warning ui-front" style=\"position:relative\"><div class="panel-heading">' + $services[i] + '</div></li>').draggable({ snap: true, revert: "invalid" }));
+							$('#draggablePanelList').append($('<li id="' + $('#host').val() + '::' + $services[i] +'" class="draggable col-xs-6 panel panel-warning ui-front" style=\"position:relative\"><div class="panel-heading row">' + $services[i] + '</div></li>').draggable({ snap: true, revert: "invalid" }));
 						}
 					}
 				},
@@ -77,19 +78,25 @@ $(document).ready(function () {
 			if($("#container_service").length){
 				$element = $('div[id="drop_zone::' + $('#host').val() + '"]');
             	var id_panel = "" + bp_name + '::' + $("#host").val() + ';;' + ui.draggable.text() + "";
-
+            	
 				if($element.length){
 					$('<div id="' + id_panel + '" class="panel-body text-info well well-sm" onclick="DeleteService(id);"style=\"font-size:16px;\">' + ui.draggable.text() + '<button type="button" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-trash"></span></button></div>').appendTo($element);
 				}
 
 				else{
 					var id_panel_hoststatus = "" + bp_name + '::' + $("#host").val() + ';;Hoststatus' + "";
-					$list_new_services.push($('#host').val() + "::Hoststatus");
-
-					$('#container-drop_zone').append('<div id="drop_zone::' + $("#host").val() + '" class="ui-widget-content panel panel-info"><div class="panel-heading panel-title" id="panel::' +$("#host").val()+ '">' + $("#host").val() + '</div><div id="' +id_panel_hoststatus+ '" class="panel-body text-primary well well-sm" style="font-size:16px;">Hoststatus<button type="button" class="btn btn-danger pull-right" disabled><span class="glyphicon glyphicon-trash"></span></button></div><div id="' +id_panel+ '" class="panel-body text-info well well-sm" onclick="DeleteService(id)" style="font-size:16px;">' + ui.draggable.text() + '<button type="button" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-trash"></span></button></div></div>');
+					
+					
+					$('li[id="'+$('#host').val()+'::Hoststatus"]').remove();
+					if(ui.draggable.text() != "Hoststatus"){
+						$('#container-drop_zone').append('<div id="drop_zone::' + $("#host").val() + '" class="ui-widget-content panel panel-info"><div class="panel-heading panel-title" id="panel::' +$("#host").val()+ '">' + $("#host").val() + '</div><div id="' +id_panel_hoststatus+ '" class="panel-body text-primary well well-sm" onclick="DeleteService(id);" style="font-size:16px;">Hoststatus<button type="button" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-trash"></span></button></div><div id="' +id_panel+ '" class="panel-body text-info well well-sm" onclick="DeleteService(id)" style="font-size:16px;">' + ui.draggable.text() + '<button type="button" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-trash"></span></button></div></div>');
+						$list_new_services.push($('#host').val() + "::Hoststatus");
+					} else {
+						$('#container-drop_zone').append('<div id="drop_zone::' + $("#host").val() + '" class="ui-widget-content panel panel-info"><div class="panel-heading panel-title" id="panel::' +$("#host").val()+ '">' + $("#host").val() + '</div><div id="' +id_panel+ '" class="panel-body text-info well well-sm" onclick="DeleteService(id)" style="font-size:16px;">' + ui.draggable.text() + '<button type="button" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-trash"></span></button></div></div>');
+					}
 				}
 				$list_new_services.push($('#host').val() + "::" + ui.draggable.text());
-				$('li[id$="' + ui.draggable.text() + '"]').remove();
+				$('li[id="' + $('#host').val() + "::" + ui.draggable.text() + '"]').remove();
 			}
 
 			else{
@@ -108,7 +115,7 @@ $(document).ready(function () {
         var bp_name = element_bp_name.split(" : ")[1];
 		var nb_display = $('select[name="display"]').val();
 		if(nb_display % 1 === 0) {
-			$('#process').html('Process for display ' + nb_display + '');
+			$('#process').html(dictionnary["label.admin_bp.process_for_display"]+' ' + nb_display + '');
 		} else {
 			$('#process').html('');
 		}
@@ -127,7 +134,7 @@ $(document).ready(function () {
 					var element = $('div[id$=";;' + $process + '"]');
 
 					if(! element.length){
-						$('#draggablePanelListProcess').append($('<li id="' + $process +'" class="draggable panel panel-warning ui-front" style=\"position:relative\"><div class="panel-heading">' + $process + '</div></li>').draggable({ snap: true, revert: "invalid" }));
+						$('#draggablePanelListProcess').append($('<li id="' + $process +'" class="draggable col-xs-6 panel panel-warning ui-front" style=\"position:relative\"><div class="panel-heading row">' + $process + '</div></li>').draggable({ snap: true, revert: "invalid" }));
 					}
                 }
             },
@@ -139,10 +146,10 @@ $(document).ready(function () {
 
 $(document).scroll(function(){
 	if($(document).scrollTop()>$('#form_drop').height()){
-		//console.log('ok');
 		$('#form_drop').css('top',$(document).scrollTop() -$('#form_drop').height());
 	}
 });
+
 
 function DeleteService(line_service){
     $('div[id="' + line_service +'"]').remove();
@@ -156,32 +163,82 @@ function DeleteService(line_service){
   		return value != host + "::" + service;
 		});
 
-	//console.log($list_new_services);
-
 	var all_element_match = $('div[id^="' + global_bp + '::' + host + '"]');
-
-	//si il ne reste plus que hoststatus on supprime tout
-	if(all_element_match.length == 1){
-		var dropzone_id = "drop_zone::" + host;
-		$('div[id="' + dropzone_id + '"]').remove();
-
-		//on supprime le service dans la liste
-    	$list_new_services = jQuery.grep($list_new_services, function(value) {
-        	return value != host + "::Hoststatus";
-        });
-	}
 
 	//On verifie si il y a encore des elements dans la dropzone
 	var element_dropzone = $('div[id^="' + global_bp + '::"]');
-	if(! element_dropzone.length){
-		$('#container-drop_zone').append('<div id="primary_drop_zone" class="ui-widget-content panel panel-info" style="width:300px;height:50px"><div class="panel-body text-center">Drop Element Here</div></div>');
+	if(element_dropzone.length < 1){
+		$('#container-drop_zone').html('<div id="primary_drop_zone" class="ui-widget-content panel panel-info" style="height:50px"><div class="panel-body text-center">'+dictionnary["label.admin_bp.drop_here"]+'</div></div>');
+	}
+
+	// SERVICE !!!
+	if($("input#host").length > 0){
+		$.get(
+			'./php/function_bp.php',
+			{
+				action: 'list_services',
+				host_name: $("input#host").val()
+			},
+			function ReturnValue(list_services){
+				$services = list_services['service'];
+				// add Hoststatus if necessary
+				
+				$('#draggablePanelList').children().remove();
+				
+
+				if($services !== undefined){
+					$('#process').html(dictionnary["label.admin_bp.serv_linked_to_host"]+' ' + $('#host').val());
+					$services.unshift("Hoststatus");
+					for(i=0;i<$services.length;i++){
+						var element = $('div[id$="::' + $("#host").val() + ';;' + $services[i] + '"]');
+						
+						if(! element.length){
+							$('#draggablePanelList').append($('<li id="' + $('#host').val() + '::' + $services[i] +'" class="draggable col-xs-6 panel panel-warning ui-front" style=\"position:relative\"><div class="panel-heading row">' + $services[i] + '</div></li>').draggable({ snap: true, revert: "invalid" }));
+						}
+					}
+				}
+			},
+			'json'
+		);
+	}
+	// PROCESS !!!
+	else {
+		var element_bp_name = $('.bp_name').html();
+	    var bp_name = element_bp_name.split(" : ")[1];
+		var nb_display = $('select[name="display"]').val();
+		if(nb_display % 1 === 0) {
+			$('#process').html(dictionnary["label.admin_bp.process_for_display"]+' ' + nb_display + '');
+		} else {
+			$('#process').html('');
+		}
+		
+		$.get(
+			'./php/function_bp.php',
+	        {
+	        	action: 'list_process',
+				bp_name: bp_name,
+				display: nb_display
+			},
+	        function ReturnValue(list_process){
+				$('#draggablePanelListProcess').children().remove();
+				for(i=0;i<list_process.length;i++){
+					$process = list_process[i]['name'];
+					var element = $('div[id$=";;' + $process + '"]');
+
+					if(! element.length){
+						$('#draggablePanelListProcess').append($('<li id="' + $process +'" class="draggable col-xs-6 panel panel-warning ui-front" style=\"position:relative\"><div class="panel-heading row">' + $process + '</div></li>').draggable({ snap: true, revert: "invalid" }));
+					}
+	            }
+	        },
+	        'json'
+	    );
 	}
 }
 
 function ApplyService(){
 	var element = $('h1.page-header').html();
 	var bp_name = element.split(" : ")[1];
-	//console.log($list_new_services);
+	
 	$.get(
 		'./php/function_bp.php',
 		{
@@ -190,7 +247,6 @@ function ApplyService(){
 			new_services: $list_new_services
 		},
 		function ReturnError(values){
-			//console.log(values);
 			setTimeout(function(){
 				$(location).attr('href',"./index.php");
 				},

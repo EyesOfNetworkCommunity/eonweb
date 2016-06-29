@@ -59,13 +59,13 @@ if(! empty($bp_name)){
 
     print "<div class=\"panel panel-default\">"; // panel start here
         print "<div class=\"panel-heading\">";
-            print "Create New Application";
+            print getLabel("action.add_new_app");
         print "</div>";
         print "<div class=\"panel-body\">";
         	print "<form class=\"form-horizontal col-md-8 col-md-offset-2\">";
                 print "<div class=\"row\">";
                 	print "<div class=\"form-group\">";
-                    	print "<label style=\"font-weight:normal\" class=\"col-xs-3 control-label\">Uniq Name</label>";
+                    	print "<label style=\"font-weight:normal\" class=\"col-xs-3 control-label\">".getLabel("label.admin_bp.unique_name")."</label>";
                         print "<div class=\"col-xs-8\">";
                         	print "<input type=\"text\" class=\"form-control\" id=\"uniq_name\" onkeyup=\"this.value=this.value.replace(/[^éèàêâç0-9a-zA-Z-_ \/\*]/g,'')\" value=\""; echo (isset($bp_name)?$bp_name:'');
         					print "\">";
@@ -78,7 +78,7 @@ if(! empty($bp_name)){
 
         		print "<div class=\"row\">";
                     print "<div class=\"form-group\">";
-                        print "<label style=\"font-weight:normal\" class=\"col-xs-3 control-label\">Process Name</label>";
+                        print "<label style=\"font-weight:normal\" class=\"col-xs-3 control-label\">".getLabel("label.admin_bp.process_name")."</label>";
                         print "<div class=\"col-xs-8\">";
                             print "<input type=\"text\" class=\"form-control\" id=\"process_name\" onkeyup=\"this.value=this.value.replace(/[^éèàêâç0-9a-zA-Z-_ \/\*]/g,'')\" value=\""; echo (isset($bp_desc)?$bp_desc:'');
         					print "\">";
@@ -91,7 +91,7 @@ if(! empty($bp_name)){
 
         		print "<div class=\"row\">";
                     print "<div class=\"form-group\">";
-                        print "<label style=\"font-weight:normal\" class=\"col-xs-3 control-label\">Display</label>";
+                        print "<label style=\"font-weight:normal\" class=\"col-xs-3 control-label\">".getLabel("label.admin_bp.display")."</label>";
                         print "<div class=\"col-xs-8\">";
         					$disabled = "";
         					if(isset($bp_prior)){
@@ -101,7 +101,7 @@ if(! empty($bp_name)){
         					}
         			        
         					print "<select class=\"form-control\" name=\"display\" $disabled>";
-        						print "<option>"; echo (isset($bp_prior)?$bp_prior:'None');
+        						print "<option>"; echo (isset($bp_prior)?$bp_prior: getLabel("label.none"));
         						print "</option>";
         						$list_display = array('0','1','2','3','4','5');
         						foreach($list_display as $display){
@@ -134,7 +134,7 @@ if(! empty($bp_name)){
 
         		print "<div class=\"row\">";
                     print "<div class=\"form-group\">";
-                        print "<label style=\"font-weight:normal\" class=\"col-xs-3 control-label\">Command</label>";
+                        print "<label style=\"font-weight:normal\" class=\"col-xs-3 control-label\">".getLabel("label.admin_bp.command")."</label>";
                         print "<div class=\"col-xs-8\">";
                             print "<input type=\"text\" class=\"form-control\" id=\"command\" value=\""; echo (isset($bp_command)?$bp_command:'');
         					print "\">";
@@ -172,10 +172,10 @@ if(! empty($bp_name)){
 
         		print "<div class=\"row\" id=\"container_select_minimum\">";
                     print "<div class=\"form-group\">";
-                        print "<label style=\"font-weight:normal\" class=\"col-xs-3 control-label\">Minimum Value</label>";
+                        print "<label style=\"font-weight:normal\" class=\"col-xs-3 control-label\">".getLabel("label.admin_bp.min_value")."</label>";
                         print "<div class=\"col-xs-8\">";
                             print "<select class=\"form-control\" name=\"min_value\">";
-        						print "<option>"; echo (isset($bp_minvalue)?$bp_minvalue:'None');
+        						print "<option>"; echo (isset($bp_minvalue)?$bp_minvalue: getLabel("label.none"));
                                 print "</option>";
                                 $list_minvalue = array('0','1','2','3','4','5','6','7','8','9');
                                 foreach($list_minvalue as $minvalue){
@@ -197,15 +197,15 @@ if(! empty($bp_name)){
                     print "<div class=\"form-group\">";
         				print "<button class=\"btn btn-primary col-xs-offset-3\" type=\"submit\" id=\"submit\" "; echo (isset($bp_name)?'':'disabled');
         				if(empty($bp_name)) {
-							print ">Créer";
+							print ">".getLabel("action.create");
 						}
 						else {
-							print ">Modifier";
+							print ">".getLabel("action.update");
 						}
             			print "</button>";
                         print " ";
                         print "<a href=\"index.php\" class=\"btn btn-default\" ";
-                        print ">Annuler";
+                        print ">".getLabel("action.cancel");
                         print "</a>";
         			print "</div>";
         		print "</div>";
@@ -214,9 +214,9 @@ if(! empty($bp_name)){
         print "</div>";
     print "</div>";
 	print "<p class=\"text-right\">";
-        print "<label style=\"font-weight:lighter;\" class=\"control-label\">Les champs marqués d'une </label>";
+        print "<label style=\"font-weight:lighter;\" class=\"control-label\">".getLabel("message.required_value1")." </label>";
         print " <span class=\"glyphicon glyphicon-asterisk\" style=\"font-size:10px;color:#707070;\"></span> ";
-        print "<label style=\"font-weight:lighter;\" class=\"control-label\"> sont obligatoires</label>";
+        print "<label style=\"font-weight:lighter;\" class=\"control-label\"> ".getLabel("message.required_value2")."</label>";
 	print "</p>";
 
 print "</div>";

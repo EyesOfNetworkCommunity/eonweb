@@ -112,7 +112,7 @@ function list_process($bp,$display,$bdd){
 function add_services($bp,$services,$bdd){
 	$list_services = array();
 	$old_list_services = array();
-
+	
 	if(is_array($services)) {
 		foreach($services as $values){
 			$value = explode("::", $values);

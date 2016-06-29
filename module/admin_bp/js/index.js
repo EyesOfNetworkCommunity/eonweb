@@ -83,44 +83,12 @@ function AddingApplication(){
 }
 
 function ShowModalDeleteBP(bp){
-	$("#popup_confirmation .modal-body").html('Supprimer le BP: ' + bp);
+	$("#popup_confirmation .modal-title").html(dictionnary["action.delete"]);
+	$("#popup_confirmation .modal-body").html(dictionnary["label.admin_bp.delete_bp"]+': ' + bp);
 	$("#popup_confirmation button").hide();
 	$("#modal-confirmation-del-bp").show();
 	$("#action-cancel").show();
 	$("#popup_confirmation").modal('show');
-    /*$('body').append('<div id="popup_confirmation" title="Suppression"></div>');
-    $("#popup_confirmation").html('Supprimer le BP ' + bp);
-
-    $("#popup_confirmation").dialog({
-        autoOpen: false,
-        width: 400,
-        buttons: [
-            {
-                text: "Oui",
-                click: function () {
-                    $(this).dialog("close");
-					$('div[id="' + bp + '"]').remove();
-
-					$.get(
-						'./php/function_bp.php',
-						{
-							action: 'delete_bp',
-							bp_name: bp
-						},
-						function ReturnAction(){
-								location.reload();
-						}
-					);
-                }
-            },
-            {
-                text: "Non",
-                click: function () {
-                    $(this).dialog("close");
-                }
-            }
-        ]
-    }).dialog("open");*/
 }
 
 function DeleteBP(){
@@ -146,41 +114,12 @@ function DeleteBP(){
 }
 
 function ShowModalApplyConfiguration(){
-	$("#popup_confirmation .modal-body").html('Appliquer la configuration ?');
+	$("#popup_confirmation .modal-title").html(dictionnary["action.apply_conf"]);
+	$("#popup_confirmation .modal-body").html(dictionnary["action.apply_conf"]+' ?');
 	$("#popup_confirmation button").hide();
 	$("#modal-confirmation-apply-conf").show();
 	$("#action-cancel").show();
 	$("#popup_confirmation").modal('show');
-	/*$('body').append('<div id="popup_confirmation" title="Suppression"></div>');
-    $("#popup_confirmation").html("Appliquer la configuration ?");
-
-    $("#popup_confirmation").dialog({
-        autoOpen: false,
-        width: 400,
-        buttons: [
-            {
-                text: "Oui",
-                click: function () {
-                    $(this).dialog("close");
-					$.get(
-						'./php/function_bp.php',
-						{
-							action: 'build_file'
-						},
-						function ReturnValue(value){
-							console.log(value);
-						}
-					);
-                }
-            },
-            {
-                text: "Non",
-                click: function () {
-                    $(this).dialog("close");
-                }
-            }
-        ]
-    }).dialog("open");*/
 }
 
 function ApplyConfiguration(){
@@ -190,7 +129,6 @@ function ApplyConfiguration(){
 			action: 'build_file'
 		},
 		function ReturnValue(value){
-			//console.log(value);
 		}
 	);
 
