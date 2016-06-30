@@ -42,6 +42,11 @@ $(document).ready(function () {
 		$list_new_services.push(host_name + "::" + service_name);
 	}
 
+	$(document).on('click', 'button.btn-success.button-addbp', function(){
+		var name = $(this).parent().text();
+		AddService(name);
+	});
+
 	$('#host').autocomplete({
 		serviceUrl: './php/auto_completion.php',
 		dataType: 'json',
@@ -77,51 +82,8 @@ $(document).ready(function () {
 	$('#container-drop_zone').droppable({
 		hoverClass : "ui-state-hover",
     	drop : function(event, ui){
-			$('#primary_drop_zone').remove();
-			var element_bp_name = $('.bp_name').html();
-            var bp_name = element_bp_name.split(" : ")[1];
-
-			if($("#container_service").length){
-				$element = $('div[id="drop_zone::' + $('#host').val() + '"]');
-            	var id_panel = "" + bp_name + '::' + $("#host").val() + ';;' + ui.draggable.text() + "";
-            	
-				if($element.length){
-					$(display_dropzone_element(id_panel,ui.draggable.text())).appendTo($element);
-				}
-
-				else{
-					var id_panel_hoststatus = "" + bp_name + '::' + $("#host").val() + ';;Hoststatus' + "";
-					
-					
-					$('div[id="drag_'+$('#host').val()+'::Hoststatus"]').remove();
-					if(ui.draggable.text() != "Hoststatus"){
-						$('#container-drop_zone').append('\
-						<div id="drop_zone::' + $("#host").val() + '" class="ui-widget-content panel panel-info">\
-							<div class="panel-heading panel-title" id="panel::' +$("#host").val()+ '">' + $("#host").val() + '</div>\
-							'+display_dropzone_element(id_panel_hoststatus,'Hoststatus')+'\
-							'+display_dropzone_element(id_panel,ui.draggable.text())+'\
-						</div>');
-						
-						$list_new_services.push($('#host').val() + "::Hoststatus");
-					} else {
-						$('#container-drop_zone').append('\
-						<div id="drop_zone::' + $("#host").val() + '" class="ui-widget-content panel panel-info">\
-							<div class="panel-heading panel-title" id="panel::' +$("#host").val()+ '">' + $("#host").val() + '</div>\
-							'+display_dropzone_element(id_panel,ui.draggable.text())+'\
-						</div>');
-					}
-				}
-				$list_new_services.push($('#host').val() + "::" + ui.draggable.text());
-				$('div[id="drag_' + $('#host').val() + "::" + ui.draggable.text() + '"]').remove();
-			}
-
-			else{
-				var id_panel = "" + bp_name + '::--;;' + ui.draggable.text() + "";
-
-				$('#container-drop_zone').append(display_dropzone_element(id_panel,ui.draggable.text()));
-				$list_new_services.push("--::" + ui.draggable.text());
-				$('div[id$="drag_' + ui.draggable.text() + '"]').remove();
-			}
+    		var name = ui.draggable.text();
+			AddService(name);
     	}
 	});
 
@@ -165,6 +127,56 @@ $(document).scroll(function(){
 	}
 });
 
+
+// function declaration !!!
+function AddService(name)
+{
+	$('#primary_drop_zone').remove();
+	var element_bp_name = $('.bp_name').html();
+    var bp_name = element_bp_name.split(" : ")[1];
+
+	if($("#container_service").length){
+		$element = $('div[id="drop_zone::' + $('#host').val() + '"]');
+    	var id_panel = "" + bp_name + '::' + $("#host").val() + ';;' + name + "";
+    	
+		if($element.length){
+			$(display_dropzone_element(id_panel,name)).appendTo($element);
+		}
+
+		else{
+			var id_panel_hoststatus = "" + bp_name + '::' + $("#host").val() + ';;Hoststatus' + "";
+			
+			
+			$('div[id="drag_'+$('#host').val()+'::Hoststatus"]').remove();
+			if(name != "Hoststatus"){
+				$('#container-drop_zone').append('\
+				<div id="drop_zone::' + $("#host").val() + '" class="ui-widget-content panel panel-info">\
+					<div class="panel-heading panel-title" id="panel::' +$("#host").val()+ '">' + $("#host").val() + '</div>\
+					'+display_dropzone_element(id_panel_hoststatus,'Hoststatus')+'\
+					'+display_dropzone_element(id_panel,name)+'\
+				</div>');
+				
+				$list_new_services.push($('#host').val() + "::Hoststatus");
+			} else {
+				$('#container-drop_zone').append('\
+				<div id="drop_zone::' + $("#host").val() + '" class="ui-widget-content panel panel-info">\
+					<div class="panel-heading panel-title" id="panel::' +$("#host").val()+ '">' + $("#host").val() + '</div>\
+					'+display_dropzone_element(id_panel,name)+'\
+				</div>');
+			}
+		}
+		$list_new_services.push($('#host').val() + "::" + name);
+		$('div[id="drag_' + $('#host').val() + "::" + name + '"]').remove();
+	}
+
+	else{
+		var id_panel = "" + bp_name + '::--;;' + name + "";
+
+		$('#container-drop_zone').append(display_dropzone_element(id_panel,name));
+		$list_new_services.push("--::" + name);
+		$('div[id$="drag_' + name + '"]').remove();
+	}
+}
 
 function DeleteService(line_service){
     $('div[id="' + line_service +'"]').remove();
