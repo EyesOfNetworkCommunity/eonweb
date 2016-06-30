@@ -219,7 +219,6 @@ function build_file_recursive($bdd,$bp_file,$bp_informations,$bp_sons){
 	$sql = "SELECT bp_link FROM bp_links where bp_name='".$bp_informations['name']."'";
 	$req = $bdd->query($sql);
 	if($req->rowCount() == 0) {
-		build_file_bp($bdd,$bp_file, $bp_informations);
 		$bp_sons[]=$bp_informations['name'];
 		build_file_bp($bdd,$bp_file, $bp_informations);
 	} else {
