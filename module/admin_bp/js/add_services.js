@@ -22,8 +22,8 @@
 $list_new_services = [];
 
 function display_dropzone_element(id, text) {
-	return '<div id="' + id + '" class="text-info well well-sm" onclick="DeleteService(\''+id+'\');"style=\"font-size:16px;\">\
-		<button type="button" class="btn btn-xs btn-danger button-addbp"><span class="glyphicon glyphicon-trash"></span></button>\
+	return '<div id="' + id + '" class="text-info well well-sm" style=\"font-size:16px;\">\
+		<button type="button" class="btn btn-xs btn-danger button-addbp" onclick="DeleteService(\''+id+'\');"><span class="glyphicon glyphicon-trash"></span></button>\
 		'+text+'\
 	</div>';
 }
@@ -202,13 +202,10 @@ function DeleteService(line_service){
 			function ReturnValue(list_services){
 				$services = list_services['service'];
 				// add Hoststatus if necessary
-				
 				$('#draggablePanelList').children().remove();
-				
 
 				if($services !== undefined){
 					$('#process').html(dictionnary["label.admin_bp.serv_linked_to_host"]+' ' + $('#host').val());
-					$services.unshift("Hoststatus");
 					for(i=0;i<$services.length;i++){
 						var element = $('div[id$="::' + $("#host").val() + ';;' + $services[i] + '"]');
 						
