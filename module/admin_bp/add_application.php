@@ -67,6 +67,8 @@ if(! empty($bp_name)){
                 	print "<div class=\"form-group\">";
                     	print "<label style=\"font-weight:normal\" class=\"col-xs-3 control-label\">".getLabel("label.admin_bp.unique_name")."</label>";
                         print "<div class=\"col-xs-8\">";
+							print "<input type=\"hidden\" id=\"uniq_name_orig\" value=\""; echo (isset($bp_name)?$bp_name:'');
+							print "\">";
                         	print "<input type=\"text\" class=\"form-control\" id=\"uniq_name\" onkeyup=\"this.value=this.value.replace(/[^éèàêâç0-9a-zA-Z-_ \/\*]/g,'')\" value=\""; echo (isset($bp_name)?$bp_name:'');
         					print "\">";
                         print "</div>";
@@ -105,6 +107,9 @@ if(! empty($bp_name)){
         						print "</option>";
         						$list_display = array('0','1','2','3','4','5');
         						foreach($list_display as $display){
+									if($bp_prior != 0 and $display == 0) {
+										continue;
+									}
         							if(isset($bp_prior)){
         								if($display != $bp_prior){
           									print "<option>$display</option>";
