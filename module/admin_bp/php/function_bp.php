@@ -127,16 +127,8 @@ function add_services($bp,$services,$bdd){
 	$sql = "select service,host from bp_services where bp_name = '" . $bp . "'";
 	$req = $bdd->query($sql);
 
-	while($old_service = $req->fetch()){
-		if(! in_array($old_service['service'], $list_services)) {
-			$sql = "delete from bp_services where bp_name = '" . $bp . "' and host = '" . $old_service['host'] . "' and service = '" . $old_service['service'] . "'";
-    		$bdd->exec($sql);
-		}
-		$old_list_services[] = $old_service['service'];
-	}
-		
-	//$sql = "delete from bp_services where bp_name = '" . $bp . "'";
-	//$bdd->exec($sql);
+	$sql = "delete from bp_services where bp_name = '" . $bp . "'";
+	$bdd->exec($sql);
 
 	if(count($services) > 0){
 		$sql = "update bp set is_define = 1 where name = '" . $bp . "'";
@@ -153,14 +145,9 @@ function add_services($bp,$services,$bdd){
 			$value = explode("::", $values);
 			$host = $value[0];
 			$service = $value[1];
-
-			if(! in_array($service, $old_list_services)){
-				echo $service;
-
-				$sql = "insert into bp_services (bp_name,host,service) values('" . trim($bp) . "','" . $host . "','" . $service . "')";
-
-				$bdd->exec($sql);
-			}
+			echo $service;
+			$sql = "insert into bp_services (bp_name,host,service) values('" . trim($bp) . "','" . $host . "','" . $service . "')";
+			$bdd->exec($sql);
 		}
 	}
 }
