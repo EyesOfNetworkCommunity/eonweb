@@ -315,7 +315,7 @@ if(file_exists($file)){
 			<div id="confirmation-modal-content" class="modal-content">
 				<div id="confirmation-modal-header" class="modal-header panel-heading">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="confirmation-modal-title">Title</h4>
+					<h4 class="modal-title">Title</h4>
 				</div>
 				<div id="confirmation-modal-body" class="modal-body">
 					<?php echo getLabel("message.confirmation"); ?>
