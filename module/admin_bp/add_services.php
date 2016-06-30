@@ -23,8 +23,8 @@
 include("../../header.php");
 include("../../side.php");
 
-$bp_name = $_GET['bp_name'];
-$display_actually_bp = $_GET['display'];
+$bp_name = isset($_GET['bp_name']) ? $_GET['bp_name'] : false;
+$display_actually_bp = isset($_GET['display']) ? $_GET['display'] : false;
 
 try {
     $bdd = new PDO("mysql:host=$database_host;dbname=nagiosbp", $database_username, $database_password);
@@ -45,7 +45,9 @@ print "<div id=\"page-wrapper\">";
 	print "<div class=\"row\">";
 		print "<div class=\"col-md-6\">";
 			print "<form onsubmit=\"return false;\">";
-
+			print "<input type=\"hidden\" id=\"bp_name\" name=\"bp_name\" value=\"".$bp_name."\">";
+			print "<input type=\"hidden\" id=\"display\" name=\"display\" value=\"".$display_actually_bp."\">";
+			
 				if($display_actually_bp == 0) {	
 					print "<div id=\"container_service\">";
 						print "<label>".getLabel("label.host")."</label>";
@@ -66,8 +68,8 @@ print "<div id=\"page-wrapper\">";
 						
 						print "<div class=\"row col-md-12\">";
 							print "<div class=\"form-group\">";
-								print "<ul id=\"draggablePanelList\" class=\"list-unstyled\">";
-								print "</ul>";
+								print "<div id=\"draggablePanelList\" class=\"list-unstyled\">";
+								print "</div>";
 							print "</div>";
 						print "</div>";
 					print "</div>";
@@ -111,55 +113,69 @@ print "<div id=\"page-wrapper\">";
 				$text_display = ($display_actually_bp > 0 ? "Process" : "Services");
 				print "<label>$text_display ".getLabel("label.admin_bp.linked_to_bp")." $bp_name</label>";
 				print "<div id=\"container-drop_zone\" class=\"container-drop_zone\">";
-
+				
 					if($display_actually_bp > 0){
+											
 						$sql = "select bp_link from bp_links where bp_name = '" . $bp_name . "'";
 						$req = $bdd->query($sql);
 						$count = 0;
 
 						while($row = $req->fetch()){
 		               		$bp_name_linked = $row['bp_link'];
-							print "<div id=\"$bp_name::--;;$bp_name_linked\" class=\"panel-body text-info well well-sm\" style=\"font-size:16px;\">$bp_name_linked<button type=\"button\" class=\"btn btn-danger pull-right\" onclick=\"DeleteService('$bp_name::--;;$bp_name_linked');\"><span class=\"glyphicon glyphicon-trash\"></span></button></div>";
+							print "<div id=\"$bp_name::--;;$bp_name_linked\" class=\"text-info well well-sm\" style=\"font-size:16px;\">
+								<button type=\"button\" class=\"btn btn-danger button-addbp\" onclick=\"DeleteService('$bp_name::--;;$bp_name_linked');\">
+									<span class=\"glyphicon glyphicon-trash\"></span>
+								</button>
+								$bp_name_linked
+							</div>";
 							$count += 1;
 						}
 						if($count == 0){
-							print "<div id=\"primary_drop_zone\" class=\"ui-widget-content panel panel-info\"><div class=\"panel-body text-center\">".getLabel("label.admin_bp.drop_here")."</div></div>";
-						}
+							print "<div id=\"primary_drop_zone\" class=\"ui-widget-content panel panel-info\" style=\"height:50px\">";
+								print "<div class=\"text-center panel-body\">".getLabel("label.admin_bp.drop_here")."</div>";
+							print "</div>";
+						} 
 					}
 
 					else{
-						print "<div>";
 						$old_host = "";
-						$sql = "select host,service from bp_services where bp_name = '" . $bp_name . "' ORDER BY id";
-
+						$sql = "select host,service from bp_services where bp_name = '" . $bp_name . "' ORDER BY host, service";
 						$req = $bdd->query($sql);
-						while($row = $req->fetch()){
-							$host = $row['host'];
-							$service = $row['service'];
-							if($host != $old_host){
+						
+						if($req->rowCount() != 0){
+							while($row = $req->fetch()){
+								$host = $row['host'];
+								$service = $row['service'];
+								
+								if($host != $old_host){
+									print "<div id=\"drop_zone::$host\" class=\"ui-widget-content panel panel-info\">";
+									print "<div id=\"panel::$host\" class=\"panel-heading panel-title\">$host</div>";
+									print "<div class=\"pannel-body\">";
+									$old_host=$host;
+								}
+								
+								print "<div id=\"$bp_name::$host;;$service\" class=\"text-info well well-sm\" style=\"font-size:16px;\">";
+								print "<button type=\"button\" class=\"btn btn-danger button-addbp\" onclick=\"DeleteService('$bp_name::$host;;$service');\">";
+								print "<span class=\"glyphicon glyphicon-trash\"></span>";
+								print "</button>";
+								print "$service";
 								print "</div>";
-								print "<div id=\"drop_zone::$host\" class=\"ui-widget-content panel panel-info\">";
-								print "\n<div id=\"panel::$host\" class=\"panel-heading panel-title\">$host</div>";
+																
+								if($host != $old_host){
+									print "</div>";
+									print "</div>"; //fermeture du div du host
+								}
+
 							}
-
-							print "<div id=\"$bp_name::$host;;$service\" class=\"panel-body text-info well well-sm\" style=\"font-size:16px;\">$service";
-							if($service != 'Hoststatus'){
-		                    	print "<button type=\"button\" class=\"btn btn-danger pull-right\" onclick=\"DeleteService('$bp_name::$host;;$service');\"><span class=\"glyphicon glyphicon-trash\"></span></button>";
-							}
-							else{
-								print "<button type=\"button\" class=\"btn btn-danger pull-right\" onclick=\"DeleteService('$bp_name::$host;;$service');\"><span class=\"glyphicon glyphicon-trash\"></span></button>";
-		                    }
-		                	print "</div>";
-
-							$old_host = $host;
-						}
-
-						print "</div>"; //fermeture du div du host
-						if($old_host == ""){ // ca signifie que aucun service n'est ajoute
-							print "<div id=\"primary_drop_zone\" class=\"ui-widget-content panel panel-info\" style=\"height:50px\">";
-								print "<div class=\"panel-body text-center\">".getLabel("label.admin_bp.drop_here")."</div>";
+							print "</div>";
 							print "</div>";
 						}
+						
+						if($old_host == ""){ // ca signifie que aucun service n'est ajoute
+							print "<div id=\"primary_drop_zone\" class=\"ui-widget-content panel panel-info\" style=\"height:50px\">";
+								print "<div class=\"text-center panel-body\">".getLabel("label.admin_bp.drop_here")."</div>";
+							print "</div>";
+						}	
 					}
 				print "</div>"; //fermeture du div container-drop_zone
 				print "<br>";

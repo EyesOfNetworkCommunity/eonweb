@@ -89,7 +89,7 @@ function list_services($host_name){
     foreach( $lignes as $ligne) {
 
         if ( preg_match("/$host_name$/", trim($ligne), $match)) {  //Get Host name
-            $hasMatch = 1 ;
+            $hasMatch = 1;
         }
         elseif ( preg_match("#^service_description#", trim($ligne))) {
 			$service = preg_split("/[\s]+/", trim($ligne));

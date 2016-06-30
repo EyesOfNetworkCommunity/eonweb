@@ -89,9 +89,9 @@ include("../../side.php");
 					<b class="condition_presentation"><?php echo $rule_type.".".$min_value."</b>&nbsp;&nbsp;".$bp."&nbsp;&nbsp;(".$desc_bp.")"; ?>
 				</div>
 				<div class="list-inline marge-buttons">
-					<button type="button" class="btn-group light-round btn-success" onclick="location.href='add_services.php?bp_name=<?php echo $bp; ?>&display=<?php echo $priority; ?>'"><i class="glyphicon glyphicon-plus"></i></button>
-					<button type="button" class="btn-group light-round btn-info" onclick="editApplication('<?php echo $bp; ?>');"><i class="glyphicon glyphicon-pencil"></i></button>
-					<button type="button" class="light-round btn-group btn-danger" onclick="ShowModalDeleteBP('<?php echo $bp; ?>');"><i class="glyphicon glyphicon-trash"></i></button>
+					<button type="button" class="btn btn-xs btn-success light-round" onclick="location.href='add_services.php?bp_name=<?php echo $bp; ?>&display=<?php echo $priority; ?>'"><i class="glyphicon glyphicon-plus"></i></button>
+					<button type="button" class="btn btn-xs btn-info light-round" onclick="editApplication('<?php echo $bp; ?>');"><i class="glyphicon glyphicon-pencil"></i></button>
+					<button type="button" class="btn btn-xs btn-danger light-round" onclick="ShowModalDeleteBP('<?php echo $bp; ?>');"><i class="glyphicon glyphicon-trash"></i></button>
 				</div>
 			</div>
 		</li>				
@@ -232,6 +232,8 @@ include("../../side.php");
 				<button type="button" class="btn btn-success" onclick="AddingApplication();">
 					<?php echo getLabel("action.add_new_app"); ?>
 				</button>
+			</div>
+			<div class="form-group">	
 				<button type="button" class="btn btn-primary" onclick="ShowModalApplyConfiguration();">
 					<?php echo getLabel("action.apply_conf"); ?>
 				</button>

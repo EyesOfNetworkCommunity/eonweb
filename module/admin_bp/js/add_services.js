@@ -21,6 +21,13 @@
 
 $list_new_services = [];
 
+function display_dropzone_element(id, text) {
+	return '<div id="' + id + '" class="text-info well well-sm" onclick="DeleteService(\''+id+'\');"style=\"font-size:16px;\">\
+		<button type="button" class="btn btn-danger button-addbp"><span class="glyphicon glyphicon-trash"></span></button>\
+		'+text+'\
+	</div>';
+}
+
 $(document).ready(function () {
 	var element_bp_name = $('.page-header').html();
     var bp_name = element_bp_name.split(" : ")[1];
@@ -48,6 +55,7 @@ $(document).ready(function () {
 					host_name: suggestion['value']
 				},
 				function ReturnValue(list_services){
+					
 					$services = list_services['service'];
 
 					// add Hoststatus if necessary
@@ -59,7 +67,7 @@ $(document).ready(function () {
 						var element = $('div[id$="::' + $("#host").val() + ';;' + $services[i] + '"]');
 						
 						if(! element.length){
-							$('#draggablePanelList').append($('<li id="' + $('#host').val() + '::' + $services[i] +'" class="draggable col-xs-6 panel panel-warning ui-front" style=\"position:relative\"><div class="panel-heading row">' + $services[i] + '</div></li>').draggable({ snap: true, revert: "invalid" }));
+							$('#draggablePanelList').append($('<div id="drag_' + $('#host').val() + '::' + $services[i] +'" class="draggable well well-sm ui-front"><button type="button" class="btn-group light-round btn-success button-addbp"><i class="glyphicon glyphicon-plus"></i></button>' + $services[i] + '</div>').draggable({ snap: true, revert: "invalid" }));
 						}
 					}
 				},
@@ -80,32 +88,41 @@ $(document).ready(function () {
             	var id_panel = "" + bp_name + '::' + $("#host").val() + ';;' + ui.draggable.text() + "";
             	
 				if($element.length){
-					$('<div id="' + id_panel + '" class="panel-body text-info well well-sm" onclick="DeleteService(id);"style=\"font-size:16px;\">' + ui.draggable.text() + '<button type="button" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-trash"></span></button></div>').appendTo($element);
+					$(display_dropzone_element(id_panel,ui.draggable.text())).appendTo($element);
 				}
 
 				else{
 					var id_panel_hoststatus = "" + bp_name + '::' + $("#host").val() + ';;Hoststatus' + "";
 					
 					
-					$('li[id="'+$('#host').val()+'::Hoststatus"]').remove();
+					$('div[id="drag_'+$('#host').val()+'::Hoststatus"]').remove();
 					if(ui.draggable.text() != "Hoststatus"){
-						$('#container-drop_zone').append('<div id="drop_zone::' + $("#host").val() + '" class="ui-widget-content panel panel-info"><div class="panel-heading panel-title" id="panel::' +$("#host").val()+ '">' + $("#host").val() + '</div><div id="' +id_panel_hoststatus+ '" class="panel-body text-primary well well-sm" onclick="DeleteService(id);" style="font-size:16px;">Hoststatus<button type="button" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-trash"></span></button></div><div id="' +id_panel+ '" class="panel-body text-info well well-sm" onclick="DeleteService(id)" style="font-size:16px;">' + ui.draggable.text() + '<button type="button" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-trash"></span></button></div></div>');
+						$('#container-drop_zone').append('\
+						<div id="drop_zone::' + $("#host").val() + '" class="ui-widget-content panel panel-info">\
+							<div class="panel-heading panel-title" id="panel::' +$("#host").val()+ '">' + $("#host").val() + '</div>\
+							'+display_dropzone_element(id_panel_hoststatus,'Hoststatus')+'\
+							'+display_dropzone_element(id_panel,ui.draggable.text())+'\
+						</div>');
+						
 						$list_new_services.push($('#host').val() + "::Hoststatus");
 					} else {
-						$('#container-drop_zone').append('<div id="drop_zone::' + $("#host").val() + '" class="ui-widget-content panel panel-info"><div class="panel-heading panel-title" id="panel::' +$("#host").val()+ '">' + $("#host").val() + '</div><div id="' +id_panel+ '" class="panel-body text-info well well-sm" onclick="DeleteService(id)" style="font-size:16px;">' + ui.draggable.text() + '<button type="button" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-trash"></span></button></div></div>');
+						$('#container-drop_zone').append('\
+						<div id="drop_zone::' + $("#host").val() + '" class="ui-widget-content panel panel-info">\
+							<div class="panel-heading panel-title" id="panel::' +$("#host").val()+ '">' + $("#host").val() + '</div>\
+							'+display_dropzone_element(id_panel,ui.draggable.text())+'\
+						</div>');
 					}
 				}
 				$list_new_services.push($('#host').val() + "::" + ui.draggable.text());
-				$('li[id="' + $('#host').val() + "::" + ui.draggable.text() + '"]').remove();
+				$('div[id="drag_' + $('#host').val() + "::" + ui.draggable.text() + '"]').remove();
 			}
 
 			else{
 				var id_panel = "" + bp_name + '::--;;' + ui.draggable.text() + "";
 
-				$('#container-drop_zone').append('<div id="' +id_panel+ '" class="panel-body text-info well well-sm" onclick="DeleteService(id)" style="font-size:16px;">' + ui.draggable.text() + '<button type="button" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-trash"></span></button></div>');
-
+				$('#container-drop_zone').append(display_dropzone_element(id_panel,ui.draggable.text()));
 				$list_new_services.push("--::" + ui.draggable.text());
-				$('li[id$="' + ui.draggable.text() + '"]').remove();
+				$('div[id$="drag_' + ui.draggable.text() + '"]').remove();
 			}
     	}
 	});
@@ -134,7 +151,7 @@ $(document).ready(function () {
 					var element = $('div[id$=";;' + $process + '"]');
 
 					if(! element.length){
-						$('#draggablePanelListProcess').append($('<li id="' + $process +'" class="draggable col-xs-6 panel panel-warning ui-front" style=\"position:relative\"><div class="panel-heading row">' + $process + '</div></li>').draggable({ snap: true, revert: "invalid" }));
+						$('#draggablePanelListProcess').append($('<div id="drag_' + $process +'" class="draggable well well-sm ui-front"><button type="button" class="btn-group light-round btn-success button-addbp"><i class="glyphicon glyphicon-plus"></i></button>' + $process + '</div>').draggable({ snap: true, revert: "invalid" }));
 					}
                 }
             },
@@ -168,7 +185,12 @@ function DeleteService(line_service){
 	//On verifie si il y a encore des elements dans la dropzone
 	var element_dropzone = $('div[id^="' + global_bp + '::"]');
 	if(element_dropzone.length < 1){
-		$('#container-drop_zone').html('<div id="primary_drop_zone" class="ui-widget-content panel panel-info" style="height:50px"><div class="panel-body text-center">'+dictionnary["label.admin_bp.drop_here"]+'</div></div>');
+		$('#container-drop_zone').html('\
+		<div id="primary_drop_zone" class="ui-widget-content panel panel-info" style="height:50px">\
+			<div class="panel-body text-center">\
+				'+dictionnary["label.admin_bp.drop_here"]+'\
+			</div>\
+		</div>');
 	}
 
 	// SERVICE !!!
@@ -193,7 +215,7 @@ function DeleteService(line_service){
 						var element = $('div[id$="::' + $("#host").val() + ';;' + $services[i] + '"]');
 						
 						if(! element.length){
-							$('#draggablePanelList').append($('<li id="' + $('#host').val() + '::' + $services[i] +'" class="draggable col-xs-6 panel panel-warning ui-front" style=\"position:relative\"><div class="panel-heading row">' + $services[i] + '</div></li>').draggable({ snap: true, revert: "invalid" }));
+							$('#draggablePanelList').append($('<div id="drag_' + $('#host').val() + '::' + $services[i] +'" class="draggable ui-front well well-sm"><button type="button" class="btn-group light-round btn-success button-addbp"><i class="glyphicon glyphicon-plus"></i></button>' + $services[i] + '</div>').draggable({ snap: true, revert: "invalid" }));
 						}
 					}
 				}
@@ -226,7 +248,7 @@ function DeleteService(line_service){
 					var element = $('div[id$=";;' + $process + '"]');
 
 					if(! element.length){
-						$('#draggablePanelListProcess').append($('<li id="' + $process +'" class="draggable col-xs-6 panel panel-warning ui-front" style=\"position:relative\"><div class="panel-heading row">' + $process + '</div></li>').draggable({ snap: true, revert: "invalid" }));
+						$('#draggablePanelListProcess').append($('<div id="drag_' + $process +'" class="draggable well well-sm ui-front"><button type="button" class="btn-group light-round btn-success button-addbp"><i class="glyphicon glyphicon-plus"></i></button>' + $process + '</div>').draggable({ snap: true, revert: "invalid" }));
 					}
 	            }
 	        },

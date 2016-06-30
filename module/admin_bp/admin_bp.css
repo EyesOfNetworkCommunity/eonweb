@@ -135,6 +135,10 @@
 	margin-bottom: 5px;
 }
 
+.button-addbp {
+	margin-right: 10px;
+}
+
 .float-right {
 	float:right;
 	display: block;
@@ -188,10 +192,14 @@ table.tablesorter .odd {
 	background-color: #c2d1f0;
 }
 
-#draggablePanelList .panel-heading, #draggablePanelListProcess .panel-heading {
+#draggablePanelList .well, #draggablePanelListProcess .well {
 	cursor: grabbing;
 	cursor: -moz-grabbing;
 	cursor: -webkit-grabbing;
+}
+
+.well {
+	margin-bottom: 5px !important;
 }
 
 .img-hover {
