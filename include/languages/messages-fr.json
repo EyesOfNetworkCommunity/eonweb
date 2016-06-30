@@ -122,7 +122,7 @@
 	"label.admin_bp.command": "Commande",
 	"label.admin_bp.min_value": "Valeur minimum",
 	"label.admin_bp.business_process": "Processus métier",
-	"label.admin_bp.process_linked_to_bp": "Processus liés au BP",
+	"label.admin_bp.linked_to_bp": "liés au BP",
 	"label.admin_bp.serv_linked_to_host": "Services liés à l'équipement",
 	"label.admin_bp.select_display": "Choisir un display",
 	"label.admin_bp.process_for_display": "Processus pour le display",
