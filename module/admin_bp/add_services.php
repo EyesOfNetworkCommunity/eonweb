@@ -123,7 +123,7 @@ print "<div id=\"page-wrapper\">";
 						while($row = $req->fetch()){
 		               		$bp_name_linked = $row['bp_link'];
 							print "<div id=\"$bp_name::--;;$bp_name_linked\" class=\"text-info well well-sm\" style=\"font-size:16px;\">
-								<button type=\"button\" class=\"btn btn-danger button-addbp\" onclick=\"DeleteService('$bp_name::--;;$bp_name_linked');\">
+								<button type=\"button\" class=\"btn btn-xs btn-danger button-addbp\" onclick=\"DeleteService('$bp_name::--;;$bp_name_linked');\">
 									<span class=\"glyphicon glyphicon-trash\"></span>
 								</button>
 								$bp_name_linked
@@ -155,7 +155,7 @@ print "<div id=\"page-wrapper\">";
 								}
 								
 								print "<div id=\"$bp_name::$host;;$service\" class=\"text-info well well-sm\" style=\"font-size:16px;\">";
-								print "<button type=\"button\" class=\"btn btn-danger button-addbp\" onclick=\"DeleteService('$bp_name::$host;;$service');\">";
+								print "<button type=\"button\" class=\"btn btn-xs btn-danger button-addbp\" onclick=\"DeleteService('$bp_name::$host;;$service');\">";
 								print "<span class=\"glyphicon glyphicon-trash\"></span>";
 								print "</button>";
 								print "$service";
