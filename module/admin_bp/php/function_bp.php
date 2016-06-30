@@ -100,7 +100,7 @@ function list_services($host_name){
             $hasMatch = 0;
         }
     }
-	sort($tabServices['service']);
+	natcasesort($tabServices['service']);
 	array_unshift($tabServices['service'],"Hoststatus");
 	echo json_encode($tabServices);
 }
