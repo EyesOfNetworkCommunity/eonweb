@@ -139,6 +139,7 @@ print "<div id=\"page-wrapper\">";
 
 					else{
 						$old_host = "";
+						$old_host_count = 0;
 						$sql = "select host,service from bp_services where bp_name = '" . $bp_name . "' ORDER BY host, service";
 						$req = $bdd->query($sql);
 						
@@ -148,10 +149,15 @@ print "<div id=\"page-wrapper\">";
 								$service = $row['service'];
 								
 								if($host != $old_host){
+									if($old_host_count!=0) {
+										print "</div>";
+										print "</div>"; //fermeture du div du host
+									}
 									print "<div id=\"drop_zone::$host\" class=\"ui-widget-content panel panel-info\">";
 									print "<div id=\"panel::$host\" class=\"panel-heading panel-title\">$host</div>";
 									print "<div class=\"pannel-body\">";
 									$old_host=$host;
+									$old_host_count++;
 								}
 								
 								print "<div id=\"$bp_name::$host;;$service\" class=\"text-info well well-sm\" style=\"font-size:16px;\">";
@@ -160,12 +166,6 @@ print "<div id=\"page-wrapper\">";
 								print "</button>";
 								print "$service";
 								print "</div>";
-																
-								if($host != $old_host){
-									print "</div>";
-									print "</div>"; //fermeture du div du host
-								}
-
 							}
 							print "</div>";
 							print "</div>";
