@@ -58,11 +58,9 @@ $(document).ready(function () {
 					
 					$services = list_services['service'];
 
-					// add Hoststatus if necessary
-					$services.unshift("Hoststatus");
-
 					$('#draggablePanelList').children().remove();
 					$('#process').html(dictionnary["label.admin_bp.serv_linked_to_host"]+' ' + $('#host').val());
+					
 					for(i=0;i<$services.length;i++){
 						var element = $('div[id$="::' + $("#host").val() + ';;' + $services[i] + '"]');
 						
