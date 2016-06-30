@@ -192,7 +192,7 @@ function DeleteService(line_service){
 	}
 
 	// SERVICE !!!
-	if($("input#host").length > 0){
+	if($("input#host").length > 0 && $('#host').val()){
 		$.get(
 			'./php/function_bp.php',
 			{
