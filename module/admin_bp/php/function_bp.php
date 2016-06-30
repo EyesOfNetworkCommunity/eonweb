@@ -86,6 +86,7 @@ function list_services($host_name){
 	$path_nagios_ser = "/srv/eyesofnetwork/nagios/etc/objects/services.cfg";
 
 	$tabServices = array() ;
+	$tabServices['service'] = array() ;
     $lignes = file($path_nagios_ser);
 	$hasMatch = 0;
 	
@@ -196,6 +197,8 @@ function add_application($uniq_name_orig,$uniq_name,$process_name,$display,$url,
 			$bdd->exec($sql);
 			$sql = "update bp_links set bp_name = '" . $uniq_name . "' where bp_name = '" . $uniq_name_orig . "'";
 			$bdd->exec($sql);		
+			$sql = "update bp_links set bp_link = '" . $uniq_name . "' where bp_link = '" . $uniq_name_orig . "'";
+			$bdd->exec($sql);
 			$sql = "update bp_services set bp_name = '" . $uniq_name . "' where bp_name = '" . $uniq_name_orig . "'";					
 			$bdd->exec($sql);		
 		}
