@@ -10,13 +10,13 @@ snmpdir="/etc/snmp"
 backupdir="/etc"
 
 # change right acces for this files
-chmod 775 ${datadir}/cache
+chmod 777 ${datadir}/cache
 chmod 666 ${snmpdir}/snmpd.conf
 chmod 666 ${snmpdir}/snmptrapd.conf
 chmod 666 ${backupdir}/backup-manager.conf
 
 # change own user for eonweb directory
-chown root:eyesofnetwork ${datadir}/cache
+chown -R root:eyesofnetwork ${datadir}*
 
 # create the eonweb database
 mysqladmin -u root --password=root66 create ${eonwebdb}
