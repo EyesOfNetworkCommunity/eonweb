@@ -194,7 +194,7 @@ include("../../side.php");
 	  FROM bp  
 	  WHERE name 
 	  NOT IN (SELECT bp_link FROM bp_links) 
-	  ORDER BY priority
+	  ORDER BY priority, name
 	";
 
 	if(!$result = $db->query($sql)){
