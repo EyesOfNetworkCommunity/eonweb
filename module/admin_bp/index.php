@@ -138,7 +138,7 @@ include("../../side.php");
 		$sql_service = "
 		SELECT host,service 
 		FROM bp_services 
-		WHERE bp_name = '".$bp_racine."'  ORDER BY id
+		WHERE bp_name = '".$bp_racine."'  ORDER BY host,service
 		";
 
 		if(!$result_bp = $db->query($sql_bp)){
