@@ -59,6 +59,7 @@ function getServicesStateNbr()
 global $sockets;
 
 $result = array();
+$nbr_services_pending = 0;
 $nbr_services_ok = 0;
 $nbr_services_warning = 0;
 $nbr_services_critical = 0;
@@ -82,24 +83,37 @@ foreach($sockets as $socket){
                 	'socketPath' => $socket_path,
         	);
 		// construct mklivestatus request, and get the response
-        	$client = new Client($options);
-        	// construct mklivestatus request, and get the response
+		$client = new Client($options);
+
+		// get all service PENDING
+		$test = $client
+                ->get('services')
+                	->filter('has_been_checked = 0')
+                    ->filter('contacts >= '. $_SERVER["REMOTE_USER"])
+                ->execute();
+        $nbr_pending = count($test) - 1;
+
+		// construct mklivestatus request, and get the response
 		$response = $client
                 ->get('services')
-                        ->stat('state = 0')
-                        ->stat('state = 1')
-                        ->stat('state = 2')
-                        ->stat('state = 3')
-                        ->filter('contacts >= '. $_SERVER["REMOTE_USER"])
+                	->stat('state = 0')
+                    ->stat('state = 1')
+                    ->stat('state = 2')
+                    ->stat('state = 3')
+                    ->filter('has_been_checked = 1')
+                    ->filter('contacts >= '. $_SERVER["REMOTE_USER"])
                 ->execute();
-                $nbr_services_ok += $response[0][0];
-                $nbr_services_warning += $response[0][1];
-                $nbr_services_critical += $response[0][2];
-                $nbr_services_unknown += $response[0][3];	
+
+        $nbr_services_pending += $nbr_pending;
+        $nbr_services_ok += $response[0][0];
+        $nbr_services_warning += $response[0][1];
+        $nbr_services_critical += $response[0][2];
+        $nbr_services_unknown += $response[0][3];
 	}
 }
 
 	// fill an empty array with previous response, in order to have a beautiful JSON to use
+	array_push($result, $nbr_services_pending);
 	array_push($result, $nbr_services_ok);
 	array_push($result, $nbr_services_warning);
 	array_push($result, $nbr_services_critical);

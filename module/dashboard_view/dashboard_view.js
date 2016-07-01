@@ -117,9 +117,9 @@ function drawPieChart(div_id, title, datas, column_type, link)
 	{
 		var begin_url = path_nagios_status+'?';
 		var columns = [ 
-			["ok", "warning", "critical", "unknown"],
-			['#00CC33', '#FFA500', '#FF3300', '#CC77C6'],
-			['servicestatustypes=2&servicestatustype=8&style=detail&hostgroup=all&hoststatustypes=2&hoststatustypes=15', 'servicestatustypes=4&servicestatustype=8&style=detail&hostgroup=all&hoststatustypes=2&hoststatustypes=15', 'servicestatustypes=16&servicestatustype=8&style=detail&hostgroup=all&hoststatustypes=2&hoststatustypes=15', 'servicestatustypes=8&servicestatustype=8&style=detail&hostgroup=all&hoststatustypes=2&hoststatustypes=15']
+			["pending", "ok", "warning", "critical", "unknown"],
+			['grey', '#00CC33', '#FFA500', '#FF3300', '#CC77C6'],
+			['host=all&hoststatustypes=15&servicestatustypes=1&style=detail', 'host=all&hoststatustypes=15&servicestatustypes=2&style=detail', 'host=all&hoststatustypes=15&servicestatustypes=4&style=detail', 'host=all&hoststatustypes=15&servicestatustypes=16&style=detail', 'host=all&_=1467375869340&hoststatustypes=15&servicestatustypes=8&style=detail']
 		];
 	}
 	else if(column_type == "eventState")
@@ -128,9 +128,31 @@ function drawPieChart(div_id, title, datas, column_type, link)
 		var columns = [ 
 			["ok", "warning", "critical", "unknown"],
 			['#00CC33', '#FFA500', '#FF3300', '#CC77C6'],
-			["q=active&status=0", "q=active&status=1", "q=active&status=2", "q=active&status=3"]
+			[,"q=active&status=0", "q=active&status=1", "q=active&status=2", "q=active&status=3"]
 		];
 	}
+
+	// construct charts data (according to array columns)
+	var length = columns[0].length;
+	var chart_datas = [];
+	for(cpt = 0; cpt < length; cpt++){
+		//$.each(columns, function(index, mini_array){
+			var data_object = {
+				name: columns[0][cpt],
+				y: datas[cpt],
+				color: {
+					radialGradient: { cx: 0.5, cy: 0.5, r: 1 },
+					stops: [
+						[0, columns[1][cpt]],
+						[1, Highcharts.Color(columns[1][cpt]).brighten(-0.3).get('rgb')] // darken
+					]
+				},
+				url: begin_url+columns[2][cpt]
+			}
+		//});
+		chart_datas.push(data_object);
+	}
+
 	
 	$('#'+div_id).highcharts({
 		chart: {
@@ -181,56 +203,7 @@ function drawPieChart(div_id, title, datas, column_type, link)
 		series: [{
 			type: 'pie',
 			name: 'Value',
-			data: [
-				{
-					name: columns[0][0],
-					y: datas[0],
-					color: {
-						radialGradient: { cx: 0.5, cy: 0.5, r: 1 },
-						stops: [
-							[0, columns[1][0]],
-							[1, Highcharts.Color(columns[1][0]).brighten(-0.3).get('rgb')] // darken
-						]
-					},
-					url: begin_url+columns[2][0]
-				},
-				{
-					name: columns[0][1],
-					y: datas[1],
-					color: {
-						radialGradient: { cx: 0.5, cy: 0.5, r: 1 },
-						stops: [
-							[0, columns[1][1]],
-							[1, Highcharts.Color(columns[1][1]).brighten(-0.3).get('rgb')] // darken
-						]
-					},
-					url: begin_url+columns[2][1]
-				},
-				{
-					name: columns[0][2],
-					y: datas[2],
-					color: {
-						radialGradient: { cx: 0.5, cy: 0.5, r: 1 },
-						stops: [
-							[0, columns[1][2]],
-							[1, Highcharts.Color(columns[1][2]).brighten(-0.3).get('rgb')] // darken
-						]
-					},
-					url: begin_url+columns[2][2]
-				},
-				{
-					name: columns[0][3],
-					y: datas[3],
-					color: {
-						radialGradient: { cx: 0.5, cy: 0.5, r: 1 },
-						stops: [
-							[0, columns[1][3]],
-							[1, Highcharts.Color(columns[1][3]).brighten(-0.3).get('rgb')] // darken
-						]
-					},
-					url: begin_url+columns[2][3]
-				}
-			]
+			data: chart_datas
 		}]
 	})
 }
