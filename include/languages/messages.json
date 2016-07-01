@@ -449,5 +449,6 @@
 	"message.tool_all.select_host": "Please select a host",
 	"message.tool_all.select_tool": "Please select a tool",
 	"message.required_value1": "Fields with a",
-	"message.required_value2": "are required"
+	"message.required_value2": "are required",
+	"message.admin_bp.bp_already_exists": "a BP already exists with this unique name"
 }

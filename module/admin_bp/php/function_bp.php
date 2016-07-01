@@ -58,6 +58,10 @@ elseif ($action == 'info_application'){
 	info_application($bp_name,$bdd);
 }
 
+elseif ($action == 'check_app_exists'){
+	check_app_exists($uniq_name, $bdd);
+}
+
 function verify_services($bp,$host,$bdd){
 	$sql = "select COUNT(*),service from bp_services where bp_name = '" . $bp . "' and host = '". $host . "'";
 	$req = $bdd->query($sql);
@@ -172,6 +176,19 @@ function add_process($bp,$process,$bdd){
 
 			$bdd->exec($sql);
 		}	
+	}
+}
+
+function check_app_exists($uniq_name, $bdd)
+{
+	$sql = "select count(*) from bp where name = '" . $uniq_name . "';";
+	$req = $bdd->query($sql);
+	$bp_exist = $req->fetch(PDO::FETCH_NUM);
+	
+	if($bp_exist[0] == 1){
+		echo "true";
+	} else {
+		echo "false";
 	}
 }
 

@@ -449,5 +449,6 @@
 	"message.tool_all.select_host": "Sélectionnez un host svp",
 	"message.tool_all.select_tool": "Sélectionnez un outil svp",
 	"message.required_value1": "Les champs marqués d'une",
-	"message.required_value2": "sont obligatoires"
+	"message.required_value2": "sont obligatoires",
+	"message.admin_bp.bp_already_exists": "Un BP éxiste déjà avec ce nom unique"
 }

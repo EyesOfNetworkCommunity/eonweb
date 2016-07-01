@@ -32,6 +32,8 @@ include("../../side.php");
 		</div>
 	</div>
 
+    <div id="error-message"></div>
+    
 <?php
 if(isset($_GET['bp_name'])){
     $bp_name = $_GET['bp_name'];

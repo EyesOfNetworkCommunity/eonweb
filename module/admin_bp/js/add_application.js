@@ -56,6 +56,14 @@ $(document).ready(function() {
 		var type = $('select[name="type"]').val();
 		var min_value = $('select[name="min_value"]').val();
 
+		// check if a BP already exists, if this is the case we stop here !
+		var bpExists = bpAlreadyExists(uniq_name);
+		if(bpExists == true){
+			var msg = dictionnary["message.admin_bp.bp_already_exists"];
+            message(msg, 'warning', '#error-message');
+            return;
+		}
+
 		$.get(
 			'php/function_bp.php',
 			{
@@ -79,3 +87,38 @@ $(document).ready(function() {
 		);
 	});
 });
+
+function message(msg, type, target)
+{
+    var message = ''
+        +'<p class="alert alert-dismissible alert-'+type+'">'
+        +   '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'
+        +       '<span aria-hidden="true">&times;</span>'
+        +   '</button>'
+        +   '<i class="fa fa-warning"> </i> '+ msg
+        +'</p>';
+    $(target).html(message);
+}
+
+function bpAlreadyExists(bp_name)
+{
+	var tmp;
+
+	$.ajax({
+		url: 'php/function_bp.php',
+		data: {
+			action: 'check_app_exists',
+			uniq_name: bp_name
+		},
+		async: false,
+		success: function(response){
+			tmp = false;
+			if(response == 'true'){
+				tmp = true;
+			}
+		}
+	});
+
+	return tmp;
+}
+
