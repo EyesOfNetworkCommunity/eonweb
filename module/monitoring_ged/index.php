@@ -169,7 +169,7 @@ if(file_exists($file)){
 						<div class="col-md-4">
 							<div class="form-group">
 								<label><?php echo getLabel("label.state") ?></label>
-								<select id="filter-state" class="selectpicker form-control" multiple>
+								<select id="filter-state" class="selectpicker form-control" multiple title="<?php echo getLabel("label.choose_state") ?>">
 									<?php 
 									foreach($array_ged_states as $col => $val){
 										if(isset($_GET["status"])) { $selected = ""; }

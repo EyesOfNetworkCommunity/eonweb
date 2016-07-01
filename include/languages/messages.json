@@ -99,6 +99,7 @@
 	"label.comments":"Comments",
 	"label.prev":"Previous",
 	"label.next":"Next",
+	"label.choose_state": "Choose state",
 	"navbarlink.discovery":"Discovery",
 	"navbarlink.xml_import":"XML import",
 	"navbarlink.apply_conf":"Apply configuration",
