@@ -7,6 +7,7 @@ $service = isset($_GET['service']) ? $_GET['service'] : false;
 $new_services = isset($_GET['new_services']) ? $_GET['new_services'] : false;
 
 $uniq_name = isset($_GET['uniq_name']) ? $_GET['uniq_name'] : false;
+$uniq_name_orig = isset($_GET['uniq_name_orig']) ? $_GET['uniq_name_orig'] : false;
 $process_name = isset($_GET['process_name']) ? $_GET['process_name'] : false;
 $display = isset($_GET['display']) ? $_GET['display'] : false;
 $url = isset($_GET['url']) ? $_GET['url'] : false;
@@ -46,7 +47,7 @@ elseif ($action == 'add_process'){
 }
 
 elseif ($action == 'add_application'){
-	add_application($uniq_name,$process_name,$display,$url,$command,$type,$min_value,$bdd);
+	add_application($uniq_name_orig,$uniq_name,$process_name,$display,$url,$command,$type,$min_value,$bdd);
 }
 
 elseif ($action == 'build_file'){
@@ -85,6 +86,7 @@ function list_services($host_name){
 	$path_nagios_ser = "/srv/eyesofnetwork/nagios/etc/objects/services.cfg";
 
 	$tabServices = array() ;
+	$tabServices['service'] = array() ;
     $lignes = file($path_nagios_ser);
 	$hasMatch = 0;
 	
@@ -173,7 +175,7 @@ function add_process($bp,$process,$bdd){
 	}
 }
 
-function add_application($uniq_name,$process_name,$display,$url,$command,$type,$min_value,$bdd){
+function add_application($uniq_name_orig,$uniq_name,$process_name,$display,$url,$command,$type,$min_value,$bdd){
 	if($type != 'MIN'){
 		$min_value = "";
 	}
@@ -181,14 +183,31 @@ function add_application($uniq_name,$process_name,$display,$url,$command,$type,$
 	$req = $bdd->query($sql);
 	$bp_exist = $req->fetch();
 
-	if($bp_exist[0] == 0){
+	// add
+	if($bp_exist[0] == 0 and empty($uniq_name_orig)){
 		$sql = "insert into bp (name,description,priority,type,command,url,min_value) values('" . $uniq_name ."','" . $process_name ."','" . $display . "','" . $type . "','" . $command . "','" . $url . "','" . $min_value . "')";
+		$bdd->exec($sql);
 	}
+	// uniq name modification
+	elseif($uniq_name_orig != $uniq_name) {
+		if($bp_exist[0] != 0){
+			// TODO QUENTIN
+		} else {
+			$sql = "update bp set name = '" . $uniq_name . "',description = '" . $process_name . "',priority = '" . $display . "',type = '" . $type . "',command = '" . $command . "',url = '" . $url . "',min_value = '" . $min_value . "' where name = '" . $uniq_name_orig . "'";
+			$bdd->exec($sql);
+			$sql = "update bp_links set bp_name = '" . $uniq_name . "' where bp_name = '" . $uniq_name_orig . "'";
+			$bdd->exec($sql);		
+			$sql = "update bp_links set bp_link = '" . $uniq_name . "' where bp_link = '" . $uniq_name_orig . "'";
+			$bdd->exec($sql);
+			$sql = "update bp_services set bp_name = '" . $uniq_name . "' where bp_name = '" . $uniq_name_orig . "'";					
+			$bdd->exec($sql);		
+		}
+	}	
+	// modification
 	else{
 		$sql = "update bp set name = '" . $uniq_name . "',description = '" . $process_name . "',priority = '" . $display . "',type = '" . $type . "',command = '" . $command . "',url = '" . $url . "',min_value = '" . $min_value . "' where name = '" . $uniq_name . "'";
+		$bdd->exec($sql);	
 	}
-
-	$bdd->exec($sql);
 }
 
 function build_file($bdd){
@@ -219,7 +238,6 @@ function build_file_recursive($bdd,$bp_file,$bp_informations,$bp_sons){
 	$sql = "SELECT bp_link FROM bp_links where bp_name='".$bp_informations['name']."'";
 	$req = $bdd->query($sql);
 	if($req->rowCount() == 0) {
-		build_file_bp($bdd,$bp_file, $bp_informations);
 		$bp_sons[]=$bp_informations['name'];
 		build_file_bp($bdd,$bp_file, $bp_informations);
 	} else {
@@ -289,11 +307,11 @@ function build_file_bp($bdd,$bp_file, $bp_informations){
 	fputs($bp_file, "display " . $bp_informations['priority'] . ";" . $bp_informations['name'] . ";" . $bp_informations['description'] . "\n");
 
 	if(! empty($bp_informations['url'])){
-		fputs($bp_file, "info_url " . $bp_informations['name'] . ";" . $bp_informations['url']);
+		fputs($bp_file, "info_url " . $bp_informations['name'] . ";" . $bp_informations['url'] . "\n");
 	}
 
 	if(! empty($bp_informations['command'])){
-		fputs($bp_file, "external_info " . $bp_informations['name'] . ";" . $bp_informations['command']);
+		fputs($bp_file, "external_info " . $bp_informations['name'] . ";" . $bp_informations['command'] . "\n");
 	}
 }
 

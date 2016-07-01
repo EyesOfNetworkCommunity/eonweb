@@ -47,6 +47,7 @@ $(document).ready(function() {
 	$('#submit').click(function(event){
 		event.preventDefault();
 
+		var uniq_name_orig = $("#uniq_name_orig").val();
 		var uniq_name = $("#uniq_name").val();
 		var process_name = $("#process_name").val();
 		var display = $('select[name="display"]').val();
@@ -59,6 +60,7 @@ $(document).ready(function() {
 			'php/function_bp.php',
 			{
 				action: "add_application",
+				uniq_name_orig: uniq_name_orig,
 				uniq_name: uniq_name,
 				process_name: process_name,
 				display: display,

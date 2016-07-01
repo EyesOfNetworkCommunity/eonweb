@@ -49,13 +49,9 @@
 }
 
 /* BP icon */
-.glyphicon-link {
+.glyphicon-link, .tree-line {
 	cursor:pointer;
 	margin-right:20px;
-}
-
-.tree-toggle {
-	cursor:pointer;
 }
 
 /* X bp level */
