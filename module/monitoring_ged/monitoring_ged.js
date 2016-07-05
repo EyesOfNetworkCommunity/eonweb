@@ -196,6 +196,10 @@ $(document).ready(function(){
 		$('#ged-search').focus();
 	});
 	
+	$('#collapseOne').on('shown.bs.collapse', function () {
+		$('#ged-search').focus();	
+	})
+	
 	$("#filter-selection").on('change', function(){
 		var filter_selection = $(this).val();
 		$.ajax({
