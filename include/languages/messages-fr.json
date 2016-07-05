@@ -28,7 +28,7 @@
 	"action.edit": "Modifier",
 	"action.own": "Prendre en compte",
 	"action.disown": "Ne plus prendre en compte",
-	"action.ack": "Acquiter",
+	"action.ack": "Acquitter",
 	"action.select_all": "Tout sélectionner",
 	"action.unselect_all": "Tout désélectionner",
 	"action.show_all": "Tout montrer",
