@@ -128,7 +128,7 @@ function drawPieChart(div_id, title, datas, column_type, link)
 		var columns = [ 
 			["ok", "warning", "critical", "unknown"],
 			['#00CC33', '#FFA500', '#FF3300', '#CC77C6'],
-			[,"q=active&status=0", "q=active&status=1", "q=active&status=2", "q=active&status=3"]
+			["q=active&status=0", "q=active&status=1", "q=active&status=2", "q=active&status=3"]
 		];
 	}
 
