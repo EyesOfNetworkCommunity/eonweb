@@ -108,9 +108,9 @@ function drawPieChart(div_id, title, datas, column_type, link)
 	{
 		var begin_url = path_nagios_status+'?';
 		var columns = [ 
-			["up", "down", "unreachable", "pending"],
-			['#00CC33', '#FF3300', '#CC77C6', 'grey'],
-			['hostgroup=all&style=hostdetail&hoststatustypes=2', 'hostgroup=all&style=hostdetail&hoststatustypes=4', 'hostgroup=all&style=hostdetail&hoststatustypes=8', 'hostgroup=all&style=hostdetail&hoststatustypes=1']
+			["pending", "up", "down", "unreachable"],
+			['grey', '#00CC33', '#FF3300', '#CC77C6'],
+			['hostgroup=all&style=hostdetail&hoststatustypes=1', 'hostgroup=all&style=hostdetail&hoststatustypes=2', 'hostgroup=all&style=hostdetail&hoststatustypes=4', 'hostgroup=all&style=hostdetail&hoststatustypes=8']
 		];
 	}
 	else if(column_type == "serviceState")
