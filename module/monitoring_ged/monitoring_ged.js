@@ -148,11 +148,33 @@ function previousNext(direction){
 	});
 }
 
+function searchAutocomplete(){
+	var queue = $("#queue").val();
+	var category = $("#filter").val();
+	
+	var datas;
+	$.ajax({
+		url: 'ged_actions.php',
+		async: false,
+		data: {
+			action: 'advancedFilterSearch',
+			filter: category,
+			queue: queue
+		},
+		success: function(response){
+			datas = response;
+		}
+	});
+	$("#ged-search").attr('onFocus', '$(this).autocomplete({source: ' + datas + '})');
+}
+
 var event_index = 0;
 var selected_events = [];
 var event_state = "";
 var global_action = "";
 var timer;
+var initialLoad = true;
+
 $(document).ready(function(){
 	var queue = $("#queue").val();
 
@@ -165,10 +187,15 @@ $(document).ready(function(){
 		startTimer();
 	});
 
+	$("#filter").on('change', function(){
+		searchAutocomplete();
+		$('#ged-search').val('');
+	});
+	
 	$(".focus-to-search").on('change', function(){
 		$('#ged-search').focus();
 	});
-
+	
 	$("#filter-selection").on('change', function(){
 		var filter_selection = $(this).val();
 		$.ajax({
@@ -447,26 +474,10 @@ $(document).ready(function(){
 			}
 		});
 	});
-
-
-	// form search auto complete by category (according to filter's value)
-	$("#filter").on('change', function(){
-		var queue = $("#queue").val();
-		var category = $("#filter").val();
-		
-		var datas;
-		$.ajax({
-			url: 'ged_actions.php',
-			async: false,
-			data: {
-				action: 'advancedFilterSearch',
-				filter: category,
-				queue: queue
-			},
-			success: function(response){
-				datas = response;
-			}
-		});
-		$("#ged-search").attr('onFocus', '$(this).autocomplete({source: ' + datas + '})');
-	});
+	
+	// form search auto complete if initial page
+	if(initialLoad) {
+		searchAutocomplete();
+	}
+	initialLoad = false;
 });

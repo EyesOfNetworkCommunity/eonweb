@@ -95,9 +95,7 @@ if(file_exists($file)){
 	<div class="panel panel-default">
 		<div class="panel-heading" id="headingOne">
 			<h4 class="panel-title">
-				<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-					<?php echo getLabel("label.ged_sorter"); ?>
-				</a>
+				<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"><?php echo getLabel("label.ged_sorter"); ?></a>
 				<?php
 				if($default == ""){
 					if($_COOKIE["user_limitation"] == 0){
