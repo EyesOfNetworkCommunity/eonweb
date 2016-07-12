@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2014 EyesOfNetwork Team
+# Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION 4.2
+# VERSION : 5.0
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -19,14 +19,13 @@
 #
 #########################################
 */
+
+include("../../include/config.php");
+include("../../include/function.php");
+
 ?>
-<html>
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<?php include("../../include/include_module.php"); ?>
-</head>
-<body id="main">
-<h1> Performance report for ALL Host</h1>
+
+<h2> Performance report for ALL Host</h2>
 
 <?php
 	# --- TIMESPAN from now
@@ -61,12 +60,14 @@
                 default:
                         $start_date = $end_date - 24*60*60;
         }
-
+	
+	echo '<p class="alert alert-info text-info">';
 	if($title!="")
-		 echo "<h2> Title : $title </h2><br>";
+		echo "Title : $title <br>";
 
-        echo "<h2> Periode :</h2>";
-        echo "from <i>" . date("l d M Y - h:i A",intval($start_date)) . "</i> to <i>" .  date("l d M Y - h:i A",intval($end_date)) . "</i><br><br>";
+        echo "Periode : ";
+        echo "from <i>" . date("l d M Y - h:i A",intval($start_date)) . "</i> to <i>" .  date("l d M Y - h:i A",intval($end_date)) . "</i>";
+	echo '</p>';
 	
 	# --- For each host
 	$result_host=sqlrequest($database_cacti,"select id,hostname from host");
@@ -84,17 +85,20 @@
 
 		# --- Display info
 		if($nbr_ligne_graph != 0) {
-        		echo "<br><br><h1>$hostname</h1>";
+			echo '
+				<div class="panel panel-default">
+					<div class="panel-heading">'.$hostname.'</div>
+					<div class="panel-body">';
 
 			# --- For each graph of the host
-			echo "<center>";
-	        	for ($i=0;$i<$nbr_ligne_graph;$i++)
-		        {	
-		        	# --- Print the graph
-	            		$graph_id = mysqli_result($result_graph,$i,"id");
-	            		echo "<img src='../../cacti/graph_image.php?local_graph_id=$graph_id&rra_id=1&graph_height=100&graph_width=300&graph_nolegend=true&graph_start=$start_date&graph_end=$end_date' border='0'>&nbsp";
-	        	}
-			echo "</center>";
+			for ($i=0;$i<$nbr_ligne_graph;$i++)
+			{	
+				# --- Print the graph
+					$graph_id = mysqli_result($result_graph,$i,"id");
+					echo "<img class='img-responsive center-block' alt='graph cacti' src='../../../cacti/graph_image.php?local_graph_id=$graph_id&rra_id=1&graph_height=100&graph_width=300&graph_nolegend=true&graph_start=$start_date&graph_end=$end_date'>";
+			}
+			echo 	'</div>';
+			echo '</div>';
 		}
 	}
 ?>

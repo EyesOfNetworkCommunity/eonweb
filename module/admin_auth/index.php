@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2014 EyesOfNetwork Team
+# Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION 4.2
+# VERSION : 5.0
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -19,46 +19,21 @@
 #
 #########################################
 */
+
+include("../../header.php");
+include("../../side.php");
+
 ?>
 
-<html>
-<head>
-        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-        <?php include("../../include/include_module.php"); ?>
-</head>
+<div id="page-wrapper">
 
-<body id='main'>
-
-<script>
-// Switch beetween MYSQL and LDAP display
-function disable(){
-        if(document.getElementById('ldap').checked){
-                document.form_auth.ldap_ip.disabled=false;
-                document.form_auth.ldap_port.disabled=false;
-                document.form_auth.ldap_search.disabled=false;
-                document.form_auth.ldap_user.disabled=false;
-                document.form_auth.ldap_password.disabled=false;
-                document.form_auth.ldap_rdn.disabled=false;
-                document.form_auth.ldap_user_filter.disabled=false;
-				document.form_auth.ldap_group_filter.disabled=false;
-        }
-        else{
-                document.form_auth.ldap_ip.disabled=true;
-                document.form_auth.ldap_port.disabled=true;
-                document.form_auth.ldap_search.disabled=true;
-                document.form_auth.ldap_user.disabled=true;
-                document.form_auth.ldap_password.disabled=true;
-                document.form_auth.ldap_rdn.disabled=true;
-                document.form_auth.ldap_user_filter.disabled=false;
-				document.form_auth.ldap_group_filter.disabled=false;
-        }
-}
-</script>
-
-<h1><?php echo $xmlmodules->getElementsByTagName("admin_auth")->item(0)->getAttribute("title")?></h1>
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="page-header"><?php echo getLabel("label.admin_auth.title"); ?></h1>
+		</div>
+	</div>
 
 <?php
-
 	global $database_eonweb;
 	global $database_host;
 	global $database_username;
@@ -70,21 +45,25 @@ function disable(){
 	// Retrieve authentification backend settings
 	$sqlresult=sqlrequest("$database_eonweb","select * from auth_settings;");
 	$backend_selected=mysqli_result($sqlresult,0,"auth_type");
+	
 	if($backend_selected=="1"){
 		$ldap_ip=mysqli_result($sqlresult,0,"ldap_ip");
-                $ldap_port=mysqli_result($sqlresult,0,"ldap_port");
-                $ldap_search=mysqli_result($sqlresult,0,"ldap_search");
-                $ldap_user_filter=mysqli_result($sqlresult,0,"ldap_user_filter");
-				$ldap_group_filter=mysqli_result($sqlresult,0,"ldap_group_filter");
-                $ldap_user=mysqli_result($sqlresult,0,"ldap_user");
-                $ldap_password=mysqli_result($sqlresult,0,"ldap_password");
-        	$ldap_rdn=mysqli_result($sqlresult,0,"ldap_rdn");
-	}	
+		$ldap_port=mysqli_result($sqlresult,0,"ldap_port");
+		$ldap_search=mysqli_result($sqlresult,0,"ldap_search");
+		$ldap_user_filter=mysqli_result($sqlresult,0,"ldap_user_filter");
+		$ldap_group_filter=mysqli_result($sqlresult,0,"ldap_group_filter");
+		$ldap_user=mysqli_result($sqlresult,0,"ldap_user");
+		$ldap_password=mysqli_result($sqlresult,0,"ldap_password");
+		$ldap_rdn=mysqli_result($sqlresult,0,"ldap_rdn");
+	} else {
+		$ldap_password="";
+	}
 
 	// Submit authentification backend settings
 	// If Update button pressed
-        if($action == 'Update'){
+	if($action == 'Update'){
 		$backend_selected=retrieve_form_data("backend_selected",null);
+		
 		// If mysql selected, deletion of ldap_users list and zeros of auth_settings
 		if($backend_selected=="mysql"){
 			sqlrequest("$database_eonweb","delete from ldap_users_extend");
@@ -100,27 +79,27 @@ function disable(){
 			$ldap_group_filter=retrieve_form_data("ldap_group_filter",null);
 			$ldap_user=retrieve_form_data("ldap_user",null);
 			$ldap_rdn=retrieve_form_data("ldap_rdn",null);
+			$ldap_password_new=retrieve_form_data("ldap_password",null);
+			
+			$sqlresult=sqlrequest("$database_eonweb","select * from auth_settings;");
+			$backend_selected=mysqli_result($sqlresult,0,"auth_type");
+			if($backend_selected=="1") { $ldap_password=mysqli_result($sqlresult,0,"ldap_password"); }
 
-		        $sqlresult=sqlrequest("$database_eonweb","select * from auth_settings;");
-		        $backend_selected=mysqli_result($sqlresult,0,"auth_type");
-		        if($backend_selected=="1")
-	                	$ldap_password=mysqli_result($sqlresult,0,"ldap_password");
-
-			if($ldap_password==retrieve_form_data("ldap_password",null))
-				$ldap_password=retrieve_form_data("ldap_password",null);
-			else
-				$ldap_password=base64_encode(retrieve_form_data("ldap_password",null));
-
-			if($ldap_ip=="" || $ldap_port=="" || $ldap_search=="" || $ldap_rdn=="" || $ldap_user_filter=="" || $ldap_group_filter=="")
+			if($ldap_password==$ldap_password_new) { $ldap_password=$ldap_password_new; }
+			else { $ldap_password=base64_encode($ldap_password_new); }
+			
+			if($ldap_ip=="" || $ldap_port=="" || $ldap_search=="" || $ldap_rdn=="" || $ldap_user_filter=="" || $ldap_group_filter==""){
 				message(7," : All fields are necessary","warning");
-			else
+			}
+			else {
 				$sqlresult=sqlrequest("$database_eonweb","update auth_settings set auth_type='1',ldap_ip='$ldap_ip',ldap_port='$ldap_port',ldap_search='$ldap_search',ldap_user_filter='$ldap_user_filter',ldap_group_filter='$ldap_group_filter',ldap_user='$ldap_user',ldap_password='$ldap_password',ldap_rdn='$ldap_rdn'");
+			}
 		}
 		// In any case
 		// Retrieve authentification backend settings
-      		$sqlresult1=sqlrequest("$database_eonweb","select * from auth_settings;");
-	        $backend_selected=mysqli_result($sqlresult1,0,"auth_type");
-	        if($backend_selected=="0"){
+		$sqlresult1=sqlrequest("$database_eonweb","select * from auth_settings;");
+		$backend_selected=mysqli_result($sqlresult1,0,"auth_type");
+		if($backend_selected=="0"){
 			$ldap_ip="";
 			$ldap_port="389";
 			$ldap_search="";
@@ -130,22 +109,22 @@ function disable(){
 			$ldap_password="";
 			$ldap_rdn="";
 		}
-	        elseif($backend_selected=="1"){
-	                $ldap_ip=mysqli_result($sqlresult1,0,"ldap_ip");
-	                $ldap_port=mysqli_result($sqlresult1,0,"ldap_port");
-	                $ldap_search=mysqli_result($sqlresult1,0,"ldap_search");
-	                $ldap_user_filter=mysqli_result($sqlresult1,0,"ldap_user_filter");
-					$ldap_group_filter=mysqli_result($sqlresult1,0,"ldap_group_filter");
-	                $ldap_user=mysqli_result($sqlresult1,0,"ldap_user");
-	                $ldap_password=mysqli_result($sqlresult1,0,"ldap_password");
-	                $ldap_rdn=mysqli_result($sqlresult1,0,"ldap_rdn");
+		elseif($backend_selected=="1"){
+			$ldap_ip=mysqli_result($sqlresult1,0,"ldap_ip");
+			$ldap_port=mysqli_result($sqlresult1,0,"ldap_port");
+			$ldap_search=mysqli_result($sqlresult1,0,"ldap_search");
+			$ldap_user_filter=mysqli_result($sqlresult1,0,"ldap_user_filter");
+			$ldap_group_filter=mysqli_result($sqlresult1,0,"ldap_group_filter");
+			$ldap_user=mysqli_result($sqlresult1,0,"ldap_user");
+			$ldap_password=mysqli_result($sqlresult1,0,"ldap_password");
+			$ldap_rdn=mysqli_result($sqlresult1,0,"ldap_rdn");
+			
 			// Connection au LDAP
 			$ldapconn=ldap_connect($ldap_ip,$ldap_port);
 			ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);
 			ldap_set_option($ldapconn, LDAP_OPT_REFERRALS, 0);
-			
 			$ldapbind=ldap_bind($ldapconn, $ldap_user, base64_decode($ldap_password));
-
+			
 			if($ldapbind){
 				message(6," : LDAP Connection Succeed","ok");
 				// Set all ldap_users as unchecked
@@ -154,8 +133,6 @@ function disable(){
 				sqlrequest("$database_eonweb","UPDATE ldap_groups_extended SET checked=0");
 
 				// Filling the ldap_users 
-                                
-
 				$connexion = mysqli_connect($database_host, $database_username, $database_password, $database_eonweb);
 				if (!$connexion) {
 					echo "<ul>";
@@ -169,12 +146,9 @@ function disable(){
 				mysqli_query($connexion,"SET NAMES 'utf8'");
 
 				// LDAP is case insensitive (RFC 2251)
-				$total=0;	
+				$total=0;
 				foreach ($ldap_search_begins as $c){
-
 					$ldap_current_filter="(&".$ldap_user_filter."(name=".$c."*))";
-
-					//message(6,"Listing ".$c."* users ","ok");
 
 					$sr=ldap_search($ldapconn, $ldap_search, $ldap_current_filter, array("dn" ,"$ldap_rdn","name"));
 					$info = ldap_get_entries($ldapconn, $sr);
@@ -183,18 +157,17 @@ function disable(){
 						$total=$total+$info["count"];
 	
 						for($i=0;$i<$info["count"];$i++){
-                	                                $dn=str_replace("\\,","\\\\,",$info[$i]["dn"]);
-                        	                        $dn=str_replace("\\2C","\\\\\\\\,",$dn);
+							$dn=str_replace("\\,","\\\\,",$info[$i]["dn"]);
+							$dn=str_replace("\\2C","\\\\\\\\,",$dn);
 							$dn=str_replace('\'', '\\\'', $dn);
 							$username=$info[$i]["name"][0];
 							$resq=mysqli_query($connexion, "UPDATE ldap_users_extended SET dn='".$dn."', login='".$info[$i][$ldap_rdn]["0"]."', user='".$username."', checked=1 where dn='".$dn."'");
-							//$resq=mysqli_fetch_array($resq);
+							
 							if($resq[0]==0){
-                                    mysqli_query($connexion, "INSERT INTO ldap_users_extended VALUES('".$dn."','".$info[$i][$ldap_rdn]["0"]."','".$username."',1)");
-							        //message(6,"INSERTED: $dn","ok");
+								mysqli_query($connexion, "INSERT INTO ldap_users_extended VALUES('".$dn."','".$info[$i][$ldap_rdn]["0"]."','".$username."',1)");
 							}
 						}
-	                }	
+					}	
         	        else
                 	   	message(6," : No LDAP entry found","info");
 				}
@@ -230,118 +203,135 @@ function disable(){
 				mysqli_query($connexion, "DELETE FROM ldap_groups_extended WHERE checked=0");
 				mysqli_close($connexion);   		
 			}			
-                	else
-                        	message(0," : LDAP Connection Failed","warning");
+			else
+				message(0," : LDAP Connection Failed","warning");
 
-	        }
+		}
 		if($sqlresult=="1")	
 			message(6," : Authentification settings updated","ok");	
 	}
-
 ?>
 
-<form action='./index.php' name='form_auth' method='GET'>
-<center>
-	<table class="table" width="500px">
-         	<tr>
-                       	<th>Authentification Backend</th>
-                        <th>Choice</th>
-		</tr>
-		<tr>
-			<td>MySQL Backend</td>
-			<td align="center" valign="center"><input type='radio' id='mysql' class='checkbox' name='backend_selected' value='mysql' 
-			<?php if($backend_selected=="0")echo "checked";?> onclick='disable()'>
-			</td>
-		</tr>
-		<tr>
-			<td>LDAP Backend</th>
-			<td align="center" valign="center"><input type='radio' id='ldap' class='checkbox' name='backend_selected' value='ldap'
-			<?php if($backend_selected=="1")echo "checked";?> onclick='disable()'>
-			</td>
-		</tr>
-	</table>
-	<table class="table" width="500px">
-        	<tr>
-                	<th colspan="2">LDAP Settings</td>
-		</tr>
-		<tr>	
-			<td width="200px">LDAP server ip address</td>
-			<td><input type="text" name="ldap_ip" style="width:300px;"
-			<?php if(isset($ldap_ip))echo 'value="'.$ldap_ip.'"';?>>
-			</td>
-		</tr>
-                <tr>    
-                	<td width="200px">LDAP server port</td>
-                        <td><input type="text" name="ldap_port" style="width:300px;"
-			<?php
-			if(isset($ldap_port))
-				echo 'value="'.$ldap_port.'"';
-			else
-				echo 'value="389"'; 
-			?>
-			></td>
-		</tr>
-                <tr>    
-                	<td width="200px">Search dn</td>
-                        <td><input type="text" name="ldap_search" style="width:300px;"
-			<?php if(isset($ldap_search))echo 'value="'.$ldap_search.'"';?>>
-			</td>
-                </tr>
-		<tr>
-                	<td width="200px">Search user filter</td>
-                        <td><input type="text" name="ldap_user_filter" style="width:300px;"
-                        <?php
-			if(isset($ldap_user_filter))
-				echo 'value="'.$ldap_user_filter.'"';
-			else
-				echo 'value="(objectclass=person)"';
-			?>>
-                        </td>
-		</tr>
-				<tr>
-                	<td width="200px">Search group filter</td>
-                        <td><input type="text" name="ldap_group_filter" style="width:300px;"
-                        <?php
-			if(isset($ldap_group_filter))
-				echo 'value="'.$ldap_group_filter.'"';
-			else
-				echo 'value="(objectclass=group)"';
-			?>>
-                        </td>
-		</tr>
-        <tr>    
-                	<td width="200px">Proxy user dn</td>
-                        <td><input type="user" name="ldap_user" style="width:300px;"
-			<?php if(isset($ldap_user))echo 'value="'.str_replace("\\","\\\\",$ldap_user).'"';?>>
-			</td>
-		</tr>
-                <tr>    
-                	<td width="200px">Proxy user password</td>
-                        <td><input type="password" name="ldap_password" style="width:300px;"
-			<?php if(isset($ldap_password))echo 'value="'.$ldap_password.'"';?>>
-			</td>
-		</tr>
-                </tr>
-		<tr>
-                	<td width="200px">Login rdn</td>
-                        <td><input type="text" name="ldap_rdn" style="width:300px;"
-			<?php if(isset($ldap_rdn))echo 'value="'.$ldap_rdn.'"';?>>
-			</td>
-                </tr>
-	</table>
-	<input class='button' type='submit' name='action' value='Update'>
-</center>
-</form>
+	<form action='./index.php' name='form_auth' method='GET' class='form'>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<?php echo getLabel("label.admin_auth.auth_backend"); ?>
+			</div>
+			<div class="panel-body">
+				<div class="form-group">
+					<div class="row">
+						<label class="col-md-3">MySQL Backend</label>
+						<div class="col-md-9">
+							<input id="mysql" type="radio" value="mysql" name="backend_selected" <?php if($backend_selected=="0")echo "checked"; ?> onclick='disable()'>
+						</div>
+					</div>
+				</div>
+				<div>
+					<div class="row">
+						<label class="col-md-3">LDAP Backend</label>
+						<div class="col-md-9">
+							<input id="ldap" type="radio" value="ldap" name="backend_selected" <?php if($backend_selected=="1")echo "checked"; ?> onclick='disable()'>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<?php echo getLabel("label.admin_auth.ldap_settings"); ?>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<label class="col-md-3"><?php echo getLabel("label.admin_auth.ldap_ip"); ?></label>
+					<div class="col-md-9">
+						<input type="text" name="ldap_ip" class="form-control"
+						<?php if(isset($ldap_ip))echo 'value="'.$ldap_ip.'"';?>>
+					</div>
+				</div>
+				<br>
+				<div class="row" style="vertical-align: middle;">
+					<label class="col-md-3"><?php echo getLabel("label.admin_auth.ldap_port"); ?></label>
+					<div class="col-md-9">
+						<input type="text" name="ldap_port" class="form-control"
+						<?php
+							if(isset($ldap_port))
+								echo 'value="'.$ldap_port.'"';
+							else
+								echo 'value="389"'; 
+						?>>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<label class="col-md-3"><?php echo getLabel("label.admin_auth.search_dn"); ?></label>
+					<div class="col-md-9">
+						<input type="text" name="ldap_search" class="form-control"
+						<?php if(isset($ldap_search))echo 'value="'.$ldap_search.'"';?>>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<label class="col-md-3"><?php echo getLabel("label.admin_auth.search_user_filter"); ?></label>
+					<div class="col-md-9">
+					<input type="text" name="ldap_user_filter" class="form-control"
+						<?php
+							if(isset($ldap_user_filter))
+								echo 'value="'.$ldap_user_filter.'"';
+							else
+								echo 'value="(objectclass=person)"';
+						?>>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<label class="col-md-3"><?php echo getLabel("label.admin_auth.search_group_filter"); ?></label>
+					<div class="col-md-9">
+					<input type="text" name="ldap_group_filter" class="form-control"
+						<?php
+							if(isset($ldap_group_filter))
+								echo 'value="'.$ldap_group_filter.'"';
+							else
+								echo 'value="(objectclass=group)"';
+						?>>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<label class="col-md-3"><?php echo getLabel("label.admin_auth.proxy_user"); ?></label>
+					<div class="col-md-9">
+						<input type="text" name="ldap_user" class="form-control"
+						<?php if(isset($ldap_user))echo 'value="'.str_replace("\\","\\\\",$ldap_user).'"';?>>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<label class="col-md-3"><?php echo getLabel("label.admin_auth.proxy_pwd"); ?></label>
+					<div class="col-md-9">
+						<input type="password" name="ldap_password" class="form-control"
+						<?php if(isset($ldap_password))echo 'value="'.$ldap_password.'"';?>>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<label class="col-md-3"><?php echo getLabel("label.admin_auth.login_rdn"); ?></label>
+					<div class="col-md-9">
+						<input type="text" name="ldap_rdn" class="form-control"
+						<?php if(isset($ldap_rdn))echo 'value="'.$ldap_rdn.'"';?>>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-md-3">
+					<button class="btn btn-primary" type="submit" name="action" value="Update">
+						<?php echo getLabel("action.update"); ?>
+					</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
 
-<?php
-if($backend_selected=="0"){
-        echo "<script>disable();</script>";
-}
-else{
-        echo "<script>disable();</script>";
-}
-?>
-
-</body>
-
-</html>
+</div>
+	
+<?php include("../../footer.php"); ?>

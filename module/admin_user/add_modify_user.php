@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2014 EyesOfNetwork Team
-# DEV NAME : Jean-Philippe Levy
-# VERSION 4.2
+# Copyright (C) 2016 EyesOfNetwork Team
+# DEV NAME : Quentin HOARAU
+# VERSION : 5.0
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -20,47 +20,16 @@
 #########################################
 */
 
+include("../../header.php");
+include("../../side.php");
+
 ?>
-<html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-		<script src="../../js/jquery.js"></script>
-		<link rel="stylesheet" href="../../css/jquery.autocomplete.css" type="text/css" />
-		<script type="text/javascript" src="../../js/jquery.autocomplete.js"></script>
-		<?php include("../../include/include_module.php"); ?>
-	</head>
 
-	<body id='main'>
+<div id="page-wrapper">
 
-		<script>
-			function disable(){
-				if(document.form_user.user_name.disabled){
-					document.form_user.user_name.disabled=false;
-					document.form_user.user_password1.disabled=false;
-					document.form_user.user_password2.disabled=false;
-					document.form_user.user_location.disabled=true;
-				}
-				else{
-					document.form_user.user_name.disabled=true;
-					document.form_user.user_password1.disabled=true;
-					document.form_user.user_password2.disabled=true;
-					document.form_user.user_location.disabled=false;
-				}
-			}
-			function disable_group(){
-				if(document.form_user.user_group.disabled){
-					document.form_user.user_group.disabled=false;
-				}
-				else{
-					document.form_user.user_group.disabled=true;
-				}
-			}
-		</script>
-
-		<?php
-		
+	<?php
 		/********************************************************
-		*		FUNCTIONS DECLARATIONS			*
+		*		FUNCTIONS DECLARATIONS			                *
 		********************************************************/
 
 		// Retrieve Group Information
@@ -73,8 +42,13 @@
 		//--------------------------------------------------------
 
 		// Update User Information & Right
-		function update_user($user_id, $user_name, $user_descr, $user_group, $user_password1, $user_password2 ,$user_type, $user_location, $user_mail, $user_limitation, $old_group_id, $old_name)
+		function update_user($user_id, $user_name, $user_descr, $user_group, $user_password1, $user_password2 ,$user_type, $user_location, $user_mail, $user_limitation, $old_group_id, $old_name, $create_user_in_nagvis, $create_user_in_cacti, $nagvis_role_id)
 		{
+			global $database_host;
+			global $database_cacti;
+			global $database_username;
+			global $database_password;
+
 			global $database_eonweb;
 			global $database_lilac;
 			global $path_eonweb;
@@ -116,6 +90,51 @@
 					if($lilac_groupid!="" and $lilac_userid!="" and $user_limitation!="1")
 						sqlrequest("$database_lilac","INSERT into nagios_contact_group_member (contactgroup,contact) values('$lilac_groupid','$lilac_userid')");
 
+					
+					// update user into nagvis :
+					$bdd = new PDO('sqlite:/srv/eyesofnetwork/nagvis/etc/auth.db');
+					$req = $bdd->query("SELECT userId, name FROM users WHERE name='".$_POST["user_name_old"]."'");
+                    $nagvis_user_exist = $req->fetch();
+
+                    // this is nagvis default salt for password encryption security
+					$nagvis_salt = '29d58ead6a65f5c00342ae03cdc6d26565e20954';
+
+					if($nagvis_user_exist["userId"] > 0){
+						// update in nagvis
+						if($create_user_in_nagvis=="yes"){
+							$nagvis_id = $nagvis_user_exist["userId"];
+							$bdd->exec("UPDATE users SET name = '$user_name', password = '".sha1($nagvis_salt.$passwd_temp)."' WHERE userId = $nagvis_id");
+							$bdd->exec("UPDATE users2roles SET roleId = $nagvis_role_id WHERE userId = $nagvis_id");
+						} else { // delete in nagvis
+							$bdd->exec("DELETE FROM users WHERE userId = ".$nagvis_user_exist["userId"]);
+							$bdd->exec("DELETE FROM users2roles WHERE userId = ".$nagvis_user_exist["userId"]);
+						}
+					} else{ // no user found in nagvis, so if checkbox is checked, we create
+						if($create_user_in_nagvis=="yes"){
+							$bdd->exec("INSERT INTO users (name, password) VALUES ('$user_name', '".sha1($nagvis_salt.$passwd_temp)."')");
+							$nagvis_id = $bdd->lastInsertId();
+							$dbb->exec("INSERT INTO users2roles (userId, roleId) VALUES ('$agvis_id', $nagvis_role_id)");
+						}
+					}
+
+                     // Update user into cacti
+                    $bdd = new PDO('mysql:host='.$database_host.';dbname='.$database_cacti, $database_username, $database_password);
+                    $req = $bdd->query("SELECT id FROM user_auth WHERE username='".$_POST["user_name_old"]."'");
+                    $cacti_user_exist = $req->fetch();
+
+                    if($cacti_user_exist["id"] > 0){
+                    	$cacti_id = $cacti_user_exist["id"];
+                    	if($create_user_in_cacti == "yes"){
+                    		$bdd->exec("UPDATE user_auth SET username = '$user_name' WHERE id = $cacti_id");
+                    	} else {
+                    		$bdd->exec("DELETE FROM user_auth WHERE id = $cacti_id");
+                    	}
+                    } else {
+                    	if($create_user_in_cacti == "yes"){
+        					$bdd->exec("INSERT INTO user_auth (username,realm,full_name,show_tree,show_list,show_preview,graph_settings,login_opts,policy_graphs,policy_trees,policy_hosts,policy_graph_templates,enabled) VALUES ('$user_name',2,'$user_descr','on','on','on','on',3,2,2,2,2,'on')");
+                    	}
+                    }
+					
 					// logging action
 					logging("admin_user","UPDATE : $user_id $user_name $user_descr $user_limitation $user_group $user_type $user_location");
 
@@ -145,7 +164,7 @@
 		// Global parameter
 		global $database_eonweb;
 		global $database_lilac;
-	
+
 		// Get parameter
 		$user_change_passord = retrieve_form_data("user_change_passord",null);
 		$user_id = retrieve_form_data("user_id",null);
@@ -165,6 +184,10 @@
 		$old_group_id = mysqli_result(sqlrequest($database_eonweb,"select group_id from users where user_id='$user_id'"),0,"group_id");
 		$old_name = retrieve_form_data("user_name_old","");
 
+		$create_user_in_nagvis = retrieve_form_data("create_user_in_nagvis","");
+		$nagvis_role_id = retrieve_form_data("nagvis_group","");
+		$create_user_in_cacti = retrieve_form_data("create_user_in_cacti","");
+
 		if($user_type=="1"){
 			$result = sqlrequest($database_eonweb,"select login from ldap_users_extended where dn='$user_location'");
 			$username = mysqli_result($result,0,"login");
@@ -182,15 +205,27 @@
 
 		if ($user_id == null) 
 		{
-			echo "<h1>".$xmlmodules->getElementsByTagName("admin_user")->item(0)->getAttribute("new")."</h1>";
+			echo '<div class="row">
+					<div class="col-lg-12">
+						<h1 class="page-header">'.getLabel("label.admin_user.title_new").'</h1>
+					</div>
+				</div>';
 			
 			//------------------------------------------------------------------------------------------------
 			// ACCOUNT CREATION (New user ID)
 			//------------------------------------------------------------------------------------------------
 			if 	(isset($_POST['add']))
 			{
+				$create_user_in_nagvis = retrieve_form_data("create_user_in_nagvis","");
+				$create_user_in_cacti = retrieve_form_data("create_user_in_cacti","");
+				if($create_user_in_nagvis == "yes"){ $nagvis_user = true; }
+				else { $nagvis_user = false; }
+				if($create_user_in_cacti == "yes"){ $cacti_user = true; }
+				else { $cacti_user = false; }
+				
 				$user_group = retrieve_form_data("user_group","");
-				$user_id=insert_user(stripAccents($user_name), $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location,$user_mail,$user_limitation, true);
+				$nagvis_grp = retrieve_form_data("nagvis_group", "");
+				$user_id=insert_user(stripAccents($user_name), $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location,$user_mail,$user_limitation, true, $create_user_in_nagvis, $create_user_in_cacti, $nagvis_grp);
 				//message(8,"User location: $user_location",'ok');	// For debug pupose, to be removed
 
 				// Retrieve Group Information from database
@@ -211,13 +246,17 @@
 		}
 		else
 		{
-			echo "<h1>".$xmlmodules->getElementsByTagName("admin_user")->item(0)->getAttribute("mod")."</h1>";
+			echo '<div class="row">
+					<div class="col-lg-12">
+						<h1 class="page-header">'.getLabel("label.admin_user.title_upd").'</h1>
+					</div>
+				</div>';
 
 			//------------------------------------------------------------------------------------------------
-                        // ACCOUNT UPDATE (and retrieve parameters)
-                        //------------------------------------------------------------------------------------------------
+						// ACCOUNT UPDATE (and retrieve parameters)
+						//------------------------------------------------------------------------------------------------
 			if (isset($_POST['update'])){
-				update_user($user_id, stripAccents($user_name), $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location, $user_mail, $user_limitation, $old_group_id, $old_name);	
+				update_user($user_id, stripAccents($user_name), $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location, $user_mail, $user_limitation, $old_group_id, $old_name, $create_user_in_nagvis, $create_user_in_cacti, $nagvis_role_id);	
 				//message(8,"Update: User location = $user_location",'ok');	// For debug pupose, to be removed
 				//message(8,"Update: User name =  $user_name",'ok');			// For debug pupose, to be removed
 			}
@@ -233,148 +272,194 @@
 			$user_location=mysqli_result($user_name_descr,0,"user_location");
 			$user_password1="abcdefghijklmnopqrstuvwxyz";
 			$user_password2="abcdefghijklmnopqrstuvwxyz";
+
+			// search the user in Cacti (to check the checkbox if he's found)
+			$cacti_user = sqlrequest($database_cacti, "SELECT id FROM user_auth WHERE username = '$user_name'");
+			$cacti_user_found = mysqli_num_rows($cacti_user);
+			if($cacti_user_found > 0){ $cacti_user = true; }
+			else { $cacti_user = false; }
+
+			// search the user in Nagvis (to check the checkbox if he's found)
+			$bdd = new PDO('sqlite:/srv/eyesofnetwork/nagvis/etc/auth.db');
+            $req = $bdd->query("SELECT count(*) FROM users WHERE name='$user_name'");
+            $nagvis_user_exist = $req->fetch();
+            if ($nagvis_user_exist["count(*)"] > 0){ $nagvis_user = true; }
+            else { $nagvis_user = false; }
+
 			//message(8,"Mod: User location = $user_location",'ok');       // For debug pupose, to be removed
-                        //message(8,"Mod: User name =  $user_name",'ok');                      // For debug pupose, to be removed
+			//message(8,"Mod: User name =  $user_name",'ok');                      // For debug pupose, to be removed
 
 			//------------------------------------------------------------------------------------------------
 		}
 
-		?>
+		// search all nagvis groups
+		$bdd = new PDO('sqlite:/srv/eyesofnetwork/nagvis/etc/auth.db');
+		$req = $bdd->query("SELECT * FROM roles");
+		$nagvis_groups = $req->fetchAll(PDO::FETCH_OBJ);
 
-		<form action='./add_modify_user.php' method='POST' name='form_user'>
-			<input type='hidden' name='user_id' value='<?php echo $user_id?>'>
-				<center>
-					<table class="table">
-						<tr>
-							<td><h2>User Name</h2></td>
-							<td>
-								<input type='textbox' name='user_name' value='<?php echo $user_name?>' style="width:300px;">
-								<input type='hidden' name='user_name_old' value='<?php echo $user_name?>'>
-							</td>
-						</tr>
-						<?php if($user_id!="1"){ ?>
-						<tr>
-							<td><h2>User Limited</h2></td>
-							<td>
-								<?php
-									if($user_limitation=="1") $checked="checked='yes'";
-									else $checked="";
-									echo "<input type='checkbox' class='checkbox' name='user_limitation' value='1' $checked onclick='disable_group()'>";
-								?>
-							</td>
-						</tr>
-						<tr>
-							<td><h2>Ldap User</h2></td>
-							<td>
-								<?php
-									if($user_type=="1") $checked="checked='yes'";
-									else $checked="";
-									echo "<input type='checkbox' class='checkbox' name='user_type' value='1' $checked onclick='disable()'>";
-								?>
-							</td>
-						</tr>
-						<tr>
-							<td><h2>Ldap Login</h2></td>
-							<td>
-								<?php
-									echo "<input id='user_location' name='user_location' type='text' style='width:300px;' value='".htmlspecialchars($user_location, ENT_QUOTES)."'>";
-								?>
-								<script type="text/javascript">
-								$(function() {
-									$("#user_location").autocomplete("search.php?request=search_user");
-									$("#user_location").result(function(event, data, formatted) {
-										if (data)
-											$(this).parent().find("input").val(data[1]);
-									});
-								});
-								</script>
-							</td>
-						</tr>
-						<?php 
-						} 
-						else {
-							echo "<input type='hidden' name='user_type' value='0'>";
-							echo "<input type='hidden' name='user_group' value='1'>";
+		// get userId in Nagvis
+		$req = $bdd->query("SELECT userId from users WHERE name = '$user_name'");
+		$result = $req->fetch(PDO::FETCH_OBJ);
+
+		$id_nagvis = false;
+		$role_id = false;
+		if($result){
+			$id_nagvis = $result->userId;
+			$req = $bdd->query("SELECT roleId FROM users2roles WHERE userId = $id_nagvis");
+			$result = $req->fetch(PDO::FETCH_OBJ);
+
+			if($result){
+				$role_id = $result->roleId;
+			}
+		}
+	?>
+
+	<form id="form_user" action='./add_modify_user.php' method='POST' name='form_user'>
+		<input type='hidden' name='user_id' value='<?php echo $user_id?>'>
+		<div class="row form-group">
+			<label class="col-md-3"><?php echo getLabel("label.admin_user.user_name") ?></label>
+			<div class="col-md-9">
+				<input class="form-control" type='text' name='user_name' value='<?php echo $user_name?>'>
+				<input type='hidden' name='user_name_old' value='<?php echo $user_name?>'>
+			</div>
+		</div>
+			
+		<?php if($user_id!="1"){ ?>
+			<div class="row form-group">
+				<label class="col-md-3"><?php echo getLabel("label.admin_user.user_limit"); ?></label>
+				<div class="col-md-9">
+					<?php
+						if($user_limitation=="1") $checked="checked='yes'";
+						else $checked="";
+						echo "<input type='checkbox' class='checkbox' name='user_limitation' value='1' $checked onclick='disable_group()'>";
+					?>
+				</div>
+			</div>
+			
+			<div class="row form-group">
+				<label class="col-md-3"><?php echo getLabel("label.admin_user.user_ldap"); ?></label>
+				<div class="col-md-9">
+					<?php
+						if($user_type=="1") $checked="checked='checked'";
+						else $checked="";
+						echo "<input type='checkbox' class='checkbox' name='user_type' value='1' $checked onclick='disable()'>";
+					?>
+				</div>
+			</div>
+			
+			<div class="row form-group">
+				<label class="col-md-3"><?php echo getLabel("label.admin_user.ldap_log"); ?></label>
+				<div class="col-md-9">
+					<?php
+						echo "<input class='form-control' id='user_location' name='user_location' type='text' value='".htmlspecialchars($user_location, ENT_QUOTES)."'>";
+					?>
+				</div>
+			</div>
+		<?php 
+		} 
+		else {
+			echo "<input type='hidden' name='user_type' value='0'>";
+			echo "<input type='hidden' name='user_group' value='1'>";
+		}
+		?>
+		<div class="row form-group">
+			<label class="col-md-3"><?php echo getLabel("label.admin_user.user_mail"); ?></label>
+			<div class="col-md-9">
+				<input class="form-control" type='text' name='user_mail' value='<?php echo $user_mail?>'>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-md-3"><?php echo getLabel("label.admin_user.user_desc"); ?></label>
+			<div class="col-md-9">
+				<input class="form-control" type='text' name='user_descr' value='<?php echo $user_descr?>'>
+			</div>
+		</div>
+		
+		<div class="row form-group">
+			<label class="col-md-3"><?php echo getLabel("label.admin_user.user_pwd"); ?></label>
+			<div class="col-md-9">
+				<input class="form-control" type='password' name='user_password1' value='<?php echo $user_password1?>'>
+			</div>
+		</div>
+		
+		<div class="row form-group">
+			<label class="col-md-3"><?php echo getLabel("label.admin_user.user_pwd2"); ?></label>
+			<div class="col-md-9">
+				<input class="form-control" type='password' name='user_password2' value='<?php echo $user_password2?>'>
+			</div>
+		</div>
+		
+		<?php if($user_id!="1") { ?>
+		<div class="row form-group">
+			<label class="col-md-3"><?php echo getLabel("label.admin_user.user_group"); ?></label>
+			<div class="col-md-9">
+				<select class="form-control" name='user_group' size=1>
+					<?php
+						$result=sqlrequest("$database_eonweb","SELECT group_id,group_name from groups");
+						while ($line = mysqli_fetch_array($result))
+						{
+							if ($user_group == $line[0])
+								echo "<OPTION value='$line[0]' SELECTED>$line[1] </OPTION>";
+							else
+								echo "<OPTION value='$line[0]'>$line[1] </OPTION>";					
 						}
+					?>
+				</select>
+			</div>
+		</div>
+
+		<div class="row form-group">
+			<label class="col-md-3"><?php echo getLabel("label.admin_user.user_nagvis"); ?></label>
+			<div class="col-md-9">
+				<div class="input-group col-md-5">
+					<span class="input-group-addon">
+		                <?php
+							if(isset($nagvis_user) && $nagvis_user=="yes") $checked="checked='checked'";
+		                    else $checked="";
+		                    echo "<input type='checkbox' class='checkbox' name='create_user_in_nagvis' value='yes' $checked>";
 						?>
-						<tr>
-							<td><h2>User Mail</h2></td>
-							<td>
-								<input type='textbox' name='user_mail' value='<?php echo $user_mail?>' style="width:300px;">
-							</td>
-						</tr>
+					</span>
+					<select class="form-control" name="nagvis_group">
+						<?php foreach ($nagvis_groups as $group):
+							$selected = "";
+							if(!isset($_GET["user_id"]) && $group->name == "Guests"){
+								$selected = "selected";
+							}
+							if($role_id == $group->roleId){
+								$selected = "selected";
+							}
+						?>
+							<option value="<?php echo $group->roleId; ?>" <?php echo $selected; ?>><?php echo $group->name; ?></option>
+						<?php endforeach ?>
+					</select>
+				</div>
+			</div>
+		</div>
 
-						<tr>
-							<td><h2>User Description</h2></td>
-							<td>
-								<input type='textbox' name='user_descr' value='<?php echo $user_descr?>' style="width:300px;">
-							</td>
-						</tr>
-						<tr>
-							<td><h2>User Password</h2></td>
-							<td>
-								<input type='password' name='user_password1' value='<?php echo $user_password1?>' style="width:300px;">
-							</td>
-						</tr>
-						<tr>
-							<td><h2>User Password Confirmation</h2></td>
-							<td>
-								<input type='password' name='user_password2' value='<?php echo $user_password2?>' style="width:300px;">
-							</td>
-						</tr>
-						<?php if($user_id!="1") { ?>
-						<tr>
-							<td><h2>User Group</h2></td>
-							<td>
-								<select name='user_group' size=1>
-									<?php
-										$result=sqlrequest("$database_eonweb","SELECT group_id,group_name from groups");
-										while ($line = mysqli_fetch_array($result))
-										{
-											if ($user_group == $line[0])
-												echo "<OPTION value='$line[0]' SELECTED>$line[1] </OPTION>";
-											else
-												echo "<OPTION value='$line[0]'>$line[1] </OPTION>";					
-										}
-									?>
-								</select>
-							</td>
-						</tr>
-						<?php } ?>
-						<tr>
-							<td class="blanc" align="center" colspan="2">
-								<?php
-									if ($user_id !=null)
-										echo "<input class='button' type='submit' name='update' value='update'>";
-									else
-										echo "<input class='button' type='submit' name='add' value='add'>";
-									echo "&nbsp;<input class='button' type='button' name='back' value='back' onclick='location.href=\"index.php\"'>";
-								?>
-							</td>
-						</tr>
-					</table>
-				</center>
-		</form>
+		<div class="row form-group">
+			<label class="col-md-3"><?php echo getLabel("label.admin_user.user_cacti"); ?></label>
+			<div class="col-md-9">
+				<?php
+					if(isset($cacti_user) && $cacti_user == "yes") $checked = "checked='checked'";
+                    else $checked = "";
+                    echo "<input type='checkbox' class='checkbox' name='create_user_in_cacti' value='yes' $checked>";
+				?>
+			</div>
+		</div>
 
-		<?php
-			if($user_limitation=="1" && $user_id!="1"){
-				echo "<script>disable_group();</script>";
-			}
-			elseif($user_id!="1"){
-				echo "<script>disable_group();</script>";
-				echo "<script>disable_group();</script>";
-			}
-			if($user_type=="1" && $user_id!="1"){
-				echo "<script>disable();</script>";
-			}
-			elseif($user_id!="1"){
-				echo "<script>disable();</script>";
-				echo "<script>disable();</script>";
-			}
-			//message(8,"Mod2: User location = $user_location",'ok');       // For debug pupose, to be removed
-                        //message(8,"Mod2: User name =  $user_name",'ok');                      // For debug pupose, to be removed
+		<?php } ?>
+		<div class="form-group">
+			<?php
+				if ($user_id !=null)
+					echo "<button class='btn btn-primary' type='submit' name='update' value='update'>".getLabel("action.update")."</button>";
+				else
+					echo "<button class='btn btn-primary' type='submit' name='add' value='add'>".getLabel("action.add")."</button>";
+				echo "<button class='btn btn-default' style='margin-left: 10px;' type='button' name='back' value='back' onclick='location.href=\"index.php\"'>".getLabel("action.cancel")."</button>";
+			?>
+		</div>
+	</form>
 
-		?>
+</div>
 
-	</body>
-</html>
+<?php include("../../footer.php"); ?>

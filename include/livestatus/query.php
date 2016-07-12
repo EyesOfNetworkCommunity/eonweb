@@ -1,7 +1,28 @@
 <?php
+/*
+#########################################
+#
+# Copyright (C) 2016 EyesOfNetwork Team
+# DEV NAME : Jean-Philippe LEVY
+# VERSION : 5.0
+# APPLICATION : eonweb for eyesofnetwork project
+#
+# LICENCE :
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+#########################################
+*/
+
 require_once("../config.php");
-require_once("../arrays.php"); 
-require_once("../function.php"); 
+require_once("../arrays.php");
+require_once("../function.php");  
 require_once("Client.php");
 use Nagios\Livestatus\Client;
 
@@ -35,61 +56,78 @@ function checkHost($type, $address, $port, $path){
  */
 function getServicesStateNbr()
 {
-global $sockets;
+	global $sockets;
 
-$result = array();
-$nbr_services_ok = 0;
-$nbr_services_warning = 0;
-$nbr_services_critical = 0;
-$nbr_services_unknown = 0;
+	$result = array();
+	$nbr_services_pending = 0;
+	$nbr_services_ok = 0;
+	$nbr_services_warning = 0;
+	$nbr_services_critical = 0;
+	$nbr_services_unknown = 0;
 
-foreach($sockets as $socket){
-	$socket_parts = explode(":", $socket);
-        $socket_type = $socket_parts[0];
-        $socket_address = $socket_parts[1];
-        $socket_port = $socket_parts[2];
-        $socket_path = $socket_parts[3];
-	if( checkHost($socket_type, $socket_address, $socket_port, $socket_path) ){
-		if($socket_port == -1){
-			$socket_port = "";
-			$socket_address = "";
+	foreach($sockets as $socket){
+		$socket_parts = explode(":", $socket);
+		$socket_type = $socket_parts[0];
+		$socket_address = $socket_parts[1];
+		$socket_port = $socket_parts[2];
+		$socket_path = $socket_parts[3];
+		if( checkHost($socket_type, $socket_address, $socket_port, $socket_path) ){
+			if($socket_port == -1){
+				$socket_port = "";
+				$socket_address = "";
+			}
+			$options = array(
+				'socketType' => $socket_type,
+				'socketAddress' => $socket_address,
+				'socketPort' => $socket_port,
+				'socketPath' => $socket_path,
+			);
+			
+			// construct mklivestatus request, and get the response
+			$client = new Client($options);
+
+			// get all service PENDING
+			$test = $client
+				->get('services')
+				->filter('has_been_checked = 0')
+				->filter('contacts >= '. $_SERVER["REMOTE_USER"])
+				->execute();
+			$nbr_pending = count($test) - 1;
+
+			// construct mklivestatus request, and get the response
+			$response = $client
+				->get('services')
+				->stat('state = 0')
+				->stat('state = 1')
+				->stat('state = 2')
+				->stat('state = 3')
+				->filter('has_been_checked = 1')
+				->filter('contacts >= '. $_SERVER["REMOTE_USER"])
+				->execute();
+
+			$nbr_services_pending += $nbr_pending;
+			$nbr_services_ok += $response[0][0];
+			$nbr_services_warning += $response[0][1];
+			$nbr_services_critical += $response[0][2];
+			$nbr_services_unknown += $response[0][3];
 		}
-		$options = array(
-                	'socketType' => $socket_type,
-                	'socketAddress' => $socket_address,
-                	'socketPort' => $socket_port,
-                	'socketPath' => $socket_path,
-        	);
-		// construct mklivestatus request, and get the response
-        	$client = new Client($options);
-        	// construct mklivestatus request, and get the response
-		$response = $client
-                ->get('services')
-                        ->stat('state = 0')
-                        ->stat('state = 1')
-                        ->stat('state = 2')
-                        ->stat('state = 3')
-                        ->filter('contacts >= '. $_SERVER["REMOTE_USER"])
-                ->execute();
-                $nbr_services_ok += $response[0][0];
-                $nbr_services_warning += $response[0][1];
-                $nbr_services_critical += $response[0][2];
-                $nbr_services_unknown += $response[0][3];	
 	}
-}
 
 	// fill an empty array with previous response, in order to have a beautiful JSON to use
+	array_push($result, $nbr_services_pending);
 	array_push($result, $nbr_services_ok);
 	array_push($result, $nbr_services_warning);
 	array_push($result, $nbr_services_critical);
 	array_push($result, $nbr_services_unknown);
 	
 	$client->command(
-    array(
-        'ACKNOWLEDGE_SVC_PROBLEM',
-        'example.com',
-        'some service', 2, 0, 1,
-        'username', 'Example comment'));
+		array(
+			'ACKNOWLEDGE_SVC_PROBLEM',
+			'example.com',
+			'some service', 2, 0, 1,
+			'username', 'Example comment'
+		)
+	);
 	
 	// response for the Ajax call
 	echo json_encode($result);
@@ -100,49 +138,64 @@ foreach($sockets as $socket){
  */
 function getHostsStateNbr()
 {
-global $sockets;
+	global $sockets;
 
-$result = array();
-$nbr_host_ok = 0;
-$nbr_host_warning = 0;
-$nbr_host_critical = 0;
-$nbr_host_unknown = 0;
+	$result = array();
+	$nbr_hosts_pending = 0;
+	$nbr_host_ok = 0;
+	$nbr_host_warning = 0;
+	$nbr_host_critical = 0;
+	$nbr_host_unknown = 0;
 
-foreach($sockets as $socket){
-        $socket_parts = explode(":", $socket);
-        $socket_type = $socket_parts[0];
-        $socket_address = $socket_parts[1];
-        $socket_port = $socket_parts[2];
-        $socket_path = $socket_parts[3];
-        if( checkHost($socket_type, $socket_address, $socket_port, $socket_path) ){
-                if($socket_port == -1){
-                        $socket_port = "";
-                        $socket_address = "";
-                }
-                $options = array(
-                        'socketType' => $socket_type,
-                        'socketAddress' => $socket_address,
-                        'socketPort' => $socket_port,
-                        'socketPath' => $socket_path,
-                );
-                // construct mklivestatus request, and get the response
-                $client = new Client($options);
-                // construct mklivestatus request, and get the response
-                $response = $client
-                ->get('hosts')
-                        ->stat('state = 0')
-                        ->stat('state = 1')
-                        ->stat('state = 2')
-                        ->stat('state = 3')
-                        ->filter('contacts >= '. $_SERVER["REMOTE_USER"])
-                ->execute();
-                $nbr_host_ok += $response[0][0];
-                $nbr_host_warning += $response[0][1];
-                $nbr_host_critical += $response[0][2];
-                $nbr_host_unknown += $response[0][3];
-        }
-}	
+	foreach($sockets as $socket){
+		$socket_parts = explode(":", $socket);
+		$socket_type = $socket_parts[0];
+		$socket_address = $socket_parts[1];
+		$socket_port = $socket_parts[2];
+		$socket_path = $socket_parts[3];
+		if( checkHost($socket_type, $socket_address, $socket_port, $socket_path) ){
+			if($socket_port == -1){
+				$socket_port = "";
+				$socket_address = "";
+			}
+			$options = array(
+				'socketType' => $socket_type,
+				'socketAddress' => $socket_address,
+				'socketPort' => $socket_port,
+				'socketPath' => $socket_path,
+			);
+			
+			// construct mklivestatus request, and get the response
+			$client = new Client($options);
+			
+			// get all host PENDING
+			$test = $client
+				->get('hosts')
+				->filter('has_been_checked = 0')
+				->filter('contacts >= '. $_SERVER["REMOTE_USER"])
+				->execute();
+			$nbr_pending = count($test) - 1;
+			
+			// construct mklivestatus request, and get the response
+			$response = $client
+				->get('hosts')
+				->stat('state = 0')
+				->stat('state = 1')
+				->stat('state = 2')
+				->stat('state = 3')
+				->filter('has_been_checked = 1')
+				->filter('contacts >= '. $_SERVER["REMOTE_USER"])
+				->execute();
+				
+			$nbr_hosts_pending += $nbr_pending;
+			$nbr_host_ok += $response[0][0];
+			$nbr_host_warning += $response[0][1];
+			$nbr_host_critical += $response[0][2];
+			$nbr_host_unknown += $response[0][3];
+		}
+	}	
 
+	array_push($result, $nbr_hosts_pending);
 	array_push($result, $nbr_host_ok);
 	array_push($result, $nbr_host_warning);
 	array_push($result, $nbr_host_critical);
@@ -150,11 +203,13 @@ foreach($sockets as $socket){
 
 	// fill an empty array with previous response, in order to have a beautiful JSON to use
 	$client->command(
-    array(
-        'ACKNOWLEDGE_SVC_PROBLEM',
-        'example.com',
-        'some service', 2, 0, 1,
-        'username', 'Example comment'));
+		array(
+			'ACKNOWLEDGE_SVC_PROBLEM',
+			'example.com',
+			'some service', 2, 0, 1,
+			'username', 'Example comment'
+		)
+	);
 	
 	// response for the Ajax call
 	echo json_encode($result);
@@ -201,7 +256,19 @@ function getEventStateNbr()
 			foreach($filters as $filter)
 			{
 				$name = $filter->getAttribute('name');
-				$text = $filter->nodeValue;
+				$filter_value = $filter->nodeValue;
+				if($name == "host"){ $name = "equipment"; }
+				if($name == "service_group"){ $name = "servicegroups"; }
+
+				//advanced search value (with *)
+				$text = "";
+				if( substr($filter_value, 0, 1) === '*' ){
+					$text .= "%";
+				}
+				$text .= trim($filter_value, '*');
+				if ( substr($filter_value, -1) === '*' ) {
+					$text .= "%";
+				}
 				
 				if($i < $filters->length){
 					switch($name){
@@ -297,29 +364,41 @@ function getNumberEventByStateAndTime()
 		foreach($filters as $filter)
 		{
 			$name = $filter->getAttribute('name');
-			$text = $filter->nodeValue;
+			$filter_value = $filter->nodeValue;
+			if($name == "host"){ $name = "equipment"; }
+			if($name == "service_group"){ $name = "servicegroups"; }
+
+			//advanced search value (with *)
+			$text = "";
+			if( substr($filter_value, 0, 1) === '*' ){
+				$text .= "%";
+			}
+			$text .= trim($filter_value, '*');
+			if ( substr($filter_value, -1) === '*' ) {
+				$text .= "%";
+			}
 			
 			// construct the WHERE clause
 			if($i < $filters->length){
 				switch($name){
-					case 'not_equipment': $name = "equipment"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-					case 'not_service': $name = "service"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-					case 'not_description': $name = "description"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-					case 'not_hostgroups': $name = "hostgroups"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-					case 'not_servicegroups': $name = "servicegroups"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-					case 'not_owner': $name = "owner"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-					default: $milieu_requete .= $name . " LIKE '%".$text."%' AND ";
+					case 'not_equipment': $name = "equipment"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
+					case 'not_service': $name = "service"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
+					case 'not_description': $name = "description"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
+					case 'not_hostgroups': $name = "hostgroups"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
+					case 'not_servicegroups': $name = "servicegroups"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
+					case 'not_owner': $name = "owner"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
+					default: $milieu_requete .= $name . " LIKE '".$text."' AND ";
 				}
 			}
 			else{
 				switch($name){
-					case 'not_equipment': $name = "equipment"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND"; break;
-					case 'not_service': $name = "service"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND"; break;
-					case 'not_description': $name = "description"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND"; break;
-					case 'not_hostgroups': $name = "hostgroups"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND"; break;
-					case 'not_servicegroups': $name = "servicegroups"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND"; break;
-					case 'not_owner': $name = "owner"; $milieu_requete .= "$name NOT LIKE '%".$text."%' AND"; break;
-					default: $milieu_requete .= $name . " LIKE '%".$text."%' AND";
+					case 'not_equipment': $name = "equipment"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
+					case 'not_service': $name = "service"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
+					case 'not_description': $name = "description"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
+					case 'not_hostgroups': $name = "hostgroups"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
+					case 'not_servicegroups': $name = "servicegroups"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
+					case 'not_owner': $name = "owner"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
+					default: $milieu_requete .= $name . " LIKE '".$text."' AND";
 				}
 			}
 			$i++;

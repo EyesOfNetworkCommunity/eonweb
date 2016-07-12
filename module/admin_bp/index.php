@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2014 EyesOfNetwork Team
-# DEV NAME : Jean-Philippe LEVY
-# VERSION 4.2
+# Copyright (C) 2016 EyesOfNetwork Team
+# DEV NAME : Michael Aubertin
+# VERSION : 5.0
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -19,306 +19,266 @@
 #
 #########################################
 */
+
+include("../../header.php");
+include("../../side.php");
 ?>
-<?php
-function deleteAll($tableBp){
-	global $database_nagios;
-	foreach($tableBp as $bp){
-		$result = sqlArrayNagios("SELECT bp_name FROM bp_links WHERE bp_link='$bp[bp_name]'");
-		sqlrequest($database_nagios,"DELETE FROM bp_links WHERE bp_name='$bp[bp_name]'");
-		sqlrequest($database_nagios,"DELETE FROM bp_services WHERE bp_name='$bp[bp_name]'");
-		sqlrequest($database_nagios,"DELETE FROM bp WHERE name='$bp[bp_name]'");
-		deleteAll($result);
-	}
-}
 
-function deleteOne($bp,$deleted){
-	global $database_nagios;
-	if ( $deleted != "" ) $deleted .= ",$bp";
-	else $deleted = "$bp";
-	sqlrequest($database_nagios,"DELETE FROM bp_links WHERE bp_name='$bp'");
-	sqlrequest($database_nagios,"DELETE FROM bp_services WHERE bp_name='$bp'");
-	sqlrequest($database_nagios,"DELETE FROM bp WHERE name='$bp'");
-	return $deleted;
-}
-?>
-<html>
-<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-		<?php include("../../include/include_module.php"); ?>
-		<script type="text/javascript" src="../../js/jquery.js"></script>
-		<script type="text/javascript" src="function.js"></script>
+<div id="page-wrapper">
 
-</head>
-<body id="main">
-<h1><?php echo $xmlmodules->getElementsByTagName("admin_bp")->item(0)->getAttribute("title")?></h1>
-<?php
-	
-	global $max_display;
-	global $display_zero;
-	$action=retrieve_form_data("action",null);
-	$build=retrieve_form_data("build",null);
-	$bp_mgt_list=retrieve_form_data("bp_mgt_list",null);
-	global $path_nagiosbpcfg ;
-	global $path_nagiosbpcfg_bu ;
-	global $path_nagiosbpcfg_lock ;
-	global $database_nagios;
-	global $max_bu_file;
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="page-header"><?php echo getLabel("label.admin_bp.title"); ?></h1>
+		</div>
+	</div>
 
-	if ($build == "Apply Config") buildFile();
-	if ($action == "submit"){
-		switch($bp_mgt_list)
-		{
-			case "add_process" : 
-				echo "<META HTTP-EQUIV=refresh CONTENT='0;URL=add_process.php'>";
-				break ;
-			case "delete_process" :
-				$bp_selected = array();
-				for ( $i = 0 ; $i < $max_display+2 ; $i++){
-					$bps = retrieve_form_data("bp_selected$i",null);
-					if ( $bps ) $bp_selected = array_merge($bp_selected,$bps);
-				} 
-
-				$notDeleted = array();
-				$deleted= "";
-				foreach($bp_selected as $bp){
-					$result = sqlArrayNagios("SELECT bp_name FROM bp_links WHERE bp_link='$bp'");
-					if ( $result ){
-						foreach($result as $i=>$r){
-							if ( !in_array($r['bp_name'],$bp_selected) ){
-								if ( isset($strDep) ) $strDep .= ",$r[bp_name]";
-								else $strDep = "$r[bp_name]";
-							}
-						}
-						if (isset($strDep))	$notDeleted[] = $bp." has dependencies with ".$strDep.".";
-						else $deleted = deleteOne($bp,$deleted);
-					}
-					else {
-						$deleted = deleteOne($bp,$deleted);
-					}
-				}
-
-				if ( $deleted != "") message(6," : $deleted deleted","ok");
-				foreach($notDeleted as $del){
-					message(0," : $del","warning");
-				}
-				break ;
-			case "cascade_delete" :
-				$bp_selected = array();
-				for ( $i = 0 ; $i < $max_display+2 ; $i++){
-					$bps = retrieve_form_data("bp_selected$i",null);
-					if ( $bps ) $bp_selected = array_merge($bp_selected,$bps);
-				}
-				foreach ($bp_selected as $bp) {
-					$result = sqlArrayNagios("SELECT bp_name FROM bp_links WHERE bp_link='$bp'");
-					sqlrequest($database_nagios,"DELETE FROM bp_links WHERE bp_name='$bp'");
-					sqlrequest($database_nagios,"DELETE FROM bp_services WHERE bp_name='$bp'");
-					sqlrequest($database_nagios,"DELETE FROM bp WHERE name='$bp'");
-					deleteAll($result);
-				}
-				break ;
-			case "backup" :
-				$option = retrieve_form_data("bu_list",null);
-				switch ($option){
-					case "clean" :
-						for ( $i = 1 ; $i < $max_bu_file+1 ; $i++){
-							if ( file_exists($path_nagiosbpcfg_bu.$i)) unlink($path_nagiosbpcfg_bu.$i);
-							else break;
-						}
-						break;
-					default :
-						wait($path_nagiosbpcfg_lock);	//Wait for the file to not be in use.
-						$fp=@fopen($path_nagiosbpcfg_lock,"w");	//Lock the file.
-						fputs($fp,getmypid());
-						fclose($fp);
-
-						rename($path_nagiosbpcfg_bu.$option,$path_nagiosbpcfg_bu.'temp');
-						backup_file($option);
-						copy($path_nagiosbpcfg_bu.'temp',$path_nagiosbpcfg);
-
-						$lines = file($path_nagiosbpcfg);
-						unset($lines[0]);
-						write_file($path_nagiosbpcfg,$lines,"w");
-
-						unlink($path_nagiosbpcfg_bu.'temp');
-						unlink($path_nagiosbpcfg_lock);
-						break ;
-				}
-				break;
-			case "duplicate" :
-				global $min_dup;
-				global $max_dup;
-				$bp_selected = array();
-				for ( $i = 0 ; $i < $max_display+2 ; $i++){
-					$bps = retrieve_form_data("bp_selected$i",null);
-					if ( $bps ) $bp_selected = array_merge($bp_selected,$bps);
-				}
-				$notDuplicate = array() ;
-				foreach ( $bp_selected as $bp){
-					$count = sqlArrayNagios("SELECT COUNT(name) AS nbr FROM bp WHERE name REGEXP '$bp-([0-9]){".strlen($min_dup).",".strlen($max_dup)."}$'");
-					if ( $count[0]['nbr'] == $max_dup-$min_dup+1 ) {
-						$notDuplicate[] = $bp ;
-					}
-					else {
-						$rand_num = mt_rand($min_dup,$max_dup);
-
-						while ( sqlArrayNagios("SELECT * FROM bp WHERE name='$bp-$rand_num'") ) {
-							$rand_num++;
-							if ($rand_num > $max_dup) $rand_num = $min_dup;
-						}
-
-						$infos = sqlArrayNagios("SELECT * FROM bp WHERE name='$bp'");
-						foreach ($infos as $info){
-							$request = "INSERT INTO bp VALUES ('$info[name]-$rand_num','";
-							if ( $info['description'] != "")	$request .= "$info[description]-$rand_num";
-							$request .=	"','$info[priority]','$info[type]','$info[command]','$info[url]','$info[min_value]','$info[is_define]')";
-							sqlrequest($database_nagios,$request);
-						}
-
-						$infos = sqlArrayNagios("SELECT * FROM bp_services WHERE bp_name='$bp'");
-						foreach ( $infos as $info) sqlrequest($database_nagios,"INSERT INTO bp_services VALUES('','$info[bp_name]-$rand_num','$info[host]','$info[service]')");
-					
-						$infos = sqlArrayNagios("SELECT * FROM bp_links WHERE bp_name='$bp'");
-						foreach ( $infos as $info) sqlrequest($database_nagios,"INSERT INTO bp_links VALUES('','$info[bp_name]-$rand_num','$info[bp_link]')");
-					}
-				}
-
-				if ( !empty($notDuplicate) ){
-					foreach ($notDuplicate as $dup) {
-						if ( !isset($str) ) $str = "$dup";
-						else $str .= ",$dup";
-					}
-
-					message(0," : Can not duplicate $str","warning");
-				}
-
-				break;
-			case "delete_all" :
-				sqlrequest($database_nagios,"DELETE FROM bp");
-				sqlrequest($database_nagios,"DELETE FROM bp_services");
-				sqlrequest($database_nagios,"DELETE FROM bp_links");
-
-				message(6,"","ok");
-				break;
-		}
-	}
-
-	//Check for inconvenient in the process.
-	if (isset($_GET['del'])){
-		unlink($_GET['del']);
-	}
-
-	if ( file_exists($path_nagiosbpcfg_lock)){
-		sleep(1);
-		if ( file_exists($path_nagiosbpcfg_lock)){
-			echo $xmlmodules->getElementsByTagName("admin_bp")->item(0)->getAttribute("check");
-			echo "   <a href=index.php?del=$path_nagiosbpcfg_lock>yes</a> | <a href=index.php>No</a>";
-			exit;
-		}
-	}
-
-	//Read the file to get the informations.
-	formatFile();
-	$tabMetier = sqlArrayNagios("SELECT * FROM bp ORDER BY name ASC");
-
-?>
-<form action='./index.php' method='GET'>
-	<table id="getWidth" style="position:fixed;margin-top:10px;">
-		<tr>
-			<td class="blanc" align="left">
-				Display :
-			</td>
-			<td>
-				<select id='prio' onChange='javascript:show(this.value)'>
-					<option value='all'>Display All</option>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td class="blanc" align="left">
-				Action :
-			</td>
-			<td>
-				<?php	
-					// Get the global table
-					global $array_bp_mgt;
-
-					// Get the first array key
-					reset($array_bp_mgt);
-
-					// Display the list of management choices
-					echo "<select name='bp_mgt_list' size='1' onchange='setVisible(this.value)'>";
-					while (list($mgt_name, $mgt_url) = each($array_bp_mgt)) {
-						echo "<option value='$mgt_url'>$mgt_name</option>";
-					}
-
-					echo "</select>";
-					?>
-				<input class='button' type='submit' name='action' value='submit' onclick="javascript:return getConfirm(this.value);">
-			</td>
-		</tr>
-		<tr id="setVis">
-			<td class="blanc" align="left">
-				Back-Up File :
-			</td>
-			<td>
-				<select name="bu_list" size="1" onchange="showSurvey(this.value)">
-					<option value='clean'>Clean</option>
-					<?php
-						for ($i=1;$i < $max_bu_file+1 ; $i++){
-							if ( file_exists($path_nagiosbpcfg_bu.$i) ){
-								echo "<option value='$i'>Get $i</option>";
-							}
-						}
-					?>
-				</select>
-				<input class='button' type="button" name='survey' value='survey' onclick="preview()"/>
-			</td>
-		</tr>
-		<tr>
-			<td class="blanc" align="left">
-				<input class="button" type="submit" value="Apply Config" name="build" onclick="javascript:return getConfirm(this.value);">
-			</td>
-		</tr>
-	</table>
-	<table id="setWidth">
-		<tr><td><table class='table' id='0' style='display:none;'>
-			<thead><tr>
-				<th>Name</th><th>URL</th><th>Command</th><th style="width:40px;">Select</th>
-			</tr></thead>
-			<tr>
-				<td colspan='3'><center>No Display</center></td>
-				<td><center><a href='#' onclick='javascript:selectAll(0)'>ALL</a></center></td>
-			</tr>
-		</table></td></tr>
-		<?php
-			for ($i = 1 ; $i < $max_display+2 ; $i++){
-				echo "<tr><td><table class='table' id='$i' style='display:none;'>
-					<thead><tr>
-					<th>Name</th><th>URL</th><th>Command</th><th style='width:40px;'>Select</th>
-					</tr></thead>
-					<tr>
-						<td colspan='3'><center>Display ".($i-$display_zero)."</center></td>
-						<td><center><a href='#' onclick='javascript:selectAll($i)'>ALL</a></center></td>
-					</tr>
-					</table></td></tr>";
-			}?>
-	</table>
-	<textarea cols='90' rows='25' id='survey' readonly scrolling='no' style='display:none;margin-top:10px;resize:none;'></textarea>
-</form>
-<script type="text/javascript">
-	
-	$("#setWidth").css("margin-left",$("#getWidth").width()+10);
-	$("#survey").css("margin-left",$("#getWidth").width()+20);
-	setDisplay(<?php echo $max_display;?>);
 	<?php
-	foreach( $tabMetier as $metier) {
-		echo "makeTable(\"$metier[priority]\",\"$metier[name]\",\"".addslashes($metier['url'])."\",\"".addslashes($metier['command'])."\");\n";
-	}?>
-	resizeAll();
-	appendDisplay();
-	show("all");
-	setVisible($("select[name=bp_mgt_list]").val());
-</script>
-</body>
-</html>
+	global $database_nagios;
+	global $database_host;
+	global $database_username;
+	global $database_password;
+
+	$t_bp_racine = array();
+
+	function display_bp($bp,$bp_racine) {
+		
+		global $database_nagios;
+		global $database_host;
+		global $database_username;
+		global $database_password;
+		$db = new mysqli($database_host, $database_username, $database_password, $database_nagios);
+
+		if($db->connect_errno > 0){
+			die('Unable to connect to database [' . $db->connect_error . ']');
+		}
+
+		$rule_type = "";
+		$desc_bp = "";
+		$min_value = "";
+		$priority = "";
+
+		$sql_type = "
+		SELECT type, description, min_value , priority
+		FROM bp 
+		WHERE name='".$bp."'
+		";
+
+		if(!$result_type = $db->query($sql_type)){
+			die('There was an error running the query [' . $db->error . ']');
+		}
+
+		while($row = $result_type->fetch_assoc()){   
+			$rule_type = $row['type'];
+			$desc_bp = $row['description'];
+			$min_value = $row['min_value'];
+			$priority = $row['priority'];
+		} 
+
+		if($min_value > 0) {
+			$min_value = " ".$min_value;
+		}
+
+		$result_type->free();
+		mysqli_close($db);
+
+?>	
+		<li>
+			<div id="<?php echo $bp; ?>" class="tree-toggle">
+				<div class="tree-line">
+					<i class="glyphicon-link glyphicon"></i><?php echo getLabel("label.admin_bp.display") ?>:<?php echo $priority; ?>&nbsp;
+					<b class="condition_presentation"><?php echo $rule_type.".".$min_value."</b>&nbsp;&nbsp;".$bp."&nbsp;&nbsp;(".$desc_bp.")"; ?>
+				</div>
+				<div class="list-inline marge-buttons">
+					<button type="button" class="btn btn-xs btn-success" onclick="location.href='add_services.php?bp_name=<?php echo $bp; ?>&display=<?php echo $priority; ?>'"><i class="glyphicon glyphicon-plus"></i></button>
+					<button type="button" class="btn btn-xs btn-info" onclick="editApplication('<?php echo $bp; ?>');"><i class="glyphicon glyphicon-pencil"></i></button>
+					<button type="button" class="btn btn-xs btn-danger" onclick="ShowModalDeleteBP('<?php echo $bp; ?>');"><i class="glyphicon glyphicon-trash"></i></button>
+				</div>
+			</div>
+		</li>				
+<?php
+	}
+
+	function display_service($host_service,$bp_racine)
+	{
+		$service_name = explode(";", $host_service);
+		$service_name = strtolower($service_name[1]);
+
+?>
+					<li class="end">
+						<div id="<?php echo $bp_racine."::".$host_service; ?>" class="tree-toggle">
+							<i class="nav-header glyphicon glyphicon-eye-open"></i>
+							<?php echo $host_service."\n"; ?>
+						</div>
+					</li>	
+<?php
+	}
+
+	function display_son($bp_racine)
+	{
+
+		global $database_nagios;
+		global $database_host;
+		global $database_username;
+		global $database_password;
+		$db = new mysqli($database_host, $database_username, $database_password, $database_nagios);
+
+		if($db->connect_errno > 0){
+			die('Unable to connect to database [' . $db->connect_error . ']');
+		}
+
+		$t_bp_son = array();
+		$t_service_son = array();
+
+		$sql_bp = "
+		SELECT bp_link 
+		FROM bp_links 
+		WHERE bp_name = '".$bp_racine."'
+		";
+
+		$sql_service = "
+		SELECT host,service 
+		FROM bp_services 
+		WHERE bp_name = '".$bp_racine."'  ORDER BY host,service
+		";
+
+		if(!$result_bp = $db->query($sql_bp)){
+			die('There was an error running the query [' . $db->error . ']');
+		}
+
+		while($row = $result_bp->fetch_assoc()){   
+			array_push($t_bp_son,$row['bp_link']);
+		} 
+
+		$result_bp->free();
+
+		if(!$result_service = $db->query($sql_service)){
+			die('There was an error running the query [' . $db->error . ']');
+		}
+
+		while($row = $result_service->fetch_assoc()){   
+			array_push($t_service_son,$row['host'].";".$row['service']);
+		}
+		$result_service->free();
+		mysqli_close($db);
+
+		if(sizeof($t_bp_son) > 0 ) {
+			for ($i = 0; $i < sizeof($t_bp_son); $i++) {
+?>
+					<li class="son">
+						<ul class="nav nav-list tree">
+<?php
+							display_bp($t_bp_son[$i],$bp_racine);
+							display_son($t_bp_son[$i]);
+?>
+						</ul>
+					</li>
+<?php
+			}
+		}
+		if(sizeof($t_service_son) > 0 ) {
+			for ($i = 0; $i < sizeof($t_service_son); $i++) {
+				display_service($t_service_son[$i],$bp_racine);
+			}
+		}
+	}
+
+	$HTMLTREE ="";
+	$db = new mysqli($database_host, $database_username, $database_password, $database_nagios);
+
+	if($db->connect_errno > 0){
+		die('Unable to connect to database [' . $db->connect_error . ']');
+	}
+
+	$sql = "
+	  SELECT name 
+	  FROM bp  
+	  WHERE name 
+	  NOT IN (SELECT bp_link FROM bp_links) 
+	  ORDER BY priority, name
+	";
+
+	if(!$result = $db->query($sql)){
+		die('There was an error running the query [' . $db->error . ']');
+	}
+	while($row = $result->fetch_assoc()){   
+		array_push($t_bp_racine,$row['name']);
+	} 
+
+	$result->free();
+	mysqli_close($db);
+
+	?>
+    
+	<form class="form-inline">
+		<div class="">
+			<div class="form-group">
+				<div class="btn-group">
+					<button class="btn btn-info" type="button" onclick="ShowAll();"><?php echo getLabel("action.show_all") ?></button>
+					<button class="btn btn-info" type="button" onclick="HideAll();"><?php echo getLabel("action.hide_all") ?></button>
+				</div><!-- /btn-group -->
+				
+			</div>
+			
+			<div class="form-group">
+				<div class="input-group">
+					<input type="text" class="form-control" id="SearchFor" placeholder="<?php echo getLabel("action.search"); ?>...">
+					<span class="input-group-btn">
+						<button class="btn btn-info" id="FindIt" type="button"><?php echo getLabel("action.search"); ?></button>
+					</span>
+				</div><!-- /input-group -->
+			</div>
+
+			<div class="form-group">		                   
+				<button type="button" class="btn btn-success" onclick="AddingApplication();">
+					<?php echo getLabel("action.add_new_app"); ?>
+				</button>
+			</div>
+			<div class="form-group">
+				<button type="button" class="btn btn-primary" onclick="ShowModalApplyConfiguration();">
+					<?php echo getLabel("action.apply_conf"); ?>
+				</button>
+			</div> 
+		</div>
+
+		<div id="body" class="pad-top">
+<?php for ($i = 0; $i < sizeof($t_bp_racine); $i++) { ?>
+			<div class="well well-sm">
+				<ul class="nav nav-list tree">
+			<?php
+				display_bp($t_bp_racine[$i],$t_bp_racine[$i]);
+				display_son($t_bp_racine[$i]);
+			?>
+				</ul>
+			</div>
+<?php } ?>
+		</div>
+	</form>
+
+	<!-- modal for apply conf button -->
+	<div id="popup_confirmation" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content panel-info">
+				<div class="modal-header panel-heading">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title"><?php echo getLabel("action.delete"); ?></h4>
+				</div>
+				<div class="modal-body">
+				</div>
+				<div class="modal-footer">
+					<button id="modal-confirmation-apply-conf" type="button" class="btn btn-primary">
+						<?php echo getLabel("label.yes"); ?>
+					</button>
+					<button id="modal-confirmation-del-bp" type="button" class="btn btn-primary">
+						<?php echo getLabel("label.yes"); ?>
+					</button>
+					<button id="action-cancel" type="button" class="btn btn-default" data-dismiss="modal">
+						<?php echo getLabel("label.no"); ?>
+					</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+</div>
+
+<?php include("../../footer.php"); ?>

@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2014 EyesOfNetwork Team
+# Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION 4.2
+# VERSION : 5.0
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -19,52 +19,42 @@
 #
 #########################################
 */
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
 
-<head>
-<title>EyesOfNetwork</title>
-<?php include("./include/include.php"); ?>
+include("header.php"); 
 
-<script type="text/javascript">
-$(document).ready(function(){
-        $("#login").draggable({
-                handle: '.handle',
-                opacity: '0.5',
-                containment: 'document'
-        });
-        $("input:text").focus();
-});
-</script>
-</head>
-
-<body id="main">
-<?php
-	logging("logout","User logged out");
-	$sessid=$_COOKIE["session_id"];
-	setcookie("session_id",FALSE);
-	setcookie("user_name",FALSE);
-	setcookie("user_id",FALSE);
-	setcookie("user_limitation",FALSE);
-	setcookie("group_id",FALSE);
-	setcookie("active_tab",FALSE);
-	setcookie("active_page",FALSE);
-        setcookie("nagvis_session",FALSE,0,"/nagvis");
-        setcookie("Cacti",FALSE);
-        setcookie("clickedFolder",FALSE);
-        setcookie("highlightedTreeviewLink",FALSE);
-	
+logging("logout","User logged out");
+if(isset($_COOKIE["session_id"])) { 
+	$sessid=$_COOKIE["session_id"]; 
 	sqlrequest($database_eonweb,"DELETE FROM sessions where session_id='$sessid'");
+}
+setcookie("session_id",FALSE);
+setcookie("user_name",FALSE);
+setcookie("user_id",FALSE);
+setcookie("user_limitation",FALSE);
+setcookie("group_id",FALSE);
+setcookie("nagvis_session",FALSE,0,"/nagvis");
+setcookie("Cacti",FALSE);
+setcookie("clickedFolder",FALSE);
+setcookie("highlightedTreeviewLink",FALSE);
 
-        echo "<div id='login'>";
-        echo "<div>";
-        echo "<p>". $xmlmenus->getElementsByTagName("login")->item(0)->nodeValue ."</p><br/>";
-        echo "<h2>" .$xmlmenus->getElementsByTagName("login")->item(0)->getAttribute("logout"). "</h2><br><br>";
-        echo "<a href='/login.php'> ".$xmlmenus->getElementsByTagName("login")->item(0)->getAttribute("connect")." .... </a>";
-        echo "</div>";
-        echo "</div>";
 ?>
-</body>
 
-</html>
+<div class="container">
+	<div class="row">
+		<div class="img col-md-4 col-md-offset-4">
+			<div class="login-panel panel panel-default">
+				<div class="panel-heading">
+					<img class="img-responsive center-block login-logo" src="images/logo.png" alt="logo eyesofnetwork">
+				</div>
+				<div class="panel-body">
+					<div class="alert alert-info">
+						<?php echo getLabel("label.message.logout.success"); ?>
+					</div>
+					<a class="btn btn-lg btn-primary btn-block" href="login.php"><?php echo getLabel("action.connect"); ?></a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+		
+<?php include("footer.php"); ?>

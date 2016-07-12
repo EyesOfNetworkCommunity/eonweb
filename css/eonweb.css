@@ -1,0 +1,181 @@
+/*
+#########################################
+#
+# Copyright (C) 2016 EyesOfNetwork Team
+# DEV NAME : Jean-Philippe LEVY
+# VERSION : 5.0
+# APPLICATION : eonweb for eyesofnetwork project
+#
+# LICENCE :
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+#########################################
+*/
+
+/*
+ * ------------------------------------------------------------------------
+ * Page layout
+ * ------------------------------------------------------------------------
+*/
+
+@media {
+	body {
+		overflow-x: hidden;
+	}
+	#page-wrapper {
+		padding-bottom: 40px;
+	}
+}
+
+@media(min-width:768px) {
+	#page-wrapper {
+		margin: 0 0 0 200px;
+	}
+	#page-wrapper.fullscreen {
+		margin: 0 0 0 0;
+	}
+	.sidebar {
+		width: 200px;
+	}
+}
+
+@media(max-width:768px) {
+	.footer {
+		font-size: 9px;
+	}
+	.navbar-top-links .dropdown-user {
+		right: auto;
+	}
+}
+
+.page-header {
+    padding-bottom: 9px;
+    margin: 15px 0 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.login-panel {
+	margin-bottom: 60px;
+}
+
+.login-logo {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.navbar-logo {
+	margin-top: -8px;
+}
+
+.form-inline {
+	margin-bottom: 10px;
+}
+
+.table-striped tbody tr td {
+	vertical-align: middle;
+}
+
+.textarea {
+	resize: vertical;
+}
+
+/*
+ * ------------------------------------------------------------------------
+ * Sidebar toggle
+ * ------------------------------------------------------------------------
+*/
+
+#wrapper.toggled #sidebar-wrapper .sidebar {
+    width: 0px;
+}
+
+#wrapper.toggled #sidebar-wrapper .masked {
+    display: none;
+}
+
+#wrapper.toggled #page-wrapper {
+    margin: 0 0 0 0px;
+}
+
+@media(max-width:768px) {
+	#menu-toggle {
+		display: none;
+	}
+}
+
+/*
+ * ------------------------------------------------------------------------
+ * Footer
+ * ------------------------------------------------------------------------
+*/
+
+.footer {
+	height: 30px;
+	line-height: 30px;
+	min-height: 30px !important;
+	text-align: center;
+	margin-bottom: 0;
+}
+
+/*
+ * ------------------------------------------------------------------------
+ * Autocomplete search
+ * ------------------------------------------------------------------------
+*/
+
+.ui-autocomplete {
+	z-index: 1000;
+}
+
+.ui-autocomplete {
+	max-height: 200px;
+	overflow-y: auto;
+	/* prevent horizontal scrollbar */
+	overflow-x: hidden;
+}
+/* IE 6 doesn't support max-height
+* we use height instead, but this forces the menu to always be this tall
+*/
+* html .ui-autocomplete {
+	height: 100px;
+}
+
+/*
+ * ------------------------------------------------------------------------
+ * Frame layout
+ * ------------------------------------------------------------------------
+*/
+
+.iframe {
+	position: absolute;
+	bottom: 0;
+	border:0;
+	overflow: hidden;
+	display: none;
+}
+
+/*
+ * ------------------------------------------------------------------------
+ * Datatable responsive
+ * ------------------------------------------------------------------------
+*/
+
+.datatable-eonweb, .datatable-eonweb-ajax {
+	border-spacing : 0 !important;
+	width: 100% !important;
+}
+
+.dataTables_filter .form-control {
+	width: auto !important;
+}
+
+table.dataTable.table-condensed.dtr-inline.collapsed > tbody > tr > td:first-child:before, table.dataTable.dtr-inline.collapsed > tbody > tr > th:first-child:before {
+	top: 6px !important;
+}

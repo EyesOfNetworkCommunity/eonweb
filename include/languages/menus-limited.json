@@ -1,0 +1,19 @@
+{
+	"link":[
+		{
+			"name":"menu.link.dashboard",
+			"url":"/module/dashboard_view/",
+			"target":"main"
+		},
+		{
+			"name":"menu.link.active_events",
+			"url":"/module/monitoring_ged/index.php?q=active",
+			"target":"main"
+		},
+		{
+			"name":"menu.link.history_events",
+			"url":"/module/monitoring_ged/index.php?q=history",
+			"target":"main"
+		}
+	]
+}

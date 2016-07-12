@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2014 EyesOfNetwork Team
+# Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION 4.2
+# VERSION : 5.0
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -20,38 +20,47 @@
 #########################################
 */
 
+# Internationalization
+include("Translator.class.php");
+
 // Display Error Message 
-function message($id, $text,$type){
-
-	// Get the global value
+function message($id, $text, $type){
+	
 	global $array_msg;
-	$tempid=$array_msg[$id];
-
-        // Display the message
-	echo "<ul class='ul'>";
+	
+	// Get standard message if exists
+	if(isset($array_msg[$id])) { $tempid=$array_msg[$id]; } 
+	else { $tempid=""; }
+	
+	// Define the message type and icon
 	switch($type)
 	{
 		case "critical":
-		        echo "<li class='msg_title'>Message EON - $id </li>";
-		        echo "<li class='msg'> $tempid $text</li>";
-		        echo "</ul></body></html>";
-		        die();
+			$alert_type = "danger";
+			$alert_icon = "fa-exclamation-circle";
 			break;
 		case "warning":
-       		 	echo "<li class='msg_title_warning'> $tempid $text</li>";
-       		 	echo "</ul>";
+			$alert_type = "warning";
+			$alert_icon = "fa-warning";
 			break;
    		case "ok":
-	                echo "<li class='msg_title_success'> $tempid $text</li>";
-	                echo "</ul>";
+   			$alert_type = "success";
+			$alert_icon = "fa-check-circle";
 			break;
 		default:
-                        echo "<li class='msg_title_success'> $tempid $text</li>";
-                        echo "</ul>";
-			break;			
+			$alert_type = "info";
+			$alert_icon = "fa-info-circle";
+			break;
 	}
-}
 
+	// Display the message
+	echo "<p class='alert alert-dismissible alert-".$alert_type." fade in'>
+			<button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+			  <span aria-hidden='true'>&times;</span>
+			</button>
+			<i class='fa ".$alert_icon."'></i> $tempid $text
+		  </p>";
+}
 
 // Connect to Database
 function sqlrequest($database,$sql,$id=false){
@@ -84,12 +93,12 @@ function sqlrequest($database,$sql,$id=false){
 }
 
 // Display array value
-function display_value($value, $key) {
+function display_value($value, $key){
 	echo "$value\n";
 }
 
 // Function Edit and Modify a file
-function filemodify($path,$get=false) {
+function filemodify($path,$get=false){
 	if(is_writable($path)) {
 	
 		// Test If Update or Display.
@@ -99,7 +108,6 @@ function filemodify($path,$get=false) {
 			if (fwrite ($fconf, str_replace("\r\n", "\n", $_POST['maj'])) === FALSE) message(3,$path,"critical");
 			else { 
 				message(6," : File updated","ok");
-				echo "<br>";
 			}
 			fclose ($fconf);
 			if (!$fconf = fopen($path, "r")) message(2,$path,"critical");
@@ -111,10 +119,14 @@ function filemodify($path,$get=false) {
 		if($get)
 			echo "?file=$get";
 		echo "'>";
-		echo "<textarea cols='100' rows='25' name='maj' scrolling='no'>";
+		echo '<div class="form-group">';
+		echo "<textarea class='form-control textarea' cols='100' rows='20' name='maj' scrolling='no'>";
 			print file_get_contents($path);
-		echo "</textarea><br>";
-		echo "<input class='button' type='submit' value='Update'>";
+		echo "</textarea>";
+		echo '</div>';
+		echo '<div class="form-group">';
+		echo "<input class='btn btn-primary' type='submit' value='".getLabel("action.update")."'>";
+		echo '</div>';
 		echo "</form>";
 		fclose ($fconf);
 	}
@@ -122,29 +134,40 @@ function filemodify($path,$get=false) {
 }
 
 // Host List form Nagios
-function get_host_list_from_nagios($field=false) {
+function get_host_list_from_nagios($field=false, $queue = false){
 	global $database_lilac;
+	global $database_ged;
 	$hosts=array();
 
-	if($field){
-		$request="SELECT name FROM nagios_$field ORDER BY name";
+	if($field && $field != 'owner'){
+		switch ($field) {
+			case 'service': $column = 'description'; break;
+			case 'description': echo json_encode($hosts); return; break;
+			default: $column = 'name'; break;
+		}
+		$request="SELECT DISTINCT $column FROM nagios_$field ORDER BY $column";
+		$db = $database_lilac;
+	} elseif ($field && $field === 'owner') {
+		$request="SELECT DISTINCT owner FROM nagios_queue_$queue WHERE owner != '' ORDER BY owner";
+		$db = $database_ged;
 	}
 	else {
 		$request="SELECT name FROM nagios_host
 		UNION SELECT name from nagios_hostgroup
 		UNION SELECT name from nagios_service_group
 		ORDER BY name";
+		$db = $database_lilac;
 	}
 
-	$result=sqlrequest($database_lilac,$request);
+	$result=sqlrequest($db,$request);
  	while ($line = mysqli_fetch_array($result)){ 
-		$hosts[]=$line[0];
+		array_push($hosts, $line[0]);
 	}
 	echo json_encode($hosts);
 }
 
-//Host and Address list from nagios. //TODO send the adress
-function get_host_list() {
+// Host and Address list from nagios. //TODO send the adress
+function get_host_list(){
 	global $database_lilac;
 	$hosts=array();
 
@@ -157,50 +180,68 @@ function get_host_list() {
 	echo json_encode($hosts);
 }
 
+// Host and Address listbox from nagios. //TODO send the adress
 function get_host_listbox_from_nagios(){
 	global $database_lilac;
 	
-	echo "<h2>host : </h2>";
-	$result=sqlrequest($database_lilac,"SELECT name,address FROM nagios_host ORDER BY name");
-	$mapage='toto';
-	echo "<SELECT name='host_list' class='select' size=10 style='width:250px;'>";
+	// create input autocomplete with all nagios host values
+	echo "<label>Host</label>";
+	$result=sqlrequest($database_lilac,"SELECT DISTINCT name FROM nagios_host UNION ALL SELECT DISTINCT address FROM nagios_host");
+	$input = "<input id='host_list' class='form-control' type='text' name='host_list' onFocus='$(this).autocomplete({source: [";
 	while ($line = mysqli_fetch_array($result))
 	{
-		echo "<OPTION value='$line[0],$line[1]'>&nbsp;$line[0]</OPTION>";
+		$input .= '"'.$line[0].'",';
 	}
-	print "</SELECT><br>";
-
+	$input = rtrim($input, ",");
+	$input .= "]})'>";
+	
+	echo '<div class="input-group">';
+	echo 	$input;
+	echo 	'<span class="input-group-btn">
+				<input class="btn btn-primary" type="submit" name="run" value="'.getLabel("action.run").'" >
+			</span>
+			';
+	echo '</div>';
 }
 
 // Host list from CACTI
-function get_title_list_from_cacti() {
-        global $database_cacti;
-        $titles=array();
-        $request="SELECT DISTINCT graph_templates_graph.title FROM graph_local,graph_templates_graph WHERE graph_templates_graph.local_graph_id=graph_local.id ORDER BY title";
-        $result=sqlrequest($database_cacti,$request);
-        while ($line = mysqli_fetch_array($result)){
-		$line[0]=str_replace("|host_description| - ","",$line[0]);
-                $titles[]=$line[0];
-        }
-        echo json_encode($titles);
-}
+function get_title_list_from_cacti(){
 
-function get_host_listbox_from_cacti(){
-        
 	global $database_cacti;
 
-	$result=sqlrequest($database_cacti,"SELECT DISTINCT host.id,hostname,description FROM host INNER JOIN graph_local ON host.id = graph_local.host_id ORDER BY hostname ASC");
-        print "<SELECT name='host' class='select' size=15 style='width:250px;'>";
-        while ($line = mysqli_fetch_array($result))
-        {
-                print "<OPTION value='$line[0]'>&nbsp;$line[1] ($line[2])&nbsp;</OPTION>";
-        }
-        print "</SELECT><br>";
+	$titles=array();
+	$request="SELECT DISTINCT graph_templates_graph.title FROM graph_local,graph_templates_graph WHERE graph_templates_graph.local_graph_id=graph_local.id ORDER BY title";
+	$result=sqlrequest($database_cacti,$request);
+	while ($line = mysqli_fetch_array($result)){
+	$line[0]=str_replace("|host_description| - ","",$line[0]);
+		$titles[]=$line[0];
+	}
+	echo json_encode($titles);
 }
 
+// Host listbox from CACTI
+function get_host_listbox_from_cacti(){
+	
+	global $database_cacti;
+	
+	$ref = "";
+	if( isset($_GET['host']) ){
+		$ref = $_GET['host'];
+	}
+	
+	$result=sqlrequest($database_cacti,"SELECT DISTINCT host.id,hostname,description FROM host INNER JOIN graph_local ON host.id = graph_local.host_id ORDER BY hostname ASC");
+	echo "<SELECT name='host' class='form-control' size=7>";
+        while ($line = mysqli_fetch_array($result))
+        {
+			echo "<OPTION value='$line[0]' ";
+			if($ref == $line[0]){echo 'selected="selected"';}
+			echo ">&nbsp;$line[1] ($line[2])&nbsp;</OPTION>";
+        }
+        echo "</SELECT><br>";
+}
 
 // system function : CUT
-function cut($string, $width, $padding = "...") {
+function cut($string, $width, $padding = "..."){
     return (strlen($string) > $width ? substr($string, 0, $width-strlen($padding)).$padding : $string);
 } 
 
@@ -209,41 +250,49 @@ function get_graph_listbox_from_cacti(){
 	
 	global $database_cacti;
 	
-        $result=sqlrequest($database_cacti,"SELECT DISTINCT graph_templates.id,name FROM graph_templates INNER JOIN graph_local ON graph_local.graph_template_id = graph_templates.id ORDER BY name ASC");
-        print "<SELECT name='graph' class='select' size=15 style='width:250px;'>";
-        while ($line = mysqli_fetch_array($result))
-        {
-		print "<OPTION value='$line[0]'>&nbsp;$line[1]&nbsp;</OPTION>\n";
-        }
-        print "</SELECT><br>";
+	$ref = "";
+	if( isset($_GET['graph']) ){
+		$ref = $_GET['graph'];
+	}
+	
+	$result=sqlrequest($database_cacti,"SELECT DISTINCT graph_templates.id,name FROM graph_templates INNER JOIN graph_local ON graph_local.graph_template_id = graph_templates.id ORDER BY name ASC");
+	echo "<SELECT name='graph' class='form-control' size=7>";
+	while ($line = mysqli_fetch_array($result))
+	{
+		echo "<OPTION value='$line[0]' ";
+		if($ref == $line[0]){echo 'selected="selected"';}
+		echo ">&nbsp;$line[1]&nbsp;</OPTION>";
+	}
+	echo "</SELECT><br>";
 }
 
 // Display TOOL list
 function get_tool_listbox(){
-	echo "<h2>tool : </h2>";	
 	// Get the global table
 	global $array_tools;
+	
+	echo "<label>".getLabel("label.tool_all.tool")."</label>";	
 
-        // Get the first array key
-        reset($array_tools);
+	// Get the first array key
+	reset($array_tools);
 
 	// Display the list of tool
-	echo "<SELECT name='tool_list' class='select' size=4 style='width:250px;'>";
+	echo "<SELECT id='tool_list' name='tool_list' class='form-control'>";
  	while (list($tool_name, $tool_url) = each($array_tools)) 
 	{
-		echo "<OPTION value='$tool_url'>&nbsp;$tool_name</OPTION>";
-        }
-	echo "</SELECT><br>";
+		echo "<OPTION value='$tool_url'>$tool_name</OPTION>";
+	}
+	echo "</SELECT>";
 }
 
 // Display min and max port value for show port tool
 function get_toolport_ports(){
 	global $default_minport;
 	global $default_maxport;
-
-	echo "<h2>port min - port max</h2>";
-	echo "(show port only) :<br>";
-	echo "<input type=text name='min_port' value=$default_minport size='8'> - <input type=text name='max_port' value=$default_maxport size=8 >";
+	
+	echo "<label>Port min - Port max</label>";
+	echo "<div class='row'><div class='col-md-4'><input id='min_port' class='form-control' type=text name='min_port' value=$default_minport size=8></div>";
+	echo "<div class='col-md-4'><input id='max_port' class='form-control' type=text name='max_port' value=$default_maxport size=8></div></div>";
 }
 
 // Display User list
@@ -261,8 +310,7 @@ function get_user_listbox(){
 }
 
 // Retrive form data
-function retrieve_form_data($field_name,$default_value)
-{
+function retrieve_form_data($field_name,$default_value){
 	if (!isset ($_GET[$field_name]))
 		if (!isset ($_POST[$field_name]))
 			return $default_value;
@@ -272,9 +320,8 @@ function retrieve_form_data($field_name,$default_value)
 		return $_GET[$field_name];
 }
 
-// Delete eccents
-function stripAccents($str, $charset='utf-8')
-{
+// Delete accents
+function stripAccents($str, $charset='utf-8'){
     $str = htmlentities($str, ENT_NOQUOTES, $charset);
 
     $str = preg_replace('#\&([A-za-z])(?:acute|cedil|circ|grave|ring|tilde|uml)\;#', '\1', $str);
@@ -285,20 +332,17 @@ function stripAccents($str, $charset='utf-8')
 }
 
 // Add Logs
-function logging($module,$command,$user=false)
-{
+function logging($module,$command,$user=false){
 	global $database_eonweb;
 	global $dateformat;
 	if($user)
 		sqlrequest($database_eonweb,"insert into logs values ('','".time()."','$user','$module','$command','".$_SERVER["REMOTE_ADDR"]."');");
-	else
+	elseif(isset($_COOKIE['user_name']))
 		sqlrequest($database_eonweb,"insert into logs values ('','".time()."','".$_COOKIE['user_name']."','$module','$command','".$_SERVER["REMOTE_ADDR"]."');");
 }
 
-
 // Time
-function getmtime()
-{
+function getmtime(){
   
     $temps = microtime();
     $temps = explode(' ', $temps);
@@ -306,8 +350,8 @@ function getmtime()
  
 }
 
-//Get the informations of nagios' config's file.
-function getBpProcess() {
+// Get the informations of nagios' config's file.
+function getBpProcess(){
 	
 	global $path_nagiosbpcfg ;
 	global $path_nagiosbpcfg_lock ;
@@ -361,7 +405,7 @@ function getBpProcess() {
 	return $tabProcess ;
 }
 
-//Wait the end of modification of a file
+// Wait the end of modification of a file
 function wait($file){
 	$retry = 0 ;
 
@@ -372,7 +416,7 @@ function wait($file){
 	}
 }
 
-//Insert a value in an array
+// Insert a value in an array
 function array_push_after($src,$in,$pos){
     if(is_int($pos)) $R=array_merge(array_slice($src,0,$pos+1), $in, array_slice($src,$pos+1));
     else{
@@ -506,7 +550,8 @@ function write_file($file,$contenu,$mode,$message = null){
 		message(3,$file,"critical");
 }
 
-function sqlArrayNagios($request) {
+// MySQL request in php array 
+function sqlArrayNagios($request){
 	global $database_nagios;
 	$result = sqlrequest($database_nagios,$request);
 	$values = array();
@@ -514,6 +559,7 @@ function sqlArrayNagios($request) {
 	return $values ;
 }
 
+// NagiosBP file backup
 function backup_file($start){
 	global $path_nagiosbpcfg;
 	global $path_nagiosbpcfg_bu;
@@ -529,6 +575,7 @@ function backup_file($start){
 	copy($path_nagiosbpcfg,$path_nagiosbpcfg_bu.'1');
 }
 
+// NagiosBP file creation
 function buildFile(){
 
 	global $path_nagiosbpcfg_lock;
@@ -574,6 +621,7 @@ function buildFile(){
     unlink($path_nagiosbpcfg_lock);
 }
 
+// Nagiosbp build
 function build($pRequest,&$file,$pWritenBP){
 
 	$values = sqlArrayNagios($pRequest);
@@ -649,7 +697,8 @@ function build($pRequest,&$file,$pWritenBP){
 	}
 }
 
-function ldap_escape ($str) {
+// Ldap escape special caracters
+function ldap_escape ($str){
 
 	$str = trim($str);
 
@@ -663,8 +712,13 @@ function ldap_escape ($str) {
 
 }
 
-function insert_user($user_name, $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location, $user_mail, $user_limitation, $message)
-{
+// User creation
+function insert_user($user_name, $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location, $user_mail, $user_limitation, $message, $in_nagvis = false, $in_cacti = false, $nagvis_group){
+	global $database_host;
+	global $database_cacti;
+	global $database_username;
+	global $database_password;
+
 	global $database_eonweb;
 	global $database_lilac;
 	$user_id=null;
@@ -676,9 +730,19 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 	if($user_descr=="")
 		$user_descr=$user_name;
 
-	// get ID of the group (for ldap !)
-	// $user_group = mysqli_result(sqlrequest("$database_eonweb", "SELECT group_id FROM groups WHERE group_name='$user_group'"), 0, "group_id");
-
+	if($user_location != "" && $user_location != null){
+		if( strpos($user_location, " -- ") !== false && strpos($user_location, "|") !== false ){
+			$user_location_parts = explode(" -- ", $user_location);
+			$user_loc = explode("|", $user_location_parts[1]);
+			$user_dn_name = $user_loc[0];
+			$user_name = $user_dn_name;
+			$user_location = $user_loc[1];
+		}
+		else{
+			$user_location = $user_location;
+		}
+	}
+	
 	if (($user_name != "") && ($user_name != null) && ($user_exist == 0)) {
 		if (($user_password1 != "") && ($user_password1 != null) && ($user_password1 == $user_password2)) {
 			$user_password = md5($user_password1);
@@ -697,6 +761,42 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 			$lilac_contactid=mysqli_result(sqlrequest("$database_lilac","SELECT id FROM nagios_contact where name='$user_name'"),0,"id");
 			if($lilac_contactgroupid!="" and $lilac_contactid!="" and $user_limitation!="1")
 				sqlrequest("$database_lilac","INSERT INTO nagios_contact_group_member (contactgroup, contact) VALUES ('$lilac_contactgroupid', '$lilac_contactid')");
+
+			// Insert into nagvis
+			if($in_nagvis == "yes"){
+				$bdd = new PDO('sqlite:/srv/eyesofnetwork/nagvis/etc/auth.db');
+
+				$req = $bdd->query("SELECT count(*) FROM users WHERE name = '$user_name'");
+				$nagvis_user_exist = $req->fetch();
+
+				if ($nagvis_user_exist["count(*)"] == 0){
+					// this is nagvis default salt for password encryption security
+					$nagvis_salt = '29d58ead6a65f5c00342ae03cdc6d26565e20954';
+					
+					// insert user in nagvis SQLite DB
+					$sql = "INSERT INTO users (name, password) VALUES ('$user_name', '".sha1($nagvis_salt.$user_password1)."')";
+					$bdd->exec($sql);
+
+					// insert user's right as "Guest" by default
+					$sql = "SELECT userId FROM users WHERE name = '$user_name'";
+					$req = $bdd->query($sql);
+					$result = $req->fetch();
+					$nagvis_id = $result['userId'];
+
+					$sql = "INSERT INTO users2roles (userId, roleId) VALUES ($nagvis_id, $nagvis_group)";
+					$bdd->exec($sql);
+				}
+			}
+
+			// Insert into cacti
+			if($in_cacti == "yes"){
+				$bdd = new PDO('mysql:host='.$database_host.';dbname='.$database_cacti, $database_username, $database_password);
+				$req = $bdd->query("SELECT count(*) FROM user_auth WHERE username='$user_name'");
+				$cacti_user_exist = $req->fetch();
+				if ($cacti_user_exist["count(*)"] == 0){
+					$bdd->exec("INSERT INTO user_auth (username,password,realm,full_name,show_tree,show_list,show_preview,graph_settings,login_opts,policy_graphs,policy_trees,policy_hosts,policy_graph_templates,enabled) VALUES ('$user_name','',2,'$user_descr','on','on','on','on',3,2,2,2,2,'on')");
+				}
+			}
 
 			// Messages
 			logging("admin_user","INSERT : $user_name $user_descr $user_limitation $user_group $user_type $user_location");
@@ -724,12 +824,8 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 	return $user_id;
 }
 
-
-
-/* FONCTIONS MYSQLI 
-=============================================== */
 // "mysqli" version of mysql_result
-function mysqli_result($res, $row, $field=0) {
+function mysqli_result($res, $row, $field=0){
     $res->data_seek($row);
 	if(gettype($field) == "string"){
 		$datarow = $res->fetch_assoc();
@@ -738,6 +834,369 @@ function mysqli_result($res, $row, $field=0) {
 		$datarow = $res->fetch_array();
 	}
     return $datarow[$field];
+}
+
+// get traduction words
+function getLabel($reference){
+
+        global $dictionnary;
+        global $path_messages;
+        global $path_messages_custom;
+        global $t;
+
+        // Load dictionnary if not isset
+        if(!isset($t)) {
+                $t = new Translator();
+                $t::initFile($path_messages,$path_messages_custom);
+                $dictionnary = $t::createPHPDictionnary();
+        }
+
+        // Display dictionnary reference if isset or reference
+        if(isset($dictionnary[$reference])) {
+                $label = $dictionnary[$reference];
+        }
+        else {
+                $label = $reference;
+        }
+
+        return $label;
+
+}
+
+// get frame url
+function getFrameURL($url){
+	global $path_frame;
+	
+	$frame_url = $path_frame.urlencode($url);
+	return $frame_url;
+}
+
+function pieChart($queue, $field, $search, $period)
+{
+	// all external variables we need
+	global $database_ged;
+	global $array_ged_states;
+	if($queue == "active"){ global $ged_active_intervals; extract($ged_active_intervals); }
+	else{ global $ged_history_intervals; extract($ged_history_intervals); }
+	
+	$array_result = array();
+	$sql = "SELECT pkt_type_name FROM pkt_type WHERE pkt_type_id!='0' AND pkt_type_id<'100'";
+	$pkt_result = sqlrequest($database_ged, $sql);
+	
+	// set the search clause (according to field and value)
+	$search_clause = "";
+	if( isset($search) && $search != "" )
+	{
+		switch ($field) {
+			case 'host': $field = 'equipment'; break;
+			case 'hostgroup': $field = 'hostgroups'; break;
+			case 'service_group': $field = 'servicegroups'; break;
+		}
+		$like = "'";
+		if( substr($search, 0, 1) === '*' ){
+			$like .= "%";
+		}
+		$like .= trim($search, '*');
+		if ( substr($search, -1) === '*' ) {
+			$like .= "%";
+		}
+		$like .= "'";
+		$search_clause = " AND $field LIKE $like";
+	}
+	
+	// set the period clause (according to checkboxes checked)
+	$period_clause = "";
+	if( isset($period) && $period != "" )
+	{
+		switch($period)
+		{
+			case "day": $period_clause = " AND o_sec >= $day"; break;
+			case "week": $period_clause = " AND o_sec >= $week AND o_sec < $day"; break;
+			case "month": $period_clause = " AND o_sec >= $month AND o_sec < $week"; break;
+			case "year": $period_clause = " AND o_sec >= $year AND o_sec < $month"; break;
+		}
+	}
+	
+	while( $pkt = mysqli_fetch_row($pkt_result) )
+	{
+		foreach($array_ged_states as $key => $state)
+		{
+			if($key == "ok")
+			{
+				continue;
+			}
+			
+			if( !isset($array_result["$key"]) ){
+				$array_result["$key"] = 0;
+			}
+			$sql = "SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue{0},0,1)."'";
+			$sql .= $search_clause;
+			$sql .= $period_clause;
+			
+			$result = sqlrequest($database_ged, $sql);
+			$result = mysqli_fetch_row($result);
+			$array_result["$key"] += $result[0];
+		}
+	}
+	return json_encode($array_result);
+}
+
+function barChart($queue, $field, $search)
+{
+	global $database_ged;
+	global $array_ged_states;
+	if($queue == "active"){ global $ged_active_intervals; extract($ged_active_intervals); }
+	else{ global $ged_history_intervals; extract($ged_history_intervals); }
+	
+	
+	$sql = "SELECT pkt_type_name FROM pkt_type WHERE pkt_type_id!='0' AND pkt_type_id<'100'";
+	$pkt_result = sqlrequest($database_ged, $sql);
+	
+	$array_result = array();
+	$array_now_day = array();
+	$array_day_week = array();
+	$array_week_month = array();
+	$array_month_year = array();
+	$array_year_more = array();
+	
+	// set the search clause (according to field and value)
+	$search_clause = "";
+	if( isset($search) && $search != "" )
+	{
+		switch ($field) {
+			case 'host': $field = 'equipment'; break;
+			case 'hostgroup': $field = 'hostgroups'; break;
+			case 'service_group': $field = 'servicegroups'; break;
+		}
+		$like = "'";
+		if( substr($search, 0, 1) === '*' ){
+			$like .= "%";
+		}
+		$like .= trim($search, '*');
+		if ( substr($search, -1) === '*' ) {
+			$like .= "%";
+		}
+		$like .= "'";
+		$search_clause = " AND $field LIKE $like";
+	}
+	
+	while( $pkt = mysqli_fetch_row($pkt_result) )
+	{
+		foreach($array_ged_states as $key => $state)
+		{
+			if($key == "ok")
+			{
+				continue;
+			}
+			
+			if( !isset($array_now_day["$key"]) ){$array_now_day["$key"] = 0;}
+			if( !isset($array_day_week["$key"]) ){$array_day_week["$key"] = 0;}
+			if( !isset($array_week_month["$key"]) ){$array_week_month["$key"] = 0;}
+			if( !isset($array_month_year["$key"]) ){$array_month_year["$key"] = 0;}
+			if( !isset($array_year_more["$key"]) ){$array_year_more["$key"] = 0;}
+			$sql = "
+				SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue{0},0,1)."' AND o_sec >= $day".$search_clause.
+				" UNION ALL
+				SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue{0},0,1)."' AND o_sec >= $week AND o_sec < $day".$search_clause.
+				" UNION ALL
+				SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue{0},0,1)."' AND o_sec >= $month AND o_sec < $week".$search_clause.
+				" UNION ALL
+				SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue{0},0,1)."' AND o_sec >= $year AND o_sec < $month".$search_clause.
+				" UNION ALL
+				SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue{0},0,1)."' AND o_sec < $year".$search_clause;
+			$result = sqlrequest($database_ged, $sql);
+			
+			$cpt = 0;
+			while( $row = mysqli_fetch_row($result) )
+			{
+				switch($cpt)
+				{
+					case 0: $array_now_day["$key"] += $row[0]; break;
+					case 1: $array_day_week["$key"] += $row[0]; break;
+					case 2: $array_week_month["$key"] += $row[0]; break;
+					case 3: $array_month_year["$key"] += $row[0]; break;
+					case 4: $array_year_more["$key"] += $row[0]; break;
+				}
+				$cpt++;
+			}
+		}
+	}
+	array_push($array_result, $array_now_day);
+	array_push($array_result, $array_day_week);
+	array_push($array_result, $array_week_month);
+	array_push($array_result, $array_month_year);
+	array_push($array_result, $array_year_more);
+	
+	return json_encode($array_result);
+}
+
+function slaPieChart($field, $search, $period)
+{
+	// all external variables we need
+	global $database_ged;
+	global $ged_sla_intervals;
+	global $ged_history_intervals;
+	extract($ged_sla_intervals);
+	extract($ged_history_intervals);
+	
+	$array_result = array();
+	$sql = "SELECT pkt_type_name FROM pkt_type WHERE pkt_type_id!='0' AND pkt_type_id<'100'";
+	$pkt_result = sqlrequest($database_ged, $sql);
+	
+	// set the search clause (according to field and value)
+	$search_clause = "";
+	if( isset($search) && $search != "" )
+	{
+		switch ($field) {
+			case 'host': $field = 'equipment'; break;
+			case 'hostgroup': $field = 'hostgroups'; break;
+			case 'service_group': $field = 'servicegroups'; break;
+		}
+		$like = "'";
+		if( substr($search, 0, 1) === '*' ){
+			$like .= "%";
+		}
+		$like .= trim($search, '*');
+		if ( substr($search, -1) === '*' ) {
+			$like .= "%";
+		}
+		$like .= "'";
+		$search_clause = " AND $field LIKE $like";
+	}
+	
+	// set the period clause (according to checkboxes checked)
+	$period_clause = "";
+	if( isset($period) && $period != "" )
+	{
+		switch($period)
+		{
+			case "day": $period_clause = " AND o_sec >= $day"; break;
+			case "week": $period_clause = " AND o_sec >= $week AND o_sec < $day"; break;
+			case "month": $period_clause = " AND o_sec >= $month AND o_sec < $week"; break;
+			case "year": $period_clause = " AND o_sec >= $year AND o_sec < $month"; break;
+		}
+	}
+	
+	while( $pkt = mysqli_fetch_row($pkt_result) )
+	{
+		foreach($ged_sla_intervals as $key => $value)
+		{
+			if( !isset($array_result["$key"]) ){
+				$array_result["$key"] = 0;
+			}
+			
+			$sla_clause = "";
+			switch($key)
+			{
+				case "first" : $sla_clause = " AND a_sec-o_sec < $first"; break;
+				case "second": $sla_clause = " AND a_sec-o_sec >= $first AND a_sec-o_sec < $second"; break;
+				case "third" : $sla_clause = " AND a_sec-o_sec >= $second AND a_sec-o_sec < $third"; break;
+				case "fourth": $sla_clause = " AND a_sec-o_sec >= $third"; break;
+			}
+			$sql = "SELECT count(id) FROM ".$pkt[0]."_queue_history WHERE queue='h' AND state!='0'".$sla_clause;
+			$sql .= $search_clause;
+			$sql .= $period_clause;
+			
+			$result = sqlrequest($database_ged, $sql);
+			$result = mysqli_fetch_row($result);
+			$array_result["$key"] += $result[0];
+		}
+	}
+	return json_encode($array_result);
+}
+
+function slaBarChart($field, $search)
+{
+	// all external variables we need
+	global $database_ged;
+	global $array_ged_states;
+	global $ged_sla_intervals;
+	global $ged_history_intervals;
+	extract($ged_sla_intervals);
+	extract($ged_history_intervals);
+	
+	$array_result = array();
+	$array_now_day = array();
+	$array_day_week = array();
+	$array_week_month = array();
+	$array_month_year = array();
+	$array_year_more = array();
+	
+	$array_result = array();
+	$sql = "SELECT pkt_type_name FROM pkt_type WHERE pkt_type_id!='0' AND pkt_type_id<'100'";
+	$pkt_result = sqlrequest($database_ged, $sql);
+	
+	// set the search clause (according to field and value)
+	$search_clause = "";
+	if( isset($search) && $search != "" )
+	{
+		switch ($field) {
+			case 'host': $field = 'equipment'; break;
+			case 'hostgroup': $field = 'hostgroups'; break;
+			case 'service_group': $field = 'servicegroups'; break;
+		}
+		$like = "'";
+		if( substr($search, 0, 1) === '*' ){
+			$like .= "%";
+		}
+		$like .= trim($search, '*');
+		if ( substr($search, -1) === '*' ) {
+			$like .= "%";
+		}
+		$like .= "'";
+		$search_clause = " AND $field LIKE $like";
+	}
+	
+	while( $pkt = mysqli_fetch_row($pkt_result) )
+	{
+		foreach($ged_sla_intervals as $key => $value)
+		{
+			if( !isset($array_now_day["$key"]) ){$array_now_day["$key"] = 0;}
+			if( !isset($array_day_week["$key"]) ){$array_day_week["$key"] = 0;}
+			if( !isset($array_week_month["$key"]) ){$array_week_month["$key"] = 0;}
+			if( !isset($array_month_year["$key"]) ){$array_month_year["$key"] = 0;}
+			if( !isset($array_year_more["$key"]) ){$array_year_more["$key"] = 0;}
+			
+			switch($key)
+			{
+				case "first" : $sla_clause = " AND a_sec-o_sec < $first"; break;
+				case "second": $sla_clause = " AND a_sec-o_sec >= $first AND a_sec-o_sec < $second"; break;
+				case "third" : $sla_clause = " AND a_sec-o_sec >= $second AND a_sec-o_sec < $third"; break;
+				case "fourth": $sla_clause = " AND a_sec-o_sec >= $third"; break;
+			}
+			$sql = "SELECT count(id) FROM ".$pkt[0]."_queue_history WHERE queue='h' AND state !='0' AND o_sec >= $day".$sla_clause.$search_clause.
+				" UNION ALL
+				SELECT count(id) FROM ".$pkt[0]."_queue_history WHERE queue='h' AND state !='0' AND o_sec >= $week AND o_sec < $day".$sla_clause.$search_clause.
+				" UNION ALL
+				SELECT count(id) FROM ".$pkt[0]."_queue_history WHERE queue='h' AND state !='0' AND o_sec >= $month AND o_sec < $week".$sla_clause.$search_clause.
+				" UNION ALL
+				SELECT count(id) FROM ".$pkt[0]."_queue_history WHERE queue='h' AND state !='0' AND o_sec >= $year AND o_sec < $month".$sla_clause.$search_clause.
+				" UNION ALL
+				SELECT count(id) FROM ".$pkt[0]."_queue_history WHERE queue='h' AND state !='0' AND o_sec < $year".$sla_clause.$search_clause;
+			$result = sqlrequest($database_ged, $sql);
+			
+			$cpt = 0;
+			while( $row = mysqli_fetch_row($result) )
+			{
+				switch($cpt)
+				{
+					case 0: $array_now_day["$key"] += $row[0]; break;
+					case 1: $array_day_week["$key"] += $row[0]; break;
+					case 2: $array_week_month["$key"] += $row[0]; break;
+					case 3: $array_month_year["$key"] += $row[0]; break;
+					case 4: $array_year_more["$key"] += $row[0]; break;
+				}
+				$cpt++;
+			}
+		}
+	}
+	array_push($array_result, $array_now_day);
+	array_push($array_result, $array_day_week);
+	array_push($array_result, $array_week_month);
+	array_push($array_result, $array_month_year);
+	array_push($array_result, $array_year_more);
+	
+	return json_encode($array_result);
 }
 
 ?>

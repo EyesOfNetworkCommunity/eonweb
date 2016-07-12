@@ -1,5 +1,5 @@
 # Auto detect text files and perform LF normalization
-* text=auto eol=lf
+* text=auto
 
 # Custom for Visual Studio
 *.cs     diff=csharp
@@ -21,10 +21,10 @@
 *.EOT binary
 *.gif binary
 *.GIF binary
-*.jar binary
-*.JAR binary
 *.jpeg binary
 *.JPEG binary
+*.otf binary
+*.OTF binary
 *.png binary
 *.PNG binary
 *.ttf binary

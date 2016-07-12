@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2014 EyesOfNetwork Team
+# Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION 4.2
+# VERSION : 5.0
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -19,189 +19,216 @@
 #
 #########################################
 */
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
 
-<head>
+$m = new Translator();
 
-<title>menus</title>
-
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<?php include("./include/include.php"); ?> 
-
-<script src="./js/jquery.min.js"></script>
-<script src="./js/jquery.ui.min.js"></script>
-<script src="./js/jquery.cookie.js"></script>
-
-<link rel="stylesheet" href="./css/jquery/jquery.ui.css">
-
-<style>
-	.ui-autocomplete {
-		max-height: 200px;
-		overflow-y: auto;
-		/* prevent horizontal scrollbar */
-		overflow-x: hidden;
-	}
-	/* IE 6 doesn't support max-height
-	* we use height instead, but this forces the menu to always be this tall
-	*/
-	* html .ui-autocomplete {
-		height: 100px;
-	}
-</style>
-
-</head>
-
-<body>
-
-<script type="text/javascript">
-
-$(document).ready(function(){
-        $("#leftmenu").sortable({
-		axis: 'y',
-		handle: 'dt.handleitem',
-		items: 'dl.sortableitem',
-		opacity: '0.5'
-	});
-	return false;
-});
-
-function setLink(headernav,side_url){
-	$('#zone_header',top.document).find('#headernav').html(headernav);
-	$.cookie('active_page',side_url);
-	return false;
+// load right menu file according to user limitation (LEFT menu)
+if( $_COOKIE['user_limitation'] != 0 ){
+	$m::initFile($path_menu_limited, $path_menu_limited_custom);
+} else {
+	$m::initFile($path_menus,$path_menus_custom);
 }
+$menus = $m::createPHPDictionnary();
 
-function animateMenu(image,menu){
-        var men = document.getElementById(menu);
-        $(men).slideToggle();
-        var img = document.getElementById(image);
-        var url = location.protocol+"//"+location.host+"/images/actions/minus.gif";
-
-        if(img.src == url)
-                img.src = "./images/actions/plus.gif";
-        else 
-                img.src = "./images/actions/minus.gif";     
-
-	return false;
-}
-
-</script>
-
-<script>
-	$.widget( "custom.catcomplete", $.ui.autocomplete, {
-		_renderMenu: function( ul, items ) {
-			var that = this,
-			currentCategory = "";
-			$.each( items, function( index, item ) {
-				if ( item.category != currentCategory ) {
-					ul.append( "<li class='ui-autocomplete-category' style='font-weight: bold'>" + item.category + "</li>" );
-					currentCategory = item.category;
-				}
-				that._renderItemData( ul, item );
-			});
-		}
-	});
-</script>
-
-<script>
-	function my_ajax_search()
-	{
-		$.ajax({
-			url : "thruk/cgi-bin/status.cgi",
-			cache: false,
-			data : {
-				format : "search",
-			},
-			success : function(response){
-				var str = '$(this).catcomplete({delay: 0, source: [';
-				$.each(response, function(i, item){
-					if(i < response.length - 1){
-						$.each(response[i].data, function(j, item){
-							str += '{label : "'+response[i].data[j]+'", category : "'+response[i].name+'"},';
-						});
-					}
-				});
-				str = str.substring(0, str.length-1);
-				str += '], select: function(event, ui) { $("form").submit();} })';
-					
-				$("#s0_value").attr('onFocus', str);
+// load right menu file according to user limitation (TOP menu)
+$navbar_menus = false;
+if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
+	if(isset($_GET["url"])){
+		// define module name
+		$ref_url = urldecode($_GET["url"]);
+		$ref_url = trim($ref_url, "/");
+		$ref_url_parts = explode("/", $ref_url);
+		$test_url = $ref_url_parts[0];
+		
+		// we test the module name in lower case (that is easier)
+		if(file_exists($path_menus."-".$test_url.".json")){
+			if($m::initFile($path_menus."-".$test_url,$path_menus_custom."-".$test_url)){
+				$navbar_menus = $m::createPHPDictionnary();
 			}
-		});
+		}
+		
 	}
-	
-	my_ajax_search();
-</script>
-
-<?php
-
-// Check POST : active menutab 
-if(!isset($_GET['tabid'])) $tmpid=$defaulttab;
-else $tmpid=$_GET['tabid'];
-
-$cookie_time = ($cookie_time=="0") ? 0 : time() + $cookie_time;
-setcookie("active_tab",$tmpid,$cookie_time);
-
-// Get information for menus in xml file
-$xpath = new DOMXPath($xmlmenus);
-$menutabs = $xpath->query("//menutab[@id='$tmpid']");
-$tab_id = $menutabs->item(0)->getAttribute("id");
-$tab_name = $menutabs->item(0)->getAttribute("name");
-
-// Create the Menu
-echo "<div id='leftmenu'>";
-	
-?>
-
-<div id="leftmenutitle">
-	<?php echo $tab_name?>
-</div>
-
-<form method="get" action="<?php echo $path_nagios_cgi?>/status.cgi" target="main">
-  <center>
-  <input name="s0_op" value="~" id="s0_to" type="hidden">
-  <input name="s0_type" value="search" type="hidden">
-  <input name="s0_value" id="s0_value" type="text" placeholder="<?php echo $xmlmenus->getElementsByTagName("search")->item(0)->nodeValue;?>" autocomplete="off" onFocus="my_ajax_search();" />
-  </center>
-</form>
-
-<?php	
-// Display Left Menu
-$menusubtabs = $menutabs->item(0)->getElementsByTagName("menusubtab");
-foreach($menusubtabs as $menusubtab){
-	(!isset($i)) ? $i=0 : $i++;
-	$subtab_name = $menusubtab->getAttribute("name");
-?>
-
-<dl id="item_<?php echo $i?>" class="sortableitem">
-  <dt class="handleitem">
-    <img src="/images/actions/minus.gif" id="image_<?php echo $i?>" alt="" onclick="animateMenu('image_<?php echo $i?>','handle_<?php echo $i?>')" /><?php echo $subtab_name?>
-  </dt>
-  <dd>
-    <ul id="handle_<?php echo $i?>" class="ul">
-<?php 
-// Get information for side menu in database
-foreach($menusubtab->getElementsByTagName("link") as $link){
-        $side_name = $link->getAttribute("name");
-        $side_url = $link->getAttribute("url");
-        $side_target = $link->getAttribute("target");
-	$headernav="&nbsp;<b>".ucfirst($tab_name)." -> <i>".ucfirst($subtab_name)."</b> --> ".str_replace("'","\'",$side_name)."</i>&nbsp;";
-	?>
-	<li>
-	  <a href="<?php echo $side_url?>" target="<?php echo $side_target?>" <?php if($side_target!="_blank") { ?>onclick="setLink('<?php echo $headernav?>','<?php echo $side_url?>');" <?php } ?>><?php echo $side_name?></a>
-	</li>
-	<?php
 }
+
 ?>
-    </ul>
-  </dd>
-</dl>
 
-<?php } ?>
+<!-- Nav menu -->
+<nav class="navbar navbar-default navbar-static-top" style="margin-bottom: 0">
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+		<a class="navbar-brand" href="/index.php">
+			<img id="logo_eon" class="navbar-logo" src="/images/logo-navbar.png" alt="logo eyesofnetwork">
+		</a>
+	</div>
+	<!-- /.navbar-header -->
+	
+	<ul class="nav navbar-top-links navbar-right">
+		<!--menu toggle button -->
+		<li>
+			<button id="menu-toggle" type="button" data-toggle="button" class="btn btn-default btn-xs">
+				<i class="fa fa-exchange fa-fw"></i>
+			</button>
+		</li>
+		<?php
+		// create the top navbar menu
+		if(isset($navbar_menus["navbarlink"])){
+			foreach ($navbar_menus["navbarlink"] as $navbarlink) {
+		?>
+				<li><a href="/module/module_frame/index.php?url=<?php echo urlencode($navbarlink["url"]); ?>"><?php echo getLabel($navbarlink["name"]); ?></a></li>
+		<?php
+			}
+		}
+		if(isset($navbar_menus["navbarsubtab"])){
+			foreach ($navbar_menus["navbarsubtab"] as $navbarsubtab) {
+		?>
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#"> <?php echo getLabel($navbarsubtab["name"]); ?> <i class="fa fa-caret-down"></i></a>
+					<ul class="dropdown-menu dropdown-user">
+		<?php
+					if(isset($navbarsubtab["link"])){
+						foreach ($navbarsubtab["link"] as $link) {
+		?>
+							<li>
+								<a href="/module/module_frame/index.php?url=<?php echo $link["url"]; ?>">
+									<?php echo getLabel($link["name"]); ?>
+								</a>
+							</li>
+		<?php
+						}
+					}
+		?>
+					</ul>
+				</li>
+		<?php
+			}
+		}
+		?>
+		<li class="dropdown">
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+				<i class="fa fa-user fa-fw"></i> <?php echo $_COOKIE['user_name']; ?> <i class="fa fa-caret-down"></i>
+			</a>
+			<ul class="dropdown-menu dropdown-user">
+				<?php 
+					// No password modification link if ldap user
+					$ldapsql=sqlrequest($database_eonweb,"SELECT user_type FROM users WHERE user_name='".$_COOKIE["user_name"]."';");
+					$user_type=mysqli_result($ldapsql,0,"user_type");
+					if($user_type != 1) { 
+				?>
+				<li><a href="/module/module_password/index.php"><i class="fa fa-user fa-fw"></i> <?php echo getLabel("menu.user.profile"); ?></a>
+				</li>
+				<li class="divider"></li>
+				<?php }	?>
+				<li><a href="/logout.php"><i class="fa fa-sign-out fa-fw"></i> <?php echo getLabel("menu.user.disconnect"); ?></a>
+				</li>
+			</ul>
+			<!-- /.dropdown-user -->
+		</li>
+		<!-- /.dropdown -->
+	</ul>
+	<!-- /.navbar-top-links -->
 
-</div>
-
-</body>
-
-</html>
+	<div id="sidebar-wrapper">
+		<div class="navbar-default sidebar masked" role="navigation">
+			<div class="sidebar-nav navbar-collapse">
+				<ul id="side-menu" class="nav in">
+					<?php if($_COOKIE['user_limitation'] == 0) : ?>
+					<li class="sidebar-search">
+						<form id="sideMenuSearch" method="get" action="<?php echo $path_frame; ?>" style="margin-bottom: 0;">
+							<div class="input-group custom-search-form">
+								<input name="s0_value" id="s0_value" class="form-control" type="text" placeholder="<?php echo getLabel("label.input.placeholder.search"); ?>" autocomplete="off" onFocus="my_ajax_search();">
+								<span class="input-group-btn">
+									<button class="btn btn-default" type="submit">
+										<i class="fa fa-search" style="padding: 3px 0;"></i>
+									</button>
+								</span>
+							</div>
+						</form>
+					</li>
+					<?php endif; ?>
+					<?php 
+					// check if there's menutabs (user not limited)
+					if(isset($menus['menutab'])){
+						// loop on each menutab
+						foreach($menus["menutab"] as $menutab) { 	
+							// Verify group rights
+							$tab_request = "SELECT tab_".$menutab["id"]." FROM groupright WHERE group_id=".$_COOKIE['group_id'].";";
+							$tab_right = mysqli_result(sqlrequest($database_eonweb, $tab_request),0);				
+							if($tab_right == 0){ continue; }
+						?>
+						<li>
+							<a href="#">
+								<i class="<?php echo $menutab["icon"]; ?>"></i>
+								<?php echo getLabel($menutab["name"]); ?>
+								<span class="fa arrow"></span>
+							</a>
+							<ul class="nav nav-second-level collapse">
+							<?php
+							// loop on level 2 to identify links ans subtabs
+							foreach($menutab as $key => $value){
+								// we have links
+								if($key == "link"){
+									foreach($value as $index => $item){	
+										$url=$item["url"];
+										if($item["target"]=="_blank") { $url=$url.'" target="_blank'; }
+										elseif($item["target"]=="frame") { $url=$path_frame.urlencode($item["url"]); }
+							?>
+							<li><a href="<?php echo $url; ?>"><?php echo getLabel($item["name"]); ?></a></li>
+							<?php
+									}
+								// we have subtabas
+								} elseif($key == "menusubtab") {
+							?>
+							
+								<?php 
+								// loop on level 3
+								foreach($menutab["menusubtab"] as $menusubtab) {
+								?>
+								<li>
+									<a href="#"><?php echo getLabel($menusubtab["name"]); ?> <span class="fa arrow"></span> </a>
+									<ul class="nav nav-third-level collapse">
+										<?php 
+										// loop on level 4 (subtab's links)
+										foreach($menusubtab["link"] as $menulink) { 
+										?>
+										<li>
+											<?php
+												$url=$menulink["url"];
+												if($menulink["target"]=="_blank") { $url=$url.'" target="_blank'; }
+												elseif($menulink["target"]=="frame") { $url=$path_frame.urlencode($menulink["url"]); }
+											?>
+											<a href="<?php echo $url; ?>"><?php echo getLabel($menulink["name"]); ?></a>
+										</li>
+										<?php } ?>
+									</ul>
+								</li>
+								<?php }
+							
+								}
+							
+						} ?>
+							</ul>
+						</li>
+						<?php }
+					} else {
+						// no menutabs (user limited)
+						foreach ($menus["link"] as $key => $value) {
+						?>
+							<li>
+								<a href="<?php echo $value['url']; ?>"><?php echo getLabel($value["name"]); ?></a>
+							</li>
+						<?php
+						}
+					}
+					?>
+				</ul>
+			</div>
+			<!-- /.sidebar-collapse -->
+		</div>
+		<!-- /.navbar-static-side -->
+	</div>
+</nav>

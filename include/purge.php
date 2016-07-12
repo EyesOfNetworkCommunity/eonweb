@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2014 EyesOfNetwork Team
+# Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION 4.2
+# VERSION : 5.0
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -20,13 +20,11 @@
 #########################################
 */
 
-include("function.php");
-$database_username="root";
-$database_password="root66";
-$database_eonweb="eonweb";
-$datepurge="-1 month";
+include(dirname(__FILE__)."/config.php");
+include(dirname(__FILE__)."/function.php");
 
 $date=strtotime($datepurge);
 sqlrequest($database_eonweb,"delete from logs where date < $date;");
+sqlrequest($database_notifier,"delete from sents_logs where epoch < $date;");
 
 ?>
