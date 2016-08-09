@@ -24,7 +24,7 @@
 <!-- DataTables JavaScript -->
 <script src="/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
 <script src="/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
-<script src="/bower_components/datatables-responsive/dist/dataTables.responsive.min.js"></script>
+<script src="/bower_components/datatables-responsive/js/dataTables.responsive.js"></script>
 <script src="/js/datatable.js"></script>
 
 <!-- DateRangePicker JavaScript -->
