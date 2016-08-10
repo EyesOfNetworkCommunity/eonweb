@@ -161,7 +161,7 @@ include("../../side.php");
 				<?php
 				while ($line = mysqli_fetch_array($group_name_descr))
 				{
-				$type = ($line[3] == "0") ? "MySQL" : "LDAP";
+				$type = ($line[3] != "1") ? "MySQL" : "LDAP";
 				?>
 				<tr class="<?php echo $type; ?>">
 					<td class="text-center">
