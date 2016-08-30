@@ -113,7 +113,7 @@ include("../../side.php");
 						if($create_user_in_nagvis=="yes"){
 							$bdd->exec("INSERT INTO users (name, password) VALUES ('$user_name', '".sha1($nagvis_salt.$passwd_temp)."')");
 							$nagvis_id = $bdd->lastInsertId();
-							$dbb->exec("INSERT INTO users2roles (userId, roleId) VALUES ('$agvis_id', $nagvis_role_id)");
+							$bdd->exec("INSERT INTO users2roles (userId, roleId) VALUES ('$nagvis_id', $nagvis_role_id)");
 						}
 					}
 
