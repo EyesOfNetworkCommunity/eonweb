@@ -39,7 +39,7 @@
 		var filters = <?php echo json_encode($array_ged_filters)?>;
 		$("#allvalues").append('<div id="row'+id+'" class="row form-group"><div class="col-md-6"><select class="form-control" id="field'+id+'" name="field'+id+'">');
 		for(var i in filters)
-			$("#field"+id).append("<option>"+filters[i]+"</option>");
+			$("#field"+id).append("<option value='"+i+"' name='"+i+"'>"+filters[i]+"</option>");
 		$("#row"+id).append('</select></div><div class="col-md-6"><div class="input-group"><input id="value'+id+'" name="value'+id+'" class="form-control" type="text" placeholder="*'+dictionnary["action.search"]+'*" onFocus=\'$(this).autocomplete(<?php echo get_host_list_from_nagios();?>)\' /><span class="input-group-btn"><button class="btn btn-danger" onClick="delFormField(\'#row'+id+'\');">'+dictionnary["action.delete"]+'</button></span></div></div>');
 		$("#allvalues").append('</div>');
 		id = (id - 1) + 2;
@@ -85,7 +85,7 @@
 							$("#allvalues").append("<div id='row"+ nbr +"' class='row form-group'>");
 							$("#row"+nbr).append("<div class='col-md-6'><select class='form-control' id='field"+ nbr +"' name='field"+ nbr +"'>");
 							for(var i in filters)
-								$("#field"+nbr).append("<option name='"+filters[i]+"'>"+filters[i]+"</option>");
+								$("#field"+nbr).append("<option value='"+i+"' name='"+i+"'>"+filters[i]+"</option>");
 							$("#row"+nbr).append("</select></div>");
 							$("#row"+nbr).append("<div class='col-md-6'><div class='input-group'><input id='value"+ nbr +"' name='value"+ nbr +"' class='form-control' type='text' value='"+ $(this).text() +"' placeholder='*"+dictionnary["action.search"]+"*'/><span class='input-group-btn'><button class='btn btn-danger' onClick='delFormField(\"#row"+ nbr +"\");'>"+dictionnary["action.delete"]+"</button></span></div></div>");
 							$("#allvalues").append("</div>");
