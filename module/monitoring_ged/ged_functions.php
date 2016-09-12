@@ -50,17 +50,20 @@ function getClassRow($event_state)
 function createTableRow($event, $event_state, $queue)
 {
 	global $dateformat;
+	global $ged_prefix;
 	
 	foreach ($event as $key => $value) {
 		$class = "";
 
 		if($key == "equipment"){
-			$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=1&host=$value");
+			$url_host = preg_replace("/^".$ged_prefix."/","",$value,1);
+			$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=1&host=$url_host");
 			$value = '<a href="../module_frame/index.php?url='.$thruk_url.'">'.$value.'</a>';
 			$class = 'class="host"';
 		}
 		if($key == "service"){
-			$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=2&host=".$event->equipment."&service=$value");
+			$url_host = preg_replace("/^".$ged_prefix."/","",$event->equipment,1);
+			$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=2&host=".$url_host."&service=$value");
 			$value = '<a href="../module_frame/index.php?url='.$thruk_url.'">'.$value.'</a>';
 			$class = 'class="service"';
 		}

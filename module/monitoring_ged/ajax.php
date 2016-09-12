@@ -118,9 +118,7 @@ if(file_exists($file)){
 						// XML filters if activated for the user
 						if( count($array_filters) > 0 ){
 							foreach ($array_filters as $key => $value) {
-								if($key == "host"){ $key = "equipment"; }
-								if($key == "service_group"){ $key = "servicegroups"; }
-								
+
 								// advanced search (with *)
 								$like = "";
 								if( substr($value, 0, 1) === '*' ){
