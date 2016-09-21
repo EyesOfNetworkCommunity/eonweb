@@ -25,6 +25,8 @@ include("../../side.php");
 
 ?>
 
+<iframe style="display:none;"></iframe>
+
 <div id="page-wrapper">
 </div>
 	
