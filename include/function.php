@@ -863,6 +863,40 @@ function getLabel($reference){
 
 }
 
+// get default page
+function getDefaultPage($usrlimit=0){
+
+	global $t;
+	global $defaultpage;
+	global $path_menu_limited;
+	global $path_menu_limited_custom;
+	global $path_menus;
+	global $path_menus_custom;
+
+	// load dictionnary if not isset
+	if(!isset($t)) {
+		$t = new Translator();
+	}
+	
+	// get json file
+	if(isset($_COOKIE["user_limitation"])) { $usrlimit = $_COOKIE["user_limitation"]; }
+	if($usrlimit == 1){
+		$file=$t::getFile($path_menu_limited, $path_menu_limited_custom);
+		$json_content = file_get_contents($file);
+		$links = json_decode($json_content, true);
+		foreach ($links["link"] as $link) {
+			if(isset($link["default"])) {
+				if( $link["default"] != null ){
+					$defaultpage = $link["url"];
+				}
+			}
+		}
+	} 
+	
+	return $defaultpage;
+
+}
+
 // get frame url
 function getFrameURL($url){
 	global $path_frame;

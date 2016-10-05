@@ -21,6 +21,8 @@
 */
 
 include("include/config.php");
+include("include/function.php");
+$defaultpage=getDefaultPage();
 header("Location: $defaultpage");
 
 ?>

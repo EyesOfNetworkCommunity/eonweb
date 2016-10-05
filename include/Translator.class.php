@@ -47,25 +47,34 @@ class Translator
 			$GLOBALS['langformat']=$lang;	
 		}
 	}
+
+	/**
+	 * Get File
+	 */
+	public static function getFile($file,$file_custom)
+	{
+		$lang=$GLOBALS['langformat'];
+
+		$path_tmp=$file."-$lang.json";
+		$path_tmp_custom=$file_custom.".json";
+		$path_tmp_custom_lang=$file_custom."-$lang.json";
+		$file=$file.".json";
+
+		if(file_exists($path_tmp_custom_lang)) { $file=$path_tmp_custom_lang; }
+		elseif(file_exists($path_tmp)) { $file=$path_tmp; }
+		elseif(file_exists($path_tmp_custom)) { $file=$path_tmp_custom; }
+
+		return $file;
+	}
 	
 	/**
 	 * Init File
 	 */
 	public static function initFile($file,$file_custom)
 	{		
-		$lang=$GLOBALS['langformat'];
-		
-		$path_tmp=$file."-$lang.json";
-		$path_tmp_custom=$file_custom.".json";
-		$path_tmp_custom_lang=$file_custom."-$lang.json";
-		$file=$file.".json";
-		
-		if(file_exists($path_tmp_custom_lang)) { $file=$path_tmp_custom_lang; }
-		elseif(file_exists($path_tmp)) { $file=$path_tmp; }
-		elseif(file_exists($path_tmp_custom)) { $file=$path_tmp_custom; }
-		
+		$file = Translator::getFile($file,$file_custom);	
 		Translator::$dictionnary_content = file_get_contents($file);
-		
+
 		return Translator::$dictionnary_content;
 	}
 	 

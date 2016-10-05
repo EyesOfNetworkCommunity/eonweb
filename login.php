@@ -20,7 +20,7 @@
 #########################################
 */
 
-include("header.php"); 
+include("header.php");
 
 // Display login Form
 function display_login(){
@@ -75,7 +75,7 @@ if(isset($_COOKIE['user_name'])){
 							+			'<div class="panel-body">'
 							+				'<div class="alert alert-info">Vous etes deja connecté en tant que : <?php echo $_COOKIE["user_name"]; ?></div>'
 							+				'<div class="btn-group btn-group-justified">'
-							+				'<a class="btn btn-primary" href="<?php echo $defaultpage; ?>">Accueil</a>'
+							+				'<a class="btn btn-primary" href="<?php echo getDefaultPage($_COOKIE["user_limitation"]); ?>">Accueil</a>'
 							+				'<a class="btn btn-default" href="logout.php">Se déconnecter</a>'
 							+				'</div>'
 							+			'</div>'
@@ -237,7 +237,7 @@ else {
 
 			// Go to the main page
 			logging("login","User logged in",$login);
-			echo "<meta http-equiv='Refresh' content='0;URL=$defaultpage' />";
+			echo "<meta http-equiv='Refresh' content='0;URL=".getDefaultPage($usrlimit)."' />";
 		}
 		else { display_login(); }
 	}
