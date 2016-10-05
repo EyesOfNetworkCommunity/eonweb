@@ -57,11 +57,13 @@ $(document).ready(function() {
 		var min_value = $('select[name="min_value"]').val();
 
 		// check if a BP already exists, if this is the case we stop here !
-		var bpExists = bpAlreadyExists(uniq_name);
-		if(bpExists == true){
-			var msg = dictionnary["message.admin_bp.bp_already_exists"];
-            message(msg, 'warning', '#error-message');
-            return;
+		if(uniq_name!=uniq_name_orig) {
+			var bpExists = bpAlreadyExists(uniq_name);
+			if(bpExists == true){
+				var msg = dictionnary["message.admin_bp.bp_already_exists"];
+				message(msg, 'warning', '#error-message');
+				return;
+			}
 		}
 
 		$.get(
