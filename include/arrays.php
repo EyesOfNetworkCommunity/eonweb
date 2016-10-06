@@ -176,12 +176,6 @@ $ged_sla_intervals = array(
 	"fourth" 	=> "",
 );
 
-
-// sockets definition (for multi-backends !)
-$sockets = array(
-        "unix::-1:/srv/eyesofnetwork/nagios/var/log/rw/live"
-);
-
 // sockets definition (for multi-backends !)
 $sockets = array(
         "unix::-1:/srv/eyesofnetwork/nagios/var/log/rw/live"
