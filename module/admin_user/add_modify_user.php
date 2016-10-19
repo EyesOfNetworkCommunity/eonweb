@@ -423,7 +423,7 @@ include("../../side.php");
 					<select class="form-control" name="nagvis_group">
 						<?php foreach ($nagvis_groups as $group):
 							$selected = "";
-							if(!isset($_GET["user_id"]) && $group->name == "Guests"){
+							if(!isset($_GET["user_id"]) && $group->name == "Guests" && !$role_id){
 								$selected = "selected";
 							}
 							if($role_id == $group->roleId){
