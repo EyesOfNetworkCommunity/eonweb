@@ -106,7 +106,8 @@ else {
 			exit;
 		}
 
-		$usersql=sqlrequest($database_eonweb,"select * from users where user_name like '$login'");
+		#$usersql=sqlrequest($database_eonweb,"select * from users where user_name like '$login'");
+		$usersql=sqlrequest($database_eonweb,"select U.user_id as user_id, U.group_id as group_id ,U.user_name as user_name, U.user_passwd as user_passwd, U.user_descr as user_descr, U.user_type as user_type, L.dn as user_location, U.user_limitation as user_limitation  from users as U left join ldap_users_extended as L on U.user_name = L.login  where U.user_name = '$login'");
 		$username = mysqli_result($usersql,0,"user_name");
 		
 		// if not in eonweb DB

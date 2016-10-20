@@ -66,7 +66,7 @@ include("../../side.php");
 		
 		// If mysql selected, deletion of ldap_users list and zeros of auth_settings
 		if($backend_selected=="mysql"){
-			sqlrequest("$database_eonweb","delete from ldap_users_extend");
+			sqlrequest("$database_eonweb","delete from ldap_users_extended");
 			$sqlresult=sqlrequest("$database_eonweb","update auth_settings set auth_type='0',ldap_ip=null,ldap_port=null,ldap_search=null,ldap_user_filter=null,ldap_group_filter=null,ldap_user=null,ldap_password=null,ldap_rdn=null");
 		}
 		// Else (LDAP selected)
