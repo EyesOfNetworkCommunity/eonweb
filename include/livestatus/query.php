@@ -90,7 +90,8 @@ function getServicesStateNbr()
 			$test = $client
 				->get('services')
 				->filter('has_been_checked = 0')
-				->filter('contacts >= '. $_SERVER["REMOTE_USER"])
+				#->filter('contacts >= '. $_SERVER["REMOTE_USER"])
+				->filter('host_contacts >= '. $_SERVER["REMOTE_USER"])
 				->execute();
 			$nbr_pending = count($test) - 1;
 
@@ -102,7 +103,8 @@ function getServicesStateNbr()
 				->stat('state = 2')
 				->stat('state = 3')
 				->filter('has_been_checked = 1')
-				->filter('contacts >= '. $_SERVER["REMOTE_USER"])
+				#->filter('contacts >= '. $_SERVER["REMOTE_USER"])
+				->filter('host_contacts >= '. $_SERVER["REMOTE_USER"])
 				->execute();
 
 			$nbr_services_pending += $nbr_pending;
