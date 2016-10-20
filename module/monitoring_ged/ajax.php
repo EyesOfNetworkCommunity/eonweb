@@ -110,27 +110,36 @@ if(file_exists($file)){
 						if($default!=""){
 							$g_filters = $xpath->query("//ged/filters[@name='$default']/filter");
 
+							$xmlcpt=0;
 							foreach($g_filters as $g_filter){
-								$array_filters[$g_filter->getAttribute("name")] = $g_filter->nodeValue;
+								$array_filters[$xmlcpt][$g_filter->getAttribute("name")] = $g_filter->nodeValue;
+								$xmlcpt++;
 							}
 						}
 
 						// XML filters if activated for the user
 						if( count($array_filters) > 0 ){
-							foreach ($array_filters as $key => $value) {
-
-								// advanced search (with *)
-								$like = "";
-								if( substr($value, 0, 1) === '*' ){
-									$like .= "%";
+							$sqlcpt=0;
+							for($i=0;$i<$xmlcpt;$i++) {
+								foreach ($array_filters[$i] as $key => $value) {
+									// advanced search (with *)
+									$like = "";
+									if( substr($value, 0, 1) === '*' ){
+										$like .= "%";
+									}
+									$like .= trim($value, '*');
+									if ( substr($value, -1) === '*' ) {
+										$like .= "%";
+									}
+									if($sqlcpt=="0") {
+										$sql .= " AND ($key LIKE '$like'";
+									} else {
+										$sql .= " OR $key LIKE '$like'";
+									}
+									$sqlcpt++;
 								}
-								$like .= trim($value, '*');
-								if ( substr($value, -1) === '*' ) {
-									$like .= "%";
-								}
-								
-								$sql .= " AND $key LIKE '$like'";
 							}
+							$sql .= ")";
 						}
 
 						$sql .= createWhereClause($owner,$filter,$search,$daterange,$ok,$warning,$critical,$unknown);
