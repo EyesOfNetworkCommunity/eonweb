@@ -27,6 +27,8 @@ include("ged_functions.php");
 
 // create variables from $_GET
 extract($_GET);
+if(!isset($queue)) { $queue="active"; } 
+elseif(!in_array($queue,$array_ged_queues)) { $queue="active"; }
 
 if(isset($action) && $action != "" && (isset($selected_events) && count($selected_events) > 0) || isset($filter_name) || isset($filter) ){
 	switch ($action) {

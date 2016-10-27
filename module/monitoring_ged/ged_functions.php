@@ -49,8 +49,11 @@ function getClassRow($event_state)
 
 function createTableRow($event, $event_state, $queue)
 {
+	global $array_ged_queues;
 	global $dateformat;
 	global $ged_prefix;
+
+	if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
 	
 	foreach ($event as $key => $value) {
 		$class = "";
@@ -96,8 +99,11 @@ function createTableRow($event, $event_state, $queue)
 
 function createSelectClause($ged_type, $queue)
 {
+	global $array_ged_queues; 
 	global $array_ged_packets;
 	global $database_ged;
+
+	if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
 
 	$sql = "SELECT id,";
 	foreach ($array_ged_packets as $key => $value) {
@@ -119,6 +125,9 @@ function createSelectClause($ged_type, $queue)
 
 function createWhereClause($owner, $filter, $search, $daterange, $ok, $warning, $critical, $unknown)
 {
+	
+	global $mysqli_prepare;
+	
 	$where_clause = "";
 	
 	// owner
@@ -136,7 +145,9 @@ function createWhereClause($owner, $filter, $search, $daterange, $ok, $warning, 
 			$like .= "%";
 		}
 
-		$where_clause .= " AND $filter LIKE '$like'";
+		$where_clause .= " AND $filter LIKE ?";
+		$mysqli_prepare[0].="s";
+		$mysqli_prepare[]=(string)$like;
 	}
 
 	// daterange
@@ -151,15 +162,18 @@ function createWhereClause($owner, $filter, $search, $daterange, $ok, $warning, 
 		$start += 3600;
 		$end = strtotime($end);
 		$end += 86400 + 3600;
-		$where_clause .= " AND o_sec > $start AND o_sec < $end";
+		$where_clause .= " AND o_sec > ? AND o_sec < ?";
+		$mysqli_prepare[0].="ii";
+		$mysqli_prepare[]=(int)$start;
+		$mysqli_prepare[]=(int)$end;
 	}
 
 	// states
 	$states_list = "";
-	if($ok != "")		{ $states_list .= "0,"; }
-	if($warning != "")	{ $states_list .= "1,"; }
-	if($critical != "")	{ $states_list .= "2,"; }
-	if($unknown != "")	{ $states_list .= "3,"; }
+	if($ok != "")		{ $states_list .= "?,"; $mysqli_prepare[0].="i"; $mysqli_prepare[]=0; }
+	if($warning != "")	{ $states_list .= "?,"; $mysqli_prepare[0].="i"; $mysqli_prepare[]=1; }
+	if($critical != "")	{ $states_list .= "?,"; $mysqli_prepare[0].="i"; $mysqli_prepare[]=2; }
+	if($unknown != "")	{ $states_list .= "?,"; $mysqli_prepare[0].="i"; $mysqli_prepare[]=3; }
 	$states_list = trim($states_list, ",");
 	
 	if($states_list != ""){
@@ -203,15 +217,18 @@ function createDetailRow($event, $db_col_name, $row_name)
 
 function details($selected_events, $queue)
 {
+	global $array_ged_queues; 
 	global $database_ged;
+
+	if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
 
 	// get all needed infos into variables
 	$value_parts = explode(":", $selected_events);
 	$id = $value_parts[0];
 	$ged_type = $value_parts[1];
 
-	$sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = $id";
-	$result = sqlrequest($database_ged, $sql);
+	$sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = ?";
+	$result = sqlrequest($database_ged, $sql, false, array("s",(string)$id));
 	$event = mysqli_fetch_assoc($result);
 
 	// display event's details
@@ -238,19 +255,19 @@ function details($selected_events, $queue)
 
 function edit($selected_events, $queue)
 {
+	global $array_ged_queues; 
 	global $database_ged;
+
+	if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
 
 	// get all needed infos into variables
 	$value_parts = explode(":", $selected_events);
 	$id = $value_parts[0];
 	$ged_type = $value_parts[1];
 
-	$sql = "SELECT comments FROM ".$ged_type."_queue_".$queue." WHERE id = $id";
-	$result = sqlrequest($database_ged, $sql);
+	$sql = "SELECT comments FROM ".$ged_type."_queue_".$queue." WHERE id = ?";
+	$result = sqlrequest($database_ged, $sql, false, array("s",(string)$id));
 	$event = mysqli_fetch_assoc($result);
-
-	$event["comments"] = str_replace("\'", "'", $event["comments"]);
-	$event["comments"] = str_replace("\#", "#'", $event["comments"]);
 
 	echo "
 	<form id='edit-event-form'>
@@ -263,19 +280,18 @@ function edit($selected_events, $queue)
 
 function editEvent($selected_events, $queue, $comments)
 {
+	global $array_ged_queues;
 	global $database_ged;
 
+	if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
+	
 	// get all needed infos into variables
 	$value_parts = explode(":", $selected_events);
 	$id = $value_parts[0];
 	$ged_type = $value_parts[1];
 
-	// format comment string to avoid errors
-	$comments = str_replace("'", "\'", $comments);
-	$comments = str_replace("#", "\#", $comments);
-
-	$sql = "UPDATE ".$ged_type."_queue_".$queue." SET comments='$comments' WHERE id = $id";
-	$result = sqlrequest($database_ged, $sql);
+	$sql = "UPDATE ".$ged_type."_queue_".$queue." SET comments=? WHERE id = ?";
+	$result = sqlrequest($database_ged, $sql, false, array("ss",(string)$comments,(string)$id));
 	if($result){
 		message(11, " : ".getLabel("message.event_edited"), "ok");
 	} else {
@@ -285,8 +301,11 @@ function editEvent($selected_events, $queue, $comments)
 
 function editAllEvents($selected_events, $queue, $comments)
 {
+	global $array_ged_queues;
 	global $database_ged;
 
+	if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
+	
 	$success = true;
 	foreach ($selected_events as $key => $value) {
 		// get all needed infos into variables
@@ -294,12 +313,8 @@ function editAllEvents($selected_events, $queue, $comments)
 		$id = $value_parts[0];
 		$ged_type = $value_parts[1];
 
-		// format comment string to avoid errors
-		$comments = str_replace("'", "\'", $comments);
-		$comments = str_replace("#", "\#", $comments);
-
-		$sql = "UPDATE ".$ged_type."_queue_".$queue." SET comments='$comments' WHERE id = $id";
-		$result = sqlrequest($database_ged, $sql);
+		$sql = "UPDATE ".$ged_type."_queue_".$queue." SET comments=? WHERE id = ?";
+		$result = sqlrequest($database_ged, $sql, false, array("ss",(string)$comments,(string)$id));
 		if(!$result){
 			$success = false;
 		}
@@ -317,9 +332,12 @@ function ownDisown($selected_events, $queue, $global_action)
 {
 	global $database_ged;
 	global $array_ged_packets;
+	global $array_ged_queues;
 	global $path_ged_bin;
 	global $array_serv_system;
 
+	if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
+	
 	if(exec($array_serv_system["Ged agent"]["status"])==NULL) {
 		return message(0," : ged daemon must be dead","critical");
 	}
@@ -337,8 +355,8 @@ function ownDisown($selected_events, $queue, $global_action)
 		if($ged_type == "nagios"){ $ged_type_nbr = 1; }
 		if($ged_type == "snmptrap"){ $ged_type_nbr = 2; }
 
-		$sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = $id";
-		$result = sqlrequest($database_ged, $sql);
+		$sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = ?";
+		$result = sqlrequest($database_ged, $sql, false, array("s",(string)$id));
 		$event = mysqli_fetch_assoc($result);
 
 		$ged_command = "-update -type $ged_type_nbr ";
@@ -351,7 +369,8 @@ function ownDisown($selected_events, $queue, $global_action)
 			}
 		}
 		$ged_command = trim($ged_command, " ");
-
+		$ged_command=escapeshellcmd($ged_command);
+		
 		shell_exec($path_ged_bin." ".$ged_command);
 		logging("ged_update",$ged_command);
 	}
@@ -359,11 +378,14 @@ function ownDisown($selected_events, $queue, $global_action)
 
 function acknowledge($selected_events, $queue)
 {
+	global $array_ged_queues;
 	global $database_ged;
 	global $array_ged_packets;
 	global $path_ged_bin;
 	global $array_serv_system;
 
+	if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
+	
 	if(exec($array_serv_system["Ged agent"]["status"])==NULL) {
 		return message(0," : ged daemon must be dead","critical");
 	}
@@ -380,8 +402,8 @@ function acknowledge($selected_events, $queue)
 		$event_to_delete = [];
 		array_push($event_to_delete, $value);
 
-		$sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = $id";
-		$result = sqlrequest($database_ged, $sql);
+		$sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = ?";
+		$result = sqlrequest($database_ged, $sql, false, array("s",(string)$id));
 		$event = mysqli_fetch_assoc($result);
 
 		$ged_command = "-update -type $ged_type_nbr ";
@@ -394,7 +416,8 @@ function acknowledge($selected_events, $queue)
 			}
 		}
 		$ged_command = trim($ged_command, " ");
-
+		$ged_command=escapeshellcmd($ged_command);
+		
 		shell_exec($path_ged_bin." ".$ged_command);
 		logging("ged_update",$ged_command);
 		delete($event_to_delete, $queue);
@@ -403,11 +426,14 @@ function acknowledge($selected_events, $queue)
 
 function delete($selected_events, $queue)
 {
+	global $array_ged_queues;
 	global $database_ged;
 	global $array_ged_packets;
 	global $path_ged_bin;
 	global $array_serv_system;
 
+	if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
+	
 	if(exec($array_serv_system["Ged agent"]["status"])==NULL) {
 		return message(0," : ged daemon must be dead","critical");
 	}
@@ -433,7 +459,8 @@ function delete($selected_events, $queue)
 				}
 			}
 			$ged_command = trim($ged_command, " ");
-
+			$ged_command=escapeshellcmd($ged_command);
+					
 			shell_exec($path_ged_bin." ".$ged_command);
 			logging("ged_update",$ged_command);
 		} else {
@@ -444,7 +471,8 @@ function delete($selected_events, $queue)
 	if($queue == "history"){
 		$id_list = trim($id_list, ",");
 		$ged_command = "-drop -id ".$id_list." -queue history";
-
+		$ged_command=escapeshellcmd($ged_command);
+		
 		shell_exec($path_ged_bin." ".$ged_command);
 		logging("ged_update",$ged_command);
 	}
@@ -482,8 +510,12 @@ function changeGedFilter($filter_name)
 // advanced search autocomplete
 function advancedFilterSearch($queue, $filter)
 {
+	global $array_ged_packets;
+	global $array_ged_queues;
 	global $database_ged;
 	$datas = array();
+	
+	if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
 
 	if($filter == "description"){
 		echo json_encode($datas);
@@ -492,14 +524,15 @@ function advancedFilterSearch($queue, $filter)
 
 	$gedsql_result1=sqlrequest($database_ged,"SELECT pkt_type_id,pkt_type_name FROM pkt_type WHERE pkt_type_id!='0' AND pkt_type_id<'100';");
 	
-	
-	while($ged_type = mysqli_fetch_assoc($gedsql_result1)){
-		$sql = "SELECT DISTINCT $filter FROM ".$ged_type["pkt_type_name"]."_queue_".$queue;
+	if(isset($array_ged_packets[$filter])) {
+		while($ged_type = mysqli_fetch_assoc($gedsql_result1)){
+			$sql = "SELECT DISTINCT $filter FROM ".$ged_type["pkt_type_name"]."_queue_".$queue;
 
-		$results = sqlrequest($database_ged, $sql);
-		while($result = mysqli_fetch_array($results)){
-			if( !in_array($result[$filter], $datas) && $result[$filter] != "" ){
-				array_push($datas, $result[$filter]);
+			$results = sqlrequest($database_ged, $sql);
+			while($result = mysqli_fetch_array($results)){
+				if( !in_array($result[$filter], $datas) && $result[$filter] != "" ){
+					array_push($datas, $result[$filter]);
+				}
 			}
 		}
 	}

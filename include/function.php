@@ -63,7 +63,7 @@ function message($id, $text, $type){
 }
 
 // Connect to Database
-function sqlrequest($database,$sql,$id=false){
+function sqlrequest($database,$sql,$id=false,$prepare=false){
 
 	// Get the global value
 	global $database_host;
@@ -83,8 +83,22 @@ function sqlrequest($database,$sql,$id=false){
 		// Force UTF-8
 		mysqli_query($connexion, "SET NAMES 'utf8'");
 	}
-	$result=mysqli_query($connexion, "$sql");
-
+	
+	if(is_array($prepare)) {
+		$stmt = mysqli_prepare($connexion,$sql);
+		
+		if(isset($prepare[0]) && isset($prepare[1])) {
+			$ref = new ReflectionClass('mysqli_stmt');
+			$method = $ref->getMethod("bind_param");
+			$method->invokeArgs($stmt,$prepare);
+		}
+		
+		mysqli_stmt_execute($stmt);
+		$result = mysqli_stmt_get_result($stmt);
+	} else {
+		$result=mysqli_query($connexion, "$sql");
+	}
+		
 	if($id==true)
 		$result=mysqli_insert_id($connexion);
 		

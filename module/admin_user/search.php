@@ -25,7 +25,8 @@ include("../../include/function.php");
 
 // Search function for Jquery an exit
 if(isset($_GET['term']) && isset($_GET['request']) && $_GET['request'] == "search_user") {
-	$result=sqlrequest($database_eonweb,"select * from ldap_users_extended where (user LIKE '%".$_GET['term']."%') OR (login LIKE '%".$_GET['term']."%') order by user");
+	$sql="select * from ldap_users_extended where (user LIKE ?) OR (login LIKE ?) order by user";
+	$result=sqlrequest($database_eonweb,$sql,false,array("ss","%".$_GET['term']."%","%".$_GET['term']."%"));
 	
 	$array = array();
 	while ($line = mysqli_fetch_array($result)){
