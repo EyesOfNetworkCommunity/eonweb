@@ -44,7 +44,7 @@ setcookie("highlightedTreeviewLink",FALSE);
 		<div class="img col-md-4 col-md-offset-4">
 			<div class="login-panel panel panel-default">
 				<div class="panel-heading">
-					<img class="img-responsive center-block login-logo" src="images/logo.png" alt="logo eyesofnetwork">
+					<img class="img-responsive center-block login-logo" src="<?php echo $path_logo; ?>" alt="logo eyesofnetwork">
 				</div>
 				<div class="panel-body">
 					<div class="alert alert-info">
