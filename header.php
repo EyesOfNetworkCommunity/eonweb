@@ -25,6 +25,10 @@ include("include/config.php");
 include("include/arrays.php");
 include("include/function.php");
 
+# Logos
+if(file_exists($path_eonweb.$path_logo_custom)) { $path_logo=$path_logo_custom; }
+if(file_exists($path_eonweb.$path_logo_navbar_custom)) { $path_logo_navbar=$path_logo_navbar_custom; }
+
 ?>
 <!DOCTYPE html>
 <html>

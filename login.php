@@ -25,13 +25,15 @@ include("header.php");
 // Display login Form
 function display_login(){
 	
+	global $path_logo;
+	
 	echo '
 	<div class="container">
 		<div class="row">
 			<div class="img col-md-4 col-md-offset-4">
 				<div class="login-panel panel panel-default">
 					<div class="panel-heading">
-						<img class="img-responsive center-block login-logo" src="images/logo.png" alt="logo eyesofnetwork">
+						<img class="img-responsive center-block login-logo" src="'.$path_logo.'" alt="logo eyesofnetwork">
 					</div>
 					<div class="panel-body">
 						<form action="login.php" method="POST">
@@ -70,7 +72,7 @@ if(isset($_COOKIE['user_name'])){
 							+	'<div class="img col-md-4 col-md-offset-4">'
 							+		'<div class="login-panel panel panel-default">'
 							+			'<div class="panel-heading">'
-							+				'<img class="img-responsive center-block imb-logo login-logo" src="images/logo.png" alt="logo eyesofnetwork">'
+							+				'<img class="img-responsive center-block imb-logo login-logo" src="<?php echo $path_logo; ?>" alt="logo eyesofnetwork">'
 							+			'</div>'
 							+			'<div class="panel-body">'
 							+				'<div class="alert alert-info">Vous etes deja connecté en tant que : <?php echo $_COOKIE["user_name"]; ?></div>'
