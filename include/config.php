@@ -4,7 +4,7 @@
 #
 # Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION : 5.0
+# VERSION : 5.1
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -23,7 +23,7 @@
 // #######################################
 // # General Information
 // #######################################
-$version="5.0";
+$version="5.1";
 
 // #######################################
 // # Database config information

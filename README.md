@@ -1,2 +1,2 @@
 # eonweb
-EyesOfNetwork web interface 5.0
+EyesOfNetwork web interface 5.1
