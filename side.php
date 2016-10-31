@@ -24,11 +24,11 @@ $m = new Translator();
 
 // load right menu file according to user limitation (LEFT menu)
 if( $_COOKIE['user_limitation'] != 0 ){
-	$m::initFile($path_menu_limited, $path_menu_limited_custom);
+	$m->initFile($path_menu_limited, $path_menu_limited_custom);
 } else {
-	$m::initFile($path_menus,$path_menus_custom);
+	$m->initFile($path_menus,$path_menus_custom);
 }
-$menus = $m::createPHPDictionnary();
+$menus = $m->createPHPDictionnary();
 
 // load right menu file according to user limitation (TOP menu)
 $navbar_menus = false;
@@ -42,8 +42,8 @@ if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 		
 		// we test the module name in lower case (that is easier)
 		if(file_exists($path_menus."-".$test_url.".json")){
-			if($m::initFile($path_menus."-".$test_url,$path_menus_custom."-".$test_url)){
-				$navbar_menus = $m::createPHPDictionnary();
+			if($m->initFile($path_menus."-".$test_url,$path_menus_custom."-".$test_url)){
+				$navbar_menus = $m->createPHPDictionnary();
 			}
 		}
 		

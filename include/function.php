@@ -861,8 +861,8 @@ function getLabel($reference){
         // Load dictionnary if not isset
         if(!isset($t)) {
                 $t = new Translator();
-                $t::initFile($path_messages,$path_messages_custom);
-                $dictionnary = $t::createPHPDictionnary();
+                $t->initFile($path_messages,$path_messages_custom);
+                $dictionnary = $t->createPHPDictionnary();
         }
 
         // Display dictionnary reference if isset or reference
@@ -895,7 +895,7 @@ function getDefaultPage($usrlimit=0){
 	// get json file
 	if(isset($_COOKIE["user_limitation"])) { $usrlimit = $_COOKIE["user_limitation"]; }
 	if($usrlimit == 1){
-		$file=$t::getFile($path_menu_limited, $path_menu_limited_custom);
+		$file=$t->getFile($path_menu_limited, $path_menu_limited_custom);
 		$json_content = file_get_contents($file);
 		$links = json_decode($json_content, true);
 		foreach ($links["link"] as $link) {
