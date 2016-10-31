@@ -51,7 +51,7 @@ if(file_exists($path_eonweb.$path_logo_navbar_custom)) { $path_logo_navbar=$path
 	<!-- DataTables CSS -->
 	<link href="/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
 	<!-- DataTables Responsive CSS -->
-        <link href="/bower_components/datatables-responsive/css/dataTables.responsive.css" rel="stylesheet">
+	<link href="/bower_components/datatables-responsive/css/dataTables.responsive.css" rel="stylesheet">
 	<!-- Custom CSS -->
 	<link href="/bower_components/startbootstrap-sb-admin-2/dist/css/sb-admin-2.css" rel="stylesheet">
 	<!-- Custom Fonts -->

@@ -31,7 +31,7 @@
 class Translator
 {
 	
-	private static $dictionnary_content;
+	private $dictionnary_content;
 	
 	/**
 	 * Constructor
@@ -51,7 +51,7 @@ class Translator
 	/**
 	 * Get File
 	 */
-	public static function getFile($file,$file_custom)
+	public function getFile($file,$file_custom)
 	{
 		$lang=$GLOBALS['langformat'];
 
@@ -70,30 +70,30 @@ class Translator
 	/**
 	 * Init File
 	 */
-	public static function initFile($file,$file_custom)
+	public function initFile($file,$file_custom)
 	{		
-		$file = Translator::getFile($file,$file_custom);	
-		Translator::$dictionnary_content = file_get_contents($file);
+		$file = $this->getFile($file,$file_custom);	
+		$this->dictionnary_content = file_get_contents($file);
 
-		return Translator::$dictionnary_content;
+		return $this->dictionnary_content;
 	}
 	 
 	/**
 	 * PHP Dictionnary
 	 */
-	public static function createPHPDictionnary()
+	public function createPHPDictionnary()
 	{
-		$dictionnary = json_decode(Translator::$dictionnary_content, true);		
+		$dictionnary = json_decode($this->dictionnary_content, true);		
 		return $dictionnary;
 	}
 	
 	/**
 	 * JS Dictionnary
 	 */
-	public static function createJSDictionnary()
+	public function createJSDictionnary()
 	{
 		echo "<script>";
-		echo "var dictionnary = ".Translator::$dictionnary_content;
+		echo "var dictionnary = ".$this->dictionnary_content;
 		echo "</script>\n";
 	}
 	
