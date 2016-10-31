@@ -34,7 +34,7 @@ if(file_exists($path_eonweb.$path_logo_navbar_custom)) { $path_logo_navbar=$path
 <html>
 
 <head>
-	<title>EyesOfNetwork</title>
+	<title><?php echo getLabel("label.product.name"); ?></title>
 	
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
