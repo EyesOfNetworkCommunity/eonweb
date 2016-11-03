@@ -27,6 +27,7 @@ include("include/function.php");
 
 # Logos
 if(file_exists($path_eonweb.$path_logo_custom)) { $path_logo=$path_logo_custom; }
+if(file_exists($path_eonweb.$path_logo_favicon_custom)) { $path_logo_favicon=$path_logo_favicon_custom; }
 if(file_exists($path_eonweb.$path_logo_navbar_custom)) { $path_logo_navbar=$path_logo_navbar_custom; }
 
 ?>
@@ -42,7 +43,7 @@ if(file_exists($path_eonweb.$path_logo_navbar_custom)) { $path_logo_navbar=$path
 	<meta name="description" content="EyesOfNetwork">
 	<meta name="author" content="EyesOfNetwork Team">
 	
-	<link rel="icon" type="image/png" href="/images/favicon.png">
+	<link rel="icon" type="image/png" href="<?php echo $path_logo_favicon; ?>">
 	
 	<!-- Bootstrap Core CSS -->
 	<link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
