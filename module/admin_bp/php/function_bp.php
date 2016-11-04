@@ -93,29 +93,33 @@ function delete_bp($bp,$bdd){
 }
 
 function list_services($host_name){
-	$path_nagios_ser = "/srv/eyesofnetwork/nagios/etc/objects/services.cfg";
-
+        $path_nagios_ser = "/srv/eyesofnetwork/nagios/etc/objects/services.cfg";
+ 
 	$tabServices = array() ;
-	$tabServices['service'] = array() ;
-    $lignes = file($path_nagios_ser);
-	$hasMatch = 0;
-	
+        $tabServices['service'] = array() ;
+	$lignes = file($path_nagios_ser);
+        $hasMatch = 0;
+                
     foreach( $lignes as $ligne) {
-
+ 
         if ( preg_match("/$host_name$/", trim($ligne), $match)) {  //Get Host name
             $hasMatch = 1;
         }
         elseif ( preg_match("#^service_description#", trim($ligne))) {
-			$service = preg_split("/[\s]+/", trim($ligne));
+            //$service = preg_split("/[\s]+/", trim($ligne));
+            $service = trim(str_replace("service_description", " ", $ligne));
+            //Modification BVI //$service = preg_split("/[\s]+/", trim($ligne));
             if ($hasMatch)
-                $tabServices['service'][] = $service[1];
+                $tabServices['service'][] = $service;
+                //Modification BVI $tabServices['service'][] = $service[1];
             $hasMatch = 0;
         }
     }
-	natcasesort($tabServices['service']);
-	array_unshift($tabServices['service'],"Hoststatus");
-	echo json_encode($tabServices);
+    natcasesort($tabServices['service']);
+    array_unshift($tabServices['service'],"Hoststatus");
+    echo json_encode($tabServices);
 }
+
 
 function list_process($bp,$display,$bdd){
 	$sql = "select name from bp where is_define = 1 and name!=? and priority = ?";
