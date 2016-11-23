@@ -727,7 +727,7 @@ function ldap_escape ($str){
 }
 
 // User creation
-function insert_user($user_name, $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location, $user_mail, $user_limitation, $message, $in_nagvis = false, $in_cacti = false, $nagvis_group){
+function insert_user($user_name, $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location, $user_mail, $user_limitation, $message, $in_nagvis = false, $in_cacti = false, $nagvis_group = false, $user_language = false){
 	global $database_host;
 	global $database_cacti;
 	global $database_username;
@@ -762,7 +762,7 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 			$user_password = md5($user_password1);
 			
 			// Insert into eonweb
-			sqlrequest("$database_eonweb","INSERT INTO users (user_name,user_descr,group_id,user_passwd,user_type,user_location,user_limitation) VALUES('$user_name', '$user_descr', '$user_group', '$user_password', '$user_type', '$user_location','$user_limitation')");
+			sqlrequest("$database_eonweb","INSERT INTO users (user_name,user_descr,group_id,user_passwd,user_type,user_location,user_limitation,user_language) VALUES('$user_name', '$user_descr', '$user_group', '$user_password', '$user_type', '$user_location', '$user_limitation', '$user_language')");
 			$user_id=mysqli_result(sqlrequest("$database_eonweb","SELECT user_id FROM users WHERE user_name='$user_name'"),0,"user_id");
 			$group_name=mysqli_result(sqlrequest("$database_eonweb","SELECT group_name FROM groups WHERE group_id='$user_group'"),0,"group_name");
 
