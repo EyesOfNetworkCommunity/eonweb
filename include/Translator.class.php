@@ -85,10 +85,27 @@ class Translator
 	 * Init File
 	 */
 	public function initFile($file,$file_custom)
-	{		
-		$file = $this->getFile($file,$file_custom);	
-		$this->dictionnary_content = file_get_contents($file);
-
+	{				
+		global $path_messages_custom;
+		$lang=$GLOBALS['langformat'];
+		
+		// Get file to use
+		$file_final = $this->getFile($file,$file_custom);	
+	
+		// If language file do merge
+		if(preg_match("#$path_messages_custom#", $file_final)) {
+			if(preg_match("#".$path_messages_custom."-".$lang."#", $file_final)){
+				$file=$file."-".$lang;
+			}
+			$messages_custom=json_decode(file_get_contents($file_final),true);
+			$messages=json_decode(file_get_contents($file.".json"),true);
+			$messages_all=array_merge($messages,$messages_custom);
+			$this->dictionnary_content = json_encode($messages_all);
+		}
+		else {
+			$this->dictionnary_content = file_get_contents($file_final);
+		}
+		
 		return $this->dictionnary_content;
 	}
 	 
