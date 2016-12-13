@@ -882,6 +882,7 @@ function getDefaultPage($usrlimit=0){
 
 	global $t;
 	global $defaultpage;
+	global $path_frame;
 	global $path_menu_limited;
 	global $path_menu_limited_custom;
 	global $path_menus;
@@ -901,6 +902,7 @@ function getDefaultPage($usrlimit=0){
 		foreach ($links["link"] as $link) {
 			if(isset($link["default"])) {
 				if( $link["default"] != null ){
+					if($link["target"]=="frame") { $link["url"]=$path_frame.urlencode($link['url']); }
 					$defaultpage = $link["url"];
 				}
 			}

@@ -217,6 +217,8 @@ if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 					} else {
 						// no menutabs (user limited)
 						foreach ($menus["link"] as $key => $value) {
+							if($value["target"]=="_blank") { $value['url'].='" target="_blank'; }
+							elseif($value["target"]=="frame") { $value['url']=$path_frame.urlencode($value['url']); }
 						?>
 							<li>
 								<a href="<?php echo $value['url']; ?>"><?php echo getLabel($value["name"]); ?></a>
