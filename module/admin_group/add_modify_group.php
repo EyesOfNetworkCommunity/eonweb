@@ -188,16 +188,13 @@ function insert_group($group_name,$group_descr,$group_type,$ldap_group_name)
 		$group_dn = "";
 		$group_ldap=sqlrequest("$database_eonweb","SELECT dn from ldap_groups_extended where group_name='$group_name';");
 		if(mysqli_num_rows($group_ldap) > 0){
-			$group_dn = mysqli_result($group_ldap,0);
+			$group_dn = ldap_escape(mysqli_result($group_ldap,0));
 		}
 		if($group_dn == ""){
 			$group_type = 0;
 		}
 		
 		// Insert into eonweb
-		$group_dn=str_replace("\\,","\\\\,",$group_dn);
-		$group_dn=str_replace("\\2C","\\\\\\\\,",$group_dn);
-		$group_dn=str_replace('\'', '\\\'', $group_dn);
 		sqlrequest("$database_eonweb","INSERT INTO groups (group_name,group_descr,group_type,group_dn) VALUES('$group_name', '$group_descr', '$group_type', '$group_dn')");
 		$group_id=mysqli_result(sqlrequest("$database_eonweb","SELECT group_id, group_descr FROM groups WHERE group_name='$group_name'"),0,"group_id");
 		sqlrequest("$database_eonweb","INSERT INTO groupright (group_id) VALUES('$group_id')");

@@ -103,7 +103,7 @@ include("../../side.php");
 				$user_password1 = "abcdefghijklmnopqrstuvwxyz";
 				$user_password2 = "abcdefghijklmnopqrstuvwxyz";
 				$usrtype = 1;
-				$usrlocation = $infos[2];
+				$usrlocation = ldap_escape($infos[2]);
 				$usrmail = $infos[3];
 				$usrlimitation = 0;
 
