@@ -177,7 +177,7 @@ else {
 							
 							if($ldapbind){
 								// insert the user in DB.
-								insert_user($login, $user_descr, $group_id, $mdp, $mdp, 1, $user_dn, "", 0, false);
+								insert_user($login, $user_descr, $group_id, $mdp, $mdp, 1, ldap_escape($user_dn), "", 0, false);
 								
 								// we can login now. And don't forget to take the new user's id (for session)
 								$usersql=sqlrequest($database_eonweb,"select * from users where user_name = '$login'");
