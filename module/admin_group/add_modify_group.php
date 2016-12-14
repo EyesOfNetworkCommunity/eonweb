@@ -195,6 +195,9 @@ function insert_group($group_name,$group_descr,$group_type,$ldap_group_name)
 		}
 		
 		// Insert into eonweb
+		$group_dn=str_replace("\\,","\\\\,",$group_dn);
+		$group_dn=str_replace("\\2C","\\\\\\\\,",$group_dn);
+		$group_dn=str_replace('\'', '\\\'', $group_dn);
 		sqlrequest("$database_eonweb","INSERT INTO groups (group_name,group_descr,group_type,group_dn) VALUES('$group_name', '$group_descr', '$group_type', '$group_dn')");
 		$group_id=mysqli_result(sqlrequest("$database_eonweb","SELECT group_id, group_descr FROM groups WHERE group_name='$group_name'"),0,"group_id");
 		sqlrequest("$database_eonweb","INSERT INTO groupright (group_id) VALUES('$group_id')");
