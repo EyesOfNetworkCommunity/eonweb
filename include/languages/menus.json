@@ -27,7 +27,7 @@
                 },
                 {
                     "name":"menu.link.nagvis",
-                    "url":"/nagvis",
+                    "url":"/nagvis/frontend/nagvis-js/index.php",
                     "target":"frame"
                 },
                 {
