@@ -161,7 +161,7 @@ else {
 								// idem, skip the first entry is it's an int
 								if(is_int($group_dn)){ continue; }
 								
-								$in_clause .= "'".$group_dn."',";
+								$in_clause .= "'".ldap_escape($group_dn)."',";
 							}
 							$in_clause = rtrim($in_clause, ",");
 							$in_clause .= ")";
