@@ -285,19 +285,19 @@ function drawColumnChart(div_id, title, datas)
 			}
 		},
 		series: [{
-			name: 'ok',
+			name: 'Ok',
 			data: [{y:datas[0][0], url:begin_url+'&status=0&time=0-5m'}, {y:datas[1][0], url:begin_url+'&status=0&time=5-15m'}, {y:datas[2][0], url:begin_url+'&status=0&time=15-30m'}, {y:datas[3][0], url:begin_url+'&status=0&time=30m-1h'}, {y:datas[4][0], url:begin_url+'&status=0&time=more'}],
 			color: '#00CC33',
 		}, {
-			name: 'incidents',
+			name: dictionnary['label.monitoring_view.incident'],
 			data: [{y:datas[0][1], url:begin_url+'&status=1-2-3&time=0-5m'}, {y:datas[1][1], url:begin_url+'&status=1-2-3&time=5-15m'}, {y:datas[2][1], url:begin_url+'&status=1-2-3&time=15-30m'}, {y:datas[3][1], url:begin_url+'&status=1-2-3&time=30m-1h'}, {y:datas[4][1], url:begin_url+'&status=1-2-3&time=more'}],
 			color: '#FFA500'
 		}, {
-			name: 'incidents not owned',
+			name: dictionnary['label.monitoring_view.incident_not_owned'],
 			data: [{y:datas[0][2], url:begin_url+'&status=1-2-3&own=no&time=0-5m'}, {y:datas[1][2], url:begin_url+'&status=1-2-3&own=no&time=5-15m'}, {y:datas[2][2], url:begin_url+'&status=1-2-3&own=no&time=15-30m'}, {y:datas[3][2], url:begin_url+'&status=1-2-3&own=no&time=30m-1h'}, {y:datas[4][2], url:begin_url+'&status=1-2-3&own=no&time=more'}],
 			color: '#FF3300'
 		}, {
-			name: 'incidents owned',
+			name: dictionnary['label.monitoring_view.incident_owned'],
 			data: [{y:datas[0][3], url:begin_url+'&status=1-2-3&own=yes&time=0-5m'}, {y:datas[1][3], url:begin_url+'&status=1-2-3&own=yes&time=5-15m'}, {y:datas[2][3], url:begin_url+'&status=1-2-3&own=yes&time=15-30m'}, {y:datas[3][3], url:begin_url+'&status=1-2-3&own=yes&time=30m-1h'}, {y:datas[4][3], url:begin_url+'&status=1-2-3&own=yes&time=more'}],
 			color: '#CC77C6'
 		}]

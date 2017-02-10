@@ -250,6 +250,7 @@
 	"label.monitoring_passwd.title": "Password management",
 	"label.monitoring_view.act_event": "Active events",
 	"label.monitoring_view.equip_nagios": "Nagios equipments",
+	"label.monitoring_view.incident": "Incident",
 	"label.monitoring_view.incident_not_owned": "Incident not owned",
 	"label.monitoring_view.incident_owned": "Incident owned",
 	"label.monitoring_view.refresh_message": "Graphs refresh every",
