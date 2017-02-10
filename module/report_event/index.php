@@ -68,7 +68,7 @@ include("../../side.php");
 					<select class="form-control" id="field" name="field">
 						<?php
 						foreach ($array_ged_filters as $key => $value) {
-							echo "<option value='$value'>$key</option>";
+							echo "<option value='$value'>$value</option>";
 						}
 						?>
 					</select>
