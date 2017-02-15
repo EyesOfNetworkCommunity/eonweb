@@ -402,7 +402,7 @@ include("../../side.php");
 			echo "<input type='hidden' name='user_type' value='0'>";
 			echo "<input type='hidden' name='user_group' value='1'>";
 			echo "<input type='hidden' name='create_user_in_nagvis' value='yes'>";
-			echo "<input type='hidden' name='nagvis_group=' value='1'>";
+			echo "<input type='hidden' name='nagvis_group' value='1'>";
 		}
 		?>
 		<div class="row form-group">
