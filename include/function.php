@@ -712,16 +712,20 @@ function build($pRequest,&$file,$pWritenBP){
 }
 
 // Ldap escape special caracters
-function ldap_escape ($str){
+function ldap_escape($str, $login=false, $escape=false){
 
 	$str = trim($str);
-
-	if ( isset($str) ) {
-		$str = str_replace("\\", "\\\\", $str);
-		$str = str_replace("'", "\'", $str);
-		$str = str_replace('"', '\"', $str);
+	if ( $login ) {
+		$search = array("\\\\",'"','+','>','<');
+		$replace = array("\\",'\"','\\2B','\>','\<');
+	} else {
+		$search = array("\\","'",'"');
+		$replace = array("\\\\","\'",'\"');
 	}
-
+	
+	$str = str_replace($search, $replace, $str);
+	if ( $escape ) { $str = str_replace("\\", "\\\\", $str); }
+	
 	return $str;
 
 }
