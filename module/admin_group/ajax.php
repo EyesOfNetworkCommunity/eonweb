@@ -56,12 +56,12 @@ if($backend_selected=="1"){
 		foreach ($group_names as $group_name) {
 			$sql = "SELECT group_dn FROM groups WHERE group_name = '$group_name'";
 			$result = sqlrequest("$database_eonweb", "$sql");
-			$group_dn = mysqli_result($result,0,"group_dn");
+			$group_dn = ldap_escape(mysqli_result($result,0,"group_dn"),true,true);
 
 			$mini_array = array();
 			foreach ($ldap_search_begins as $c){
 				$filter = "(&(objectCategory=user)(memberOf=$group_dn)(name=" . $c . "*))";
-				
+
 				$sr=ldap_search($ldapconn, $ldap_search, $filter, array("dn" ,"name", "samaccountname", "mail"));
 				$info = ldap_get_entries($ldapconn, $sr);
 
