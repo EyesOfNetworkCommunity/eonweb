@@ -4,7 +4,7 @@
 #
 # Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION : 5.0
+# VERSION : 5.1
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -63,7 +63,7 @@ function message($id, $text, $type){
 }
 
 // Connect to Database
-function sqlrequest($database,$sql,$id=false){
+function sqlrequest($database,$sql,$id=false,$prepare=false){
 
 	// Get the global value
 	global $database_host;
@@ -83,8 +83,22 @@ function sqlrequest($database,$sql,$id=false){
 		// Force UTF-8
 		mysqli_query($connexion, "SET NAMES 'utf8'");
 	}
-	$result=mysqli_query($connexion, "$sql");
-
+	
+	if(is_array($prepare)) {
+		$stmt = mysqli_prepare($connexion,$sql);
+		
+		if(isset($prepare[0]) && isset($prepare[1])) {
+			$ref = new ReflectionClass('mysqli_stmt');
+			$method = $ref->getMethod("bind_param");
+			$method->invokeArgs($stmt,$prepare);
+		}
+		
+		mysqli_stmt_execute($stmt);
+		$result = mysqli_stmt_get_result($stmt);
+	} else {
+		$result=mysqli_query($connexion, "$sql");
+	}
+		
 	if($id==true)
 		$result=mysqli_insert_id($connexion);
 		
@@ -698,22 +712,26 @@ function build($pRequest,&$file,$pWritenBP){
 }
 
 // Ldap escape special caracters
-function ldap_escape ($str){
+function ldap_escape($str, $login=false, $escape=false){
 
 	$str = trim($str);
-
-	if ( isset($str) ) {
-		$str = str_replace("\\", "\\\\", $str);
-		$str = str_replace("'", "\'", $str);
-		$str = str_replace('"', '\"', $str);
+	if ( $login ) {
+		$search = array("\\\\",'"','+','>','<');
+		$replace = array("\\",'\"','\\2B','\>','\<');
+	} else {
+		$search = array("\\","'",'"');
+		$replace = array("\\\\","\'",'\"');
 	}
-
+	
+	$str = str_replace($search, $replace, $str);
+	if ( $escape ) { $str = str_replace("\\", "\\\\", $str); }
+	
 	return $str;
 
 }
 
 // User creation
-function insert_user($user_name, $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location, $user_mail, $user_limitation, $message, $in_nagvis = false, $in_cacti = false, $nagvis_group){
+function insert_user($user_name, $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location, $user_mail, $user_limitation, $message, $in_nagvis = false, $in_cacti = false, $nagvis_group = false, $user_language = false){
 	global $database_host;
 	global $database_cacti;
 	global $database_username;
@@ -748,7 +766,7 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 			$user_password = md5($user_password1);
 			
 			// Insert into eonweb
-			sqlrequest("$database_eonweb","INSERT INTO users (user_name,user_descr,group_id,user_passwd,user_type,user_location,user_limitation) VALUES('$user_name', '$user_descr', '$user_group', '$user_password', '$user_type', '$user_location','$user_limitation')");
+			sqlrequest("$database_eonweb","INSERT INTO users (user_name,user_descr,group_id,user_passwd,user_type,user_location,user_limitation,user_language) VALUES('$user_name', '$user_descr', '$user_group', '$user_password', '$user_type', '$user_location', '$user_limitation', '$user_language')");
 			$user_id=mysqli_result(sqlrequest("$database_eonweb","SELECT user_id FROM users WHERE user_name='$user_name'"),0,"user_id");
 			$group_name=mysqli_result(sqlrequest("$database_eonweb","SELECT group_name FROM groups WHERE group_id='$user_group'"),0,"group_name");
 
@@ -847,8 +865,8 @@ function getLabel($reference){
         // Load dictionnary if not isset
         if(!isset($t)) {
                 $t = new Translator();
-                $t::initFile($path_messages,$path_messages_custom);
-                $dictionnary = $t::createPHPDictionnary();
+                $t->initFile($path_messages,$path_messages_custom);
+                $dictionnary = $t->createPHPDictionnary();
         }
 
         // Display dictionnary reference if isset or reference
@@ -882,7 +900,7 @@ function getDefaultPage($usrlimit=0){
 	// get json file
 	if(isset($_COOKIE["user_limitation"])) { $usrlimit = $_COOKIE["user_limitation"]; }
 	if($usrlimit == 1){
-		$file=$t::getFile($path_menu_limited, $path_menu_limited_custom);
+		$file=$t->getFile($path_menu_limited, $path_menu_limited_custom);
 		$json_content = file_get_contents($file);
 		$links = json_decode($json_content, true);
 		foreach ($links["link"] as $link) {

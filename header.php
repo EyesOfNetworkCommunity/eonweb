@@ -4,7 +4,7 @@
 #
 # Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Quentin HOARAU
-# VERSION : 5.0
+# VERSION : 5.1
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -25,12 +25,17 @@ include("include/config.php");
 include("include/arrays.php");
 include("include/function.php");
 
+# Logos
+if(file_exists($path_eonweb.$path_logo_custom)) { $path_logo=$path_logo_custom; }
+if(file_exists($path_eonweb.$path_logo_favicon_custom)) { $path_logo_favicon=$path_logo_favicon_custom; }
+if(file_exists($path_eonweb.$path_logo_navbar_custom)) { $path_logo_navbar=$path_logo_navbar_custom; }
+
 ?>
 <!DOCTYPE html>
 <html>
 
 <head>
-	<title>EyesOfNetwork</title>
+	<title><?php echo getLabel("label.product.name"); ?></title>
 	
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -38,7 +43,7 @@ include("include/function.php");
 	<meta name="description" content="EyesOfNetwork">
 	<meta name="author" content="EyesOfNetwork Team">
 	
-	<link rel="icon" type="image/png" href="/images/favicon.png">
+	<link rel="icon" type="image/png" href="<?php echo $path_logo_favicon; ?>">
 	
 	<!-- Bootstrap Core CSS -->
 	<link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -47,7 +52,7 @@ include("include/function.php");
 	<!-- DataTables CSS -->
 	<link href="/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
 	<!-- DataTables Responsive CSS -->
-        <link href="/bower_components/datatables-responsive/css/dataTables.responsive.css" rel="stylesheet">
+	<link href="/bower_components/datatables-responsive/css/dataTables.responsive.css" rel="stylesheet">
 	<!-- Custom CSS -->
 	<link href="/bower_components/startbootstrap-sb-admin-2/dist/css/sb-admin-2.css" rel="stylesheet">
 	<!-- Custom Fonts -->

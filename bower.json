@@ -1,6 +1,6 @@
 {
-  "name": "eonweb-5.0",
-  "description": "EyesOfNetwork web interface 5.0",
+  "name": "eonweb-5.1",
+  "description": "EyesOfNetwork web interface 5.1",
   "main": "index.php",
   "moduleType": [],
   "authors": [

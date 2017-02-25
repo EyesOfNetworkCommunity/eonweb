@@ -3,7 +3,7 @@
 #
 # Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Quentin HOARAU
-# VERSION : 5.0
+# VERSION : 5.1
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -22,7 +22,7 @@
 $('.daterangepicker-eonweb').daterangepicker({
 	autoUpdateInput: false,
 	locale: {
-		format: 'MMMM D, YYYY',
+		//format: 'MMMM D, YYYY',
 		applyLabel: dictionnary['action.apply'],
 		cancelLabel: dictionnary['action.clear'],
 		customRangeLabel: dictionnary['label.custom'],

@@ -4,7 +4,7 @@
 #
 # Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION : 5.0
+# VERSION : 5.1
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -25,13 +25,15 @@ include("header.php");
 // Display login Form
 function display_login(){
 	
+	global $path_logo;
+	
 	echo '
 	<div class="container">
 		<div class="row">
 			<div class="img col-md-4 col-md-offset-4">
 				<div class="login-panel panel panel-default">
 					<div class="panel-heading">
-						<img class="img-responsive center-block login-logo" src="images/logo.png" alt="logo eyesofnetwork">
+						<img class="img-responsive center-block login-logo" src="'.$path_logo.'" alt="logo eyesofnetwork">
 					</div>
 					<div class="panel-body">
 						<form action="login.php" method="POST">
@@ -70,7 +72,7 @@ if(isset($_COOKIE['user_name'])){
 							+	'<div class="img col-md-4 col-md-offset-4">'
 							+		'<div class="login-panel panel panel-default">'
 							+			'<div class="panel-heading">'
-							+				'<img class="img-responsive center-block imb-logo login-logo" src="images/logo.png" alt="logo eyesofnetwork">'
+							+				'<img class="img-responsive center-block imb-logo login-logo" src="<?php echo $path_logo; ?>" alt="logo eyesofnetwork">'
 							+			'</div>'
 							+			'<div class="panel-body">'
 							+				'<div class="alert alert-info">Vous etes deja connecté en tant que : <?php echo $_COOKIE["user_name"]; ?></div>'
@@ -153,13 +155,15 @@ else {
 							if(is_int($result)){ continue; }
 							
 							$user_dn = $result["distinguishedname"][0];
+							$user_dn = str_replace("\\","",$user_dn);
 							
 							$in_clause = "(";
 							foreach($result["memberof"] as $group_dn){
+								$group_dn=str_replace("\\","",$group_dn);
 								// idem, skip the first entry is it's an int
 								if(is_int($group_dn)){ continue; }
 								
-								$in_clause .= "'".$group_dn."',";
+								$in_clause .= "'".ldap_escape($group_dn)."',";
 							}
 							$in_clause = rtrim($in_clause, ",");
 							$in_clause .= ")";
@@ -173,7 +177,7 @@ else {
 							$group_id = mysqli_result($sql_results,0,"group_id");
 							
 							// check user's connection to ldap
-							$ldapbind = ldap_bind($ldapconn, $user_dn, $mdp);
+							$ldapbind = ldap_bind($ldapconn, ldap_escape($user_dn,true), $mdp);
 							
 							if($ldapbind){
 								// insert the user in DB.
@@ -196,7 +200,7 @@ else {
 				$ldap_port=mysqli_result($ldapsql,0,"ldap_port");
 				$ldap_rdn=mysqli_result($ldapsql,0,"ldap_rdn");
 				$ldap_search=mysqli_result($ldapsql,0,"ldap_search");
-				$user_location=str_replace("\\\\","\\",mysqli_result($usersql,0,"user_location"));
+				$user_location=ldap_escape(mysqli_result($usersql,0,"user_location"),true);
 
 				$ldapconn=ldap_connect($ldap_ip,$ldap_port);
 				ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);

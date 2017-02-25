@@ -4,7 +4,7 @@
 #
 # Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION : 5.0
+# VERSION : 5.1
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -23,10 +23,14 @@
 # Check optionnal module to load
 if(isset($_GET["module"]) && isset($_GET["link"])) { 
 
-	$module=exec("rpm -q ".$_GET["module"]." |grep '.eon' |wc -l");
+	include("../include/config.php");
+	include("../include/arrays.php");
 	
-	# Redirect to module page if rpm installed
-	if($module!=0) { header('Location: '.$_GET["link"].''); }
+	if(in_array($_GET["module"],$array_modules)) {
+		$module=exec("rpm -q ".$_GET["module"]." |grep '.eon' |wc -l");
+		# Redirect to module page if rpm installed
+		if($module!=0) { header('Location: '.$_GET["link"].''); }
+	}
 
 } 
 	

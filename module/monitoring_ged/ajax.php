@@ -4,7 +4,7 @@
 #
 # Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Quentin HOARAU
-# VERSION : 5.0
+# VERSION : 5.1
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -26,6 +26,8 @@ include("../../include/function.php");
 include("ged_functions.php");
 
 extract($_GET);
+if(!isset($queue)) { $queue="active"; } 
+elseif(!in_array($queue,$array_ged_queues)) { $queue="active"; }
 
 // get all GED filters
 $default = "";
@@ -62,16 +64,19 @@ if(file_exists($file)){
 			<tbody>
 				<?php
 					if($_GET["type"] == 0){
-						$ged_where = "WHERE pkt_type_id!='0'";
+						$sql = "SELECT pkt_type_id,pkt_type_name FROM pkt_type WHERE pkt_type_id!='0' AND pkt_type_id<'100';";
+						$gedsql_result1=sqlrequest($database_ged,$sql);
 					} else {
-						$ged_where = "WHERE pkt_type_id='".$_GET["type"]."'";
+						$sql = "SELECT pkt_type_id,pkt_type_name FROM pkt_type WHERE pkt_type_id=? AND pkt_type_id<'100';";
+						$prepare=array("i",(int)$_GET["type"]);
+						$gedsql_result1=sqlrequest($database_ged,$sql,false,$prepare);
 					}
-					$gedsql_result1=sqlrequest($database_ged,"SELECT pkt_type_id,pkt_type_name FROM pkt_type $ged_where AND pkt_type_id<'100';");
-					
+										
 					while($ged_type = mysqli_fetch_assoc($gedsql_result1)){
 
 						// request for ged events according to queue and filters
 						$sql = createSelectClause($ged_type["pkt_type_name"], $queue);
+						$mysqli_prepare=array("");
 						
 						// time periods (only in active events);
 						if($time_period != ""){
@@ -84,25 +89,40 @@ if(file_exists($file)){
 
 							switch ($time_period) {
 								case '0-5m':
-									$sql .= " AND o_sec <= ". $actual_time ." AND o_sec > ". $five_minutes;
+									$sql .= " AND o_sec <= ? AND o_sec > ?";
+									$mysqli_prepare[0].="ii";
+									$mysqli_prepare[]=(int)$actual_time;
+									$mysqli_prepare[]=(int)$five_minutes;
 									break;
 								case '5-15m':
-									$sql .= " AND o_sec <= ". $five_minutes ." AND o_sec > ". $fifteen_minutes;
+									$sql .= " AND o_sec <= ? AND o_sec > ?";
+									$mysqli_prepare[0].="ii";
+									$mysqli_prepare[]=(int)$five_minutes;
+									$mysqli_prepare[]=(int)$fifteen_minutes;
 									break;
 								case '15-30m':
-									$sql .= " AND o_sec <= ". $fifteen_minutes ." AND o_sec > ". $thirty_minutes;
+									$sql .= " AND o_sec <= ? AND o_sec > ?";
+									$mysqli_prepare[0].="ii";
+									$mysqli_prepare[]=(int)$fifteen_minutes;
+									$mysqli_prepare[]=(int)$thirty_minutes;
 									break;
 								case '30m-1h':
-									$sql .= " AND o_sec <= ". $thirty_minutes ." AND o_sec > ". $one_hour;
+									$sql .= " AND o_sec <= ? AND o_sec > ?";
+									$mysqli_prepare[0].="ii";
+									$mysqli_prepare[]=(int)$thirty_minutes;
+									$mysqli_prepare[]=(int)$one_hour;
 									break;
 								case 'more':
-									$sql .= " AND o_sec <= ". $one_hour;
+									$sql .= " AND o_sec <= ?";
+									$mysqli_prepare[0].="i";
+									$mysqli_prepare[]=(int)$one_hour;
 									break;
 							}
 						}
 
 						if($ack_time != ""){
-							$sql .= " AND a_sec - o_sec >= $ack_time";
+							$sql .= " AND a_sec - o_sec >= ?";
+							$mysqli_prepare=array("i",(int)$ack_time);
 						}
 
 						// if there's a default filter
@@ -132,9 +152,13 @@ if(file_exists($file)){
 										$like .= "%";
 									}
 									if($sqlcpt=="0") {
-										$sql .= " AND ($key LIKE '$like'";
+										$sql .= " AND ($key LIKE ?";
+										$mysqli_prepare[0].="s";
+										$mysqli_prepare[]=(string)$like;
 									} else {
-										$sql .= " OR $key LIKE '$like'";
+										$sql .= " OR $key LIKE ?";
+										$mysqli_prepare[0].="s";
+										$mysqli_prepare[]=(string)$like;
 									}
 									$sqlcpt++;
 								}
@@ -144,7 +168,7 @@ if(file_exists($file)){
 
 						$sql .= createWhereClause($owner,$filter,$search,$daterange,$ok,$warning,$critical,$unknown);
 
-						$request = sqlrequest($database_ged, $sql);
+						$request = sqlrequest($database_ged, $sql, false, $mysqli_prepare);
 						while($event = mysqli_fetch_object($request)){
 							$event_state = getEventState($event);
 							$row_class = getClassRow($event_state);

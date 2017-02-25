@@ -4,7 +4,7 @@
 #
 # Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Quentin HOARAU
-# VERSION : 5.0
+# VERSION : 5.1
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -27,22 +27,26 @@ include("../../include/function.php");
 extract($_POST);
 
 $where_clause = "";
-if($user != ""){ $where_clause .= " AND user LIKE '%$user%'"; }
-if($module != ""){ $where_clause .= " AND module LIKE '%$module%'"; }
-if($description != ""){ $where_clause .= " AND description LIKE '%$description%'"; }
-if($source != ""){ $where_clause .= " AND source LIKE '%$source%'"; }
+$where_prepare=array("");
+if($user != ""){ $where_clause .= " AND user LIKE ?"; $where_prepare[0].="s" ; $where_prepare[]="%$user%"; }
+if($module != ""){ $where_clause .= " AND module LIKE ?"; $where_prepare[0].="s" ; $where_prepare[]="%$module%"; }
+if($description != ""){ $where_clause .= " AND description LIKE ?"; $where_prepare[0].="s" ; $where_prepare[]="%$description%"; }
+if($source != ""){ $where_clause .= " AND source LIKE ?"; $where_prepare[0].="s" ; $where_prepare[]="%$source%"; }
 
 // period clause
 if($date != ""){
 	$times = explode(" - ", $date);
 	$start = strtotime($times[0]);
 	$end = strtotime($times[1]) + 86400;
-	$where_clause .= " AND date >= $start AND date < $end";
+	$where_clause .= " AND date >= ? AND date < ?";
+	$where_prepare[0].="ss"; 
+	$where_prepare[]=(string)$start;
+	$where_prepare[]=(string)$end;
 }
 
 
 $sql = "SELECT * FROM logs WHERE id!=0".$where_clause." ORDER BY date DESC";
-$results = sqlrequest($database_eonweb,$sql);
+$results = sqlrequest($database_eonweb,$sql,false,$where_prepare);
 
 ?>
 

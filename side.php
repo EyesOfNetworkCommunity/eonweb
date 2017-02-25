@@ -4,7 +4,7 @@
 #
 # Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION : 5.0
+# VERSION : 5.1
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -24,11 +24,11 @@ $m = new Translator();
 
 // load right menu file according to user limitation (LEFT menu)
 if( $_COOKIE['user_limitation'] != 0 ){
-	$m::initFile($path_menu_limited, $path_menu_limited_custom);
+	$m->initFile($path_menu_limited, $path_menu_limited_custom);
 } else {
-	$m::initFile($path_menus,$path_menus_custom);
+	$m->initFile($path_menus,$path_menus_custom);
 }
-$menus = $m::createPHPDictionnary();
+$menus = $m->createPHPDictionnary();
 
 // load right menu file according to user limitation (TOP menu)
 $navbar_menus = false;
@@ -42,8 +42,8 @@ if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 		
 		// we test the module name in lower case (that is easier)
 		if(file_exists($path_menus."-".$test_url.".json")){
-			if($m::initFile($path_menus."-".$test_url,$path_menus_custom."-".$test_url)){
-				$navbar_menus = $m::createPHPDictionnary();
+			if($m->initFile($path_menus."-".$test_url,$path_menus_custom."-".$test_url)){
+				$navbar_menus = $m->createPHPDictionnary();
 			}
 		}
 		
@@ -62,7 +62,7 @@ if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 			<span class="icon-bar"></span>
 		</button>
 		<a class="navbar-brand" href="/index.php">
-			<img id="logo_eon" class="navbar-logo" src="/images/logo-navbar.png" alt="logo eyesofnetwork">
+			<img id="logo_eon" class="navbar-logo" src="<?php echo $path_logo_navbar; ?>" alt="logo eyesofnetwork">
 		</a>
 	</div>
 	<!-- /.navbar-header -->

@@ -4,7 +4,7 @@
 #
 # Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION : 5.0
+# VERSION : 5.1
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -31,15 +31,29 @@
 class Translator
 {
 	
-	private static $dictionnary_content;
+	private $dictionnary_content;
 	
 	/**
 	 * Constructor
 	 */
 	public function __construct()
 	{
+
+		global $database_eonweb;
+		$lang = 0;
+		
 		// # Languages files
-		if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
+		
+		// Check if user default lang is defined
+		if(isset($_COOKIE['user_id'])){
+			$lang = mysqli_result(sqlrequest($database_eonweb,"select user_language from users where user_id='".$_COOKIE['user_id']."'"),0);
+		}
+		
+		// Check if isset browser lang
+		if($lang) {
+			$GLOBALS['langformat']=$lang;	
+		}
+		elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
 			
 			// Language detection
 			$lang = explode(",",$_SERVER['HTTP_ACCEPT_LANGUAGE']);
@@ -51,7 +65,7 @@ class Translator
 	/**
 	 * Get File
 	 */
-	public static function getFile($file,$file_custom)
+	public function getFile($file,$file_custom)
 	{
 		$lang=$GLOBALS['langformat'];
 
@@ -70,30 +84,47 @@ class Translator
 	/**
 	 * Init File
 	 */
-	public static function initFile($file,$file_custom)
-	{		
-		$file = Translator::getFile($file,$file_custom);	
-		Translator::$dictionnary_content = file_get_contents($file);
-
-		return Translator::$dictionnary_content;
+	public function initFile($file,$file_custom)
+	{				
+		global $path_messages_custom;
+		$lang=$GLOBALS['langformat'];
+		
+		// Get file to use
+		$file_final = $this->getFile($file,$file_custom);	
+	
+		// If language file do merge
+		if(preg_match("#$path_messages_custom#", $file_final)) {
+			if(preg_match("#".$path_messages_custom."-".$lang."#", $file_final)){
+				$file=$file."-".$lang;
+			}
+			$messages_custom=json_decode(file_get_contents($file_final),true);
+			$messages=json_decode(file_get_contents($file.".json"),true);
+			$messages_all=array_merge($messages,$messages_custom);
+			$this->dictionnary_content = json_encode($messages_all);
+		}
+		else {
+			$this->dictionnary_content = file_get_contents($file_final);
+		}
+		
+		return $this->dictionnary_content;
 	}
 	 
 	/**
 	 * PHP Dictionnary
 	 */
-	public static function createPHPDictionnary()
+	public function createPHPDictionnary()
 	{
-		$dictionnary = json_decode(Translator::$dictionnary_content, true);		
+		$dictionnary = json_decode($this->dictionnary_content, true);		
 		return $dictionnary;
 	}
 	
 	/**
 	 * JS Dictionnary
 	 */
-	public static function createJSDictionnary()
+	public function createJSDictionnary()
 	{
 		echo "<script>";
-		echo "var dictionnary = ".Translator::$dictionnary_content;
+		echo "var dictionnary = ".$this->dictionnary_content;
 		echo "</script>\n";
 	}
 	

@@ -4,7 +4,7 @@
 #
 # Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION : 5.0
+# VERSION : 5.1
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -37,6 +37,8 @@ $array_msg = array (
 	10 => "EON - Name Error",
 	11 => "EON - GED");
 
+$array_modules = array ("glpi","ocsinventory-reports");
+	
 $array_tools = array (
 	"snmpwalk"		 => "tools/snmpwalk.php",
 	"show interface" => "tools/interface.php",
@@ -60,6 +62,8 @@ $array_bp_mgt = array (
 	"duplicate" 		=> "duplicate",
 	"back-up file" 		=> "backup");
 
+$array_ged_queues = array("active","sync","history");
+		
 $array_ged_types = array(
 	0 => "label.all",
 	1 => "services",

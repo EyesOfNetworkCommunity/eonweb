@@ -4,7 +4,7 @@
 #
 # Copyright (C) 2016 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION : 5.0
+# VERSION : 5.1
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -29,7 +29,7 @@ include("../../side.php");
 
 	<div class="row">
 		<div class="col-lg-12">
-			<h1 class="page-header"><?php echo getLabel("label.home_about.title"); ?></h1>
+			<h1 class="page-header"><?php echo getLabel("label.home_about.title")." $version"; ?></h1>
 		</div>
 	</div>
 
