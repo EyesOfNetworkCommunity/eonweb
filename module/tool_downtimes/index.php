@@ -41,7 +41,7 @@ extract($_POST);
 
 		<?php
 
-		if(isset($bp)){
+		if(isset($submit)){
 			
 			echo '<div class="col-lg-12">';
 
@@ -81,6 +81,7 @@ extract($_POST);
 					<div class="form-group">
 						<label><?php echo getLabel("label.admin_bp.business_process"); ?></label>
 						<select class="form-control" name="bp">
+							<option value=""></option>
 							<?php
 							foreach($thruk_bps_deps as $thruk_bps_dep => $value) {
 								echo "<option>$thruk_bps_dep</option>";
@@ -126,7 +127,7 @@ extract($_POST);
 					</div>
 
 					<div class="form-group">
-						<button class="btn btn-primary" type="submit"><?php echo getLabel("action.submit"); ?></button>
+						<button class="btn btn-primary" type="submit" name="submit"><?php echo getLabel("action.submit"); ?></button>
 					</div>					
 					
 				</div>
