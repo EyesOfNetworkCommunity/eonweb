@@ -99,10 +99,15 @@ function list_services($host_name){
         $tabServices['service'] = array() ;
 	$lignes = file($path_nagios_ser);
         $hasMatch = 0;
+	$pattern = "/^$host_name$/"; /**Modification BVI 15/03/2017 */
                 
     foreach( $lignes as $ligne) {
- 
+ 	/**Modification BVI 15/03/2017 
         if ( preg_match("/$host_name$/", trim($ligne), $match)) {  //Get Host name
+            $hasMatch = 1;
+        }*/
+	$host_ligne = trim(str_replace("host_name", " ", $ligne));
+        if ( preg_match($pattern, trim($host_ligne), $match)) {  //Get Host name
             $hasMatch = 1;
         }
         elseif ( preg_match("#^service_description#", trim($ligne))) {
