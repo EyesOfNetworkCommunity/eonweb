@@ -143,7 +143,7 @@ if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 								<input name="s0_value" id="s0_value" class="form-control" type="text" placeholder="<?php echo getLabel("label.input.placeholder.search"); ?>" autocomplete="off" onFocus="my_ajax_search();">
 								<span class="input-group-btn">
 									<button class="btn btn-default" type="submit">
-										<i class="fa fa-search" style="padding: 3px 0;"></i>
+										<i class="fa fa-search"></i>
 									</button>
 								</span>
 							</div>
