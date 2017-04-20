@@ -221,6 +221,7 @@
 	"label.last_30_days": "30 derniers jours",
 	"label.last_month": "Mois dernier",
 	"label.ldap_usr_list": "Liste des utilisateurs LDAP",
+	"label.locale": "fr",
 	"label.message.logout.success": "Vous êtes maintenant déconnecté.",
 	"label.monitoring_ged.all_user_view": "Tous les utilisateurs",
 	"label.monitoring_ged.date_range": "Plage de dates",
