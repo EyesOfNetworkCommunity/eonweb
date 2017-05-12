@@ -186,7 +186,7 @@ function createWhereClause($owner, $filter, $search, $daterange, $ok, $warning, 
 		$where_clause .= " AND state IN ($states_list)";
 	}
 
-	$where_clause .= " ORDER BY o_sec DESC LIMIT 500";
+	$where_clause .= " ORDER BY l_sec DESC LIMIT 500";
 	return $where_clause;
 }
 
