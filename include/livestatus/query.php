@@ -40,15 +40,14 @@ if( !empty($_GET["action"]) )
 
 function checkHost($type, $address, $port, $path){
 	$host = false;
-        if($type == "unix"){
-                $socket_path_connexion = "unix://".$path;
-                $host = fsockopen($socket_path_connexion, $port, $errno, $errstr, 5);
-        }
-        else{
-                $host = fsockopen($address, $port, $errno, $errstr, 5);
-        }
+	if($type == "unix"){
+		$socket_path_connexion = "unix://".$path;
+		$host = fsockopen($socket_path_connexion, $port, $errno, $errstr, 5);
+	}
+	else{
+		$host = fsockopen($address, $port, $errno, $errstr, 5);
+	}
 	return $host;
-	
 }
 
 /**
@@ -251,6 +250,7 @@ function getEventStateNbr()
 		$unknown = 0;
 		// will construct the SQL request
 		$requete = "SELECT COUNT(*) FROM ".$row[0]."_queue_active WHERE ";
+		
 		if($default)
 		{
 			// construct the WHERE clause foreach <filter> in the XML file
@@ -272,28 +272,7 @@ function getEventStateNbr()
 					$text .= "%";
 				}
 				
-				if($i < $filters->length){
-					switch($name){
-						case 'not_equipment': $name = "equipment"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_service': $name = "service"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_description': $name = "description"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_hostgroups': $name = "hostgroups"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_servicegroups': $name = "servicegroups"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_owner': $name = "owner"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						default: $requete .= $name . " LIKE '%".$text."%' AND ";
-					}
-				}
-				else{
-					switch($name){
-						case 'not_equipment': $name = "equipment"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_service': $name = "service"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_description': $name = "description"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_hostgroups': $name = "hostgroups"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_servicegroups': $name = "servicegroups"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_owner': $name = "owner"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						default: $requete .= $name . " LIKE '%".$text."%' AND ";
-					}
-				}
+				$requete_filter .= $name . " LIKE '%".$text."%' OR ";
 				$i++;
 			}
 		}
@@ -302,7 +281,10 @@ function getEventStateNbr()
 		for($i = 0; $i <= 3; $i++)
 		{
 			$requete_finale = $requete . "state = ". $i;
-			//echo "<br>" . $requete_finale . "<br>";
+			if(isset($requete_filter)) {
+				$requete_finale = $requete_finale." AND (".preg_replace("/OR $/", "", $requete_filter).")";
+			}
+			#echo "<br>" . $requete_finale . "<br>";
 			$query_result = sqlrequest($database_ged, $requete_finale);
 			switch($i)
 			{
@@ -380,29 +362,7 @@ function getNumberEventByStateAndTime()
 				$text .= "%";
 			}
 			
-			// construct the WHERE clause
-			if($i < $filters->length){
-				switch($name){
-					case 'not_equipment': $name = "equipment"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
-					case 'not_service': $name = "service"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
-					case 'not_description': $name = "description"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
-					case 'not_hostgroups': $name = "hostgroups"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
-					case 'not_servicegroups': $name = "servicegroups"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
-					case 'not_owner': $name = "owner"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
-					default: $milieu_requete .= $name . " LIKE '".$text."' AND ";
-				}
-			}
-			else{
-				switch($name){
-					case 'not_equipment': $name = "equipment"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
-					case 'not_service': $name = "service"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
-					case 'not_description': $name = "description"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
-					case 'not_hostgroups': $name = "hostgroups"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
-					case 'not_servicegroups': $name = "servicegroups"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
-					case 'not_owner': $name = "owner"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
-					default: $milieu_requete .= $name . " LIKE '".$text."' AND";
-				}
-			}
+			$requete_filter .= $name . " LIKE '%".$text."%' OR ";
 			$i++;
 		}
 	}
@@ -423,7 +383,11 @@ function getNumberEventByStateAndTime()
 		$temp_result_15_30 = array();
 		$temp_result_30_1h = array();
 		$temp_result_1h = array();
-		
+	
+		if(isset($requete_filter)) {
+			$milieu_requete = "(".preg_replace("/OR $/", ") AND", $requete_filter)."";
+		}
+
 		$sql = "
 		SELECT COUNT(*) FROM ".$row[0]."_queue_active WHERE ".$milieu_requete." state=0 AND o_sec <= ". $actual_time ." AND o_sec > ". $five_minutes ."
 		UNION ALL SELECT COUNT(*) FROM ".$row[0]."_queue_active WHERE ".$milieu_requete." state!=0 AND o_sec <= ". $actual_time ." AND o_sec > ". $five_minutes ."

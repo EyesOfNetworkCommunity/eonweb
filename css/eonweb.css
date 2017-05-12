@@ -86,6 +86,10 @@
 	resize: vertical;
 }
 
+a.nodecor {
+	text-decoration: none;
+}
+
 /*
  * ------------------------------------------------------------------------
  * Sidebar toggle

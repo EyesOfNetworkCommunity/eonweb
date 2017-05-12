@@ -59,25 +59,31 @@ function createTableRow($event, $event_state, $queue)
 		$class = "";
 
 		if($key == "equipment"){
-			$url_host = preg_replace("/^".$ged_prefix."/","",$value,1);
-			$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=1&host=$url_host");
-			$value = '<a href="../module_frame/index.php?url='.$thruk_url.'">'.$value.'</a>';
+			if($event->src == "0.0.0.0" || $event->src == "0.0.0.0/0") {
+				$url_host = preg_replace("/^".$ged_prefix."/","",$value,1);
+				$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=1&host=$url_host");
+				$value = '<a href="../module_frame/index.php?url='.$thruk_url.'">'.$value.'</a>';
+			} else { 
+				$value = '<a class="nodecor">'.$value.'</a>';
+			}
 			$class = 'class="host"';
 		}
 		if($key == "service"){
-			$url_host = preg_replace("/^".$ged_prefix."/","",$event->equipment,1);
-			$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=2&host=".$url_host."&service=$value");
-			$value = '<a href="../module_frame/index.php?url='.$thruk_url.'">'.$value.'</a>';
+			if($event->src == "0.0.0.0" || $event->src == "0.0.0.0/0") {
+				$url_host = preg_replace("/^".$ged_prefix."/","",$event->equipment,1);
+				$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=2&host=".$url_host."&service=$value");
+				$value = '<a href="../module_frame/index.php?url='.$thruk_url.'">'.$value.'</a>';
+			} else {
+				$value = '<a class="nodecor">'.$value.'</a>';
+			}
 			$class = 'class="service"';
 		}
-		if ($key == "state" || $key == "comments") {
+		if ($key == "state" || $key == "comments" || $key == "src") {
 			continue;
 		}
 		if($key == "o_sec" || $key == "l_sec"){
 			if($queue == "active"){
-				$value = time() - $value;
-				$value = round($value/60);
-				$value .= " min";
+				$value = strTime(time() - $value);
 			} else {
 				$value = date($dateformat, $value);
 			}
@@ -92,7 +98,7 @@ function createTableRow($event, $event_state, $queue)
 				$value .= ' <i class="glyphicon glyphicon-floppy-disk"></i>';
 			}
 		}
-
+		
 		echo "<td $class>$value</td>";
 	}	
 }
@@ -115,7 +121,7 @@ function createSelectClause($ged_type, $queue)
 			}
 		}
 	}
-	$sql .= "comments";
+	$sql .= "comments,src";
 	//$sql = trim($sql, ",");
 	$sql .= " FROM ".$ged_type."_queue_".$queue;
 	$sql .= " WHERE id > 0";

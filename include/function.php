@@ -1253,4 +1253,32 @@ function slaBarChart($field, $search)
 	return json_encode($array_result);
 }
 
+# Convert seconds to human readable
+function strTime($s) {
+
+	$d = intval($s/86400);
+	$s -= $d*86400;
+	$h = intval($s/3600);
+	$s -= $h*3600;
+	$m = intval($s/60);
+	$s -= $m*60;
+
+	if($d<10) $d="0".$d;
+	if($h<10) $h="0".$h;
+	if($m<10) $m="0".$m;
+	if($s<10) $s="0".$s;
+
+	if ($d) $str = $d . 'd ';
+	else $str = '00d ';
+	if ($h) $str .= $h . 'h ';
+	else $str .= '00h ';
+	if ($m) $str .= $m . 'm ';
+	else $str .= '00m ';
+	if ($s) $str .= $s . 's';
+	else $str .= '00s';
+
+	return $str;
+
+}
+
 ?>
