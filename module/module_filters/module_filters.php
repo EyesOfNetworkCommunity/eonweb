@@ -87,7 +87,7 @@
 							for(var i in filters)
 								$("#field"+nbr).append("<option value='"+i+"' name='"+i+"'>"+filters[i]+"</option>");
 							$("#row"+nbr).append("</select></div>");
-							$("#row"+nbr).append("<div class='col-md-6'><div class='input-group'><input id='value"+ nbr +"' name='value"+ nbr +"' class='form-control' type='text' value='"+ $(this).text() +"' placeholder='*"+dictionnary["action.search"]+"*'/><span class='input-group-btn'><button class='btn btn-danger' onClick='delFormField(\"#row"+ nbr +"\");'>"+dictionnary["action.delete"]+"</button></span></div></div>");
+							$("#row"+nbr).append('<div class="col-md-6"><div class="input-group"><input id="value'+ nbr +'" name="value'+ nbr +'" class="form-control" type="text" value="'+ $(this).text() +'" placeholder="*'+dictionnary["action.search"]+'*" onFocus=\'$(this).autocomplete({ source: <?php echo get_host_list_from_nagios();?> })\'/><span class="input-group-btn"><button class="btn btn-danger" onClick=\'delFormField("#row'+ nbr +'");\'>'+dictionnary["action.delete"]+'</button></span></div></div>');
 							$("#allvalues").append("</div>");
 							$("#field"+nbr+" option[name="+$(this).attr("name")+"]").attr("selected","yes");
 							nbr++;
