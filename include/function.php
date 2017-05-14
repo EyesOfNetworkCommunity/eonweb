@@ -168,6 +168,7 @@ function get_host_list_from_nagios($field=false, $queue = false){
 	else {
 		$request="SELECT name FROM nagios_host
 		UNION SELECT name from nagios_hostgroup
+		UNION SELECT DISTINCT description from nagios_service
 		UNION SELECT name from nagios_service_group
 		ORDER BY name";
 		$db = $database_lilac;

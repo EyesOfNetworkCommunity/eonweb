@@ -40,7 +40,7 @@
 		$("#allvalues").append('<div id="row'+id+'" class="row form-group"><div class="col-md-6"><select class="form-control" id="field'+id+'" name="field'+id+'">');
 		for(var i in filters)
 			$("#field"+id).append("<option value='"+i+"' name='"+i+"'>"+filters[i]+"</option>");
-		$("#row"+id).append('</select></div><div class="col-md-6"><div class="input-group"><input id="value'+id+'" name="value'+id+'" class="form-control" type="text" placeholder="*'+dictionnary["action.search"]+'*" onFocus=\'$(this).autocomplete(<?php echo get_host_list_from_nagios();?>)\' /><span class="input-group-btn"><button class="btn btn-danger" onClick="delFormField(\'#row'+id+'\');">'+dictionnary["action.delete"]+'</button></span></div></div>');
+		$("#row"+id).append('</select></div><div class="col-md-6"><div class="input-group"><input id="value'+id+'" name="value'+id+'" class="form-control" type="text" placeholder="*'+dictionnary["action.search"]+'*" onFocus=\'$(this).autocomplete({ source: <?php echo get_host_list_from_nagios();?> })\' /><span class="input-group-btn"><button class="btn btn-danger" onClick="delFormField(\'#row'+id+'\');">'+dictionnary["action.delete"]+'</button></span></div></div>');
 		$("#allvalues").append('</div>');
 		id = (id - 1) + 2;
 		document.getElementById("id").value = id;
