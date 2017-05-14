@@ -19,6 +19,8 @@
 #########################################
 */
 
+$.ajaxSetup({ cache: false });
+
 var path_frame="/module/module_frame/index.php?url=";
 var path_nagios_cgi="/thruk/cgi-bin";
 var path_nagios_status=path_nagios_cgi+"/status.cgi";

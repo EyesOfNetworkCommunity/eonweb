@@ -155,17 +155,16 @@ function searchAutocomplete(){
 	var datas;
 	$.ajax({
 		url: 'ged_actions.php',
-		async: false,
+		dataType: 'json',
 		data: {
 			action: 'advancedFilterSearch',
 			filter: category,
 			queue: queue
 		},
 		success: function(response){
-			datas = response;
+			$("#ged-search").autocomplete({ source: response });
 		}
 	});
-	$("#ged-search").attr('onFocus', '$(this).autocomplete({source: ' + datas + '})');
 }
 
 var event_index = 0;

@@ -217,7 +217,7 @@ function createDetailRow($event, $db_col_name, $row_name)
 
 	echo '<tr>';
 		echo '<th scope="row">'.getLabel($row_name).'</th>';
-		echo '<td>'.$event[$db_col_name].'</td>';
+		echo '<td style="word-break: break-all;">'.$event[$db_col_name].'</td>';
 	echo '</tr>';
 }
 

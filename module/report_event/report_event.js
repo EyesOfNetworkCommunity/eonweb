@@ -373,17 +373,16 @@ function changeAutocomplete(){
 	var datas;
 	$.ajax({
 		url: 'ajax.php',
-		async: false,
+		dataType: 'json',
 		data: {
 			field: field,
 			queue: queue
 		},
 		type: 'POST',
 		success: function(response){
-			datas = response;
+			$("#value").autocomplete({ source: response });
 		}
 	});
-	$("#value").attr('onFocus', '$(this).autocomplete({source: ' + datas + '})');
 
 	$('#value').focus();
 }
