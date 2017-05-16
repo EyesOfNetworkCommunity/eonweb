@@ -208,7 +208,7 @@ if(file_exists($file)){
 <script type="text/javascript">
 	$('.datatable-eonweb-ajax').DataTable({
 		responsive: true,
-		lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, dictionnary['label.all']] ],
+		lengthMenu: [ [25, 50, 100, 250, -1], [25, 50, 100, 250, dictionnary['label.all']] ],
 		language: {
 			lengthMenu: dictionnary['action.display'] + " _MENU_ " + dictionnary['label.entries'],
 			search: dictionnary['action.search']+":",
