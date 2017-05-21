@@ -61,10 +61,10 @@ if($snmp_version == "3"){
 	else
 		$snmp_priv_passphrase = "";
 
-	$command = "snmpwalk -c $snmp_community -v $snmp_version -a $snmp_auth_protocol -u $username -A $password $snmp_priv_protocol $snmp_priv_passphrase $snmp_context $host_name";
+	$command = "snmpwalk -c ".escapeshellarg($snmp_community)." -v ".escapeshellarg($snmp_version)." -a ".escapeshellarg($snmp_auth_protocol)." -u ".escapeshellarg($username)." -A ".escapeshellarg($password)." ".escapeshellarg($snmp_priv_protocol)." ".escapeshellarg($snmp_priv_passphrase)." ".escapeshellarg($snmp_context)." ".escapeshellarg($host_name);
 }
 else{
-	$command = "snmpwalk -c $snmp_community -v $snmp_version $host_name";
+	$command = "snmpwalk -c ".escapeshellarg($snmp_community)." -v ".escapeshellarg($snmp_version)." ".escapeshellarg($host_name);
 }
 
 echo '
