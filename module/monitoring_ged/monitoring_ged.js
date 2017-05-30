@@ -110,7 +110,7 @@ function stopTimer(timer)
 	}
 }
 
-function previousNext(direction){
+function previousNext(direction,gedaction){
 	if(direction == "next"){
 		event_index++;
 		if(event_index == selected_events.length){
@@ -124,7 +124,6 @@ function previousNext(direction){
 	}
 
 	var queue = $("#queue").val();
-	var action= $("#ged-action").val();
 
 	var event_infos = selected_events[event_index].split(":");
 	var host_name = event_infos[3];
@@ -134,7 +133,7 @@ function previousNext(direction){
 		url: "ged_actions.php",
 		data: {
 			queue: queue,
-			action: action,
+			action: gedaction,
 			selected_events: selected_events[event_index]
 		},
 		beforeSend: function(){
@@ -181,6 +180,11 @@ $(document).ready(function(){
 		loadTable();
 		startTimer();
 	}
+
+	var gedaction="";
+	$(document).on("click", "#ged-action button",function () {
+		gedaction = $(this).attr("id");
+	});
 	
 	$('#ged-modal').on('hidden.bs.modal', function (e) {
 		startTimer();
@@ -235,26 +239,30 @@ $(document).ready(function(){
 	});
 
 	// select all events in one shot
-	$(document).on('click', "#select-all, #unselect-all", function(event){
+	$(document).on('click', "#select-all1, #unselect-all1, #select-all2, #unselect-all2", function(event){
 		event.preventDefault();
-		if($(this).attr('id') == "select-all"){
+		if($(this).attr('id') == "select-all1" || $(this).attr('id') == "select-all2"){
 			$("#events-table tbody tr").each(function(){
 				if($(this).hasClass("active") == false && $(this).hasClass("child") == false){
 					$(this).addClass("active");
 				}
 			});
 			// display the right button
-			$("#select-all").addClass("hidden");
-			$("#unselect-all").removeClass("hidden");
-		} else if($(this).attr('id') == "unselect-all"){
+			$("#select-all1").addClass("hidden");
+			$("#unselect-all1").removeClass("hidden");
+			$("#select-all2").addClass("hidden");
+			$("#unselect-all2").removeClass("hidden");
+		} else if($(this).attr('id') == "unselect-all1" || $(this).attr('id') == "unselect-all2"){
 			$("#events-table tbody tr").each(function(){
 				if($(this).hasClass("active") == true && $(this).hasClass("child") == false){
 					$(this).removeClass("active");
 				}
 			});
 			// display the right button
-			$("#unselect-all").addClass("hidden");
-			$("#select-all").removeClass("hidden");
+			$("#unselect-all1").addClass("hidden");
+			$("#select-all1").removeClass("hidden");
+			$("#unselect-all2").addClass("hidden");
+			$("#select-all2").removeClass("hidden");
 		}
 		
 	});
@@ -266,16 +274,15 @@ $(document).ready(function(){
 		// and refresh ajax table
 		loadTable();
 	});
-
-
+	
 	// ajax when we execute an action into the ged table
 	$(document).on("submit", "#ged-table", function(event){
 		event.preventDefault();
 
 		event_index = 0;
 		var queue  = $("#queue").val();
-		var action = $("#ged-action").val();
-
+		var action = gedaction;
+		
 		// empty the event selected array before filling it
 		selected_events = [];
 		$("#events-table tbody tr.active").each(function(){
@@ -359,21 +366,21 @@ $(document).ready(function(){
 
 	// click for the next event
 	$(document).on("click", "#details-next", function(){
-		previousNext("next");
+		previousNext("next",gedaction);
 	});
 
 	// click for the previous event
 	$(document).on("click", "#details-prev", function(){
-		previousNext("previous");
+		previousNext("previous",gedaction);
 	});
 
 	$(document).keyup(function(e) {
     switch(e.which) {
         case 37: // left
-        	previousNext("previous");
+        	previousNext("previous",gedaction);
         	break;
         case 39: // right
-        	previousNext("next");
+        	previousNext("next",gedaction);
         	break;
         default: return; // exit this handler for other keys
     }
@@ -452,7 +459,7 @@ $(document).ready(function(){
 		var queue = $("#queue").val();
 
 		if(global_action.length == 0){
-			global_action = $("#ged-action").val();
+			global_action = gedaction;
 		}
 
 		$.ajax({

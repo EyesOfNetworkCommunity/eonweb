@@ -47,6 +47,24 @@ if(file_exists($file)){
 ?>
 
 <form id="ged-table" method="POST" onsubmit="return false;" class="form-inline">
+
+	<div class="form-group datatable_actions">
+		<div id="ged-action" class="btn-group">
+		<?php
+		if($queue == "active"){
+			$actions = $array_action_option;
+		} else {
+			$actions = $array_resolve_action_option;
+		}
+		foreach ($actions as $key => $value) {
+			echo "<button id=\"$key\" class=\"btn btn-sm btn-default\" type=\"submit\" name=\"action\">".getLabel($value)."</button>";
+		}
+		?>
+		</div>
+		<button id="select-all1" class="btn btn-sm btn-primary"><?php echo getLabel("action.select_all"); ?></button>
+		<button id="unselect-all1" class="btn btn-sm btn-primary hidden"><?php echo getLabel("action.unselect_all"); ?></button>
+	</div>
+	
 	<div class="dataTable_wrapper">
 		<table id="events-table" class="table table-striped datatable-eonweb-ajax table-condensed table-hover">
 			<thead>
@@ -184,22 +202,21 @@ if(file_exists($file)){
 	</div>
 
 	<div class="form-group">
-		<select id="ged-action" class="form-control" name="ged_actions">
-			<?php
-				if($queue == "active"){
-					$actions = $array_action_option;
-				} else {
-					$actions = $array_resolve_action_option;
-				}
-				foreach ($actions as $key => $value) {
-					echo "<option value=\"$key\">".getLabel("$value")."</option>";
-				}
-			?>
-		</select>
+		<div id="ged-action" class="btn-group">
+		<?php
+		if($queue == "active"){
+			$actions = $array_action_option;
+		} else {
+			$actions = $array_resolve_action_option;
+		}
+		foreach ($actions as $key => $value) {
+			echo "<button id=\"$key\" class=\"btn btn-sm btn-default\" type=\"submit\" name=\"action\">".getLabel($value)."</button>";
+		}
+		?>
+		</div>
+		<button id="select-all2" class="btn btn-sm btn-primary"><?php echo getLabel("action.select_all"); ?></button>
+		<button id="unselect-all2" class="btn btn-sm btn-primary hidden"><?php echo getLabel("action.unselect_all"); ?></button>
 	</div>
-	<button id="exec-ged-action" class="btn btn-primary" type="submit" name="action" value="submit"><?php echo getLabel("action.submit"); ?></button>
-	<button id="select-all" class="btn btn-primary"><?php echo getLabel("action.select_all"); ?></button>
-	<button id="unselect-all" class="btn btn-primary hidden"><?php echo getLabel("action.unselect_all"); ?></button>
 </form>
 
 <script src="/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>

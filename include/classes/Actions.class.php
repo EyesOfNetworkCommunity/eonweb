@@ -3,7 +3,7 @@
 #########################################
 #
 # Copyright (C) 2017 EyesOfNetwork Team
-# DEV NAME : Quentin HOARAU
+# DEV NAME : Jean-Philippe LEVY
 # VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
@@ -20,7 +20,36 @@
 #########################################
 */
 
-// Here, we can add new functions to monitoring_GED.
-// this file is automatically included in index.php
+/**
+ * Actions class for all eonweb's pages
+ */
+class Actions
+{
+
+	/**
+	 * Ged Acknowledge
+	 */
+	public function ged_acknowledge($selected_events, $queue)
+	{
+		return true;
+	}
+
+	/**
+	 * Ged Edit
+	 */
+	public function ged_edit($selected_events, $queue, $comments)
+	{
+		return true;
+	}
+	
+	/**
+	 * Ged Own
+	 */
+	public function ged_own($selected_events, $queue, $global_action)
+	{
+		return true;
+	}
+	
+}
 
 ?>

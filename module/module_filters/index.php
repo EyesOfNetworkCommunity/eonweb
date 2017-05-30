@@ -219,7 +219,7 @@ include("../monitoring_ged/ged_functions.php");
 					<option value="" selected><?php echo getLabel("label.create_filter"); ?></option>
 					<?php
 					foreach($filters as $filter_name)
-						echo '<option name="'.$filter_name->getAttribute("name").'" value="'.$filter_name->getAttribute("name").'">'.$filter_name->getAttribute("name").'</option>';
+						echo '<option id="'.$filter_name->getAttribute("name").'" value="'.$filter_name->getAttribute("name").'">'.$filter_name->getAttribute("name").'</option>';
 					?>
 				</select>
 			</div>

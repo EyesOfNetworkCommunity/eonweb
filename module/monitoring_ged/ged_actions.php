@@ -30,6 +30,7 @@ extract($_GET);
 if(!isset($queue)) { $queue="active"; } 
 elseif(!in_array($queue,$array_ged_queues)) { $queue="active"; }
 
+// execute actions
 if(isset($action) && $action != "" && (isset($selected_events) && count($selected_events) > 0) || isset($filter_name) || isset($filter) ){
 	switch ($action) {
 		case "0":
@@ -40,17 +41,21 @@ if(isset($action) && $action != "" && (isset($selected_events) && count($selecte
 			break;
 		case 'edit_event':
 			editEvent($selected_events, $queue, $comments);
+			$CustomActions->ged_edit($selected_events, $queue, $comments);
 			break;
 		case 'edit_all_event':
 			editAllEvents($selected_events, $queue, $comments);
+			$CustomActions->ged_edit($selected_events, $queue, $comments);
 			break;
 		case 'confirm':
 			if($global_action == "4"){
-				acknowledge($selected_events, $queue, $global_action);
+				acknowledge($selected_events, $queue);
+				$CustomActions->ged_acknowledge($selected_events, $queue);
 			} elseif($global_action == "5") {
 				delete($selected_events, $queue);
 			} else {
 				ownDisown($selected_events, $queue, $global_action);
+				$CustomActions->ged_own($selected_events, $queue, $global_action);
 			}
 			break;
 		case 'changeGedFilter':

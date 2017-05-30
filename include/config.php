@@ -58,7 +58,7 @@ $defaulttab=1;
 $defaultpage="./module/dashboard_view/index.php";
 
 // # Max number of lines in a tablesorter
-$maxlines=100;
+$maxlines=500;
 
 // # Page refresh interval
 $refresh_time=60;
@@ -73,18 +73,8 @@ $cookie_time=0;
 // LDAP
 $ldap_search_begins=array('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','1','2','3','4','5','6','7','8','9','0','\\28');
 
-// Max Display value
-$max_display=5;
-
-// Display 0 or not ; Use it like a boolean with values 0/1
-$display_zero=1;
-
 // Number of back-up file to use for nagios configuration file.
 $max_bu_file = 5;
-
-// Minimun and maximun number for duplicate process.
-$min_dup = 1000;
-$max_dup = 9999;
 
 // # Define All Path
 $path_eon="/srv/eyesofnetwork";
