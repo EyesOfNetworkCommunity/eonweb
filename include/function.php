@@ -21,7 +21,14 @@
 */
 
 # Internationalization
-include("Translator.class.php");
+include("classes/Translator.class.php");
+
+# Actions
+include("classes/Actions.class.php");	
+if(file_exists(dirname(__FILE__)."/classes/Custom.Actions.class.php")) { 
+	include("classes/Custom.Actions.class.php"); 
+}
+$CustomActions = class_exists("CustomActions") ? new CustomActions() : new Actions();
 
 // Display Error Message 
 function message($id, $text, $type){
@@ -1280,6 +1287,29 @@ function strTime($s) {
 
 	return $str;
 
+}
+
+# Get eon config values
+function getEonConfig($name,$type=false)
+{
+
+	global $database_eonweb;
+	global ${$name};
+	
+	// mysql request	
+	$sql = "SELECT value FROM configs WHERE name='".$name."'";
+	$value = sqlrequest($database_eonweb, $sql);
+	$result = mysqli_fetch_row($value);
+	
+	// return value if exists
+	if(count($result)==0) {
+		return ${$name};
+	} elseif($type=="array") {
+		return explode(",",$result[0]);
+	} else {
+		return $result[0];
+	}
+	
 }
 
 ?>
