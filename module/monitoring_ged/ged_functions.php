@@ -51,7 +51,6 @@ function createTableRow($event, $event_state, $queue)
 {
 	global $array_ged_queues;
 	global $dateformat;
-	global $ged_prefix;
 
 	if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
 	
@@ -60,7 +59,7 @@ function createTableRow($event, $event_state, $queue)
 
 		if($key == "equipment"){
 			if($event->src == "0.0.0.0" || $event->src == "0.0.0.0/0") {
-				$url_host = preg_replace("/^".$ged_prefix."/","",$value,1);
+				$url_host = preg_replace("/^".getEonConfig("ged_prefix")."/","",$value,1);
 				$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=1&host=$url_host");
 				$value = '<a href="../module_frame/index.php?url='.$thruk_url.'">'.$value.'</a>';
 			} else { 
@@ -70,7 +69,7 @@ function createTableRow($event, $event_state, $queue)
 		}
 		if($key == "service"){
 			if($event->src == "0.0.0.0" || $event->src == "0.0.0.0/0") {
-				$url_host = preg_replace("/^".$ged_prefix."/","",$event->equipment,1);
+				$url_host = preg_replace("/^".getEonConfig("ged_prefix")."/","",$event->equipment,1);
 				$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=2&host=".$url_host."&service=$value");
 				$value = '<a href="../module_frame/index.php?url='.$thruk_url.'">'.$value.'</a>';
 			} else {
@@ -186,7 +185,7 @@ function createWhereClause($owner, $filter, $search, $daterange, $ok, $warning, 
 		$where_clause .= " AND state IN ($states_list)";
 	}
 
-	$where_clause .= " ORDER BY l_sec DESC LIMIT 500";
+	$where_clause .= " ORDER BY l_sec DESC LIMIT ".getEonConfig("maxlines").";";
 	return $where_clause;
 }
 

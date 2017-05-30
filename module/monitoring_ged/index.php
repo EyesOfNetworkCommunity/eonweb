@@ -23,7 +23,6 @@
 include("../../header.php");
 include("../../side.php");
 include("ged_functions.php");
-include("external_functions.php");
 
 $queue = "active";
 if(isset($_GET["q"]) && $_GET["q"] == "history"){
@@ -87,6 +86,7 @@ if(file_exists($file)){
 		if(!$gedd) {
 			message(0," : ged daemon must be dead","critical");
 		}
+		message("", getLabel("label.search_limit")." ".getEonConfig("maxlines")." ".getLabel("label.entries"), "");
 		?>
 	</div>
 
@@ -248,7 +248,7 @@ if(file_exists($file)){
 
 	<div id="result"></div>
 	<?php } ?>
-
+	
 	<div id="loader" style="visibility: hidden;">
 		<img src="/images/loader.gif" alt="loading">
 	</div>

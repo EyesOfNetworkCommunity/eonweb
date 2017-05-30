@@ -55,7 +55,7 @@ function checkHost($type, $address, $port, $path){
  */
 function getServicesStateNbr()
 {
-	global $sockets;
+	$sockets = getEonConfig("sockets","array");
 
 	$result = array();
 	$nbr_services_pending = 0;
@@ -139,7 +139,7 @@ function getServicesStateNbr()
  */
 function getHostsStateNbr()
 {
-	global $sockets;
+	$sockets = getEonConfig("sockets","array");
 
 	$result = array();
 	$nbr_hosts_pending = 0;
