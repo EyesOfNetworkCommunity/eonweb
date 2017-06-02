@@ -91,7 +91,7 @@ function changeModalState(e)
 
 	removeModalState();
 
-	$(".modal-content").addClass("panel-"+event_state);
+	$("#ged-modal .modal-content").addClass("panel-"+event_state);
 }
 
 function startTimer()
@@ -241,30 +241,31 @@ $(document).ready(function(){
 	// select all events in one shot
 	$(document).on('click', "#select-all1, #unselect-all1, #select-all2, #unselect-all2", function(event){
 		event.preventDefault();
-		if($(this).attr('id') == "select-all1" || $(this).attr('id') == "select-all2"){
-			$("#events-table tbody tr").each(function(){
-				if($(this).hasClass("active") == false && $(this).hasClass("child") == false){
-					$(this).addClass("active");
-				}
-			});
-			// display the right button
-			$("#select-all1").addClass("hidden");
-			$("#unselect-all1").removeClass("hidden");
-			$("#select-all2").addClass("hidden");
-			$("#unselect-all2").removeClass("hidden");
-		} else if($(this).attr('id') == "unselect-all1" || $(this).attr('id') == "unselect-all2"){
-			$("#events-table tbody tr").each(function(){
-				if($(this).hasClass("active") == true && $(this).hasClass("child") == false){
-					$(this).removeClass("active");
-				}
-			});
-			// display the right button
-			$("#unselect-all1").addClass("hidden");
-			$("#select-all1").removeClass("hidden");
-			$("#unselect-all2").addClass("hidden");
-			$("#select-all2").removeClass("hidden");
+		if(!$(".dataTables_empty").length) {
+			if($(this).attr('id') == "select-all1" || $(this).attr('id') == "select-all2"){
+				$("#events-table tbody tr").each(function(){
+					if($(this).hasClass("active") == false && $(this).hasClass("child") == false){
+						$(this).addClass("active");
+					}
+				});
+				// display the right button
+				$("#select-all1").addClass("hidden");
+				$("#unselect-all1").removeClass("hidden");
+				$("#select-all2").addClass("hidden");
+				$("#unselect-all2").removeClass("hidden");
+			} else if($(this).attr('id') == "unselect-all1" || $(this).attr('id') == "unselect-all2"){
+				$("#events-table tbody tr").each(function(){
+					if($(this).hasClass("active") == true && $(this).hasClass("child") == false){
+						$(this).removeClass("active");
+					}
+				});
+				// display the right button
+				$("#unselect-all1").addClass("hidden");
+				$("#select-all1").removeClass("hidden");
+				$("#unselect-all2").addClass("hidden");
+				$("#select-all2").removeClass("hidden");
+			}
 		}
-		
 	});
 
 	// ajax when we submit filters form
@@ -331,14 +332,14 @@ $(document).ready(function(){
 				selected_events: events
 			},
 			beforeSend: function(){
-				$("#modal-nav, #edit-btns, #ack-btns, #event-validation").hide();
+				$("#modal-nav, #edit-btns, #own-btns, #ack-btns, #event-validation").hide();
 				
 				// configure modal footer according to action selected
 				switch(action){
 					case "0":
-						$("#modal-nav, #ack-btns").show(); break;
+						$("#modal-nav, #own-btns, #ack-btns").show(); break;
 					case "1":
-						$("#modal-nav, #edit-btns, #ack-btns").show(); break;
+						$("#modal-nav, #edit-btns, #own-btns, #ack-btns").show(); break;
 					default:
 						$("#event-validation").show(); break;
 				}
@@ -374,32 +375,54 @@ $(document).ready(function(){
 		previousNext("previous",gedaction);
 	});
 
+	// use keyboard for next/previous
 	$(document).keyup(function(e) {
-    switch(e.which) {
-        case 37: // left
-        	previousNext("previous",gedaction);
-        	break;
-        case 39: // right
-        	previousNext("next",gedaction);
-        	break;
-        default: return; // exit this handler for other keys
-    }
-    e.preventDefault(); // prevent the default action (scroll / move caret)
-});
+		switch(e.which) {
+			case 37: // left
+				previousNext("previous",gedaction);
+				break;
+			case 39: // right
+				previousNext("next",gedaction);
+				break;
+			default: return; // exit this handler for other keys
+		}
+		e.preventDefault(); // prevent the default action (scroll / move caret)
+	});
 
 	// click to edit an event
-	$(document).on("click", "#edit-event, #edit-all-event", function(){
+	$(document).on("click", "#edit-event, #edit-all-event, #own-event, #own-all-event, #ack-event, #ack-all-event", function(){
+		global_action = this.id;
+		global_action_name = this.id;
+		action_title = "action.edit";
+		
+		if(global_action == "own-event" || global_action == "own-all-event") {
+			action_title = "action.own";
+			global_action = 2;
+		} else if(global_action == "ack-event" || global_action == "ack-all-event") {
+			action_title = "action.ack";
+			global_action = 4;
+		}
+		
+		$("#confirmation-modal-title").html(dictionnary[action_title]);
+		$("#confirmation-modal").modal();
+	});
+	
+	// click to confirm event edit/own/ack
+	$(document).on("click", "#confirmation-event-validation", function(){
 		var queue = $("#queue").val();
-		var comments = $("#event-comments").val();
-		var action = "";
-
+		var action = "confirm";
+		var comments = "";
+				
 		var events = [];
-		if(this.id == "edit-event"){
-			events = selected_events[event_index];
-			action = "edit_event";
+		if(global_action_name == "edit-event" || global_action_name == "own-event" || global_action_name == "ack-event"){
+			events.push(selected_events[event_index]);
 		} else {
 			events = selected_events;
-			action = "edit_all_event";
+		}
+
+		if($("#event-comments").length) {
+			comments = $("#event-comments").val();
+			action = "edit"
 		}
 
 		$.ajax({
@@ -407,42 +430,12 @@ $(document).ready(function(){
 			data: {
 				queue: queue,
 				action: action,
+				global_action: global_action,
 				selected_events: events,
 				comments: comments
 			},
 			success: function(response){
 				$(".modal-body #event-message").html(response);
-				$("#ged-modal").modal('hide');
-				loadTable();
-			}
-		});
-	});
-
-	$(document).on("click", "#ack-event, #ack-all-event", function(){
-		global_action = this.id;
-		$(".confirmation-modal-title").html(dictionnary["action.ack"]);
-		$("#confirmation-modal").modal();
-	});
-
-	$(document).on("click", "#confirmation-event-validation", function(){
-		var queue = $("#queue").val();
-
-		var events = [];
-		if(global_action == "ack-event"){
-			events.push(selected_events[event_index]);
-		} else {
-			events = selected_events;
-		}
-
-		$.ajax({
-			url: 'ged_actions.php',
-			data: {
-				queue: queue,
-				action: "confirm",
-				global_action: 4,
-				selected_events: events
-			},
-			success: function(response){
 				$("#confirmation-modal").modal('hide');
 				$("#ged-modal").modal('hide');
 				loadTable();
@@ -450,6 +443,7 @@ $(document).ready(function(){
 		});
 	});
 
+	// click to cancel event edit/own/ack
 	$(document).on("click", "#confirmation-action-cancel", function(){
 		$("#confirmation-modal").modal('hide');
 	});
@@ -457,11 +451,8 @@ $(document).ready(function(){
 	// click to valid the own/disown/ack/delete
 	$(document).on("click", "#event-validation", function(){
 		var queue = $("#queue").val();
-
-		if(global_action.length == 0){
-			global_action = gedaction;
-		}
-
+		global_action = gedaction;
+		
 		$.ajax({
 			url: "ged_actions.php",
 			data: {

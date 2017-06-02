@@ -91,7 +91,7 @@ function createTableRow($event, $event_state, $queue)
 			$value = "<input type='hidden' value='".$value."'>";
 			$class = 'class="text-center"';
 			if($event->comments != ""){
-				$value .= ' <i class="glyphicon glyphicon-comment"></i>';
+				$value .= ' <i class="glyphicon glyphicon-comment" title="'.$event->comments.'"></i>';
 			}
 			if($event->owner != ""){
 				$value .= ' <i class="glyphicon glyphicon-floppy-disk"></i>';
@@ -283,27 +283,6 @@ function edit($selected_events, $queue)
 	</form>";
 }
 
-function editEvent($selected_events, $queue, $comments)
-{
-	global $array_ged_queues;
-	global $database_ged;
-
-	if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
-	
-	// get all needed infos into variables
-	$value_parts = explode(":", $selected_events);
-	$id = $value_parts[0];
-	$ged_type = $value_parts[1];
-
-	$sql = "UPDATE ".$ged_type."_queue_".$queue." SET comments=? WHERE id = ?";
-	$result = sqlrequest($database_ged, $sql, false, array("ss",(string)$comments,(string)$id));
-	if($result){
-		message(11, " : ".getLabel("message.event_edited"), "ok");
-	} else {
-		message(11, " : ".getLabel("message.event_edited_error"), "danger");
-	}
-}
-
 function editAllEvents($selected_events, $queue, $comments)
 {
 	global $array_ged_queues;
@@ -370,11 +349,10 @@ function ownDisown($selected_events, $queue, $global_action)
 				if($key == "owner"){
 					$event[$key] = $owner;
 				}
-				$ged_command .= "\"".$event[$key]."\" ";
+				$ged_command .= escapeshellarg($event[$key])." ";
 			}
 		}
 		$ged_command = trim($ged_command, " ");
-		$ged_command=escapeshellcmd($ged_command);
 		
 		shell_exec($path_ged_bin." ".$ged_command);
 		logging("ged_update",$ged_command);
@@ -417,11 +395,10 @@ function acknowledge($selected_events, $queue)
 				if($key == "owner"){
 					$event[$key] = $owner;
 				}
-				$ged_command .= "\"".$event[$key]."\" ";
+				$ged_command .= escapeshellarg($event[$key])." ";
 			}
 		}
 		$ged_command = trim($ged_command, " ");
-		$ged_command=escapeshellcmd($ged_command);
 		
 		shell_exec($path_ged_bin." ".$ged_command);
 		logging("ged_update",$ged_command);
@@ -460,11 +437,10 @@ function delete($selected_events, $queue)
 			$ged_command = "-drop -type $ged_type_nbr -queue $queue ";
 			foreach ($array_ged_packets as $key => $value) {
 				if($value["key"] == true){
-					$ged_command .= "\"".$event[$key]."\" ";
+					$ged_command .= escapeshellarg($event[$key])." ";
 				}
 			}
 			$ged_command = trim($ged_command, " ");
-			$ged_command=escapeshellcmd($ged_command);
 					
 			shell_exec($path_ged_bin." ".$ged_command);
 			logging("ged_update",$ged_command);
@@ -475,8 +451,7 @@ function delete($selected_events, $queue)
 
 	if($queue == "history"){
 		$id_list = trim($id_list, ",");
-		$ged_command = "-drop -id ".$id_list." -queue history";
-		$ged_command=escapeshellcmd($ged_command);
+		$ged_command = "-drop -id ".escapeshellarg($id_list)." -queue history";
 		
 		shell_exec($path_ged_bin." ".$ged_command);
 		logging("ged_update",$ged_command);
