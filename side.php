@@ -41,15 +41,25 @@ if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 		$test_url = $ref_url_parts[0];
 		
 		// we test the module name in lower case (that is easier)
-		if(file_exists($path_menus."-".$test_url.".json")){
+		if(file_exists($path_menus."-".$test_url.".json") or file_exists($path_menus_custom."-".$test_url.".json")){
+			$prefix_url = "/module/module_frame/index.php?url=";
 			if($m->initFile($path_menus."-".$test_url,$path_menus_custom."-".$test_url)){
 				$navbar_menus = $m->createPHPDictionnary();
 			}
 		}
 		
 	}
+} else {
+	// custom navbar
+	$module_path=basename(dirname($_SERVER["PHP_SELF"]));
+	if(file_exists($path_menus."-".$module_path.".json") or file_exists($path_menus_custom."-".$module_path.".json")){
+		$prefix_url = "";
+		if($m->initFile($path_menus."-".$module_path,$path_menus_custom."-".$module_path)){
+			$navbar_menus = $m->createPHPDictionnary();
+		}
+	}
 }
-
+		
 ?>
 
 <!-- Nav menu -->
@@ -79,7 +89,7 @@ if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 		if(isset($navbar_menus["navbarlink"])){
 			foreach ($navbar_menus["navbarlink"] as $navbarlink) {
 		?>
-				<li><a href="/module/module_frame/index.php?url=<?php echo urlencode($navbarlink["url"]); ?>"><?php echo getLabel($navbarlink["name"]); ?></a></li>
+				<li><a href="<?php echo $prefix_url.urlencode($navbarlink["url"]); ?>"><?php echo getLabel($navbarlink["name"]); ?></a></li>
 		<?php
 			}
 		}
@@ -94,7 +104,7 @@ if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 						foreach ($navbarsubtab["link"] as $link) {
 		?>
 							<li>
-								<a href="/module/module_frame/index.php?url=<?php echo $link["url"]; ?>">
+								<a href="<?php echo $prefix_url.$link["url"]; ?>">
 									<?php echo getLabel($link["name"]); ?>
 								</a>
 							</li>
