@@ -48,7 +48,7 @@ if(file_exists($file)){
 
 <form id="ged-table" method="POST" onsubmit="return false;" class="form-inline">
 
-	<div class="form-group datatable_actions">
+	<div class="form-group datatable_actions_top">
 		<div id="ged-action" class="btn-group">
 		<?php
 		if($queue == "active"){

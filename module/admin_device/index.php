@@ -51,12 +51,12 @@ include("../../side.php");
 				
 				$command="";
 				if($_REQUEST['snmp_version']=="3"){
-					$username = $_REQUEST['username'];
-					$password = $_REQUEST['password'];
-					$snmp_auth_protocol = $_REQUEST['snmp_auth_protocol'];
-					$snmp_priv_passphrase = $_REQUEST['snmp_priv_passphrase'];
-					$snmp_priv_protocol = $_REQUEST['snmp_priv_protocol'];
-					$snmp_context = $_REQUEST['snmp_context'];
+					$username = escapeshellarg($_REQUEST['username']);
+					$password = escapeshellarg($_REQUEST['password']);
+					$snmp_auth_protocol = escapeshellarg($_REQUEST['snmp_auth_protocol']);
+					$snmp_priv_passphrase = escapeshellarg($_REQUEST['snmp_priv_passphrase']);
+					$snmp_priv_protocol = escapeshellarg($_REQUEST['snmp_priv_protocol']);
+					$snmp_context = escapeshellarg($_REQUEST['snmp_context']);
 					
 					if($snmp_context=="")
 						$snmp_context="";
@@ -70,14 +70,14 @@ include("../../side.php");
 					
 					$command="--username=$username --password=$password --authproto=$snmp_auth_protocol $snmp_priv_protocol $snmp_context";
 				}
-				exec("/usr/bin/php $path_eon/cacti/cli/add_device.php --description='".$_REQUEST['hosts'][$i]."' --ip='".$host_name."' --template='".$_REQUEST['snmp_template']."' --avail='snmp' --community='".$_REQUEST['snmp_community']."' --port='".$_REQUEST['snmp_port']."' --version='".$_REQUEST['snmp_version']."' ".$command."");
+				exec("/usr/bin/php $path_eon/cacti/cli/add_device.php --description=".escapeshellarg($_REQUEST['hosts'][$i])." --ip=".escapeshellarg($host_name)." --template=".escapeshellarg($_REQUEST['snmp_template'])." --avail='snmp' --community=".escapeshellarg($_REQUEST['snmp_community'])." --port=".escapeshellarg($_REQUEST['snmp_port'])." --version=".escapeshellarg($_REQUEST['snmp_version'])." ".$command."");
 			}
 		}
 
 		# --- Section delete host and any other data (data source, graph) from cacti
 		if(isset($_POST['Remove'])){
 			for($i=0;isset($_POST['hosts_cacti'][$i]);$i++){
-				exec("/usr/bin/php $path_eon/cacti/cli/remove_device.php --device-id=".$_REQUEST['hosts_cacti'][$i]."");
+				exec("/usr/bin/php $path_eon/cacti/cli/remove_device.php --device-id=".escapeshellarg($_REQUEST['hosts_cacti'][$i])."");
 			}
 		}
 	?>

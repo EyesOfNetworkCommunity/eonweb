@@ -184,6 +184,10 @@ table.dataTable.table-condensed.dtr-inline.collapsed > tbody > tr > td:first-chi
 	top: 6px !important;
 }
 
-.datatable_actions {
-	margin-bottom: 20px !important;
+.datatable_actions_bottom {
+	margin-top: 20px !important;
+}
+
+.datatable_actions_top {
+        margin-bottom: 20px !important;
 }
