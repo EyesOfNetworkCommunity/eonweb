@@ -176,8 +176,9 @@ var initialLoad = true;
 $(document).ready(function(){
 	var queue = $("#queue").val();
 
+	loadTable();
+	
 	if(queue == "active"){
-		loadTable();
 		startTimer();
 	}
 
