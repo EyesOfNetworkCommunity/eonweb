@@ -145,6 +145,7 @@ if(file_exists($file)){
 
 						// if there's a default filter
 						$array_filters = [];
+						$array_filters_exploded = [];
 						if($default!=""){
 							$g_filters = $xpath->query("//ged/filters[@name='$default']/filter");
 
@@ -174,9 +175,17 @@ if(file_exists($file)){
 										$mysqli_prepare[0].="s";
 										$mysqli_prepare[]=(string)$like;
 									} else {
-										$sql .= " OR $key LIKE ?";
-										$mysqli_prepare[0].="s";
-										$mysqli_prepare[]=(string)$like;
+										$array_filters_exploded = explode(",",$like);
+										foreach($array_filters_exploded as $filter_group) {
+											$first_node=$filter_group.",%";
+											$middle_node="%,".$filter_group.",%";
+											$last_node="%,".$filter_group;
+											$sql .= " OR $key LIKE ? OR $key LIKE ? OR $key LIKE ?";
+											$mysqli_prepare[0].="sss";
+											$mysqli_prepare[]=(string)$first_node;
+											$mysqli_prepare[]=(string)$middle_node;
+											$mysqli_prepare[]=(string)$last_node;
+										}
 									}
 									$sqlcpt++;
 								}
