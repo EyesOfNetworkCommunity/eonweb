@@ -271,7 +271,7 @@ function getEventStateNbr()
 				if ( substr($filter_value, -1) === '*' ) {
 					$text .= "%";
 				}
-				
+				if(!isset($requete_filter)) $requete_filter="";	
 				$requete_filter .= $name . " LIKE '%".$text."%' OR ";
 				$i++;
 			}
@@ -361,7 +361,7 @@ function getNumberEventByStateAndTime()
 			if ( substr($filter_value, -1) === '*' ) {
 				$text .= "%";
 			}
-			
+			if(!isset($requete_filter)) $requete_filter="";	
 			$requete_filter .= $name . " LIKE '%".$text."%' OR ";
 			$i++;
 		}
