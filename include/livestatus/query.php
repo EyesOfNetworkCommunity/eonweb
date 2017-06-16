@@ -121,14 +121,14 @@ function getServicesStateNbr()
 	array_push($result, $nbr_services_critical);
 	array_push($result, $nbr_services_unknown);
 	
-	$client->command(
+	/*$client->command(
 		array(
 			'ACKNOWLEDGE_SVC_PROBLEM',
 			'example.com',
 			'some service', 2, 0, 1,
 			'username', 'Example comment'
 		)
-	);
+	);*/
 	
 	// response for the Ajax call
 	echo json_encode($result);
@@ -203,14 +203,14 @@ function getHostsStateNbr()
 	array_push($result, $nbr_host_unknown);
 
 	// fill an empty array with previous response, in order to have a beautiful JSON to use
-	$client->command(
+	/*$client->command(
 		array(
 			'ACKNOWLEDGE_SVC_PROBLEM',
 			'example.com',
 			'some service', 2, 0, 1,
 			'username', 'Example comment'
 		)
-	);
+	);*/
 	
 	// response for the Ajax call
 	echo json_encode($result);
