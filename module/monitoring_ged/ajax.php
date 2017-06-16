@@ -171,17 +171,24 @@ if(file_exists($file)){
 										$like .= "%";
 									}
 									if($sqlcpt=="0") {
-										$sql .= " AND ($key LIKE ?";
-										$mysqli_prepare[0].="s";
+										$first_node=$like.",%";
+										$middle_node="%,".$like.",%";
+										$last_node="%,".$like;
+										$sql .= " AND ($key LIKE ? OR $key LIKE ? OR $key LIKE ? OR $key LIKE ?";
+										$mysqli_prepare[0].="ssss";
 										$mysqli_prepare[]=(string)$like;
+										$mysqli_prepare[]=(string)$first_node;
+										$mysqli_prepare[]=(string)$middle_node;
+										$mysqli_prepare[]=(string)$last_node;
 									} else {
 										$array_filters_exploded = explode(",",$like);
 										foreach($array_filters_exploded as $filter_group) {
 											$first_node=$filter_group.",%";
 											$middle_node="%,".$filter_group.",%";
 											$last_node="%,".$filter_group;
-											$sql .= " OR $key LIKE ? OR $key LIKE ? OR $key LIKE ?";
-											$mysqli_prepare[0].="sss";
+											$sql .= " OR $key LIKE ? OR $key LIKE ? OR $key LIKE ? OR $key LIKE ?";
+											$mysqli_prepare[0].="ssss";
+											$mysqli_prepare[]=(string)$filter_group;
 											$mysqli_prepare[]=(string)$first_node;
 											$mysqli_prepare[]=(string)$middle_node;
 											$mysqli_prepare[]=(string)$last_node;
