@@ -20,10 +20,10 @@
 #########################################
 */
 
-require_once("../config.php");
-require_once("../arrays.php");
-require_once("../function.php");  
-require_once("Client.php");
+require_once(dirname(__FILE__)."/../config.php");
+require_once(dirname(__FILE__)."/../arrays.php");
+require_once(dirname(__FILE__)."/../function.php");
+require_once(dirname(__FILE__)."/Client.php");
 use Nagios\Livestatus\Client;
 
 // define the action to do
@@ -121,15 +121,6 @@ function getServicesStateNbr()
 	array_push($result, $nbr_services_critical);
 	array_push($result, $nbr_services_unknown);
 	
-	/*$client->command(
-		array(
-			'ACKNOWLEDGE_SVC_PROBLEM',
-			'example.com',
-			'some service', 2, 0, 1,
-			'username', 'Example comment'
-		)
-	);*/
-	
 	// response for the Ajax call
 	echo json_encode($result);
 }
@@ -201,16 +192,6 @@ function getHostsStateNbr()
 	array_push($result, $nbr_host_warning);
 	array_push($result, $nbr_host_critical);
 	array_push($result, $nbr_host_unknown);
-
-	// fill an empty array with previous response, in order to have a beautiful JSON to use
-	/*$client->command(
-		array(
-			'ACKNOWLEDGE_SVC_PROBLEM',
-			'example.com',
-			'some service', 2, 0, 1,
-			'username', 'Example comment'
-		)
-	);*/
 	
 	// response for the Ajax call
 	echo json_encode($result);
@@ -219,7 +200,7 @@ function getHostsStateNbr()
 /**
  * Get number of event ordered by state (in DB GED), according to the default filter if there is.
  */
-function getEventStateNbr()
+function getEventStateNbr($result=false)
 {
 	global $database_ged;
 	
@@ -305,6 +286,11 @@ function getEventStateNbr()
 	
 	// response for the Ajax call
 	echo json_encode($result);
+	if($return) {
+		return $result;
+	} else {
+		echo json_encode($result);
+	}
 }
 
 /**
