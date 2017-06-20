@@ -200,7 +200,7 @@ function getHostsStateNbr()
 /**
  * Get number of event ordered by state (in DB GED), according to the default filter if there is.
  */
-function getEventStateNbr($result=false)
+function getEventStateNbr($return=false)
 {
 	global $database_ged;
 	
