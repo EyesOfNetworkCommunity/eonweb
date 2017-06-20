@@ -285,12 +285,12 @@ function getEventStateNbr($result=false)
 	array_push($result, $nbr_unknown);
 	
 	// response for the Ajax call
-	echo json_encode($result);
 	if($return) {
 		return $result;
 	} else {
 		echo json_encode($result);
 	}
+	
 }
 
 /**
