@@ -17,10 +17,14 @@
     "tests"
   ],
   "dependencies": {
-    "startbootstrap-sb-admin-2": "^3.3.7",
-    "highcharts": "^4.2.6",
-    "jquery-ui": "^1.12.0",
-    "bootstrap-daterangepicker": "^2.1.24",
-    "bootstrap-select": "^1.10.0"
+    "startbootstrap-sb-admin-2": "BlackrockDigital/startbootstrap-sb-admin-2#^3.3.7",
+    "font-awesome": "^4.7.0",
+    "highcharts": "^5.0.12",
+    "jquery-ui": "^1.12.1",
+    "bootstrap-daterangepicker": "^2.1.25",
+    "bootstrap-select": "^1.12.2"
+  },
+  "resolutions": {
+    "font-awesome": "^4.7.0"
   }
 }
