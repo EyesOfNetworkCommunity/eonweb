@@ -88,8 +88,11 @@ if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 		// create the top navbar menu
 		if(isset($navbar_menus["navbarlink"])){
 			foreach ($navbar_menus["navbarlink"] as $navbarlink) {
+				if(!empty($prefix_url)) {
+					$navbarlink["url"]=urlencode($navbarlink["url"]);
+				}
 		?>
-				<li><a href="<?php echo $prefix_url.urlencode($navbarlink["url"]); ?>"><?php echo getLabel($navbarlink["name"]); ?></a></li>
+				<li><a href="<?php echo $prefix_url.$navbarlink["url"]; ?>"><?php echo getLabel($navbarlink["name"]); ?></a></li>
 		<?php
 			}
 		}
@@ -102,6 +105,9 @@ if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 		<?php
 					if(isset($navbarsubtab["link"])){
 						foreach ($navbarsubtab["link"] as $link) {
+							if(!empty($prefix_url)) {
+								$link["url"]=urlencode($link["url"]);
+							}
 		?>
 							<li>
 								<a href="<?php echo $prefix_url.$link["url"]; ?>">
