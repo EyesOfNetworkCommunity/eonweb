@@ -125,11 +125,6 @@ $path_gedhdb="$path_ged/etc/bkd/gedmysql.cfg";
 $path_gedqcfg="$path_ged/etc/gedq.cfg";
 $path_gedtcfg="$path_ged/etc/gedt.cfg";
 
-// # Net-SNMP
-$path_snmpwalk="/usr/bin/snmpwalk";
-$path_snmpconf="/etc/snmp/snmpd.conf";
-$path_snmptrapconf="/etc/snmp/snmptrapd.conf";
-
 // # NetCAT
 $default_minport=1;
 $default_maxport=1024;
