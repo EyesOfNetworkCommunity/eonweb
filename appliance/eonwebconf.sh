@@ -11,9 +11,9 @@ backupdir="/etc"
 
 # change right acces for this files
 chmod 775 ${datadir}/cache
-chmod 666 ${snmpdir}/snmpd.conf
-chmod 666 ${snmpdir}/snmptrapd.conf
-chmod 666 ${backupdir}/backup-manager.conf
+chmod 644 ${snmpdir}/snmpd.conf
+chmod 644 ${snmpdir}/snmptrapd.conf
+chmod 644 ${backupdir}/backup-manager.conf
 
 # change own user for eonweb directory
 chown -R root:eyesofnetwork ${datadir}*
