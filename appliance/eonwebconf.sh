@@ -1,7 +1,8 @@
 #!/bin/sh
 
 # Define values
-eonconfdir="/srv/eyesofnetworkconf/eonweb"
+eonconfpath=$(readlink -f "$0")
+eonconfdir=$(dirname "$eonconfpath")
 eondir="/srv/eyesofnetwork"
 datadir="$eondir/eonweb"
 eonwebdb="eonweb"
