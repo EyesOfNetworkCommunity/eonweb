@@ -175,7 +175,7 @@ $(document).ready(function() {
 		// Add
 		$('#rule_service_button').on('click',function(){
 			var o = new Option($("#rule_service2").val(),$("#rule_service2").val(),true,true);
-			document.getElementById("services").append(o);
+			$("#services").append(o);
 		});
 		
 		// Delete
