@@ -22,7 +22,7 @@
     "highcharts": "^5.0.12",
     "jquery-ui": "^1.12.1",
     "bootstrap-daterangepicker": "^2.1.25",
-    "bootstrap-select": "^1.12.2"
+    "bootstrap-select": "^1.12.3"
   },
   "resolutions": {
     "font-awesome": "^4.7.0"
