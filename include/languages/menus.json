@@ -313,7 +313,7 @@
                         },
                         {
                             "name":"menu.link.notif",
-                            "url":"/module/admin_files/index.php?file=notification",
+                            "url":"/module/admin_notifier/",
                             "target":"main"
                         },
                         {

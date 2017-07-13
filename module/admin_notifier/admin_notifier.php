@@ -3,7 +3,7 @@
 #########################################
 #
 # Copyright (C) 2017 EyesOfNetwork Team
-# DEV NAME : Quentin HOARAU
+# DEV NAME : Bastien PUJOS
 # VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
@@ -19,32 +19,7 @@
 #
 #########################################
 */
-
-include("../../header.php");
-include("../../side.php");
-
 ?>
 
-<div id="page-wrapper">
-	<?php
-		if(isset($_GET["file"])){
-			$file=$_GET["file"];
-			if(!isset(${"path_".$file}))
-				die("");
-		}
-		else
-			die("");
-	?>
-	<div class="row">
-		<div class="col-lg-12">
-			<h1 class="page-header"><?php echo getLabel("label.admin_files.title_$file"); ?></h1>
-		</div>
-	</div>
-
-	<?php
-		// Test if file is writable
-		filemodify(${"path_".$file},$file);
-	?>
-</div>
-
-<?php include("../../footer.php"); ?>
+<!-- talbe-sort -->
+<script src="/module/admin_notifier/js/jquery.table_sort.min.js"></script>

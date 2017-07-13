@@ -97,9 +97,6 @@ $path_menu_limited="$path_languages/menus-limited";
 $path_menu_limited_custom="$path_languages/custom.menus-limited";
 $path_reports="$path_eonweb/include/reports";
 
-// # Backup Manager
-$path_backupconf="/etc/backup-manager.conf";
-
 // # Nagios
 $path_nagios="$path_eon/nagios";
 $path_notifier="$path_eon/notifier";
@@ -124,6 +121,10 @@ $path_gedcfg="$path_ged/etc/ged.cfg";
 $path_gedhdb="$path_ged/etc/bkd/gedmysql.cfg";
 $path_gedqcfg="$path_ged/etc/gedq.cfg";
 $path_gedtcfg="$path_ged/etc/gedt.cfg";
+
+// # Notifier
+$path_notifier_rules="$path_notifier/etc/notifier.rules";
+$path_notifier_methods="$path_notifier/etc/notifier.cfg";
 
 // # NetCAT
 $default_minport=1;

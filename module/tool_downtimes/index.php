@@ -33,7 +33,7 @@ extract($_POST);
 	
 	<div class="row">
 		<div class="col-lg-12">
-			<h1 class="page-header"><?php echo getLabel("label.admin_files.title_nagiosdowntime"); ?></h1>
+			<h1 class="page-header"><?php echo getLabel("label.tool_downtimes.title_nagiosdowntime"); ?></h1>
 		</div>
 	</div>
 	

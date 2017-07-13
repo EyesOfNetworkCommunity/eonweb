@@ -15,6 +15,10 @@ chmod 775 ${datadir}/cache
 chmod 644 ${snmpdir}/snmpd.conf
 chmod 644 ${snmpdir}/snmptrapd.conf
 chmod 644 ${backupdir}/backup-manager.conf
+chmod 664 /srv/eyesofnetwork/notifier/etc/notifier.cfg
+chmod 664 /srv/eyesofnetwork/notifier/etc/notifier.rules
+chown root:eyesofnetwork /srv/eyesofnetwork/notifier/etc/notifier.cfg
+chown root:eyesofnetwork /srv/eyesofnetwork/notifier/etc/notifier.rules
 
 # change own user for eonweb directory
 chown -R root:eyesofnetwork ${datadir}*
