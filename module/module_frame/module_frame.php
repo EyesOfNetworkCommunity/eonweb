@@ -57,6 +57,7 @@ $(window).bind("load resize", function() {
 	$(".iframe").css("top",topOffset);
 	$(".iframe").css("left",leftOffset);
 	$(".iframe").height(height-$(".footer").height());
+	$("#page-wrapper").height($(".iframe").height()-$(".footer").height());
 	$(".iframe").width(width-leftOffset);
 	$(".iframe").show();
 });
