@@ -35,6 +35,7 @@
 
     while (true) {
       if (element.is('li')) {
+	element.addClass('active');
         element = element.parent().addClass('in').parent();
       } else {
         break;
