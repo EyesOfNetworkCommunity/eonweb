@@ -206,10 +206,8 @@ function get_field($field1, $base=false, $field2=false) {
 			message(6," : Rule have been added",'ok');
 			$rule_name_old=$rule_name;
 		}elseif(isset($_POST["update"])){
-			$sql_sort_key = sqlrequest($database_notifier,"select max(sort_key+1) as sort_key from rules where type='".$rule_type."'");
-			$rule_sort_key = mysqli_result($sql_sort_key,0,"sort_key");
 			$sql_add = "UPDATE rules SET name='".$rule_name."', type='".$rule_type."', debug='".$rule_debug."', contact='".$rule_contact."',
-			host='".$rule_host."', service='".$rule_service."', state='".$rule_state."', notificationnumber='".$rule_notification."',timeperiod_id='".$rule_timeperiod_id."', sort_key='".$rule_sort_key."' 
+			host='".$rule_host."', service='".$rule_service."', state='".$rule_state."', notificationnumber='".$rule_notification."',timeperiod_id='".$rule_timeperiod_id."'
 			WHERE id='".$rule_id."'";
 			sqlrequest($database_notifier,$sql_add);
 			sqlrequest($database_notifier,"DELETE FROM rule_method WHERE rule_id='".$rule_id."'",true);
