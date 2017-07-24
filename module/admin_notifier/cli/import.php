@@ -94,7 +94,7 @@ function notifier_import_rules($type) {
 				$timeperiod = trim($rule[6]);
 				
 				$timeperiod_exist = sqlrequest($database_notifier,"SELECT id,name from timeperiods where daysofweek='".$daysofweek."' and timeperiod='".$timeperiod."'");
-				$timeperiod_result = mysql_fetch_array($timeperiod_exist);
+				$timeperiod_result = mysqli_fetch_array($timeperiod_exist);
 							
 				if(!$timeperiod_result[0]) {
 					$timeperiod_id=sqlrequest($database_notifier,"INSERT into timeperiods VALUES('','','".$daysofweek."','".$timeperiod."')",true);
@@ -108,7 +108,7 @@ function notifier_import_rules($type) {
 				
 				// Insert rule
 				$rule_sort_sql=sqlrequest($database_notifier,"select max(sort_key) as sort_key FROM rules where type='".$type."'");
-				$rule_sort_keys= mysql_fetch_array($rule_sort_sql);
+				$rule_sort_keys= mysqli_fetch_array($rule_sort_sql);
 				if(isset($rule_sort_keys["sort_key"])) {
 					$rule_sort_key=$rule_sort_keys["sort_key"]+1;
 				} else {
@@ -124,7 +124,7 @@ function notifier_import_rules($type) {
 				$methods = explode(",",trim($rule[8]));
 				foreach($methods as $method) {
 					$method_exist = sqlrequest($database_notifier,"SELECT id from methods where name='".trim($method)."' and type='".$type."'");
-					$method_res = mysql_fetch_array($method_exist);
+					$method_res = mysqli_fetch_array($method_exist);
 					if(isset($method_res[0])) {
 						sqlrequest($database_notifier,"INSERT INTO rule_method VALUES('".$rule_type_id."','".$method_res[0]."')");
 						echo "INFO : use method $method (".$method_res[0].")\n";
