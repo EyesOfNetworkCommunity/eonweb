@@ -20,12 +20,17 @@
 #########################################
 */
 
+include_once("./request.php");
+
 if(isset($_GET["file"])){
-	$dwn="/tmp/".$_GET["file"];
-	header("Content-type: application/octet-stream");
-	header("Content-Disposition: attachment; filename=".$_GET["file"]);
-	flush(); 
-	readfile($dwn);
+	$file=basename($_GET["file"],".csv");
+	if($request[$file]) {
+		$dwn="/tmp/".$_GET["file"];
+		header("Content-type: application/octet-stream");
+		header("Content-Disposition: attachment; filename=".$_GET["file"]);
+		flush(); 
+		readfile($dwn);
+	}
 }
 
 ?>
