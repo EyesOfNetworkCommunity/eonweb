@@ -98,7 +98,7 @@ function startTimer()
 {
 	var queue = $("#queue").val();
 	if(queue == "active"){
-		timer =  setInterval(loadTable, 2000);
+		timer =  setInterval(loadTable, 60000);
 	}
 }
 

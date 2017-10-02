@@ -243,7 +243,7 @@ if(file_exists($file)){
 									<label><?php echo getLabel("label.refresh_button")?></label>
 									<div>
 									<input id="refresh_on" type="button" class="btn btn-primary" value="on" />
-									<input id="refresh_off" type="button" class="btn btn-primary hidden" value="off" />
+									<input id="refresh_off" type="button" class="btn btn-danger hidden" value="off" />
 									</div>
 								</div> 
 								<?php }?>
