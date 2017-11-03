@@ -269,6 +269,19 @@ $(document).ready(function(){
 		}
 	});
 
+	// display the right button on/off
+	$(document).on('click', "#refresh_on, #refresh_off", function(event){
+		if($(this).attr('id') == "refresh_off"){
+			$("#refresh_off").addClass("hidden");
+			$("#refresh_on").removeClass("hidden");
+			startTimer();
+		} else if($(this).attr('id') == "refresh_on"){
+			$("#refresh_on").addClass("hidden");
+			$("#refresh_off").removeClass("hidden");
+			clearInterval(timer);
+		}
+	});
+
 	// ajax when we submit filters form
 	$("#events-filter").on("submit", function(event){
 		// cancel form's submission

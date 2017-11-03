@@ -238,6 +238,15 @@ if(file_exists($file)){
 										</span>
 									</div>
 								</div>
+								<?php if ($_GET["q"] != "history") { ?>
+								<div class="col-md-4">
+									<label><?php echo getLabel("label.refresh_button")?></label>
+									<div>
+									<input id="refresh_on" type="button" class="btn btn-primary" value="on" />
+									<input id="refresh_off" type="button" class="btn btn-danger hidden" value="off" />
+									</div>
+								</div> 
+								<?php }?>
 							</div>
 						</div>
 					</div>
