@@ -220,7 +220,7 @@ class Client
 
     public function authUser($authUser)
     {
-        if (!is_string($parameter)) {
+        if (!is_string($authUser)) {
             throw new InvalidArgumentException("A string must be supplied.");
         }
 
