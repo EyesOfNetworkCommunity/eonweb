@@ -240,6 +240,13 @@ else {
 			setcookie("user_limitation",$usrlimit,$cookie_time);
 			setcookie("group_id",$grpid,$cookie_time);
 
+			// Rename filters
+			$filter="$path_eonweb/$dir_imgcache/".strtolower($_POST['login'])."-ged.xml";
+			$filter_old="$path_eonweb/$dir_imgcache/".$_POST['login']."-ged.xml";
+			if(file_exists($filter_old) and !file_exists($filter)) {
+				rename($filter_old,$filter);
+			}
+
 			// Go to the main page
 			logging("login","User logged in",$login);
 			echo "<meta http-equiv='Refresh' content='0;URL=".getDefaultPage($usrlimit)."' />";

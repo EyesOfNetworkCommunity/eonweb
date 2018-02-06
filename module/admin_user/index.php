@@ -70,15 +70,8 @@ include("../../side.php");
 						sqlrequest("$database_lilac","delete from nagios_service_contact_member where contact='$lilac_contactid'");
 
 						// Delete user files
-						$user_files_path="$path_eonweb/$dir_imgcache/$user_name";
+						$user_files_path="$path_eonweb/$dir_imgcache/".strtolower($user_name);
 						@unlink("$user_files_path-ged.xml");
-						@unlink("$user_files_path-report.doc");
-						@unlink("$user_files_path-report.xml");
-						@unlink("$path_eonweb/$dir_imgcache/$user_name-report_xml.xml");
-
-						foreach (glob("$user_files_path-*.png") as $filename){
-							@unlink($filename);
-						}
 
 						// delete user in nagvis
 						$bdd = new PDO('sqlite:/srv/eyesofnetwork/nagvis/etc/auth.db');
