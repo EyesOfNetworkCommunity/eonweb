@@ -22,7 +22,7 @@
 ?>
 
 <!-- DateRangePicker JavaScript -->
-<script src="/bower_components/moment/min/moment.min.js"></script>
+<script src="/bower_components/moment/min/moment-with-locales.min.js"></script>
 <script src="/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
 
 <script type="text/javascript">
