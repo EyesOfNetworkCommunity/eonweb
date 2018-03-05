@@ -131,7 +131,7 @@ function get_field($field1, $base=false, $field2=false) {
 	if(!empty($_POST['services'])){
 		$rule_service="";
 		foreach($_POST['services'] as $selected){
-			$rule_service=$selected.",";
+			$rule_service.=$selected.",";
 		}
 		$rule_service=rtrim($rule_service,",");
 	}
