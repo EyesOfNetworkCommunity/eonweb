@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2016 EyesOfNetwork Team
+# Copyright (C) 2017 EyesOfNetwork Team
 # DEV NAME : Quentin HOARAU
-# VERSION : 5.1
+# VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -23,7 +23,6 @@
 include("../../header.php");
 include("../../side.php");
 include("ged_functions.php");
-include("external_functions.php");
 
 $queue = "active";
 if(isset($_GET["q"]) && $_GET["q"] == "history"){
@@ -87,6 +86,7 @@ if(file_exists($file)){
 		if(!$gedd) {
 			message(0," : ged daemon must be dead","critical");
 		}
+		message("", getLabel("label.search_limit")." ".getEonConfig("maxlines")." ".getLabel("label.entries"), "");
 		?>
 	</div>
 
@@ -95,7 +95,8 @@ if(file_exists($file)){
 	<div class="panel panel-default">
 		<div class="panel-heading" id="headingOne">
 			<h4 class="panel-title">
-				<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"><?php echo getLabel("label.ged_sorter"); ?></a>
+				<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"><i class="fa fa-filter fa-fw"></i></a>
+				<?php echo getLabel("label.ged_sorter"); ?>
 				<?php
 				if($default == ""){
 					if($_COOKIE["user_limitation"] == 0){
@@ -237,6 +238,15 @@ if(file_exists($file)){
 										</span>
 									</div>
 								</div>
+								<?php if ($_GET["q"] != "history") { ?>
+								<div class="col-md-4">
+									<label><?php echo getLabel("label.refresh_button")?></label>
+									<div>
+									<input id="refresh_on" type="button" class="btn btn-primary" value="on" />
+									<input id="refresh_off" type="button" class="btn btn-danger hidden" value="off" />
+									</div>
+								</div> 
+								<?php }?>
 							</div>
 						</div>
 					</div>
@@ -247,7 +257,7 @@ if(file_exists($file)){
 
 	<div id="result"></div>
 	<?php } ?>
-
+	
 	<div id="loader" style="visibility: hidden;">
 		<img src="/images/loader.gif" alt="loading">
 	</div>
@@ -255,7 +265,7 @@ if(file_exists($file)){
 	<!-- modal for GED actions -->
 	<div id="ged-modal" class="modal fade" tabindex="-1" role="dialog">
 		<div class="modal-dialog">
-			<div class="modal-content">
+			<div class="modal-content panel-default">
 				<div class="modal-header panel-heading">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 					<h4 class="modal-title">Modal title</h4>
@@ -284,6 +294,15 @@ if(file_exists($file)){
 							<li id="edit-all-event"><a href="#"><?php echo ucfirst(getLabel("label.all")); ?></a></li>
 						</ul>
 					</div>
+					<div id="own-btns" class="btn-group">
+						<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<?php echo getLabel("action.own"); ?> <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li id="own-event"><a href="#"><?php echo getLabel("label.this"); ?></a></li>
+							<li id="own-all-event"><a href="#"><?php echo ucfirst(getLabel("label.all")); ?></a></li>
+						</ul>
+					</div>
 					<div id="ack-btns" class="btn-group">
 						<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<?php echo getLabel("action.ack"); ?> <span class="caret"></span>
@@ -310,10 +329,10 @@ if(file_exists($file)){
 	<!-- modal for confirmation -->
 	<div id="confirmation-modal" class="modal fade" tabindex="-1" role="dialog">
 		<div id="confirmation-modal-dialog" class="modal-dialog">
-			<div id="confirmation-modal-content" class="modal-content">
+			<div id="confirmation-modal-content" class="modal-content panel-default">
 				<div id="confirmation-modal-header" class="modal-header panel-heading">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title">Title</h4>
+					<h4 id="confirmation-modal-title" class="modal-title">Title</h4>
 				</div>
 				<div id="confirmation-modal-body" class="modal-body">
 					<?php echo getLabel("message.confirmation"); ?>

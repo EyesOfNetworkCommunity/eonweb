@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2016 EyesOfNetwork Team
+# Copyright (C) 2017 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION : 5.1
+# VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -28,6 +28,6 @@
 <script src="/js/datatable.js"></script>
 
 <!-- DateRangePicker JavaScript -->
-<script src="/bower_components/moment/min/moment.min.js"></script>
+<script src="/bower_components/moment/min/moment-with-locales.min.js"></script>
 <script src="/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
 <script src="/js/daterangepicker.js"></script>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EoN_Export type="Command">
+  <Command id="162" object="true">
+    <Name>eon_host_notifier</Name>
+    <Line>/srv/eyesofnetwork/notifier/bin/notifier.pl -t host -c /srv/eyesofnetwork/notifier/etc/notifier.cfg -r /srv/eyesofnetwork/notifier/etc/notifier.rules -T "$LONGDATETIME$" -h "$HOSTNAME$" -e "$HOSTSTATE$" -i "$HOSTADDRESS$" -n "$NOTIFICATIONTYPE$" -C "$CONTACTNAME$" -M "$CONTACTEMAIL$" -O "$HOSTOUTPUT$" -A "$HOSTGROUPNAMES$" -G "$CONTACTGROUPNAMES$" -X "$TIME$" -Y "$HOSTNOTIFICATIONNUMBER$" -N "$CONTACTPAGER$"</Line>
+    <Description>Eon notification broker for host</Description>
+  </Command>
+  <Command id="161" object="true">
+    <Name>eon_service_notifier</Name>
+    <Line>/srv/eyesofnetwork/notifier/bin/notifier.pl -t service -c /srv/eyesofnetwork/notifier/etc/notifier.cfg -r /srv/eyesofnetwork/notifier/etc/notifier.rules -T "$LONGDATETIME$" -h "$HOSTNAME$" -s "$SERVICEDESC$" -e "$SERVICESTATE$" -i "$HOSTADDRESS$" -n "$NOTIFICATIONTYPE$" -C "$CONTACTNAME$" -M "$CONTACTEMAIL$" -O "$SERVICEOUTPUT$" -A "$HOSTGROUPNAMES$" -B "$SERVICEGROUPNAMES$" -G "$CONTACTGROUPNAMES$" -X "$TIME$" -Y "$SERVICENOTIFICATIONNUMBER$" -N "$CONTACTPAGER$"</Line>
+    <Description>Eon notification broker for service</Description>
+  </Command>
+</EoN_Export>

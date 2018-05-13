@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2016 EyesOfNetwork Team
+# Copyright (C) 2017 EyesOfNetwork Team
 # DEV NAME : Quentin HOARAU
-# VERSION : 5.1
+# VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -47,7 +47,7 @@ if( $snmp_com != "" && $snmp_version != "" ){
 		else
 			$snmp_priv_passphrase = "";
 
-		$command="-a $snmp_auth_protocol -u $username -A $password $snmp_priv_protocol $snmp_priv_passphrase $snmp_context";
+		$command="-a ".escapeshellarg($snmp_auth_protocol)." -u ".escapeshellarg($username)." -A ".escapeshellarg($password)." ".escapeshellarg($snmp_priv_protocol)." ".escapeshellarg($snmp_priv_passphrase)." ".escapeshellarg($snmp_context);
 	}
 }
 else{
@@ -55,21 +55,24 @@ else{
 	die;
 }
 
+// Snmp command
+$snmpwalk = "snmpwalk -Oqv -c ".escapeshellarg($snmp_community)." -v ".escapeshellarg($snmp_version)." ".$command." ".escapeshellarg($host_name);
+
 // Get host detail with snmp command
-exec("snmpwalk -Oqv -c $snmp_community -v $snmp_version $command $host_name sysUpTime",$result_sysuptime);
-exec("snmpwalk -Oqv -c $snmp_community -v $snmp_version $command $host_name sysName",$result_sysname);
-exec("snmpwalk -Oqv -c $snmp_community -v $snmp_version $command $host_name sysLocation",$result_syslocation);
-exec("snmpwalk -Oqv -c $snmp_community -v $snmp_version $command $host_name snmpOutTraps",$result_snmpouttraps);
-exec("snmpwalk -Oqv -c $snmp_community -v $snmp_version $command $host_name snmpEnableAuthenTraps",$result_authentrap);
-exec("snmpwalk -Oqv -c $snmp_community -v $snmp_version $command $host_name sysDescr",$result_sysdescr);
+exec("$snmpwalk sysUpTime",$result_sysuptime);
+exec("$snmpwalk sysName",$result_sysname);
+exec("$snmpwalk sysLocation",$result_syslocation);
+exec("$snmpwalk snmpOutTraps",$result_snmpouttraps);
+exec("$snmpwalk snmpEnableAuthenTraps",$result_authentrap);
+exec("$snmpwalk sysDescr",$result_sysdescr);
 
 // Get interface detail with snmp command
-exec("snmpwalk -Oqv -c $snmp_community -v $snmp_version $command $host_name ifIndex",$result_index);
-exec("snmpwalk -Oqv -c $snmp_community -v $snmp_version $command $host_name ifDescr",$result_descr);
-exec("snmpwalk -Oqv -c $snmp_community -v $snmp_version $command $host_name ifAlias",$result_alias);
-exec("snmpwalk -Oqv -c $snmp_community -v $snmp_version $command $host_name ifSpeed",$result_speed);
-exec("snmpwalk -Oqv -c $snmp_community -v $snmp_version $command $host_name ifOperStatus",$result_status);
-exec("snmpwalk -Oqv -c $snmp_community -v $snmp_version $command $host_name ifAdminStatus",$result_admstatus);
+exec("$snmpwalk ifIndex",$result_index);
+exec("$snmpwalk ifDescr",$result_descr);
+exec("$snmpwalk ifAlias",$result_alias);
+exec("$snmpwalk ifSpeed",$result_speed);
+exec("$snmpwalk ifOperStatus",$result_status);
+exec("$snmpwalk ifAdminStatus",$result_admstatus);
 
 // Display Host Information
 echo '

@@ -1,9 +1,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2016 EyesOfNetwork Team
+# Copyright (C) 2017 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION : 5.1
+# VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -84,6 +84,10 @@
 
 .textarea {
 	resize: vertical;
+}
+
+a.nodecor {
+	text-decoration: none;
 }
 
 /*
@@ -178,4 +182,12 @@
 
 table.dataTable.table-condensed.dtr-inline.collapsed > tbody > tr > td:first-child:before, table.dataTable.dtr-inline.collapsed > tbody > tr > th:first-child:before {
 	top: 6px !important;
+}
+
+.datatable_actions_bottom {
+	margin-top: 20px !important;
+}
+
+.datatable_actions_top {
+        margin-bottom: 20px !important;
 }

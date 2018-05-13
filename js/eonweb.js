@@ -1,9 +1,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2016 EyesOfNetwork Team
+# Copyright (C) 2017 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION : 5.1
+# VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -18,6 +18,8 @@
 #
 #########################################
 */
+
+$.ajaxSetup({ cache: false });
 
 var path_frame="/module/module_frame/index.php?url=";
 var path_nagios_cgi="/thruk/cgi-bin";

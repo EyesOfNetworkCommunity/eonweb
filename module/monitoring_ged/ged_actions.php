@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2016 EyesOfNetwork Team
+# Copyright (C) 2017 EyesOfNetwork Team
 # DEV NAME : Quentin HOARAU
-# VERSION : 5.1
+# VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -30,7 +30,18 @@ extract($_GET);
 if(!isset($queue)) { $queue="active"; } 
 elseif(!in_array($queue,$array_ged_queues)) { $queue="active"; }
 
-if(isset($action) && $action != "" && (isset($selected_events) && count($selected_events) > 0) || isset($filter_name) || isset($filter) ){
+// execute actions
+
+/*
+ * 0 = details
+ * 1 = edit
+ * 2 = own
+ * 3 = disown
+ * 4 = acknowledge
+ * 5 = delete
+ */
+
+ if(isset($action) && $action != "" && (isset($selected_events) && count($selected_events) > 0) || isset($filter_name) || isset($filter) ){
 	switch ($action) {
 		case "0":
 			details($selected_events, $queue);
@@ -38,19 +49,26 @@ if(isset($action) && $action != "" && (isset($selected_events) && count($selecte
 		case "1":
 			edit($selected_events, $queue);
 			break;
-		case 'edit_event':
-			editEvent($selected_events, $queue, $comments);
-			break;
-		case 'edit_all_event':
+		case 'edit':
 			editAllEvents($selected_events, $queue, $comments);
+			$CustomActions->ged_edit($selected_events, $queue, $comments);
+			if($global_action == "4"){
+				acknowledge($selected_events, $queue);
+				$CustomActions->ged_acknowledge($selected_events, $queue);
+			} elseif($global_action == "2") {
+				ownDisown($selected_events, $queue, $global_action);
+				$CustomActions->ged_own($selected_events, $queue, $global_action);
+			}
 			break;
 		case 'confirm':
 			if($global_action == "4"){
-				acknowledge($selected_events, $queue, $global_action);
+				acknowledge($selected_events, $queue);
+				$CustomActions->ged_acknowledge($selected_events, $queue);
 			} elseif($global_action == "5") {
 				delete($selected_events, $queue);
-			} else {
+			} elseif($global_action == "2" || $global_action == "3") {
 				ownDisown($selected_events, $queue, $global_action);
+				$CustomActions->ged_own($selected_events, $queue, $global_action);
 			}
 			break;
 		case 'changeGedFilter':

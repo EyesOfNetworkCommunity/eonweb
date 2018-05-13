@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2016 EyesOfNetwork Team
+# Copyright (C) 2017 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION : 5.1
+# VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -20,10 +20,10 @@
 #########################################
 */
 
-require_once("../config.php");
-require_once("../arrays.php");
-require_once("../function.php");  
-require_once("Client.php");
+require_once(dirname(__FILE__)."/../config.php");
+require_once(dirname(__FILE__)."/../arrays.php");
+require_once(dirname(__FILE__)."/../function.php");
+require_once(dirname(__FILE__)."/Client.php");
 use Nagios\Livestatus\Client;
 
 // define the action to do
@@ -40,15 +40,14 @@ if( !empty($_GET["action"]) )
 
 function checkHost($type, $address, $port, $path){
 	$host = false;
-        if($type == "unix"){
-                $socket_path_connexion = "unix://".$path;
-                $host = fsockopen($socket_path_connexion, $port, $errno, $errstr, 5);
-        }
-        else{
-                $host = fsockopen($address, $port, $errno, $errstr, 5);
-        }
+	if($type == "unix"){
+		$socket_path_connexion = "unix://".$path;
+		$host = fsockopen($socket_path_connexion, $port, $errno, $errstr, 5);
+	}
+	else{
+		$host = fsockopen($address, $port, $errno, $errstr, 5);
+	}
 	return $host;
-	
 }
 
 /**
@@ -56,7 +55,7 @@ function checkHost($type, $address, $port, $path){
  */
 function getServicesStateNbr()
 {
-	global $sockets;
+	$sockets = getEonConfig("sockets","array");
 
 	$result = array();
 	$nbr_services_pending = 0;
@@ -71,6 +70,13 @@ function getServicesStateNbr()
 		$socket_address = $socket_parts[1];
 		$socket_port = $socket_parts[2];
 		$socket_path = $socket_parts[3];
+		
+		// check if socket disabled
+		if(isset($socket_parts[4])) {
+			continue;
+		}
+
+		// check if socket is up
 		if( checkHost($socket_type, $socket_address, $socket_port, $socket_path) ){
 			if($socket_port == -1){
 				$socket_port = "";
@@ -122,15 +128,6 @@ function getServicesStateNbr()
 	array_push($result, $nbr_services_critical);
 	array_push($result, $nbr_services_unknown);
 	
-	$client->command(
-		array(
-			'ACKNOWLEDGE_SVC_PROBLEM',
-			'example.com',
-			'some service', 2, 0, 1,
-			'username', 'Example comment'
-		)
-	);
-	
 	// response for the Ajax call
 	echo json_encode($result);
 }
@@ -140,7 +137,7 @@ function getServicesStateNbr()
  */
 function getHostsStateNbr()
 {
-	global $sockets;
+	$sockets = getEonConfig("sockets","array");
 
 	$result = array();
 	$nbr_hosts_pending = 0;
@@ -155,6 +152,13 @@ function getHostsStateNbr()
 		$socket_address = $socket_parts[1];
 		$socket_port = $socket_parts[2];
 		$socket_path = $socket_parts[3];
+		
+		// check if socket disabled
+		if(isset($socket_parts[4])) {
+			continue;
+		}
+
+		// check if socket is up
 		if( checkHost($socket_type, $socket_address, $socket_port, $socket_path) ){
 			if($socket_port == -1){
 				$socket_port = "";
@@ -202,16 +206,6 @@ function getHostsStateNbr()
 	array_push($result, $nbr_host_warning);
 	array_push($result, $nbr_host_critical);
 	array_push($result, $nbr_host_unknown);
-
-	// fill an empty array with previous response, in order to have a beautiful JSON to use
-	$client->command(
-		array(
-			'ACKNOWLEDGE_SVC_PROBLEM',
-			'example.com',
-			'some service', 2, 0, 1,
-			'username', 'Example comment'
-		)
-	);
 	
 	// response for the Ajax call
 	echo json_encode($result);
@@ -220,7 +214,7 @@ function getHostsStateNbr()
 /**
  * Get number of event ordered by state (in DB GED), according to the default filter if there is.
  */
-function getEventStateNbr()
+function getEventStateNbr($return=false)
 {
 	global $database_ged;
 	
@@ -251,6 +245,7 @@ function getEventStateNbr()
 		$unknown = 0;
 		// will construct the SQL request
 		$requete = "SELECT COUNT(*) FROM ".$row[0]."_queue_active WHERE ";
+		
 		if($default)
 		{
 			// construct the WHERE clause foreach <filter> in the XML file
@@ -271,29 +266,8 @@ function getEventStateNbr()
 				if ( substr($filter_value, -1) === '*' ) {
 					$text .= "%";
 				}
-				
-				if($i < $filters->length){
-					switch($name){
-						case 'not_equipment': $name = "equipment"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_service': $name = "service"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_description': $name = "description"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_hostgroups': $name = "hostgroups"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_servicegroups': $name = "servicegroups"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_owner': $name = "owner"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						default: $requete .= $name . " LIKE '%".$text."%' AND ";
-					}
-				}
-				else{
-					switch($name){
-						case 'not_equipment': $name = "equipment"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_service': $name = "service"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_description': $name = "description"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_hostgroups': $name = "hostgroups"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_servicegroups': $name = "servicegroups"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						case 'not_owner': $name = "owner"; $requete .= "$name NOT LIKE '%".$text."%' AND "; break;
-						default: $requete .= $name . " LIKE '%".$text."%' AND ";
-					}
-				}
+				if(!isset($requete_filter)) $requete_filter="";	
+				$requete_filter .= $name . " LIKE '%".$text."%' OR ";
 				$i++;
 			}
 		}
@@ -302,7 +276,10 @@ function getEventStateNbr()
 		for($i = 0; $i <= 3; $i++)
 		{
 			$requete_finale = $requete . "state = ". $i;
-			//echo "<br>" . $requete_finale . "<br>";
+			if(isset($requete_filter)) {
+				$requete_finale = $requete_finale." AND (".preg_replace("/OR $/", "", $requete_filter).")";
+			}
+			#echo "<br>" . $requete_finale . "<br>";
 			$query_result = sqlrequest($database_ged, $requete_finale);
 			switch($i)
 			{
@@ -322,7 +299,12 @@ function getEventStateNbr()
 	array_push($result, $nbr_unknown);
 	
 	// response for the Ajax call
-	echo json_encode($result);
+	if($return) {
+		return $result;
+	} else {
+		echo json_encode($result);
+	}
+	
 }
 
 /**
@@ -379,30 +361,8 @@ function getNumberEventByStateAndTime()
 			if ( substr($filter_value, -1) === '*' ) {
 				$text .= "%";
 			}
-			
-			// construct the WHERE clause
-			if($i < $filters->length){
-				switch($name){
-					case 'not_equipment': $name = "equipment"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
-					case 'not_service': $name = "service"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
-					case 'not_description': $name = "description"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
-					case 'not_hostgroups': $name = "hostgroups"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
-					case 'not_servicegroups': $name = "servicegroups"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
-					case 'not_owner': $name = "owner"; $milieu_requete .= "$name NOT LIKE '".$text."' AND "; break;
-					default: $milieu_requete .= $name . " LIKE '".$text."' AND ";
-				}
-			}
-			else{
-				switch($name){
-					case 'not_equipment': $name = "equipment"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
-					case 'not_service': $name = "service"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
-					case 'not_description': $name = "description"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
-					case 'not_hostgroups': $name = "hostgroups"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
-					case 'not_servicegroups': $name = "servicegroups"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
-					case 'not_owner': $name = "owner"; $milieu_requete .= "$name NOT LIKE '".$text."' AND"; break;
-					default: $milieu_requete .= $name . " LIKE '".$text."' AND";
-				}
-			}
+			if(!isset($requete_filter)) $requete_filter="";	
+			$requete_filter .= $name . " LIKE '%".$text."%' OR ";
 			$i++;
 		}
 	}
@@ -423,7 +383,11 @@ function getNumberEventByStateAndTime()
 		$temp_result_15_30 = array();
 		$temp_result_30_1h = array();
 		$temp_result_1h = array();
-		
+	
+		if(isset($requete_filter)) {
+			$milieu_requete = "(".preg_replace("/OR $/", ") AND", $requete_filter)."";
+		}
+
 		$sql = "
 		SELECT COUNT(*) FROM ".$row[0]."_queue_active WHERE ".$milieu_requete." state=0 AND o_sec <= ". $actual_time ." AND o_sec > ". $five_minutes ."
 		UNION ALL SELECT COUNT(*) FROM ".$row[0]."_queue_active WHERE ".$milieu_requete." state!=0 AND o_sec <= ". $actual_time ." AND o_sec > ". $five_minutes ."

@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2016 EyesOfNetwork Team
+# Copyright (C) 2017 EyesOfNetwork Team
 # DEV NAME : Quentin HOARAU
-# VERSION : 5.1
+# VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -38,8 +38,8 @@ include("../monitoring_ged/ged_functions.php");
 	if(isset($_GET["user_id"]) && isset($_GET["user_name"])){
 		$user_id = isset($_GET["user_id"]) ? $_GET["user_id"] : false;
 		$user_name = isset($_GET["user_name"]) ? $_GET["user_name"] : false;
-		$file="../../cache/".$user_name."-ged.xml";
-		$file_url="/cache/".$user_name."-ged.xml";
+		$file="../../cache/".strtolower($user_name)."-ged.xml";
+		$file_url="/cache/".strtolower($user_name)."-ged.xml";
 	}
 	
 	// Verify if user limitation
@@ -219,7 +219,7 @@ include("../monitoring_ged/ged_functions.php");
 					<option value="" selected><?php echo getLabel("label.create_filter"); ?></option>
 					<?php
 					foreach($filters as $filter_name)
-						echo '<option name="'.$filter_name->getAttribute("name").'" value="'.$filter_name->getAttribute("name").'">'.$filter_name->getAttribute("name").'</option>';
+						echo '<option id="'.$filter_name->getAttribute("name").'" value="'.$filter_name->getAttribute("name").'">'.$filter_name->getAttribute("name").'</option>';
 					?>
 				</select>
 			</div>

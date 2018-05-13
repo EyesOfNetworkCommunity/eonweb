@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2016 EyesOfNetwork Team
+# Copyright (C) 2017 EyesOfNetwork Team
 # DEV NAME : Quentin HOARAU
-# VERSION : 5.1
+# VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -51,7 +51,6 @@ function createTableRow($event, $event_state, $queue)
 {
 	global $array_ged_queues;
 	global $dateformat;
-	global $ged_prefix;
 
 	if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
 	
@@ -59,25 +58,31 @@ function createTableRow($event, $event_state, $queue)
 		$class = "";
 
 		if($key == "equipment"){
-			$url_host = preg_replace("/^".$ged_prefix."/","",$value,1);
-			$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=1&host=$url_host");
-			$value = '<a href="../module_frame/index.php?url='.$thruk_url.'">'.$value.'</a>';
+			if($event->src == "0.0.0.0" || $event->src == "0.0.0.0/0") {
+				$url_host = preg_replace("/^".getEonConfig("ged_prefix")."/","",$value,1);
+				$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=1&host=$url_host");
+				$value = '<a href="../module_frame/index.php?url='.$thruk_url.'">'.$value.'</a>';
+			} else { 
+				$value = '<a class="nodecor">'.$value.'</a>';
+			}
 			$class = 'class="host"';
 		}
 		if($key == "service"){
-			$url_host = preg_replace("/^".$ged_prefix."/","",$event->equipment,1);
-			$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=2&host=".$url_host."&service=$value");
-			$value = '<a href="../module_frame/index.php?url='.$thruk_url.'">'.$value.'</a>';
+			if($event->src == "0.0.0.0" || $event->src == "0.0.0.0/0") {
+				$url_host = preg_replace("/^".getEonConfig("ged_prefix")."/","",$event->equipment,1);
+				$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=2&host=".$url_host."&service=$value");
+				$value = '<a href="../module_frame/index.php?url='.$thruk_url.'">'.$value.'</a>';
+			} else {
+				$value = '<a class="nodecor">'.$value.'</a>';
+			}
 			$class = 'class="service"';
 		}
-		if ($key == "state" || $key == "comments") {
+		if ($key == "state" || $key == "comments" || $key == "src") {
 			continue;
 		}
 		if($key == "o_sec" || $key == "l_sec"){
 			if($queue == "active"){
-				$value = time() - $value;
-				$value = round($value/60);
-				$value .= " min";
+				$value = strTime(time() - $value);
 			} else {
 				$value = date($dateformat, $value);
 			}
@@ -86,13 +91,13 @@ function createTableRow($event, $event_state, $queue)
 			$value = "<input type='hidden' value='".$value."'>";
 			$class = 'class="text-center"';
 			if($event->comments != ""){
-				$value .= ' <i class="glyphicon glyphicon-comment"></i>';
+				$value .= ' <i class="glyphicon glyphicon-comment" title="'.$event->comments.'"></i>';
 			}
 			if($event->owner != ""){
 				$value .= ' <i class="glyphicon glyphicon-floppy-disk"></i>';
 			}
 		}
-
+		
 		echo "<td $class>$value</td>";
 	}	
 }
@@ -115,7 +120,7 @@ function createSelectClause($ged_type, $queue)
 			}
 		}
 	}
-	$sql .= "comments";
+	$sql .= "comments,src";
 	//$sql = trim($sql, ",");
 	$sql .= " FROM ".$ged_type."_queue_".$queue;
 	$sql .= " WHERE id > 0";
@@ -180,7 +185,7 @@ function createWhereClause($owner, $filter, $search, $daterange, $ok, $warning, 
 		$where_clause .= " AND state IN ($states_list)";
 	}
 
-	$where_clause .= " ORDER BY o_sec DESC LIMIT 500";
+	$where_clause .= " ORDER BY l_sec DESC LIMIT ".getEonConfig("maxlines").";";
 	return $where_clause;
 }
 
@@ -211,7 +216,7 @@ function createDetailRow($event, $db_col_name, $row_name)
 
 	echo '<tr>';
 		echo '<th scope="row">'.getLabel($row_name).'</th>';
-		echo '<td>'.$event[$db_col_name].'</td>';
+		echo '<td style="word-break: break-all;">'.$event[$db_col_name].'</td>';
 	echo '</tr>';
 }
 
@@ -276,27 +281,6 @@ function edit($selected_events, $queue)
 			<textarea id='event-comments' class='form-control textarea' rows='10'>".$event["comments"]."</textarea>
 		</div>
 	</form>";
-}
-
-function editEvent($selected_events, $queue, $comments)
-{
-	global $array_ged_queues;
-	global $database_ged;
-
-	if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
-	
-	// get all needed infos into variables
-	$value_parts = explode(":", $selected_events);
-	$id = $value_parts[0];
-	$ged_type = $value_parts[1];
-
-	$sql = "UPDATE ".$ged_type."_queue_".$queue." SET comments=? WHERE id = ?";
-	$result = sqlrequest($database_ged, $sql, false, array("ss",(string)$comments,(string)$id));
-	if($result){
-		message(11, " : ".getLabel("message.event_edited"), "ok");
-	} else {
-		message(11, " : ".getLabel("message.event_edited_error"), "danger");
-	}
 }
 
 function editAllEvents($selected_events, $queue, $comments)
@@ -365,11 +349,10 @@ function ownDisown($selected_events, $queue, $global_action)
 				if($key == "owner"){
 					$event[$key] = $owner;
 				}
-				$ged_command .= "\"".$event[$key]."\" ";
+				$ged_command .= escapeshellarg($event[$key])." ";
 			}
 		}
 		$ged_command = trim($ged_command, " ");
-		$ged_command=escapeshellcmd($ged_command);
 		
 		shell_exec($path_ged_bin." ".$ged_command);
 		logging("ged_update",$ged_command);
@@ -412,11 +395,10 @@ function acknowledge($selected_events, $queue)
 				if($key == "owner"){
 					$event[$key] = $owner;
 				}
-				$ged_command .= "\"".$event[$key]."\" ";
+				$ged_command .= escapeshellarg($event[$key])." ";
 			}
 		}
 		$ged_command = trim($ged_command, " ");
-		$ged_command=escapeshellcmd($ged_command);
 		
 		shell_exec($path_ged_bin." ".$ged_command);
 		logging("ged_update",$ged_command);
@@ -455,11 +437,10 @@ function delete($selected_events, $queue)
 			$ged_command = "-drop -type $ged_type_nbr -queue $queue ";
 			foreach ($array_ged_packets as $key => $value) {
 				if($value["key"] == true){
-					$ged_command .= "\"".$event[$key]."\" ";
+					$ged_command .= escapeshellarg($event[$key])." ";
 				}
 			}
 			$ged_command = trim($ged_command, " ");
-			$ged_command=escapeshellcmd($ged_command);
 					
 			shell_exec($path_ged_bin." ".$ged_command);
 			logging("ged_update",$ged_command);
@@ -470,8 +451,7 @@ function delete($selected_events, $queue)
 
 	if($queue == "history"){
 		$id_list = trim($id_list, ",");
-		$ged_command = "-drop -id ".$id_list." -queue history";
-		$ged_command=escapeshellcmd($ged_command);
+		$ged_command = "-drop -id ".escapeshellarg($id_list)." -queue history";
 		
 		shell_exec($path_ged_bin." ".$ged_command);
 		logging("ged_update",$ged_command);

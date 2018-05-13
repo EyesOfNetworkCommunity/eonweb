@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2016 EyesOfNetwork Team
+# Copyright (C) 2017 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION : 5.1
+# VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -21,7 +21,14 @@
 */
 
 # Internationalization
-include("Translator.class.php");
+include("classes/Translator.class.php");
+
+# Actions
+include("classes/Actions.class.php");	
+if(file_exists(dirname(__FILE__)."/classes/Custom.Actions.class.php")) { 
+	include("classes/Custom.Actions.class.php"); 
+}
+$CustomActions = class_exists("CustomActions") ? new CustomActions() : new Actions();
 
 // Display Error Message 
 function message($id, $text, $type){
@@ -168,6 +175,7 @@ function get_host_list_from_nagios($field=false, $queue = false){
 	else {
 		$request="SELECT name FROM nagios_host
 		UNION SELECT name from nagios_hostgroup
+		UNION SELECT DISTINCT description from nagios_service
 		UNION SELECT name from nagios_service_group
 		ORDER BY name";
 		$db = $database_lilac;
@@ -1251,6 +1259,57 @@ function slaBarChart($field, $search)
 	array_push($array_result, $array_year_more);
 	
 	return json_encode($array_result);
+}
+
+# Convert seconds to human readable
+function strTime($s) {
+
+	$d = intval($s/86400);
+	$s -= $d*86400;
+	$h = intval($s/3600);
+	$s -= $h*3600;
+	$m = intval($s/60);
+	$s -= $m*60;
+
+	if($d<10) $d="0".$d;
+	if($h<10) $h="0".$h;
+	if($m<10) $m="0".$m;
+	if($s<10) $s="0".$s;
+
+	if ($d) $str = $d . 'd ';
+	else $str = '00d ';
+	if ($h) $str .= $h . 'h ';
+	else $str .= '00h ';
+	if ($m) $str .= $m . 'm ';
+	else $str .= '00m ';
+	if ($s) $str .= $s . 's';
+	else $str .= '00s';
+
+	return $str;
+
+}
+
+# Get eon config values
+function getEonConfig($name,$type=false)
+{
+
+	global $database_eonweb;
+	global ${$name};
+	
+	// mysql request	
+	$sql = "SELECT value FROM configs WHERE name='".$name."'";
+	$value = sqlrequest($database_eonweb, $sql);
+	$result = mysqli_fetch_row($value);
+	
+	// return value if exists
+	if(count($result)==0) {
+		return ${$name};
+	} elseif($type=="array") {
+		return explode(",",$result[0]);
+	} else {
+		return $result[0];
+	}
+	
 }
 
 ?>

@@ -1,9 +1,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2016 EyesOfNetwork Team
+# Copyright (C) 2017 EyesOfNetwork Team
 # DEV NAME : Quentin HOARAU
-# VERSION : 5.1
+# VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -373,17 +373,16 @@ function changeAutocomplete(){
 	var datas;
 	$.ajax({
 		url: 'ajax.php',
-		async: false,
+		dataType: 'json',
 		data: {
 			field: field,
 			queue: queue
 		},
 		type: 'POST',
 		success: function(response){
-			datas = response;
+			$("#value").autocomplete({ source: response });
 		}
 	});
-	$("#value").attr('onFocus', '$(this).autocomplete({source: ' + datas + '})');
 
 	$('#value').focus();
 }

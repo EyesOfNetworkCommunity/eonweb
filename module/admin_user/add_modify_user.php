@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2016 EyesOfNetwork Team
+# Copyright (C) 2017 EyesOfNetwork Team
 # DEV NAME : Quentin HOARAU
-# VERSION : 5.1
+# VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -179,10 +179,8 @@ include("../../side.php");
 
 					// renaming files
 					if($user_name!=$old_name){
-						foreach (glob("$path_eonweb/$dir_imgcache/$old_name*.png") as $filename)
-							unlink($filename);
-						if(file_exists("$path_eonweb/$dir_imgcache/$old_name-ged.xml"))
-							rename("$path_eonweb/$dir_imgcache/$old_name-ged.xml","$path_eonweb/$dir_imgcache/$user_name-ged.xml");
+						if(file_exists("$path_eonweb/$dir_imgcache/".strtolower($old_name)."-ged.xml"))
+							rename("$path_eonweb/$dir_imgcache/".strtolower($old_name)."-ged.xml","$path_eonweb/$dir_imgcache/".strtolower($user_name)."-ged.xml");
 					}
 					message(8," : User updated",'ok');
 					}

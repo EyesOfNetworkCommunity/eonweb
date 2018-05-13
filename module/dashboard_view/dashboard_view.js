@@ -1,9 +1,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2016 EyesOfNetwork Team
+# Copyright (C) 2017 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION : 5.1
+# VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -42,6 +42,9 @@ function ajaxCharts(link)
 				else{
 					drawPieChart("container_hosts_state", title, response, "hostState", false);
 				}
+				$("#menu-toggle").click(function(){
+					$('#container_hosts_state').highcharts().reflow(); 
+				});
 			},
 			error: function(){}
 		});
@@ -61,6 +64,9 @@ function ajaxCharts(link)
 				else{
 					drawPieChart("container_services_state", title, response, "serviceState", false);
 				}
+				$("#menu-toggle").click(function(){
+					$('#container_services_state').highcharts().reflow(); 
+				});
 			},
 			error: function(){}
 		});
@@ -76,6 +82,9 @@ function ajaxCharts(link)
 		success: function(response){
 			var title = '<a style="font-size:18px;color:#333333;text-decoration:none;" class="graph_title" style="text-decoration:none;" href="/module/monitoring_ged/ged.php?q=active">Evenements actifs</a>';
 			drawPieChart("container_event_state_nbr", title, response, "eventState", "with_link");
+			$("#menu-toggle").click(function(){
+				$('#container_event_state_nbr').highcharts().reflow(); 
+			});
 		},
 		error: function(){}
 	});
@@ -90,6 +99,9 @@ function ajaxCharts(link)
 		success: function(response){
 			var title = '<a style="font-size:18px;color:#333333;text-decoration:none;" class="graph_title" style="text-decoration:none;" href="/module/monitoring_ged/ged.php?q=active">Evenements actifs</a>';
 			drawColumnChart("container_event_state_nbr_by_time", title, response);
+			$("#menu-toggle").click(function(){
+				$('#container_event_state_nbr_by_time').highcharts().reflow(); 
+			});
 		},
 		error: function(){}
 	});

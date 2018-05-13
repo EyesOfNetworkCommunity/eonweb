@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2016 EyesOfNetwork Team
+# Copyright (C) 2017 EyesOfNetwork Team
 # DEV NAME : Quentin HOARAU
-# VERSION : 5.1
+# VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -47,6 +47,24 @@ if(file_exists($file)){
 ?>
 
 <form id="ged-table" method="POST" onsubmit="return false;" class="form-inline">
+
+	<div class="form-group datatable_actions_top">
+		<div id="ged-action" class="btn-group">
+		<?php
+		if($queue == "active"){
+			$actions = $array_action_option;
+		} else {
+			$actions = $array_resolve_action_option;
+		}
+		foreach ($actions as $key => $value) {
+			echo "<button id=\"$key\" class=\"btn btn-sm btn-default\" type=\"submit\" name=\"action\">".getLabel($value)."</button>";
+		}
+		?>
+		</div>
+		<button id="select-all1" class="btn btn-sm btn-primary"><?php echo getLabel("action.select_all"); ?></button>
+		<button id="unselect-all1" class="btn btn-sm btn-primary hidden"><?php echo getLabel("action.unselect_all"); ?></button>
+	</div>
+	
 	<div class="dataTable_wrapper">
 		<table id="events-table" class="table table-striped datatable-eonweb-ajax table-condensed table-hover">
 			<thead>
@@ -127,6 +145,7 @@ if(file_exists($file)){
 
 						// if there's a default filter
 						$array_filters = [];
+						$array_filters_exploded = [];
 						if($default!=""){
 							$g_filters = $xpath->query("//ged/filters[@name='$default']/filter");
 
@@ -152,13 +171,28 @@ if(file_exists($file)){
 										$like .= "%";
 									}
 									if($sqlcpt=="0") {
-										$sql .= " AND ($key LIKE ?";
-										$mysqli_prepare[0].="s";
+										$first_node=$like.",%";
+										$middle_node="%,".$like.",%";
+										$last_node="%,".$like;
+										$sql .= " AND ($key LIKE ? OR $key LIKE ? OR $key LIKE ? OR $key LIKE ?";
+										$mysqli_prepare[0].="ssss";
 										$mysqli_prepare[]=(string)$like;
+										$mysqli_prepare[]=(string)$first_node;
+										$mysqli_prepare[]=(string)$middle_node;
+										$mysqli_prepare[]=(string)$last_node;
 									} else {
-										$sql .= " OR $key LIKE ?";
-										$mysqli_prepare[0].="s";
-										$mysqli_prepare[]=(string)$like;
+										$array_filters_exploded = explode(",",$like);
+										foreach($array_filters_exploded as $filter_group) {
+											$first_node=$filter_group.",%";
+											$middle_node="%,".$filter_group.",%";
+											$last_node="%,".$filter_group;
+											$sql .= " OR $key LIKE ? OR $key LIKE ? OR $key LIKE ? OR $key LIKE ?";
+											$mysqli_prepare[0].="ssss";
+											$mysqli_prepare[]=(string)$filter_group;
+											$mysqli_prepare[]=(string)$first_node;
+											$mysqli_prepare[]=(string)$middle_node;
+											$mysqli_prepare[]=(string)$last_node;
+										}
 									}
 									$sqlcpt++;
 								}
@@ -184,22 +218,21 @@ if(file_exists($file)){
 	</div>
 
 	<div class="form-group">
-		<select id="ged-action" class="form-control" name="ged_actions">
-			<?php
-				if($queue == "active"){
-					$actions = $array_action_option;
-				} else {
-					$actions = $array_resolve_action_option;
-				}
-				foreach ($actions as $key => $value) {
-					echo "<option value=\"$key\">".getLabel("$value")."</option>";
-				}
-			?>
-		</select>
+		<div id="ged-action" class="btn-group">
+		<?php
+		if($queue == "active"){
+			$actions = $array_action_option;
+		} else {
+			$actions = $array_resolve_action_option;
+		}
+		foreach ($actions as $key => $value) {
+			echo "<button id=\"$key\" class=\"btn btn-sm btn-default\" type=\"submit\" name=\"action\">".getLabel($value)."</button>";
+		}
+		?>
+		</div>
+		<button id="select-all2" class="btn btn-sm btn-primary"><?php echo getLabel("action.select_all"); ?></button>
+		<button id="unselect-all2" class="btn btn-sm btn-primary hidden"><?php echo getLabel("action.unselect_all"); ?></button>
 	</div>
-	<button id="exec-ged-action" class="btn btn-primary" type="submit" name="action" value="submit"><?php echo getLabel("action.submit"); ?></button>
-	<button id="select-all" class="btn btn-primary"><?php echo getLabel("action.select_all"); ?></button>
-	<button id="unselect-all" class="btn btn-primary hidden"><?php echo getLabel("action.unselect_all"); ?></button>
 </form>
 
 <script src="/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
@@ -208,7 +241,7 @@ if(file_exists($file)){
 <script type="text/javascript">
 	$('.datatable-eonweb-ajax').DataTable({
 		responsive: true,
-		lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, dictionnary['label.all']] ],
+		lengthMenu: [ [25, 50, 100, 250, -1], [25, 50, 100, 250, dictionnary['label.all']] ],
 		language: {
 			lengthMenu: dictionnary['action.display'] + " _MENU_ " + dictionnary['label.entries'],
 			search: dictionnary['action.search']+":",

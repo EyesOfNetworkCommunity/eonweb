@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2016 EyesOfNetwork Team
+# Copyright (C) 2017 EyesOfNetwork Team
 # DEV NAME : Quentin HOARAU
-# VERSION : 5.1
+# VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -80,15 +80,22 @@ include_once("./request.php");
 			mysqli_close($connect);
 		}
 	}
+	
+	// Get object
+	if(isset($_POST["object"])){
+		$post_object = htmlspecialchars($_POST["object"]);
+	}
+
 	?>
 
 	<form action="index.php" method="post" class="form-inline">
 		<div class="form-group">
 			<select class="form-control" id="object" name="object">
 			<?php
+			$selected="";
 			foreach($request as $object => $request){
-				if(isset($_POST["object"])){
-					if($object==$_POST["object"])
+				if(isset($post_object)){
+					if($object==$post_object)
 						$selected="selected";
 					else
 						$selected="";
@@ -102,10 +109,12 @@ include_once("./request.php");
 	</form>
 	
 	<?php
-	if(isset($_POST["object"])){
+	if(isset($post_object)){
 		include("./request.php");
-		echo "<p class='alert alert-info'><i class='fa fa-info-circle'></i> File : <a href=\"./download.php?file=".$_POST["object"].".csv\">".$_POST["object"]."</a></p>";
-		createFile( $_POST["object"],$request[$_POST["object"]] );
+		if(isset($request[$post_object])) {
+			echo "<p class='alert alert-info'><i class='fa fa-info-circle'></i> File : <a href=\"./download.php?file=".$post_object.".csv\">".$post_object."</a></p>";
+			createFile( $post_object, $request[$post_object] );
+		}
 	}
 	?>
 

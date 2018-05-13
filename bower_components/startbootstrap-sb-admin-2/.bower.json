@@ -1,7 +1,7 @@
 {
   "name": "startbootstrap-sb-admin-2",
-  "version": "3.3.7",
   "homepage": "http://startbootstrap.com/template-overviews/sb-admin-2/",
+  "version": "3.3.7+1",
   "authors": [
     "David Miller"
   ],
@@ -10,7 +10,7 @@
     "bootstrap",
     "theme"
   ],
-  "license": "Apache-2.0",
+  "license": "MIT",
   "ignore": [
     "**/.*",
     "node_modules",
@@ -23,14 +23,16 @@
   ],
   "main": [
     "dist/css/sb-admin-2.css",
-    "dist/js/sb-admin-2.js"
+    "dist/css/sb-admin-2.min.css",
+    "dist/js/sb-admin-2.js",
+    "dist/js/sb-admin-2.min.js"
   ],
   "dependencies": {
     "bootstrap": "~3.3.7",
     "datatables": "~1.10.4",
     "datatables-plugins": "~1.0.1",
     "flot": "~0.8.3",
-    "font-awesome": "~4.2.0",
+    "font-awesome": "~4.6.3",
     "holderjs": "~2.4.1",
     "metisMenu": "~1.1.3",
     "morrisjs": "~0.5.1",
@@ -38,13 +40,16 @@
     "bootstrap-social": "~4.8.0",
     "flot.tooltip": "~0.8.4"
   },
-  "_release": "3.3.7",
+  "resolutions": {
+    "font-awesome": "~4.6.3"
+  },
+  "_release": "3.3.7+1",
   "_resolution": {
     "type": "version",
-    "tag": "v3.3.7",
-    "commit": "49fbecb507c36e83de055bdd836ef2d03352300e"
+    "tag": "v3.3.7+1",
+    "commit": "e85ee3814ba12b7095024d31424cc9d19d791d05"
   },
-  "_source": "https://github.com/IronSummitMedia/startbootstrap-sb-admin-2.git",
+  "_source": "https://github.com/BlackrockDigital/startbootstrap-sb-admin-2.git",
   "_target": "^3.3.7",
-  "_originalSource": "startbootstrap-sb-admin-2"
+  "_originalSource": "BlackrockDigital/startbootstrap-sb-admin-2"
 }

@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2016 EyesOfNetwork Team
+# Copyright (C) 2017 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION : 5.1
+# VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -20,12 +20,17 @@
 #########################################
 */
 
+include_once("./request.php");
+
 if(isset($_GET["file"])){
-	$dwn="/tmp/".$_GET["file"];
-	header("Content-type: application/octet-stream");
-	header("Content-Disposition: attachment; filename=".$_GET["file"]);
-	flush(); 
-	readfile($dwn);
+	$file=basename($_GET["file"],".csv");
+	if($request[$file]) {
+		$dwn="/tmp/".$_GET["file"];
+		header("Content-type: application/octet-stream");
+		header("Content-Disposition: attachment; filename=".$_GET["file"]);
+		flush(); 
+		readfile($dwn);
+	}
 }
 
 ?>

@@ -1,9 +1,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2016 EyesOfNetwork Team
+# Copyright (C) 2017 EyesOfNetwork Team
 # DEV NAME : Quentin HOARAU
-# VERSION : 5.1
+# VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -19,6 +19,16 @@
 #########################################
 */
 
+moment.locale('fr');
+
+var ranges = [];
+ranges[dictionnary["label.today"]] = [moment(), moment()];
+ranges[dictionnary["label.yesterday"]] = [moment().subtract(1, 'days'), moment().subtract(1, 'days')];
+ranges[dictionnary["label.last_7_days"]] = [moment().subtract(6, 'days'), moment()];
+ranges[dictionnary["label.last_30_days"]] = [moment().subtract(29, 'days'), moment()];
+ranges[dictionnary["label.this_month"]] = [moment().startOf('month'), moment().endOf('month')];
+ranges[dictionnary["label.last_month"]] = [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')];
+
 $('.daterangepicker-eonweb').daterangepicker({
 	autoUpdateInput: false,
 	locale: {
@@ -27,38 +37,8 @@ $('.daterangepicker-eonweb').daterangepicker({
 		cancelLabel: dictionnary['action.clear'],
 		customRangeLabel: dictionnary['label.custom'],
 		applyClass: "btn-primary",
-		daysOfWeek: [
-            dictionnary["calendar.sunday"],
-            dictionnary["calendar.monday"],
-            dictionnary["calendar.tuesday"],
-            dictionnary["calendar.wednesday"],
-            dictionnary["calendar.thursday"],
-            dictionnary["calendar.friday"],
-            dictionnary["calendar.saturday"]
-        ],
-        monthNames: [
-			dictionnary["calendar.january"],
-			dictionnary["calendar.february"],
-			dictionnary["calendar.march"],
-			dictionnary["calendar.april"],
-			dictionnary["calendar.may"],
-			dictionnary["calendar.june"],
-			dictionnary["calendar.july"],
-			dictionnary["calendar.august"],
-			dictionnary["calendar.september"],
-			dictionnary["calendar.october"],
-			dictionnary["calendar.november"],
-			dictionnary["calendar.december"]
-        ]
 	},
-	ranges: {
-		[dictionnary["label.today"]]: [moment(), moment()],
-		[dictionnary["label.yesterday"]]: [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-		[dictionnary["label.last_7_days"]]: [moment().subtract(6, 'days'), moment()],
-		[dictionnary["label.last_30_days"]]: [moment().subtract(29, 'days'), moment()],
-		[dictionnary["label.this_month"]]: [moment().startOf('month'), moment().endOf('month')],
-		[dictionnary["label.last_month"]]: [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-	}
+	ranges: ranges
 });
 	
 $('.daterangepicker-eonweb').on('apply.daterangepicker', function(ev, picker) {

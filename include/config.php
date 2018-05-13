@@ -2,9 +2,9 @@
 /*
 #########################################
 #
-# Copyright (C) 2016 EyesOfNetwork Team
+# Copyright (C) 2017 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION : 5.1
+# VERSION : 5.2
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
@@ -23,7 +23,7 @@
 // #######################################
 // # General Information
 // #######################################
-$version="5.1";
+$version="5.2";
 
 // #######################################
 // # Database config information
@@ -58,7 +58,7 @@ $defaulttab=1;
 $defaultpage="./module/dashboard_view/index.php";
 
 // # Max number of lines in a tablesorter
-$maxlines=100;
+$maxlines=500;
 
 // # Page refresh interval
 $refresh_time=60;
@@ -73,18 +73,8 @@ $cookie_time=0;
 // LDAP
 $ldap_search_begins=array('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','1','2','3','4','5','6','7','8','9','0','\\28');
 
-// Max Display value
-$max_display=5;
-
-// Display 0 or not ; Use it like a boolean with values 0/1
-$display_zero=1;
-
 // Number of back-up file to use for nagios configuration file.
 $max_bu_file = 5;
-
-// Minimun and maximun number for duplicate process.
-$min_dup = 1000;
-$max_dup = 9999;
 
 // # Define All Path
 $path_eon="/srv/eyesofnetwork";
@@ -106,9 +96,6 @@ $path_menus_custom="$path_languages/custom.menus";
 $path_menu_limited="$path_languages/menus-limited";
 $path_menu_limited_custom="$path_languages/custom.menus-limited";
 $path_reports="$path_eonweb/include/reports";
-
-// # Backup Manager
-$path_backupconf="/etc/backup-manager.conf";
 
 // # Nagios
 $path_nagios="$path_eon/nagios";
@@ -135,10 +122,9 @@ $path_gedhdb="$path_ged/etc/bkd/gedmysql.cfg";
 $path_gedqcfg="$path_ged/etc/gedq.cfg";
 $path_gedtcfg="$path_ged/etc/gedt.cfg";
 
-// # Net-SNMP
-$path_snmpwalk="/usr/bin/snmpwalk";
-$path_snmpconf="/etc/snmp/snmpd.conf";
-$path_snmptrapconf="/etc/snmp/snmptrapd.conf";
+// # Notifier
+$path_notifier_rules="$path_notifier/etc/notifier.rules";
+$path_notifier_methods="$path_notifier/etc/notifier.cfg";
 
 // # NetCAT
 $default_minport=1;
