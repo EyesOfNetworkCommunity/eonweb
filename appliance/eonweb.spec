@@ -2,10 +2,10 @@ Summary: EyesOfNetwork Web Interface
 Name: eonweb
 Version: 5.2
 Release: 0.eon
-Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
+Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/master.tar.gz#/%{name}-%{version}.tar.gz
 Group: Applications/System
 License: GPL
-Requires: eonconf, backup-manager, cacti, ged, ged-mysql, eon4apps, lilac, snmptt, thruk 
+Requires: backup-manager, cacti, ged, ged-mysql, eon4apps, lilac, snmptt, thruk 
 Requires: httpd, mariadb-server, mod_auth_eon, mod_perl
 Requires: php, php-mysql, php-ldap, php-process, php-xml
 Requires: nagios >= 3.0, nagios-plugins >= 1.4.0, nagvis, nagiosbp, notifier, nagios-plugins-nrpe, pnp4nagios
@@ -15,9 +15,8 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 # appliance group and users
 %define eondir          /srv/eyesofnetwork
-%define	datadir		%{eondir}/%{name}-%{version}
+%define	datadir		%{eondir}/%{name}
 %define eonconfdir	/srv/eyesofnetworkconf/%{name}
-%define linkdir         %{eondir}/%{name}
 %define snmpdir		/etc/snmp
 %define backupdir	/etc
 
@@ -25,7 +24,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 EONWEB is the web frontend for the EyesOfNetwork appliance : https://www.eyesofnetwork.com.
 
 %prep
-%setup -q
+%setup -q -n %{name}-master
 
 %build
 
@@ -42,10 +41,8 @@ cp -afv %{buildroot}%{eonconfdir}/eonwebpurge %{buildroot}%{_sysconfdir}/cron.d/
 cp -afv %{buildroot}%{eonconfdir}/eonweb.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
 
 %post
-ln -nsf %{datadir} %{linkdir}
 /bin/chmod 775 %{datadir}/cache
 /bin/chown -R root:eyesofnetwork %{datadir}
-/bin/chown -h root:eyesofnetwork %{linkdir}
 
 %clean
 rm -rf %{buildroot}
@@ -58,7 +55,7 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
-* Thu Nov 23 2017 Jean-Philippe Levy <jeanphilippe.levy@gmail.com> - 5.2-0.eon
+* Sun May 13 2018 Jean-Philippe Levy <jeanphilippe.levy@gmail.com> - 5.2-0.eon
 - packaged for EyesOfNetwork appliance 5.2
 
 * Wed Jan 11 2017 Jean-Philippe Levy <jeanphilippe.levy@gmail.com> - 5.1-0.eon
