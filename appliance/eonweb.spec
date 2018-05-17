@@ -5,7 +5,7 @@ Release: 1.eon
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/master.tar.gz#/%{name}-%{version}.tar.gz
 Group: Applications/System
 License: GPL
-Requires: backup-manager, cacti, ged, ged-mysql, eon4apps, lilac, snmptt, thruk 
+Requires: backup-manager, cacti0, ged, ged-mysql, eon4apps, lilac, snmptt, thruk 
 Requires: httpd, mariadb-server, mod_auth_eon, mod_perl
 Requires: php, php-mysql, php-ldap, php-process, php-xml
 Requires: nagios >= 3.0, nagios-plugins >= 1.4.0, nagvis, nagiosbp, notifier, nagios-plugins-nrpe, pnp4nagios
