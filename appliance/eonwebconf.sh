@@ -7,6 +7,7 @@ eondir="/srv/eyesofnetwork"
 datadir="$eondir/eonweb"
 eonwebdb="eonweb"
 nagiosbpdb="nagiosbp"
+notifierdb="notifier"
 snmpdir="/etc/snmp"
 backupdir="/etc"
 
@@ -26,10 +27,12 @@ chown -R root:eyesofnetwork ${datadir}*
 # create the eonweb database
 mysqladmin -u root --password=root66 create ${eonwebdb}
 mysqladmin -u root --password=root66 create ${nagiosbpdb}
+mysqladmin -u root --password=root66 create ${notifierdb}
 
 # create the database content
 mysql -u root --password=root66 ${eonwebdb} < ${eonconfdir}/eonweb.sql
 mysql -u root --password=root66 ${nagiosbpdb} < ${eonconfdir}/nagiosbp.sql
+mysql -u root --password=root66 ${notifierdb} < ${datadir}/module/admin_notifier/db/notifier.sql
 
 # Change DocumentRoot for apache
 sed -i 's/^DocumentRoot.*/DocumentRoot\ \"\/srv\/eyesofnetwork\/eonweb\"/g' /etc/httpd/conf/httpd.conf

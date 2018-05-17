@@ -1,7 +1,7 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
 Version: 5.2
-Release: 0.eon
+Release: 1.eon
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/master.tar.gz#/%{name}-%{version}.tar.gz
 Group: Applications/System
 License: GPL
@@ -55,6 +55,9 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
+* Thu May 17 2018 Jean-Philippe Levy <jeanphilippe.levy@gmail.com> - 5.2-1.eon
+- fix notifier gui config  
+
 * Sun May 13 2018 Jean-Philippe Levy <jeanphilippe.levy@gmail.com> - 5.2-0.eon
 - packaged for EyesOfNetwork appliance 5.2
 
