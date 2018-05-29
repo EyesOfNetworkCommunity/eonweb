@@ -21,8 +21,8 @@
                     "target":"_blank"
                 },
                 {
-                    "name":"menu.link.thruk",
-                    "url":"/thruk/cgi-bin/statusmap.cgi",
+                    "name":"menu.link.thrukbp",
+                    "url":"/thruk/cgi-bin/bp.cgi",
                     "target":"frame"
                 },
                 {
