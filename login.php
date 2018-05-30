@@ -62,7 +62,7 @@ function display_login(){
 if(isset($_COOKIE['user_name'])){
 	?>
 	<script src="/bower_components/jquery/dist/jquery.min.js"></script>
-	<script type="text/javascript">
+	<script>
 		document.write("<body id='main'>");
 		if (window!=top){
 			top.location="/module/index.php";

@@ -25,7 +25,7 @@
 <script src="/bower_components/moment/min/moment-with-locales.min.js"></script>
 <script src="/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
 
-<script type="text/javascript">
+<script>
 	// on page load
     $(document).ready(function() {
 		var start = moment().format('YYYY-MM-DD HH:mm:ss');

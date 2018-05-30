@@ -24,7 +24,7 @@
 <script src="/bower_components/highcharts/highcharts.js"></script>
 
 <!-- Dashboards -->
-<script type="text/javascript">
+<script>
         ajaxCharts("with_link");
         setInterval(function(){ajaxCharts("with_link");}, <?php echo $refresh_time * 1000; ?>);
 </script>

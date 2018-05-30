@@ -25,7 +25,7 @@
 <!-- BootstrapSelect JavaScript -->
 <script src="/bower_components/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
 
-<script type="text/javascript">
+<script>
 	// on page load
     $(document).ready(function() {
         $('#loading').hide();

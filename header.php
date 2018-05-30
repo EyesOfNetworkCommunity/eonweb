@@ -32,7 +32,7 @@ if(file_exists($path_eonweb.$path_logo_navbar_custom)) { $path_logo_navbar=$path
 
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="<?php echo getLabel("label._lang"); ?>">
 
 <head>
 	<title><?php echo getLabel("label.product.name"); ?></title>
