@@ -27,9 +27,9 @@ if(isset($_GET["module"]) && isset($_GET["link"])) {
 	include("../include/arrays.php");
 	
 	if(in_array($_GET["module"],$array_modules)) {
-		$module=exec("rpm -q ".$_GET["module"]." |grep '.eon' |wc -l");
+		$module=exec("rpm -qi ".$_GET["module"]." |wc -l");
 		# Redirect to module page if rpm installed
-		if($module!=0) { header('Location: '.$_GET["link"].''); }
+		if($module!=1) { header('Location: '.$_GET["link"].''); }
 	}
 
 } 
