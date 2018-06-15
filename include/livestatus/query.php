@@ -93,13 +93,12 @@ function getServicesStateNbr()
 			$client = new Client($options);
 
 			// get all service PENDING
-			$test = $client
+			$nbr_pending = $client
 				->get('services')
-				->filter('has_been_checked = 0')
+				->stat('has_been_checked = 0')
 				#->filter('contacts >= '. $_SERVER["REMOTE_USER"])
 				->filter('host_contacts >= '. $_SERVER["REMOTE_USER"])
 				->execute();
-			$nbr_pending = count($test) - 1;
 
 			// construct mklivestatus request, and get the response
 			$response = $client
@@ -113,7 +112,7 @@ function getServicesStateNbr()
 				->filter('host_contacts >= '. $_SERVER["REMOTE_USER"])
 				->execute();
 
-			$nbr_services_pending += $nbr_pending;
+			$nbr_services_pending += $nbr_pending[0][0];
 			$nbr_services_ok += $response[0][0];
 			$nbr_services_warning += $response[0][1];
 			$nbr_services_critical += $response[0][2];
