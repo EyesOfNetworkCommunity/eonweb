@@ -155,6 +155,7 @@
 	"label.admin_notifier.rules.type": "Type",
 	"label.admin_notifier.service" : "Règles des services",
 	"label.admin_notifier.title": "Notifications avancées",
+	"label.admin_notifier.rules.track": "Suivi",
 	"label.admin_process.title": "Gestion des processus",
 	"label.admin_user.ldap_log": "Login LDAP",
 	"label.admin_user.select": "Sélectionner",

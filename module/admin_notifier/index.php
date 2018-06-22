@@ -154,7 +154,7 @@ if(isset($_GET["action"])) {
 	if($action==null or $action =="rules") {
 		// SQL get rules
 		$rules_sql="SELECT rules.id,rules.name as name,debug,contact,host,service,state,notificationnumber,
-			timeperiods.name as timeperiod, timeperiods.id as timeperiod_id, GROUP_CONCAT(methods.name) as methods
+			timeperiods.name as timeperiod, timeperiods.id as timeperiod_id, rules.tracking as tracking, GROUP_CONCAT(methods.name) as methods
 			FROM rules,timeperiods,methods,rule_method
 			WHERE rules.timeperiod_id=timeperiods.id
 			AND rules.id = rule_method.rule_id
@@ -185,6 +185,7 @@ if(isset($_GET["action"])) {
 							<th> <?php echo getLabel("label.admin_notifier.notification"); ?> </th>
 							<th> <?php echo getLabel("label.admin_notifier.notifperiod"); ?> </th>
 							<th> <?php echo getLabel("label.admin_notifier.methods.menu"); ?> </th>
+							<th> <?php echo getLabel("label.admin_notifier.rules.track"); ?> </th>
 							<th> <?php echo getLabel("label.admin_notifier.move"); ?>  </th>
 						</tr>
 					</thead>
@@ -206,6 +207,7 @@ if(isset($_GET["action"])) {
 							<td><?php echo $line["notificationnumber"]; ?></td>
 							<td><a href="timeperiods.php?id=<?php echo $line["timeperiod_id"]; ?>"><?php echo $line["timeperiod"]; ?></a></td>
 							<td><?php echo $line["methods"]; ?></td>
+							<td><?php echo $line["tracking"]; ?></td>
 							<td>
 								<a class="up" href="javascript:void(0)"><i class="fa fa-arrow-up"></i></a>
 								<a class="down" href="javascript:void(0)"><i class="fa fa-arrow-down"></i></a>
@@ -247,6 +249,7 @@ if(isset($_GET["action"])) {
 							<th> <?php echo getLabel("label.admin_notifier.notification"); ?> </th>
 							<th> <?php echo getLabel("label.admin_notifier.notifperiod"); ?> </th>
 							<th> <?php echo getLabel("label.admin_notifier.methods.menu"); ?> </th>
+							<th> <?php echo getLabel("label.admin_notifier.rules.track"); ?> </th>
 							<th> <?php echo getLabel("label.admin_notifier.move"); ?>  </th>
 						</tr>
 					</thead>
@@ -268,6 +271,7 @@ if(isset($_GET["action"])) {
 							<td><?php echo $line["notificationnumber"]; ?></td>
 							<td><a href="timeperiods.php?id=<?php echo $line["timeperiod_id"]; ?>"><?php echo $line["timeperiod"]; ?></a></td>
 							<td><?php echo $line["methods"]; ?></td>
+							<td><?php echo $line["tracking"]; ?></td>
 							<td>
 								<a class="up" href="javascript:void(0)"><i class="fa fa-arrow-up"></i></a>
 								<a class="down" href="javascript:void(0)"><i class="fa fa-arrow-down"></i></a>
