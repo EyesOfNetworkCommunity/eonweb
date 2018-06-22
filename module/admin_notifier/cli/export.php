@@ -95,7 +95,7 @@ $node_service = $notifier_rules->createElement("service");
 $node_rules->appendchild($node_service);
 
 $rules_sql="SELECT rules.id,rules.name as name,rules.type as type,debug,contact,host,service,state,notificationnumber,
-	timeperiods.daysofweek as daysofweek, timeperiods.timeperiod as timeperiod, GROUP_CONCAT(methods.name) as methods
+	timeperiods.daysofweek as daysofweek, timeperiods.timeperiod as timeperiod, rules.tracking as tracking, GROUP_CONCAT(methods.name) as methods
 	FROM rules,timeperiods,methods,rule_method
 	WHERE rules.timeperiod_id=timeperiods.id
 	AND rules.id = rule_method.rule_id
@@ -107,7 +107,7 @@ $rules_sql="SELECT rules.id,rules.name as name,rules.type as type,debug,contact,
 $rules_req = sqlrequest($database_notifier,$rules_sql);
 while($rule = mysqli_fetch_array($rules_req)) {
 	$rule_line="\n\t".$rule["debug"].":".$rule["contact"].":".$rule["host"].":".$rule["service"].":".$rule["state"];
-	$rule_line.=":".$rule["daysofweek"].":".$rule["timeperiod"].":".$rule["notificationnumber"].":".$rule["methods"];
+	$rule_line.=":".$rule["daysofweek"].":".$rule["timeperiod"].":".$rule["notificationnumber"].":".$rule["methods"].":".$rule["tracking"];
 	if($rule["type"]=="host") {
 		$rule_host = $notifier_rules->createTextNode($rule_line);
 		$node_host->appendchild($rule_host);
