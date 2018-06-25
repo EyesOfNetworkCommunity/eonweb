@@ -79,7 +79,7 @@ function my_ajax_search()
 				}
 			});
 			str = str.substring(0, str.length-1);
-			str += '], select: function(event, ui) { $("#sideMenuSearch").submit();} })';
+			str += '], select: function(event, ui) { $("#s0_value").val(ui.item.label); $("#sideMenuSearch").submit();} })';
 				
 			$("#s0_value").attr('onFocus', str);
 		}
