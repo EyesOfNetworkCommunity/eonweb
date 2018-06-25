@@ -80,14 +80,20 @@ function notifier_import_rules($type) {
 	$rules_type = explode(PHP_EOL,$xml_rules->$type);
 	foreach($rules_type as $rule_type) {
 		if(!empty($rule_type)) {
-			$rule = explode(":",$rule_type,9);		 
-			if(count($rule) == 9) {
+			$rule = explode(":",$rule_type,10);		 
+			if(count($rule) == 10 || count($rule) == 9 ) {
 				$debug = trim($rule[0]);
 				$contact = trim($rule[1]);
 				$host = trim($rule[2]);
 				$service = trim($rule[3]);
 				$state = trim($rule[4]);
 				$notificationnumber = trim($rule[7]);
+				
+				if(isset($rule[9])){
+					$tracking = trim($rule[9]);
+				}else{
+					$tracking = 0;
+				}
 				
 				// Timeperiod
 				$daysofweek = trim($rule[5]);
@@ -114,7 +120,7 @@ function notifier_import_rules($type) {
 				} else {
 					$rule_sort_key=0;
 				}
-				$sql_rule = "INSERT INTO rules VALUES('','','".$type."','".$debug."','".$contact."','".$host."','".$service."','".$state."','".$notificationnumber."','".$timeperiod_id."','".$rule_sort_key."')";
+				$sql_rule = "INSERT INTO rules VALUES('','','".$type."','".$debug."','".$contact."','".$host."','".$service."','".$state."','".$notificationnumber."','".$timeperiod_id."','".$rule_sort_key."', '".$tracking."')";
 				$rule_type_id = sqlrequest($database_notifier,$sql_rule,true);
 				$rule_name = "RULE_".strtoupper($type)."_".$rule_type_id."";
 				sqlrequest($database_notifier,"UPDATE rules set name='".$rule_name."' where id='".$rule_type_id."'");
