@@ -1,7 +1,7 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
 Version: 5.2
-Release: 1.eon
+Release: 3.eon
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/master.tar.gz#/%{name}-%{version}.tar.gz
 Group: Applications/System
 License: GPL
@@ -9,7 +9,7 @@ Requires: backup-manager, cacti0, ged, ged-mysql, eon4apps, lilac, snmptt, thruk
 Requires: httpd, mariadb-server, mod_auth_eon, mod_perl
 Requires: php, php-mysql, php-ldap, php-process, php-xml
 Requires: nagios >= 3.0, nagios-plugins >= 1.4.0, nagvis, nagiosbp, notifier, nagios-plugins-nrpe, pnp4nagios
-Requires: net-snmp
+Requires: net-snmp,net-snmp-perl
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
@@ -55,6 +55,15 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
+* Fri Jul 06 2018 Jean-Philippe Levy <jeanphilippe.levy@gmail.com> - 5.2-3.eon
+- add tracking option in notifier gui
+- fix dashboard pendings
+- fix search autocomplete click
+- fix restore admin_files module
+
+* Fri Jun 08 2018 Jean-Philippe Levy <jeanphilippe.levy@gmail.com> - 5.2-2.eon
+- fix net-snmp-perl dependency for snmptt
+
 * Thu May 17 2018 Jean-Philippe Levy <jeanphilippe.levy@gmail.com> - 5.2-1.eon
 - fix notifier gui config  
 
