@@ -56,7 +56,6 @@ rm -rf %{buildroot}
 
 %changelog
 * Fri Jul 06 2018 Jean-Philippe Levy <jeanphilippe.levy@gmail.com> - 5.2-3.eon
-- add tracking option in notifier gui
 - fix dashboard pendings
 - fix search autocomplete click
 - fix restore admin_files module
