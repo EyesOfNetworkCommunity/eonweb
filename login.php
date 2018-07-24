@@ -255,5 +255,4 @@ else {
 	}
 	else { display_login(); }
 }
-	
 ?>

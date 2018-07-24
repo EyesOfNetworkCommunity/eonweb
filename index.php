@@ -23,6 +23,7 @@
 include("include/config.php");
 include("include/function.php");
 $defaultpage=getDefaultPage();
+checkUpdateDB();
 header("Location: $defaultpage");
 
 ?>

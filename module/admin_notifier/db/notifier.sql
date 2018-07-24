@@ -128,6 +128,7 @@ CREATE TABLE `rules` (
   `notificationnumber` varchar(255) NOT NULL DEFAULT '*',
   `timeperiod_id` bigint unsigned NOT NULL,
   `sort_key` int(32) NOT NULL default 0,
+  `tracking` INT(11) NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `timeperiod_id` (`timeperiod_id`),
   CONSTRAINT `rules_ibfk_1` FOREIGN KEY (`timeperiod_id`) REFERENCES `timeperiods` (`id`)
