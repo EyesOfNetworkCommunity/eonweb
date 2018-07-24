@@ -1317,28 +1317,35 @@ function checkUpdateDB(){
 	global $database_eonweb;
 	global $database_username;
 	global $database_password;
+	global $path_eonweb;
+	
+	$dir=$path_eonweb."/appliance/updates/";
 	
 	$version_sql = sqlrequest($database_eonweb,"SELECT count(value) as value FROM configs WHERE name='version'");
 	if(mysqli_result($version_sql,0,"value") == 0){
 		$version_sql = sqlrequest($database_eonweb,"INSERT INTO configs (name, value) VALUES('version', '".$version."')");
 		
 		// execution de tous les .sql jusqu'à la version donné dans config
-		exec("ls /srv/eyesofnetwork/eonweb/appliance/updates/ | sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n", $SQL_Files);
+		$SQL_Files = array_slice(scandir($dir), 2);
+		usort($SQL_Files, 'version_compare');
 		
 		foreach($SQL_Files as $file){
-			echo "mysql -u $database_username --password=$database_password < /srv/eyesofnetwork/eonweb/appliance/updates/$file";
-			exec("mysql -u $database_username --password=$database_password < /srv/eyesofnetwork/eonweb/appliance/updates/$file");
+			if(rtrim($file,'.sql') <= $version){
+				exec("mysql -u $database_username --password=$database_password < $dir$file");
+			}
 		}
 		
 	}else{
 		$versionBD = mysqli_result(sqlrequest($database_eonweb,"SELECT value FROM configs WHERE name='version'"),0,"value");
 		
 		// execution des .sql entre version en BD et celle config
-		exec("ls /srv/eyesofnetwork/eonweb/appliance/updates/ | sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n", $SQL_Files);
+		
+		$SQL_Files = array_slice(scandir($dir), 2);
+		usort($SQL_Files, 'version_compare');
+		
 		foreach($SQL_Files as $file){
 			if((rtrim($file,'.sql') <= $version && rtrim($file,'.sql') > $versionBD)){
-				echo "mysql -u $database_username --password=$database_password < /srv/eyesofnetwork/eonweb/appliance/updates/$file";
-				exec("mysql -u $database_username --password=$database_password < /srv/eyesofnetwork/eonweb/appliance/updates/$file");
+				exec("mysql -u $database_username --password=$database_password < $dir$file");
 			}
 		}
 		sqlrequest($database_eonweb,"UPDATE configs SET value='$version' WHERE name='version'");

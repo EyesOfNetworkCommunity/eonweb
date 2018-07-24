@@ -1,0 +1,2 @@
+USE notifier;
+ALTER TABLE rules ADD COLUMN tracking INT(11) NULL DEFAULT '0';
