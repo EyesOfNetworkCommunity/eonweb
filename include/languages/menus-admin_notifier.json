@@ -52,6 +52,10 @@
 			"name":"label.tools",
 			"link":[
 				{
+					"name":"label.admin_notifier.config",
+					"url":"/module/admin_notifier/config.php"
+				},
+				{
 					"name":"label.admin_notifier.contact",
 					"url":"/module/admin_notifier/index.php?action=contacts"
 				},

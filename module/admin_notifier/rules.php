@@ -143,6 +143,11 @@ function get_field($field1, $base=false, $field2=false) {
 	$rule_type=retrieve_form_data("type",null);
 	if(is_null($rule_type) or ($rule_type!="host" and $rule_type!="service")) { $rule_type="host"; }
 	$rule_debug=retrieve_form_data("rule_debug",null);
+	if ( $rule_debug == '1') {
+		$rule_debug = 1;
+	} else {
+		$rule_debug = 0;
+	}
 	if(isset($rule_contact)){
 		$rule_contact = (is_null($rule_contact)) ? "-" : $rule_contact;
 	}
@@ -279,21 +284,19 @@ function get_field($field1, $base=false, $field2=false) {
 				<input class="form-control" type="text" name="type" value="<?php echo $rule_type; ?>" readonly>
 			</div>
 		</div>
-		
+
 		<div class="row form-group">
 			<label class="col-md-3"><?php echo getLabel("label.admin_notifier.rules.debug") ?></label>
 			<div class="col-md-9">
-				<select class="form-control" name="rule_debug">
-				<?php
-				for($i=0;$i<=3;$i++) {
-					if($rule_debug==$i) {
-						echo "<option selected>$i</option>";
-					} else {
-						echo "<option>$i</option>";
+				<input class="checkbox" type="checkbox" name="rule_debug" value="1" 
+				<?php 
+				if (isset($rule_debug)) {
+					if ($rule_debug > 0) {
+						echo " checked";
 					}
 				}
 				?>
-				</select>
+				>
 			</div>
 		</div>
 
