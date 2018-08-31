@@ -93,6 +93,47 @@ function delete_bp($bp,$bdd){
 }
 
 function list_services($host_name){
+	if ('/srv/eyesofnetwork/nagios/etc/objects/services.cfg') {
+		list_services_51($host_name);
+	}
+	else {
+		list_services_52($host_name);
+	}
+}
+
+function list_services_51($host_name){
+	$path_nagios_ser = "/srv/eyesofnetwork/nagios/etc/objects/services.cfg";
+	$tabServices = array() ;
+	$tabServices['service'] = array() ;
+	$lignes = file($path_nagios_ser);
+	$hasMatch = 0;
+	$pattern = "/^$host_name$/"; /**Modification BVI 15/03/2017 */
+
+	foreach( $lignes as $ligne) {
+	 /**Modification BVI 15/03/2017 
+		if ( preg_match("/$host_name$/", trim($ligne), $match)) {  //Get Host name
+			$hasMatch = 1;
+		}*/
+	$host_ligne = trim(str_replace("host_name", " ", $ligne));
+		if ( preg_match($pattern, trim($host_ligne), $match)) {  //Get Host name
+			$hasMatch = 1;
+		}
+		elseif ( preg_match("#^service_description#", trim($ligne))) {
+			//$service = preg_split("/[\s]+/", trim($ligne));
+			$service = trim(str_replace("service_description", " ", $ligne));
+			//Modification BVI //$service = preg_split("/[\s]+/", trim($ligne));
+			if ($hasMatch)
+				$tabServices['service'][] = $service;
+				//Modification BVI $tabServices['service'][] = $service[1];
+			$hasMatch = 0;
+		}
+	}
+	natcasesort($tabServices['service']);
+	array_unshift($tabServices['service'],"Hoststatus");
+	echo json_encode($tabServices);
+}
+
+function list_services_52($host_name){
 	$path_nagios_ser = "/srv/eyesofnetwork/nagios/etc/objects/hosts/". $host_name .".cfg";
 	$tabServices = array() ;
 	$tabServices['service'] = array() ;
