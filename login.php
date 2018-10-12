@@ -208,7 +208,7 @@ else {
 
 				$ldapbind=ldap_bind($ldapconn, $user_location, $mdp);
 
-				if($ldapbind && !empty($mdp))		
+				if($ldapbind && !empty($mdp) && !empty($user_location))		
 					$LOGIN=true;
 			}
 			// IF NOT A LDAP USER
