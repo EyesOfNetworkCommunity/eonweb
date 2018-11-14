@@ -1,7 +1,7 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
 Version: 5.2
-Release: 3.eon
+Release: 4.eon
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/master.tar.gz#/%{name}-%{version}.tar.gz
 Group: Applications/System
 License: GPL
@@ -55,6 +55,14 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
+* Wed Nov 14 2018 Jean-Philippe Levy <jeanphilippe.levy@gmail.com> - 5.2-4.eon
+- fix search with new thruk versions
+- fix ldap security issue 
+- fix BP to be backward compatible when used on EON 5.1 server
+- add general config options for notifier
+- fix debug flag for a given rule
+- fix nagiosbp to use correct cfg file to list host services
+
 * Fri Jul 06 2018 Jean-Philippe Levy <jeanphilippe.levy@gmail.com> - 5.2-3.eon
 - fix dashboard pendings
 - fix search autocomplete click
