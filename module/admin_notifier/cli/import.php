@@ -41,11 +41,11 @@ sqlrequest($database_notifier,"DELETE FROM methods");
 sqlrequest($database_notifier,"DELETE FROM timeperiods");
 
 // Insert configs
-sqlrequest($database_notifier,"INSERT INTO configs VALUES('','debug','cfg','".trim($xml_methods->debug)."')");
-sqlrequest($database_notifier,"INSERT INTO configs VALUES('','debug_rules','rules','".trim($xml_rules->debug_rules)."')");
-sqlrequest($database_notifier,"INSERT INTO configs VALUES('','log_file','cfg','".trim($xml_methods->log_file)."')");
-sqlrequest($database_notifier,"INSERT INTO configs VALUES('','logrules_file','rules','".trim($xml_rules->logrules_file)."')");
-sqlrequest($database_notifier,"INSERT INTO configs VALUES('','notifsent_file','rules','".trim($xml_rules->notifsent_file)."')");
+sqlrequest($database_notifier,"INSERT INTO configs (name, type, value) VALUES('debug','cfg','".trim($xml_methods->debug)."')");
+sqlrequest($database_notifier,"INSERT INTO configs (name, type, value) VALUES('debug_rules','rules','".trim($xml_rules->debug_rules)."')");
+sqlrequest($database_notifier,"INSERT INTO configs (name, type, value) VALUES('log_file','cfg','".trim($xml_methods->log_file)."')");
+sqlrequest($database_notifier,"INSERT INTO configs (name, type, value) VALUES('logrules_file','rules','".trim($xml_rules->logrules_file)."')");
+sqlrequest($database_notifier,"INSERT INTO configs (name, type, value) VALUES('notifsent_file','rules','".trim($xml_rules->notifsent_file)."')");
 
 // Insert methods
 function notifier_import_methods($type) {
@@ -60,7 +60,7 @@ function notifier_import_methods($type) {
 			if(isset($method[0]) and isset($method[1])) {
 				$method_name = trim($method[0]);
 				$method_line = addslashes(trim($method[1]));
-				$sql_method = "INSERT INTO methods VALUES('','".$method_name."','".$type."','".$method_line."')";
+				$sql_method = "INSERT INTO methods (name, type, line) VALUES('".$method_name."','".$type."','".$method_line."')";
 				$method_id = sqlrequest($database_notifier,$sql_method,true);
 				echo "INFO : create $type method ".$method_name." ($method_id)\n";
 			}
@@ -103,7 +103,7 @@ function notifier_import_rules($type) {
 				$timeperiod_result = mysqli_fetch_array($timeperiod_exist);
 							
 				if(!$timeperiod_result[0]) {
-					$timeperiod_id=sqlrequest($database_notifier,"INSERT into timeperiods VALUES('','','".$daysofweek."','".$timeperiod."')",true);
+					$timeperiod_id=sqlrequest($database_notifier,"INSERT into timeperiods (daysofweek, timeperiod) VALUES('".$daysofweek."','".$timeperiod."')",true);
 					$timeperiod_name = "TP_".$timeperiod_id."";
 					sqlrequest($database_notifier,"UPDATE timeperiods set name='".$timeperiod_name."' where id='".$timeperiod_id."'");
 					echo "INFO : create timeperiod ".$timeperiod_name." ($timeperiod_id)\n";
@@ -120,7 +120,7 @@ function notifier_import_rules($type) {
 				} else {
 					$rule_sort_key=0;
 				}
-				$sql_rule = "INSERT INTO rules VALUES('','','".$type."','".$debug."','".$contact."','".$host."','".$service."','".$state."','".$notificationnumber."','".$timeperiod_id."','".$rule_sort_key."', '".$tracking."')";
+        $sql_rule = "INSERT INTO rules (type, debug, contact, host, service, state, notificationnumber, timeperiod_id, tracking, sort_key) VALUES('".$type."','".$debug."','".$contact."','".$host."','".$service."','".$state."','".$notificationnumber."','".$timeperiod_id."','".$tracking."','".$rule_sort_key."')";
 				$rule_type_id = sqlrequest($database_notifier,$sql_rule,true);
 				$rule_name = "RULE_".strtoupper($type)."_".$rule_type_id."";
 				sqlrequest($database_notifier,"UPDATE rules set name='".$rule_name."' where id='".$rule_type_id."'");
@@ -132,7 +132,7 @@ function notifier_import_rules($type) {
 					$method_exist = sqlrequest($database_notifier,"SELECT id from methods where name='".trim($method)."' and type='".$type."'");
 					$method_res = mysqli_fetch_array($method_exist);
 					if(isset($method_res[0])) {
-						sqlrequest($database_notifier,"INSERT INTO rule_method VALUES('".$rule_type_id."','".$method_res[0]."')");
+						sqlrequest($database_notifier,"INSERT INTO rule_method (rule_id, method_id) VALUES('".$rule_type_id."','".$method_res[0]."')");
 						echo "INFO : use method $method (".$method_res[0].")\n";
 						
 					} else {
