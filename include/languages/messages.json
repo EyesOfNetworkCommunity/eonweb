@@ -161,6 +161,7 @@
 	"label.admin_notifier.config.notif_file": "full path for notifier's sent notifications logfile",
 	"label.admin_notifier.service" : "Service rules",
 	"label.admin_notifier.title": "Advanced Notifications",
+	"label.admin_notifier.rules.track": "Tracking",
 	"label.admin_process.title": "Process management",
 	"label.admin_user.ldap_log": "LDAP login",
 	"label.admin_user.select": "Select",

@@ -1312,4 +1312,44 @@ function getEonConfig($name,$type=false)
 	
 }
 
+function checkUpdateDB(){
+	global $version;
+	global $database_eonweb;
+	global $database_username;
+	global $database_password;
+	global $path_eonweb;
+	
+	$dir=$path_eonweb."/appliance/updates/";
+	
+	$version_sql = sqlrequest($database_eonweb,"SELECT count(value) as value FROM configs WHERE name='version'");
+	if(mysqli_result($version_sql,0,"value") == 0){
+		$version_sql = sqlrequest($database_eonweb,"INSERT INTO configs (name, value) VALUES('version', '".$version."')");
+		
+		// execution de tous les .sql jusqu'à la version donné dans config
+		$SQL_Files = array_slice(scandir($dir), 2);
+		usort($SQL_Files, 'version_compare');
+		
+		foreach($SQL_Files as $file){
+			if(rtrim($file,'.sql') <= $version){
+				exec("mysql -u $database_username --password=$database_password < $dir$file");
+			}
+		}
+		
+	}else{
+		$versionBD = mysqli_result(sqlrequest($database_eonweb,"SELECT value FROM configs WHERE name='version'"),0,"value");
+		
+		// execution des .sql entre version en BD et celle config
+		
+		$SQL_Files = array_slice(scandir($dir), 2);
+		usort($SQL_Files, 'version_compare');
+		
+		foreach($SQL_Files as $file){
+			if((rtrim($file,'.sql') <= $version && rtrim($file,'.sql') > $versionBD)){
+				exec("mysql -u $database_username --password=$database_password < $dir$file");
+			}
+		}
+		sqlrequest($database_eonweb,"UPDATE configs SET value='$version' WHERE name='version'");
+	}
+}
+
 ?>
