@@ -120,7 +120,7 @@ function notifier_import_rules($type) {
 				} else {
 					$rule_sort_key=0;
 				}
-				$sql_rule = "INSERT INTO rules (type, debug, contact, host, service, state, notificationnumber, timeperiod_id, tracking, sort_key) VALUES('".$type."','".$debug."','".$contact."','".$host."','".$service."','".$state."','".$notificationnumber."','".$timeperiod_id."','".$tracking."','".$rule_sort_key."')";
+        $sql_rule = "INSERT INTO rules (type, debug, contact, host, service, state, notificationnumber, timeperiod_id, tracking, sort_key) VALUES('".$type."','".$debug."','".$contact."','".$host."','".$service."','".$state."','".$notificationnumber."','".$timeperiod_id."','".$tracking."','".$rule_sort_key."')";
 				$rule_type_id = sqlrequest($database_notifier,$sql_rule,true);
 				$rule_name = "RULE_".strtoupper($type)."_".$rule_type_id."";
 				sqlrequest($database_notifier,"UPDATE rules set name='".$rule_name."' where id='".$rule_type_id."'");

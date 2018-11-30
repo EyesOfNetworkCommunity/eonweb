@@ -74,7 +74,12 @@ function my_ajax_search()
 			$.each(response, function(i, item){
 				if(i < response.length - 1){
 					$.each(response[i].data, function(j, item){
-						str += '{label : "'+response[i].data[j]+'", category : "'+response[i].name+'"},';
+						if(response[i].data[j].name) {
+							item_name=response[i].data[j].name;
+						} else {
+							item_name=response[i].data[j];
+						}
+						str += '{label : "'+item_name+'", category : "'+response[i].name+'"},';
 					});
 				}
 			});
