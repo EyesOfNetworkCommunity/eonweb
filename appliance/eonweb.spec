@@ -1,7 +1,7 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
 Version: 5.2
-Release: 4.eon
+Release: 5.eon
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/master.tar.gz#/%{name}-%{version}.tar.gz
 Group: Applications/System
 License: GPL
@@ -55,6 +55,10 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
+* Fri Nov 30 2018 Jean-Philippe Levy <jeanphilippe.levy@gmail.com> - 5.2-5.eon
+- add tracking for advanced notifications gui
+- add auto version and database update 
+
 * Wed Nov 14 2018 Jean-Philippe Levy <jeanphilippe.levy@gmail.com> - 5.2-4.eon
 - fix search with new thruk versions
 - fix ldap security issue 
