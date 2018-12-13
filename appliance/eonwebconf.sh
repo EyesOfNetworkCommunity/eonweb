@@ -26,8 +26,8 @@ mysqladmin -u root --password=root66 create ${notifierdb}
 
 # create the database content
 mysql -u root --password=root66 ${eonwebdb} < ${eonconfdir}/eonweb.sql
-mysql -u root --password=root66 ${nagiosbpdb} < ${eonconfdir}/nagiosbp.sql
-mysql -u root --password=root66 ${notifierdb} < ${datadir}/module/admin_notifier/db/notifier.sql
+mysql -u root --password=root66 ${eonwebdb} < ${eonconfdir}/updates/5.2.sql
+mysql -u root --password=root66 ${eonwebdb} < ${eonconfdir}/updates/5.2.1.sql
 
 # Change DocumentRoot for apache
 sed -i 's/^DocumentRoot.*/DocumentRoot\ \"\/srv\/eyesofnetwork\/eonweb\"/g' /etc/httpd/conf/httpd.conf
