@@ -93,7 +93,7 @@ function delete_bp($bp,$bdd){
 }
 
 function list_services($host_name){
-	if ('/srv/eyesofnetwork/nagios/etc/objects/services.cfg') {
+	if (file_exists('/srv/eyesofnetwork/nagios/etc/objects/services.cfg')) {
 		list_services_51($host_name);
 	}
 	else {
