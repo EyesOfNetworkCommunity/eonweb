@@ -134,6 +134,7 @@ function list_services_51($host_name){
 }
 
 function list_services_52($host_name){
+	$host_name = str_replace('.', '_', $host_name);
 	$path_nagios_ser = "/srv/eyesofnetwork/nagios/etc/objects/hosts/". $host_name .".cfg";
 	$tabServices = array() ;
 	$tabServices['service'] = array() ;
