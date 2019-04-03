@@ -88,4 +88,10 @@ where nagios_host.name not in (select hostname from cacti.host)
 and nagios_host.address not in (select hostname from cacti.host)
 order by 1 ;";
 
+$request ["unused_templates"]="SELECT nht.id as id,
+nht.name as name
+FROM nagios_host_template as nht
+LEFT JOIN nagios_host_template_inheritance nhti ON nht.id = nhti.target_template
+WHERE nhti.target_template IS NULL;";
+
 ?>
