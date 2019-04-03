@@ -100,4 +100,25 @@ FROM nagios_service_template as nst
 LEFT JOIN nagios_service_template_inheritance nsti ON nst.id = nsti.target_template
 WHERE nsti.target_template IS NULL;";
 
+$request ["commands_unused"]="SELECT nc.id as id,
+nc.name as name
+FROM nagios_command as nc
+LEFT JOIN nagios_service ns ON ns.check_command = nc.id
+LEFT JOIN nagios_service_template nst ON nst.check_command = nc.id
+LEFT JOIN nagios_contact_notification_command ncn ON ncn.command = nc.id
+LEFT JOIN nagios_main_configuration nm1 ON nm1.ocsp_command = nc.id
+LEFT JOIN nagios_main_configuration nm2 ON nm2.ochp_command = nc.id
+LEFT JOIN nagios_main_configuration nm3 ON nm3.host_perfdata_command = nc.id
+LEFT JOIN nagios_main_configuration nm4 ON nm4.service_perfdata_command = nc.id
+LEFT JOIN nagios_main_configuration nm5 ON nm5.host_perfdata_file_processing_command = nc.id
+LEFT JOIN nagios_main_configuration nm6 ON nm6.service_perfdata_file_processing_command = nc.id
+WHERE ns.check_command IS NULL AND nst.check_command IS NULL
+AND ncn.command IS NULL
+AND nm1.ocsp_command IS NULL
+AND nm2.ochp_command IS NULL
+AND nm3.host_perfdata_command IS NULL
+AND nm4.service_perfdata_command IS NULL
+AND nm5.host_perfdata_file_processing_command IS NULL
+AND nm6.service_perfdata_file_processing_command IS NULL;";
+
 ?>
