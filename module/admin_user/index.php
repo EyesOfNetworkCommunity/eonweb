@@ -61,14 +61,9 @@ include("../../side.php");
 
 						// Delete user in lilac
 						$lilac_contactid=mysqli_result(sqlrequest("$database_lilac","select id from nagios_contact where name='$user_name'"),0,"id");
-						sqlrequest("$database_lilac","delete from nagios_contact where name='$user_name'");
-						sqlrequest("$database_lilac","delete from nagios_contact_address where contact='$lilac_contactid'");
-						sqlrequest("$database_lilac","delete from nagios_contact_group_member where contact='$lilac_contactid'");
-						sqlrequest("$database_lilac","delete from nagios_contact_notification_command where contact_id='$lilac_contactid'");
-						sqlrequest("$database_lilac","delete from nagios_escalation_contact where contact='$lilac_contactid'");
-						sqlrequest("$database_lilac","delete from nagios_host_contact_member where contact='$lilac_contactid'");
-						sqlrequest("$database_lilac","delete from nagios_service_contact_member where contact='$lilac_contactid'");
-
+						require_once('/srv/eyesofnetwork/lilac/includes/config.inc');
+						$lilac->delete_contact($lilac_contactid);
+						
 						// Delete user files
 						$user_files_path="$path_eonweb/$dir_imgcache/".strtolower($user_name);
 						@unlink("$user_files_path-ged.xml");

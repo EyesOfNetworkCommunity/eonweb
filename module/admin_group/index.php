@@ -69,12 +69,12 @@ include("../../side.php");
 							sqlrequest("$database_eonweb","delete from groupright where group_id='$group_selected[$i]'");
 							sqlrequest("$database_eonweb","delete from groups where group_id='$group_selected[$i]'");
 							// Delete in lilac
-							$lilac_contactgroupid=mysqli_result(sqlrequest("$database_lilac","select id from nagios_contact_group where name='$group_name'"),0,"id");
-							sqlrequest("$database_lilac","delete from nagios_contact_group where name='$group_name'");
-							sqlrequest("$database_lilac","delete from nagios_contact_group_member where contactgroup='$lilac_contactgroupid'");
-							sqlrequest("$database_lilac","delete from nagios_escalation_contactgroup where contactgroup='$lilac_contactgroupid'");
-							sqlrequest("$database_lilac","delete from nagios_host_contactgroup where contactgroup='$lilac_contactgroupid'");
-							sqlrequest("$database_lilac","delete from nagios_service_contact_group_member where contact_group='$lilac_contactgroupid'");
+							require_once('/srv/eyesofnetwork/lilac/includes/config.inc');
+							$ncg = NagiosContactGroupPeer::getByName($group_name);
+							if($ncg){
+								$ncg->delete();
+							}
+
 							logging("admin_group","DELETE : $group_selected[$i]");
 							message(8," : Group $group_name removed",'ok');
 						}
