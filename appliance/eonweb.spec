@@ -1,7 +1,7 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
-Version: 5.2
-Release: 6.eon
+Version: 5.3
+Release: 0.eon
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/master.tar.gz#/%{name}-%{version}.tar.gz
 Group: Applications/System
 License: GPL
@@ -55,6 +55,12 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
+* Tue Jul 16 2019 Sebastien DAVOULT <d@vou.lt> - 5.3-0.eon
+- Add services unused templates
+- Add menu to list unused templates
+- Update function_bp.php
+- fix nagios cfg file syle
+
 * Thu Dec 13 2018 Jean-Philippe Levy <jeanphilippe.levy@gmail.com> - 5.2-6.eon
 - fix database to 5.2.1
 
