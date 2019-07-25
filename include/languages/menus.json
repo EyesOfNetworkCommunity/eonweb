@@ -295,6 +295,11 @@
                             "name":"menu.link.logs",
                             "url":"/module/admin_logs/",
                             "target":"main"
+                        },
+                        {
+                            "name":"menu.link.ticket",
+                            "url":"/module/admin_ticket/",
+                            "target":"main"
                         }
                     ]
                 },
