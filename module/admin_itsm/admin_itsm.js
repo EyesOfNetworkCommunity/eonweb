@@ -42,6 +42,12 @@ $(document).ready(function(){
 		$("#file_label").val(fileName);
 	});
 
+	$("#options_itsm").hover(function(){
+		$("#info_options").show();
+	},function(){
+		$("#info_options").hide();
+	});
+
 	$("#btn_form").click(function(){
 		var form = $('#myForm').get(0);
 		var formData = new FormData(form);// get the form data

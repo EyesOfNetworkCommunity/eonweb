@@ -165,6 +165,8 @@
 	"label.admin_process.title": "Gestion des processus",
 	"label.admin_itsm.title":"Outils de ticket externe",
 	"label.admin_itsm.file" : "Fichier",
+	"label.admin_itsm.warn" : "Attention",
+	"label.admin_itsm.warn_text" : "Si vous avez sélectionné ces options, vous risquez de créer une sur-création de ticket.",
 	"label.admin_itsm.itsm_setting" :"Configuration itsm" ,
 	"label.admin_itsm.url":"Adresse",
 	"label.admin_itsm.header":"En-tête",

@@ -165,6 +165,8 @@
 	"label.admin_process.title": "Process management",
 	"label.admin_itsm.title": "External ticketing tools",
 	"label.admin_itsm.file" : "File",
+	"label.admin_itsm.warn" : "Warning",
+	"label.admin_itsm.warn_text" : "If you selected those options you may cause an over creation of ticket.",
 	"label.admin_itsm.url":"Address",
 	"label.admin_itsm.header":"Header",
 	"label.admin_itsm.acquit":"Automatic acquitement",

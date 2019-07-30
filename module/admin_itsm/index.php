@@ -84,19 +84,30 @@ include("./function_itsm.php");
                         <input type="text" class="form-control" id="itsm_url" name="itsm_url" placeholder="http://url.com" <?php echo 'value="'.$itsm_url.'"';?> >
                     </div>
                 </div>
-                <div class="form-group"> 
-                    <div class="col-sm-offset-2 col-sm-10">
+                <div class="form-group" id="options_itsm"> 
+                    <div class="col-sm-offset-2 col-sm-3">
                         <div class="checkbox">
                             <?php 
                             if($itsm_create=="true"){
-                                echo '<label><input id="itsm_create" name="itsm_create" type="checkbox" value="true" checked>'.getLabel("label.admin_itsm.create").'</label>';
-                            }else echo '<label><input id="itsm_create" name="itsm_create" type="checkbox" value="true" >'.getLabel("label.admin_itsm.create").'</label>';
-                            if($itsm_acquit == "true"){
-                                echo '<label><input id="itsm_acquit" name="itsm_acquit" type="checkbox" value ="true" checked>'.getLabel("label.admin_itsm.acquit").'</label>';
-                            }else echo '<label><input id="itsm_acquit" name="itsm_acquit" type="checkbox" value ="true" >'.getLabel("label.admin_itsm.acquit").'</label>';
+                                echo '<label><input id="itsm_create" name="itsm_create" type="checkbox"  value="true" checked>'.getLabel("label.admin_itsm.create").'</label>';
+                            }else echo '<label><input id="itsm_create" name="itsm_create" type="checkbox"  value="true" >'.getLabel("label.admin_itsm.create").'</label>';
                             ?>
                         </div>
                     </div>
+                    <div class=" col-sm-3">
+                        <div class="checkbox">
+                            <?php
+                                if($itsm_acquit == "true"){
+                                    echo '<label><input id="itsm_acquit" name="itsm_acquit" type="checkbox" value ="true" checked>'.getLabel("label.admin_itsm.acquit").'</label>';
+                                }else echo '<label><input id="itsm_acquit" name="itsm_acquit" type="checkbox" value ="true" >'.getLabel("label.admin_itsm.acquit").'</label>';
+                            ?>
+                        </div>
+                    </div>
+                  
+                    <div  id="info_options" class="col-sm-4 alert alert-warning" hidden>
+                        <strong><?php echo getLabel("label.admin_itsm.warn"); ?> ! </strong> <?php echo getLabel("label.admin_itsm.warn_text"); ?>
+                    </div>
+                   
                 </div>
                 
             </form>
