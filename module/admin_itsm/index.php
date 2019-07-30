@@ -64,7 +64,7 @@ include("./function_itsm.php");
                     <div class="col-sm-8">
                         <div class="input-group">
                             <label class="input-group-btn">
-                                <span class="btn btn-primary">
+                                <span class="btn btn-primary" id="btn_import">
                                     <?php echo getLabel("action.import"); ?>&hellip; <input id="input_file" name="fileName" type="file" style="display: none;" >
                                 </span>
                             </label>
@@ -85,7 +85,7 @@ include("./function_itsm.php");
                     </div>
                 </div>
                 <div class="form-group" id="options_itsm"> 
-                    <div class="col-sm-offset-2 col-sm-3">
+                    <div class="col-sm-offset-2 col-sm-4">
                         <div class="checkbox">
                             <?php 
                             if($itsm_create=="true"){
@@ -94,7 +94,7 @@ include("./function_itsm.php");
                             ?>
                         </div>
                     </div>
-                    <div class=" col-sm-3">
+                    <div class=" col-sm-4">
                         <div class="checkbox">
                             <?php
                                 if($itsm_acquit == "true"){
@@ -104,18 +104,18 @@ include("./function_itsm.php");
                         </div>
                     </div>
                   
-                    <div  id="info_options" class="col-sm-4 alert alert-warning" hidden>
-                        <strong><?php echo getLabel("label.admin_itsm.warn"); ?> ! </strong> <?php echo getLabel("label.admin_itsm.warn_text"); ?>
-                    </div>
                    
                 </div>
                 
             </form>
             <div class="form-group"> 
-                    <div class="col-sm-offset-2 col-sm-8">
+                    <div class="col-sm-offset-2 col-sm-4">
                         <button class="btn btn-primary" id="btn_form" type="submit">
                             <?php echo getLabel("action.apply"); ?>
                         </button>
+                    </div>
+                    <div  id="info_options" class="col-sm-4 alert alert-warning" hidden>
+                        <strong><?php echo getLabel("label.admin_itsm.warn"); ?> ! </strong> <?php echo getLabel("label.admin_itsm.warn_text"); ?>
                     </div>
                 </div>
             

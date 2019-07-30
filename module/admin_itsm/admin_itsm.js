@@ -21,6 +21,7 @@
 
 
 $(document).ready(function(){
+	$("#btn_import").hide();
 	$("#input_file").prop('disabled', true);
 	$("#itsm_header").prop('disabled', true);
 	$("#itsm_url").prop('disabled', true);
@@ -29,6 +30,7 @@ $(document).ready(function(){
 	$("#btn_form").prop('disabled',true);
 	
 	$("#btn_unlock").click(function(){
+		$("#btn_import").show();
 		$("#input_file").prop('disabled', false);
 		$("#itsm_header").prop('disabled', false);
 		$("#itsm_url").prop('disabled', false);
@@ -63,6 +65,7 @@ $(document).ready(function(){
 			},
 			success : function(result){ // success est toujours en place, bien sûr !
 				$("#result").html(result);
+				$("#btn_import").hide();
 				$("#input_file").prop('disabled', true);
 				$("#itsm_header").prop('disabled', true);
 				$("#itsm_url").prop('disabled', true);
