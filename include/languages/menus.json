@@ -297,8 +297,8 @@
                             "target":"main"
                         },
                         {
-                            "name":"menu.link.ticket",
-                            "url":"/module/admin_ticket/",
+                            "name":"menu.link.itsm",
+                            "url":"/module/admin_itsm/",
                             "target":"main"
                         }
                     ]

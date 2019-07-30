@@ -1,0 +1,19 @@
+<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:man="http://futureware.biz/mantisconnect">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <man:mc_issue_add_CD74 soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <username xsi:type="xsd:string">axians</username>
+         <password xsi:type="xsd:string">Annecy74</password>
+         <project_id xsi:type="xsd:integer">1</project_id>
+         <category_id xsi:type="xsd:integer">2</category_id>
+         <nature_ticket xsi:type="xsd:string">Incident Système</nature_ticket>
+         <nb_impacted_functions xsi:type="xsd:string">Toutes les fonctionnalités</nb_impacted_functions>
+         <nb_impacted_users xsi:type="xsd:string">Tous les utilisateurs</nb_impacted_users>
+         <ticket_priority_id xsi:type="xsd:integer">30</ticket_priority_id>
+         <description xsi:type="xsd:string">Essai pour la supervision : accueillera le nom de l’hôte, du service KO </description>
+         <details xsi:type="xsd:string">$DETAIL$ </details>
+         <infos_complementaires xsi:type="xsd:string">Essai pour la supervision : accueillera le détail de la commande de check </infos_complementaires>
+         <id_service xsi:type="xsd:integer">63</id_service>
+      </man:mc_issue_add_CD74>
+   </soapenv:Body>
+</soapenv:Envelope>
