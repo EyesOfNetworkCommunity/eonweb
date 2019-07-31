@@ -104,7 +104,7 @@
 	"label.admin_group.title": "Gestion des groupes",
 	"label.admin_group.title_new": "Nouveau groupe",
 	"label.admin_group.title_upd": "Paramètres du groupe",
-	"label.admin_import_device.title": "Déploiement nagios via csv",
+	"label.admin_import_device.title": "Vérification et Déploiement nagios via csv",
 	"label.admin_logs.title": "Journaux",
 	"label.admin_notifier.config": "Configuration générale",
 	"label.admin_notifier.contacts": "Contacts",
