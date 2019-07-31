@@ -34,12 +34,25 @@ include("../../side.php");
 	</div>
 
 	<?php
-		# --- Import host from CSV to nagios (hostname, host ip, host description, host template name)
+		# -- Verify if host from CSV is in nagios (hostname)
+		function verify_hosts_in_nagios($host_name) {
+			global $database_lilac;
+
+			$result=sqlrequest($database_lilac,"SELECT name FROM nagios_host WHERE UPPER(name) LIKE '".$host_name."'");
+
+			# --- Check if the template exist in lilac, returns 1 if not exists
+			if (mysqli_num_rows($result) == 0){
+				return 0;
+			}
+			return mysqli_result($result,0,"name");
+		}
+
+# --- Import host from CSV to nagios (hostname, host ip, host description, host template name)
 		function import_hosts_to_nagios($host_name,$host_ip,$host_desc,$host_template){
 			global $database_lilac;
 
 			$result=sqlrequest($database_lilac,"SELECT id from nagios_host_template where name like '".$host_template."'");
-			
+
 			# --- Check if the template exist in lilac
 			if (mysqli_num_rows($result) == 0){
 				return "Template $host_template not found";
@@ -56,7 +69,7 @@ include("../../side.php");
 				}
 				if(!$id)
 					return "Error in host $host_name definition";
-				
+
 				# --- Check if the host + template link already exists
 				$nbr=mysqli_result(sqlrequest($database_lilac,"SELECT count(id) from nagios_host_template_inheritance where source_host='".$id."' and target_template='".$template_id."';"),0,0);
 				if($nbr==0){
@@ -76,14 +89,15 @@ include("../../side.php");
 			<input class="file" type="file" name="filename">
 		</div>
 		<div class="form-group">
+			<button class="btn btn-success" type="submit" name="verify" value="Verify"><?php echo getLabel("action.verify"); ?></button>
 			<button class="btn btn-primary" type="submit" name="upload" value="Upload"><?php echo getLabel("action.submit"); ?></button>
 		</div>
 	</form>
 	<br>
-	
-	<?php 
+
+	<?php
 		message("", "Format : (Hostname ; IP ; Description ; Template1 ; Template2 ; TemplateN ; ...)", ""); 
-		
+
 		# --- Check if the form is post
 		if( isset($_POST['upload']) )
 		{
@@ -115,10 +129,10 @@ include("../../side.php");
 				echo "<th>Template Name</th>";
 				echo "<th>Import Status</th>";
 				echo "</tr></thead>";
-				
+
 				$fichier = $_FILES['filename']['tmp_name'];
 				$fic = fopen($fichier, 'rb');
-				
+
 				# --- Parse the uploaded csv file and extract host information
 				for ($item = fgetcsv($fic, 1024,';'); !feof($fic); $item = fgetcsv($fic, 1024,';')) {
 					# --- get templates
@@ -145,6 +159,57 @@ include("../../side.php");
 							echo "<td>$import</td>";
 							echo "</tr>";
 						}
+					}
+				}
+				echo '</table>';
+				echo "</div>";
+			}
+		}
+		if( isset($_POST['verify']) )
+		{
+			# --- Check if there is an error in the upload
+			if ($_FILES['filename']['error']) {
+				switch ($_FILES['filename']['error']){
+					case 1: // UPLOAD_ERR_INI_SIZE
+						message(5,"The uploaded file exceeds the upload_max_filesize directive in php.ini","critical");
+						break;
+					case 2: // UPLOAD_ERR_FORM_SIZE
+						message(5,"The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.","critical");
+						break;
+					case 3: // UPLOAD_ERR_PARTIAL
+						message(5,"The uploaded file was only partially uploaded.","critical");
+						break;
+					case 4: // UPLOAD_ERR_NO_FILE
+						message(5,"No file was uploaded","critical");
+						break;
+				}
+			}
+			else {
+				# --- Build the result table header
+				echo "<div class='table-responsive'>";
+				echo '<table class="table table-striped">';
+				echo "<thead><tr>";
+				echo "<th>File Hostname</th>";
+				echo "<th>Nagios Hostname</th>";
+				echo "</tr></thead>";
+
+				$fichier = $_FILES['filename']['tmp_name'];
+				$fic = fopen($fichier, 'rb');
+
+				# --- Parse the uploaded csv file and extract host information
+				for ($item = fgetcsv($fic, 1024,';'); !feof($fic); $item = fgetcsv($fic, 1024,';')) {
+					$verify=verify_hosts_in_nagios($item[0]);
+					if ($verify){
+						echo "<tr class='ok'>";
+						echo "<td>".$item[0]."</td>";
+						echo "<td>".$verify."</td>";
+						echo "</tr>";
+					}
+					else {
+						echo "<tr class='danger'>";
+						echo "<td>".$item[0]."</td>";
+						echo "<td>&nbsp;</td>";
+						echo "</tr>";
 					}
 				}
 				echo '</table>';
