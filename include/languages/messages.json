@@ -164,6 +164,8 @@
 	"label.admin_notifier.rules.track": "Tracking",
 	"label.admin_process.title": "Process management",
 	"label.admin_itsm.title": "External ticketing tools",
+	"label.admin_itsm.on":"On",
+	"label.admin_itsm.off":"Off",
 	"label.admin_itsm.file" : "File",
 	"label.admin_itsm.warn" : "Warning",
 	"label.admin_itsm.warn_text" : "If you selected those options you may cause an over creation of ticket.",

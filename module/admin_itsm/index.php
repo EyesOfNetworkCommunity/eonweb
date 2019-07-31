@@ -24,10 +24,7 @@ include("../../header.php");
 include("../../side.php");
 include("./function_itsm.php");
 
-?>
-
-
-<?php
+    $state          = get_itsm_state();
     $itsm_file      = basename(get_itsm_var("itsm_file"));
     $itsm_header    = get_itsm_var("itsm_header");    
     $itsm_url       = get_itsm_var("itsm_url");    
@@ -51,6 +48,9 @@ include("./function_itsm.php");
                 <?php echo getLabel("label.admin_itsm.itsm_setting"); ?>
             </h4>
             <div class="btn-group pull-right">
+                    <div class="btn-group" id="result_state_itsm">
+                        <?php echo $state; ?>
+                    </div>
                     <button class="btn btn-warning" id="btn_unlock" >
 						<?php echo getLabel("action.update"); ?>
 					</button>

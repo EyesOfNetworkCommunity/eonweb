@@ -50,6 +50,24 @@ $(document).ready(function(){
 		$("#info_options").hide();
 	});
 
+	$("#btn_activate").click(function(){
+		var formData = new FormData();
+		formData.append('state', $("#btn_activate").val());
+		$.ajax({
+			type		: 'POST', // define the type of HTTP verb we want to use (POST for our form)
+			url		    : 'activate_external_itsm.php', // the url where we want to POST
+			dataType	: 'html',
+			data		: formData,
+			processData	: false,
+			contentType	: false,
+			success		:function(response) {
+				$("#result_state_itsm").html(response);
+				$("#result_state_itsm").html($("#btn_activate"));
+				location.reload();
+			}
+		});
+	});
+
 	$("#btn_form").click(function(){
 		var form = $('#myForm').get(0);
 		var formData = new FormData(form);// get the form data
@@ -65,6 +83,7 @@ $(document).ready(function(){
 			},
 			success : function(result){ // success est toujours en place, bien sûr !
 				$("#result").html(result);
+				$("#result").html($("#log"));
 				$("#btn_import").hide();
 				$("#input_file").prop('disabled', true);
 				$("#itsm_header").prop('disabled', true);

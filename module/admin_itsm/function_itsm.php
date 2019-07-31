@@ -19,7 +19,6 @@
 #
 #########################################
 */
-
 /**
  * Upload a file in the given destination. 
  * /!\ The destination must have the correct autorisation. /!\
@@ -74,6 +73,27 @@ function get_itsm_var($name){
     global $database_eonweb;
     $res = mysqli_result(sqlrequest("$database_eonweb",'SELECT value FROM configs WHERE name="'.$name.'"'),0);
     return $res;
+}
+
+function change_itsm_state($state){
+    if($state != get_itsm_var("itsm")){
+        global $database_eonweb;
+        sqlrequest("$database_eonweb",'UPDATE configs set value="'.$state.'" WHERE name="itsm"');
+    }
+    return get_itsm_state();
+}
+
+function get_itsm_state(){
+    $state = get_itsm_var("itsm");
+    if(!empty($state) && $state=="on"){
+        return '<button class="btn btn-success" id="btn_activate" value="off">'.getLabel("label.admin_itsm.on").'</button>';
+    }elseif((!empty($state) && $state=="off")){
+        return '<button class="btn btn-danger" id="btn_activate" value="on">'.getLabel("label.admin_itsm.off").'</button>';
+    }else{
+        global $database_eonweb;
+        sqlrequest("$database_eonweb",'INSERT INTO configs VALUES("itsm","off")');
+        return '<button class="btn btn-danger" value="on" id="btn_activate">'.getLabel("label.admin_itsm.off").'</button>';
+    }
 }
 
 

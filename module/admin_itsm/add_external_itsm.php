@@ -20,11 +20,12 @@
 #########################################
 */
 
-include("../../header.php");
-include("function_itsm.php");
+include_once("../../header.php");
+include_once("function_itsm.php");
 
-$message ="";
-if(isset($_FILE["fileName"])){
+
+$message ="<div id='log'>";
+if(isset($_FILES["fileName"])){
     $old_file = basename(get_itsm_var("itsm_file"));
     if(isset($old_file) && $old_file == $_FILES["fileName"]["name"]){
         $message .= "<div class=\"alert alert-warning\" role=\"alert\">".$_FILES["fileName"]["name"]." a file whith this name already exist.</div>";
@@ -63,6 +64,7 @@ if(insert_itsm_var("itsm_acquit",$itsm_acquit)){
     $message .= "<div class=\"alert alert-success\" role=\"alert\">".$itsm_acquit." acquit succesfully saved.</div>";
 }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$itsm_acquit." acquit failed to be saved.</div>";
 
-echo $message;
+
+echo $message."</div>";
 
 ?>
