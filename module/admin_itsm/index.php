@@ -65,7 +65,7 @@ include("function_itsm.php");
                         <div class="input-group">
                             <label class="input-group-btn">
                                 <span class="btn btn-primary" id="btn_import">
-                                    <?php echo getLabel("action.import"); ?>&hellip; <input id="input_file" name="fileName" type="file" style="display: none;" >
+                                    <?php echo getLabel("action.import"); ?>&hellip; <input id="input_file" name="fileName" type="file" accept=".json,.xml" style="display: none;" >
                                 </span>
                             </label>
                             <input type="text" id="file_label" class="form-control" placeholder="File type : xml , json" <?php echo 'value="'.$itsm_file.'"';?> readonly>

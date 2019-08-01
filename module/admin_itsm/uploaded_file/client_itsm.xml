@@ -10,7 +10,7 @@
          <nb_impacted_functions xsi:type="xsd:string">Toutes les fonctionnalités</nb_impacted_functions>
          <nb_impacted_users xsi:type="xsd:string">Tous les utilisateurs</nb_impacted_users>
          <ticket_priority_id xsi:type="xsd:integer">30</ticket_priority_id>
-         <description xsi:type="xsd:string">$DESCRIPTION$</description>
+         <description xsi:type="xsd:string">Essai pour la supervision : accueillera le nom de l’hôte, du service KO </description>
          <details xsi:type="xsd:string">$DETAIL$ </details>
          <infos_complementaires xsi:type="xsd:string">Essai pour la supervision : accueillera le détail de la commande de check </infos_complementaires>
          <id_service xsi:type="xsd:integer">63</id_service>
