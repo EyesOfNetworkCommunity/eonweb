@@ -58,6 +58,9 @@ elseif(!in_array($queue,$array_ged_queues)) { $queue="active"; }
 			} elseif($global_action == "2") {
 				ownDisown($selected_events, $queue, $global_action);
 				$CustomActions->ged_own($selected_events, $queue, $global_action);
+			}elseif($global_action == "6"){
+				acknowledge($selected_events, $queue);
+				$CustomActions->ged_acknowledge($selected_events, $queue);
 			}
 			break;
 		case 'confirm':
@@ -69,6 +72,9 @@ elseif(!in_array($queue,$array_ged_queues)) { $queue="active"; }
 			} elseif($global_action == "2" || $global_action == "3") {
 				ownDisown($selected_events, $queue, $global_action);
 				$CustomActions->ged_own($selected_events, $queue, $global_action);
+			}elseif($global_action == "6"){
+				acknowledge($selected_events, $queue);
+				$CustomActions->ged_acknowledge($selected_events, $queue);
 			}
 			break;
 		case 'changeGedFilter':

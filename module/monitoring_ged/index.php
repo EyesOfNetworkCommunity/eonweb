@@ -303,16 +303,9 @@ if(file_exists($file)){
 							<li id="own-all-event"><a href="#"><?php echo ucfirst(getLabel("label.all")); ?></a></li>
 						</ul>
 					</div>
-					<div id="ack-btns" class="btn-group">
-						<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							<?php echo getLabel("action.ack"); ?> <span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu">
-							<li id="ack-event"><a href="#"><?php echo getLabel("label.this"); ?></a></li>
-							<li id="ack-all-event"><a href="#"><?php echo ucfirst(getLabel("label.all")); ?></a></li>
-						</ul>
-					</div>
-					<?php } ?>
+					<?php 
+						edit_button();
+					} ?>
 
 					<button id="event-validation" type="button" class="btn btn-primary">
 						<?php echo getLabel("action.apply"); ?>

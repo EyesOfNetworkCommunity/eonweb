@@ -33,8 +33,8 @@ if(isset($_FILES["fileName"])){
         $contenus = file_get_contents($_FILES["fileName"]['tmp_name']);
         if(verify_format($contenus)){
             if(upload_file($_FILES["fileName"])){
-                $message = "<div class=\"alert alert-success\" role=\"alert\">File uploaded.</div>";
-                if(insert_itsm_var("itsm_file","./uploaded_file/".$_FILES["fileName"]["name"])){
+                $message .= "<div class=\"alert alert-success\" role=\"alert\">File uploaded.</div>";
+                if(insert_itsm_var("itsm_file",__DIR__."/"."uploaded_file/".$_FILES["fileName"]["name"])){
                     $message .= "<div class=\"alert alert-success\" role=\"alert\">".$_FILES["fileName"]["name"]." succesfully saved.</div>";
                 }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$_FILES["fileName"]["name"]." failed to be saved.</div>";
                 

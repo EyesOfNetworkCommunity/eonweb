@@ -25,9 +25,9 @@
  * 
  * @return boolean
  */
-function upload_file($file, $dir="./uploaded_file/"){
+function upload_file($file, $dir="uploaded_file/"){
     if(isset($file)){
-        $target_file = $dir.basename($file["name"]);
+        $target_file = __DIR__."/".$dir.basename($file["name"]);
         if(move_uploaded_file($file["tmp_name"], $target_file)){
             return true;
         }
@@ -94,6 +94,35 @@ function get_itsm_state(){
         sqlrequest("$database_eonweb",'INSERT INTO configs VALUES("itsm","off")');
         return '<button class="btn btn-danger" value="on" id="btn_activate">'.getLabel("label.admin_itsm.off").'</button>';
     }
+}
+
+
+/**
+ * This function create the http request to the external server itsm
+ * ie : curl -v --header "Content-Type: text/xml;charset=UTF-8" --header "SOAPAction: mc_issue_add_CD74" --data @request-add.xml https://eticket-recette.hautesavoie.fr/api/soap/mantisconnect.php
+ */
+function report_itsm($detail, $descr){
+    $path       = get_itsm_var("itsm_file");
+    $extension  = explode(".",basename($path))[1];
+    $file       = file_get_contents($path);
+    $url        = get_itsm_var("itsm_url");
+    $header     = get_itsm_var("itsm_header");
+
+    if($extension == "xml"){
+        str_replace("\$DETAIL$",$detail,$file);
+        str_replace("\$DESCRIPTION$",$descr,$file);
+        $ch = curl_init();
+        curl_setopt( $ch, CURLOPT_URL, $url );
+        curl_setopt( $ch, CURLOPT_POST, true );
+        curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type: text/xml;charset=UTF-8',$header));
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+        curl_setopt( $ch, CURLOPT_POSTFIELDS, $file );
+        $result = curl_exec($ch);
+        curl_close($ch);
+        return true;
+    }else if ($extension =="json"){
+        return true;
+    }else return false;
 }
 
 

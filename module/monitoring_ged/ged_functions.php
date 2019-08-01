@@ -520,4 +520,33 @@ function advancedFilterSearch($queue, $filter)
 	echo json_encode($datas);
 }
 
+function edit_button(){
+	global $database_eonweb;
+	$itsm_button = "";
+	$itsm = mysqli_result(sqlrequest("$database_eonweb","SELECT value FROM configs WHERE name=\"itsm\""),0);
+	if(isset($itsm) && $itsm == "on" ){
+		echo "
+		<div id=\"itsm-btns\" class=\"btn-group\">
+						<button class=\"btn btn-primary dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">
+							".getLabel('label.admin_itsm.ged_btn_create')." <span class=\"caret\"></span>
+						</button>
+						<ul class=\"dropdown-menu\">
+							<li id=\"itsm-event\"><a href=\"#\">".getLabel('label.this')."</a></li>
+							<li id=\"itsm-all-event\"><a href=\"#\">".ucfirst(getLabel('label.all'))."</a></li>
+						</ul>
+					</div>";
+	}else {
+		echo "
+		<div id=\"ack-btns\" class=\"btn-group\">
+						<button class=\"btn btn-primary dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">
+							".getLabel('action.ack')." <span class=\"caret\"></span>
+						</button>
+						<ul class=\"dropdown-menu\">
+							<li id=\"ack-event\"><a href=\"#\">".getLabel('label.this')."</a></li>
+							<li id=\"ack-all-event\"><a href=\"#\">".ucfirst(getLabel('label.all'))."</a></li>
+						</ul>
+					</div>";
+	}
+}
+
 ?>

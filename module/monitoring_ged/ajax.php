@@ -51,16 +51,25 @@ if(file_exists($file)){
 	<div class="form-group datatable_actions_top">
 		<div id="ged-action" class="btn-group">
 		<?php
+		global $database_eonweb;
+		$itsm_button = "";
+		$itsm = mysqli_result(sqlrequest("$database_eonweb","SELECT value FROM configs WHERE name=\"itsm\""),0);
 		if($queue == "active"){
-			$actions = $array_action_option;
+			if(isset($itsm) && $itsm == "on" ){
+				$actions = $array_action_itsm;
+			}else{
+				$actions = $array_action_option;
+			}
 		} else {
 			$actions = $array_resolve_action_option;
 		}
 		foreach ($actions as $key => $value) {
 			echo "<button id=\"$key\" class=\"btn btn-sm btn-default\" type=\"submit\" name=\"action\">".getLabel($value)."</button>";
 		}
+		
 		?>
 		</div>
+		
 		<button id="select-all1" class="btn btn-sm btn-primary"><?php echo getLabel("action.select_all"); ?></button>
 		<button id="unselect-all1" class="btn btn-sm btn-primary hidden"><?php echo getLabel("action.unselect_all"); ?></button>
 	</div>
@@ -221,7 +230,11 @@ if(file_exists($file)){
 		<div id="ged-action" class="btn-group">
 		<?php
 		if($queue == "active"){
-			$actions = $array_action_option;
+			if(isset($itsm) && $itsm == "on" ){
+				$actions = $array_action_itsm;
+			}else{
+				$actions = $array_action_option;
+			}
 		} else {
 			$actions = $array_resolve_action_option;
 		}

@@ -202,7 +202,7 @@ $(document).ready(function(){
 	
 	$('#collapseOne').on('shown.bs.collapse', function () {
 		$('#ged-search').focus();	
-	})
+	});
 	
 	$("#filter-selection").on('change', function(){
 		var filter_selection = $(this).val();
@@ -318,6 +318,7 @@ $(document).ready(function(){
 			selected_events.push(event_id+":"+event_type+":"+event_state+":"+host_name+":"+service_name);
 		});
 
+		
 		// stop here if no event selected
 		if(selected_events.length < 1){
 			return;
@@ -337,6 +338,7 @@ $(document).ready(function(){
 		if(action == 3){ action_name = "action.disown"; }
 		if(action == 4){ action_name = "action.ack"; }
 		if(action == 5){ action_name = "action.delete"; }
+		if(action == 6){ action_name = "action.create";}
 
 		$.ajax({
 			url: "ged_actions.php",
@@ -346,14 +348,14 @@ $(document).ready(function(){
 				selected_events: events
 			},
 			beforeSend: function(){
-				$("#modal-nav, #edit-btns, #own-btns, #ack-btns, #event-validation").hide();
+				$("#modal-nav, #edit-btns, #own-btns, #ack-btns, #itsm-btns, #event-validation").hide();
 				
 				// configure modal footer according to action selected
 				switch(action){
 					case "0":
-						$("#modal-nav, #own-btns, #ack-btns").show(); break;
+						$("#modal-nav, #own-btns, #ack-btns, #itsm-btns").show(); break;
 					case "1":
-						$("#modal-nav, #edit-btns, #own-btns, #ack-btns").show(); break;
+						$("#modal-nav, #edit-btns, #own-btns, #itsm-btns, #ack-btns").show(); break;
 					default:
 						$("#event-validation").show(); break;
 				}
@@ -404,7 +406,7 @@ $(document).ready(function(){
 	});
 
 	// click to edit an event
-	$(document).on("click", "#edit-event, #edit-all-event, #own-event, #own-all-event, #ack-event, #ack-all-event", function(){
+	$(document).on("click", "#edit-event, #edit-all-event, #own-event, #own-all-event, #ack-event, #ack-all-event, itsm-all-event, itsm-event", function(){
 		global_action = this.id;
 		global_action_name = this.id;
 		action_title = "action.edit";
@@ -415,6 +417,9 @@ $(document).ready(function(){
 		} else if(global_action == "ack-event" || global_action == "ack-all-event") {
 			action_title = "action.ack";
 			global_action = 4;
+		}else if (global_action == "itsm-event" || global_action == "itsm-all-event"){
+			action_title = "action.create";
+			global_action = 6;
 		}
 		
 		$("#confirmation-modal-title").html(dictionnary[action_title]);
@@ -428,7 +433,7 @@ $(document).ready(function(){
 		var comments = "";
 				
 		var events = [];
-		if(global_action_name == "edit-event" || global_action_name == "own-event" || global_action_name == "ack-event"){
+		if(global_action_name == "edit-event" || global_action_name == "own-event" || global_action_name == "ack-event" || global_action_name == "itsm-event" ){
 			events.push(selected_events[event_index]);
 		} else {
 			events = selected_events;

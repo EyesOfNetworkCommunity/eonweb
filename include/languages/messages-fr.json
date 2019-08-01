@@ -166,6 +166,7 @@
 	"label.admin_itsm.title":"Outils de ticket externe",
 	"label.admin_itsm.on":"Activé",
 	"label.admin_itsm.off":"Desactivé",
+	"label.admin_itsm.ged_btn_create":"Déclarer un incident",
 	"label.admin_itsm.file" : "Fichier",
 	"label.admin_itsm.warn" : "Attention",
 	"label.admin_itsm.warn_text" : "Si vous avez sélectionné ces options, vous risquez de créer une sur-création de ticket.",

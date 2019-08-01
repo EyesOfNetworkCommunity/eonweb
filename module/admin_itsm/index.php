@@ -22,7 +22,7 @@
 
 include("../../header.php");
 include("../../side.php");
-include("./function_itsm.php");
+include("function_itsm.php");
 
     $state          = get_itsm_state();
     $itsm_file      = basename(get_itsm_var("itsm_file"));
@@ -38,7 +38,7 @@ include("./function_itsm.php");
 
 	<div class="row">
 		<div class="col-lg-12">
-			<h1 class="page-header"><?php echo getLabel("label.admin_itsm.title"); ?></h1>
+			<h1 class="page-header"><?php echo getLabel("label.admin_itsm.title"); ?> <span class="badge badge-dark">beta</span></h1>
 		</div>
 	</div>
     
