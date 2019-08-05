@@ -38,7 +38,7 @@ include("function_itsm.php");
 
 	<div class="row">
 		<div class="col-lg-12">
-			<h1 class="page-header"><?php echo getLabel("label.admin_itsm.title"); ?> <span class="badge badge-dark">beta</span></h1>
+			<h1 class="page-header"><?php echo getLabel("label.admin_itsm.title"); ?> <span class="badge badge-dark">béta</span></h1>
 		</div>
 	</div>
     

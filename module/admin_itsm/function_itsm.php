@@ -57,7 +57,7 @@ function insert_itsm_var($name,$value){
     global $database_eonweb;
     $var = get_itsm_var($name);
     $rq = "";
-    if($var != false || empty($var)){
+    if($var != false){
         $rq ='UPDATE configs SET value="'.$value.'" WHERE name="'.$name.'"'; 
     }else{
         $rq = 'INSERT INTO configs VALUES("'.$name.'","'.$value.'")';
