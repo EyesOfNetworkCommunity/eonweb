@@ -26,6 +26,9 @@
  * @return boolean
  */
 function upload_file($file, $dir="uploaded_file/"){
+    $old_file = get_itsm_var("itsm_file");
+    unlink($old_file);
+
     if(isset($file)){
         $target_file = __DIR__."/".$dir.basename($file["name"]);
         if(move_uploaded_file($file["tmp_name"], $target_file)){
@@ -54,7 +57,7 @@ function insert_itsm_var($name,$value){
     global $database_eonweb;
     $var = get_itsm_var($name);
     $rq = "";
-    if(!empty($var)){
+    if($var != false || empty($var)){
         $rq ='UPDATE configs SET value="'.$value.'" WHERE name="'.$name.'"'; 
     }else{
         $rq = 'INSERT INTO configs VALUES("'.$name.'","'.$value.'")';
@@ -71,8 +74,12 @@ function insert_itsm_var($name,$value){
 
 function get_itsm_var($name){
     global $database_eonweb;
-    $res = mysqli_result(sqlrequest("$database_eonweb",'SELECT value FROM configs WHERE name="'.$name.'"'),0);
-    return $res;
+    $res = sqlrequest("$database_eonweb",'SELECT value FROM configs WHERE name="'.$name.'"');
+    $val = false;
+    if(mysqli_num_rows($res) == 1 ){
+        $val = mysqli_result($res , 0);
+    }
+    return $val;
 }
 
 function change_itsm_state($state){

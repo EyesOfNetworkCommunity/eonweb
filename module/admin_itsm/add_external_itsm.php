@@ -26,22 +26,18 @@ include_once("function_itsm.php");
 
 $message ="<div id='log'>";
 if(isset($_FILES["fileName"])){
-    $old_file = basename(get_itsm_var("itsm_file"));
-    if(isset($old_file) && $old_file == $_FILES["fileName"]["name"]){
-        $message .= "<div class=\"alert alert-warning\" role=\"alert\">".$_FILES["fileName"]["name"]." a file whith this name already exist.</div>";
-    }else{
-        $contenus = file_get_contents($_FILES["fileName"]['tmp_name']);
-        if(verify_format($contenus)){
-            if(upload_file($_FILES["fileName"])){
-                $message .= "<div class=\"alert alert-success\" role=\"alert\">File uploaded.</div>";
-                if(insert_itsm_var("itsm_file",__DIR__."/"."uploaded_file/".$_FILES["fileName"]["name"])){
-                    $message .= "<div class=\"alert alert-success\" role=\"alert\">".$_FILES["fileName"]["name"]." succesfully saved.</div>";
-                }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$_FILES["fileName"]["name"]." failed to be saved.</div>";
-                
-            }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">File failed to be upload, nothing else have been executed.</div>";
+    $contenus = file_get_contents($_FILES["fileName"]['tmp_name']);
+    if(verify_format($contenus)){
+        if(upload_file($_FILES["fileName"])){
+            $message .= "<div class=\"alert alert-success\" role=\"alert\">File uploaded.</div>";
+            $toto = insert_itsm_var("itsm_file",__DIR__."/"."uploaded_file/".$_FILES["fileName"]["name"]);
+            if($toto){
+                $message .= "<div class=\"alert alert-success\" role=\"alert\">".$_FILES["fileName"]["name"]." succesfully saved. </div>";
+            }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$_FILES["fileName"]["name"]." failed to be saved.</div>";
+            
+        }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">File failed to be upload, nothing else have been executed.</div>";
 
-        }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">The File verification failed, please verify the conformity of the file you want to upload.</div>"; 
-    }
+    }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">The File verification failed, please verify the conformity of the file you want to upload.</div>"; 
 }
 
 

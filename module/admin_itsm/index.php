@@ -25,11 +25,11 @@ include("../../side.php");
 include("function_itsm.php");
 
     $state          = get_itsm_state();
-    $itsm_file      = basename(get_itsm_var("itsm_file"));
-    $itsm_header    = get_itsm_var("itsm_header");    
-    $itsm_url       = get_itsm_var("itsm_url");    
-    $itsm_acquit    = get_itsm_var("itsm_acquit");
-    $itsm_create    = get_itsm_var("itsm_create");
+    $itsm_file      = (get_itsm_var("itsm_file")    == false ) ? "" : basename(get_itsm_var("itsm_file"));
+    $itsm_header    = (get_itsm_var("itsm_header")  == false ) ? "" : get_itsm_var("itsm_header");    
+    $itsm_url       = (get_itsm_var("itsm_url")     == false ) ? "" : get_itsm_var("itsm_url");    
+    $itsm_acquit    = (get_itsm_var("itsm_acquit")  == false ) ? "" : get_itsm_var("itsm_acquit");
+    $itsm_create    = (get_itsm_var("itsm_create")  == false ) ? "" : get_itsm_var("itsm_create");
 
 ?>
 
