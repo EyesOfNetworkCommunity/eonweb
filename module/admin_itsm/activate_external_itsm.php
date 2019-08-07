@@ -19,7 +19,8 @@
 #
 #########################################
 */
-include_once("../../header.php");
+include_once("../../include/config.php");
+include_once("../../include/function.php");
 include_once("function_itsm.php");
 
 $result ="";

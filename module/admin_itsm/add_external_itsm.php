@@ -19,19 +19,18 @@
 #
 #########################################
 */
-
-include_once("../../header.php");
-include_once("function_itsm.php");
+include_once("../../include/config.php");
+include_once("../../include/function.php");
+include_once("./function_itsm.php");
 
 
 $message ="<div id='log'>";
-if(isset($_FILES["fileName"])){
+if($_FILES["fileName"]["size"] > 0){
     $contenus = file_get_contents($_FILES["fileName"]['tmp_name']);
     if(verify_format($contenus)){
         if(upload_file($_FILES["fileName"])){
             $message .= "<div class=\"alert alert-success\" role=\"alert\">File uploaded.</div>";
-            $toto = insert_itsm_var("itsm_file",__DIR__."/"."uploaded_file/".$_FILES["fileName"]["name"]);
-            if($toto){
+            if( insert_itsm_var("itsm_file",__DIR__."/"."uploaded_file/".$_FILES["fileName"]["name"])){
                 $message .= "<div class=\"alert alert-success\" role=\"alert\">".$_FILES["fileName"]["name"]." succesfully saved. </div>";
             }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$_FILES["fileName"]["name"]." failed to be saved.</div>";
             

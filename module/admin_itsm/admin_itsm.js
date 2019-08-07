@@ -62,7 +62,6 @@ $(document).ready(function(){
 			contentType	: false,
 			success		:function(response) {
 				$("#result_state_itsm").html(response);
-				$("#result_state_itsm").html($("#btn_activate"));
 				location.reload();
 			}
 		});
@@ -83,7 +82,7 @@ $(document).ready(function(){
 			},
 			success : function(result){ // success est toujours en place, bien sûr !
 				$("#result").html(result);
-				$("#result").html($("#log"));
+				//$("#result").html($("#log"));
 				$("#btn_import").hide();
 				$("#input_file").prop('disabled', true);
 				$("#itsm_header").prop('disabled', true);
