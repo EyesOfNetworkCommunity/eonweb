@@ -30,19 +30,22 @@
 #########################################
 */
 
-include_once("../../../include/config.php");
-include_once("../../../include/function.php");
-include_once("../function_itsm.php");
-$itsm   =  get_itsm_var("itsm");
+include_once(__DIR__."/../../../include/config.php");
+include_once(__DIR__."/../../../include/function.php");
+include_once(__DIR__."/../../../include/arrays.php");
+
+include_once(__DIR__."/../function_itsm.php");
+
+$itsm   = get_itsm_var("itsm");
 $create = get_itsm_var("itsm_create");
 $acquit = get_itsm_var("itsm_acquit");
 $queue  = "active";
+
 if($itsm == "on"){
     if($create == "true"){
         $selected_events = get_all_events();
         if(!empty($selected_events)){
             $CustomActions->ged_acknowledge($selected_events, $queue);
-    
             if($acquit == "true"){
                 acknowledge($selected_events, $queue);
             }
