@@ -117,21 +117,20 @@ function report_itsm($detail, $descr){
     $url        = get_itsm_var("itsm_url");
     $header     = get_itsm_var("itsm_header");
 
-    if($extension == "xml"){
+    if(isset($extension)){
         str_replace("\$DETAIL$",$detail,$file);
         str_replace("\$DESCRIPTION$",$descr,$file);
         $ch = curl_init();
         curl_setopt( $ch, CURLOPT_URL, $url );
         curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, false); // TODO create a variable in database
         curl_setopt( $ch, CURLOPT_POST, true );
-        curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type: text/xml;charset=UTF-8',$header));
+        curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type: text/'.$extension.';charset=UTF-8',$header));
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $file );
         $result = curl_exec($ch);
         curl_close($ch);
         return $result;
-    }else if ($extension =="json"){
-        return true;
+    
     }else return false;
 }
 
