@@ -148,7 +148,7 @@ function curl_call($headers,$url,$file,$type="get",$ssl=false){
     $ch = curl_init();
     curl_setopt( $ch, CURLOPT_URL, $url );
     curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, $ssl); // TODO create a variable in database
-    curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers));
+    curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 
     if($type=="post"){
