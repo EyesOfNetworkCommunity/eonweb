@@ -117,23 +117,51 @@ function report_itsm($detail, $descr){
     $url        = get_itsm_var("itsm_url");
     $header     = get_itsm_var("itsm_header");
 
-    if(isset($extension)){
+    if($extension == "xml"){
         $file = str_replace("%DETAIL%",$detail,$file);
         $file = str_replace("%DESCRIPTION%",$descr,$file);
-
-        $ch = curl_init();
-        curl_setopt( $ch, CURLOPT_URL, $url );
-        curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, false); // TODO create a variable in database
-        curl_setopt( $ch, CURLOPT_POST, true );
-        curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type: text/'.$extension.';charset=UTF-8',$header));
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-        curl_setopt( $ch, CURLOPT_POSTFIELDS, $file );
-        $result = curl_exec($ch);
-        curl_close($ch);
+        $result = curl_call(array('Content-Type: text/'.$extension.';charset=UTF-8',$header),$url,$file,"post");
         return $result;
-    
+
+    }else if($extension == "json"){
+        $token_app = get_itsm_var("itsm_user_token");
+        $token_user = get_itsm_var("itsm_app_token");
+        $token_session = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_user,$token_app),$url."/initSession","");
+        $file = str_replace("%DETAIL%",$detail,$file);
+        $file = str_replace("%DESCRIPTION%",$descr,$file);
+        $result = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$header.$token_session,$token_app),$url."/Ticket/",$file,"post");
+        return $result;
+
     }else return false;
 }
+
+/**
+ * @var headers ==> array
+ * @var url ==> string 
+ * @var file ==> string
+ * @var type ==> "get" by default "post"
+ * @var ssl ==> boolean false by default
+ * 
+ * @return curl result
+ */
+function curl_call($headers,$url,$file,$type="get",$ssl=false){
+    $ch = curl_init();
+    curl_setopt( $ch, CURLOPT_URL, $url );
+    curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, $ssl); // TODO create a variable in database
+    curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers));
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+
+    if($type=="post"){
+        curl_setopt( $ch, CURLOPT_POST, true );
+        curl_setopt( $ch, CURLOPT_POSTFIELDS, $file);
+    }
+
+    $result = curl_exec($ch);
+    curl_close($ch);
+    return $result;
+}
+
+
 
 /**
  * 

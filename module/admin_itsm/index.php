@@ -25,11 +25,13 @@ include("../../side.php");
 include("function_itsm.php");
 
     $state          = get_itsm_state();
-    $itsm_file      = (get_itsm_var("itsm_file")    == false ) ? "" : basename(get_itsm_var("itsm_file"));
-    $itsm_header    = (get_itsm_var("itsm_header")  == false ) ? "" : get_itsm_var("itsm_header");    
-    $itsm_url       = (get_itsm_var("itsm_url")     == false ) ? "" : get_itsm_var("itsm_url");    
-    $itsm_acquit    = (get_itsm_var("itsm_acquit")  == false ) ? "" : get_itsm_var("itsm_acquit");
-    $itsm_create    = (get_itsm_var("itsm_create")  == false ) ? "" : get_itsm_var("itsm_create");
+    $itsm_file      = (get_itsm_var("itsm_file")        == false ) ? "" : basename(get_itsm_var("itsm_file"));
+    $itsm_header    = (get_itsm_var("itsm_header")      == false ) ? "" : get_itsm_var("itsm_header");    
+    $itsm_url       = (get_itsm_var("itsm_url")         == false ) ? "" : get_itsm_var("itsm_url");    
+    $itsm_acquit    = (get_itsm_var("itsm_acquit")      == false ) ? "" : get_itsm_var("itsm_acquit");
+    $itsm_create    = (get_itsm_var("itsm_create")      == false ) ? "" : get_itsm_var("itsm_create");
+    $itsm_app_token = (get_itsm_var("itsm_app_token")   == false ) ? "" : get_itsm_var("itsm_app_token");
+    $itsm_user_token= (get_itsm_var("itsm_user_token")  == false ) ? "" : get_itsm_var("itsm_user_token");
 
 ?>
 
@@ -76,6 +78,18 @@ include("function_itsm.php");
                     <label class="control-label col-sm-2" for="itsm_header"><?php echo getLabel("label.admin_itsm.header"); ?>:</label>
                     <div class="col-sm-8"> 
                         <input type="text" class="form-control" id="itsm_header" name="itsm_header" placeholder="SoapAction : mc..." <?php echo 'value="'.$itsm_header.'"';?> >
+                    </div>
+                </div>
+                <div class="form-group" id="token_user" >
+                    <label class="control-label col-sm-2" for="itsm_user_token"><?php echo getLabel("label.admin_itsm.token_user"); ?>:</label>
+                    <div class="col-sm-8"> 
+                        <input type="text" class="form-control" id="itsm_user_token" name="itsm_user_token"  <?php echo 'value="'.$itsm_user_token.'"';?> >
+                    </div>
+                </div>
+                <div class="form-group" id="token_app" >
+                    <label class="control-label col-sm-2" for="itsm_app_token"><?php echo getLabel("label.admin_itsm.token_app"); ?>:</label>
+                    <div class="col-sm-8"> 
+                        <input type="text" class="form-control" id="itsm_app_token" name="itsm_app_token"  <?php echo 'value="'.$itsm_app_token.'"';?> >
                     </div>
                 </div>
                 <div class="form-group">

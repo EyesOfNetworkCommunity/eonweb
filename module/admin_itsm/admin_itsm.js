@@ -22,8 +22,18 @@
 
 $(document).ready(function(){
 	$("#btn_import").hide();
+	if($("#itsm_app_token").val() == ""){
+		$("#token_app").hide();
+	}
+
+	if($("#itsm_user_token").val() == ""){
+		$("#token_user").hide();
+	}
+
 	$("#input_file").prop('disabled', true);
 	$("#itsm_header").prop('disabled', true);
+	$("#itsm_app_token").prop('disabled', true);
+	$("#itsm_user_token").prop('disabled', true);
 	$("#itsm_url").prop('disabled', true);
 	$("#itsm_create").prop('disabled', true);
 	$("#itsm_acquit").prop('disabled', true);
@@ -34,6 +44,8 @@ $(document).ready(function(){
 		$("#input_file").prop('disabled', false);
 		$("#itsm_header").prop('disabled', false);
 		$("#itsm_url").prop('disabled', false);
+		$("#itsm_app_token").prop('disabled', false);
+		$("#itsm_user_token").prop('disabled', false);
 		$("#itsm_create").prop('disabled', false);
 		$("#itsm_acquit").prop('disabled', false);
 		$("#btn_form").prop('disabled',false);
@@ -42,6 +54,11 @@ $(document).ready(function(){
 	$("#input_file").change(function() {
 		var fileName = $(this).val().split("\\").pop();
 		$("#file_label").val(fileName);
+		var ext = fileName.split('.').pop();
+		if(ext == "json"){
+			$("#token_user").show();
+			$("#token_app").show();
+		}
 	});
 
 	$("#options_itsm").hover(function(){
@@ -86,6 +103,8 @@ $(document).ready(function(){
 				$("#btn_import").hide();
 				$("#input_file").prop('disabled', true);
 				$("#itsm_header").prop('disabled', true);
+				$("#itsm_app_token").prop('disabled', true);
+				$("#itsm_user_token").prop('disabled', true);
 				$("#itsm_url").prop('disabled', true);
 				$("#itsm_create").prop('disabled', true);
 				$("#itsm_acquit").prop('disabled', true);

@@ -171,6 +171,8 @@
 	"label.admin_itsm.warn" : "Warning",
 	"label.admin_itsm.warn_text" : "If you selected those options you may cause an over creation of ticket.",
 	"label.admin_itsm.url":"Address",
+	"label.admin_itsm.token_user":"User Token",
+	"label.admin_itsm.token_app":"App Token",
 	"label.admin_itsm.header":"Header",
 	"label.admin_itsm.acquit":"Automatic acquitement",
 	"label.admin_itsm.create":"Automatic creation",
