@@ -130,7 +130,7 @@ function report_itsm($detail, $descr){
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $file );
         $result = curl_exec($ch);
         curl_close($ch);
-        return $file;
+        return $result;
     
     }else return false;
 }
