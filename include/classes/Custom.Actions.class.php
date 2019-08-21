@@ -19,7 +19,6 @@
 #
 #########################################
 */
-include("../admin_itsm/function_itsm.php");
 /**
  * Actions class for all eonweb's pages
  */
@@ -51,8 +50,9 @@ class CustomActions
                 $description = $event["description"];
             }
             $result = report_itsm($detail,$description);
+            insert_itsm_var("log_itsm",$result);
             return $result;
-        }else return true;
+        }else return false;
 	}
 
 	/**

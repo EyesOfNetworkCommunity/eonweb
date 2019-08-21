@@ -338,7 +338,7 @@ $(document).ready(function(){
 		if(action == 3){ action_name = "action.disown"; }
 		if(action == 4){ action_name = "action.ack"; }
 		if(action == 5){ action_name = "action.delete"; }
-		if(action == 6){ action_name = "action.create";}
+		if(action == 6){ action_name = "action.create"; }
 
 		$.ajax({
 			url: "ged_actions.php",
@@ -406,7 +406,7 @@ $(document).ready(function(){
 	});
 
 	// click to edit an event
-	$(document).on("click", "#edit-event, #edit-all-event, #own-event, #own-all-event, #ack-event, #ack-all-event, itsm-all-event, itsm-event", function(){
+	$(document).on("click", "#edit-event, #edit-all-event, #own-event, #own-all-event, #ack-event, #ack-all-event, #itsm-all-event, #itsm-event", function(){
 		global_action = this.id;
 		global_action_name = this.id;
 		action_title = "action.edit";
@@ -441,7 +441,7 @@ $(document).ready(function(){
 
 		if($("#event-comments").length) {
 			comments = $("#event-comments").val();
-			action = "edit"
+			action = "edit";
 		}
 
 		$.ajax({
@@ -471,7 +471,7 @@ $(document).ready(function(){
 	$(document).on("click", "#event-validation", function(){
 		var queue = $("#queue").val();
 		global_action = gedaction;
-		
+		$("#modal-loader").css("visibility", "visible");
 		$.ajax({
 			url: "ged_actions.php",
 			data: {
@@ -482,7 +482,7 @@ $(document).ready(function(){
 			},
 			success: function(response){
 				global_action = "";
-
+				$("#modal-loader").css("visibility", "hidden");
 				if(response.length > 0){
 					$("#messages").html(response);
 					$("#result").empty();

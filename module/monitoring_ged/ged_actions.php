@@ -22,8 +22,9 @@
 
 include("../../include/config.php");
 include("../../include/arrays.php");
-include("../../include/function.php"); 
-include("ged_functions.php");
+include_once("../../include/function.php"); 
+include("./ged_functions.php");
+include_once("../admin_itsm/function_itsm.php");
 
 // create variables from $_GET
 extract($_GET);
@@ -74,7 +75,7 @@ elseif(!in_array($queue,$array_ged_queues)) { $queue="active"; }
 				$CustomActions->ged_own($selected_events, $queue, $global_action);
 			}elseif($global_action == "6"){
 				acknowledge($selected_events, $queue);
-				$CustomActions->ged_acknowledge($selected_events, $queue);
+				$CustomActions->ged_acknowledge($selected_events, $queue);				
 			}
 			break;
 		case 'changeGedFilter':
