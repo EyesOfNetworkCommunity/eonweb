@@ -47,7 +47,7 @@ function upload_file($file, $dir="uploaded_file"){
  * @return Boolean 
  */
 function verify_format($text){
-    preg_match('/\$DETAIL\$|\$DESCRIPTION\$/', $text, $matches);
+    preg_match('/%DETAIL%|%DESCRIPTION%/', $text, $matches);
     if(count($matches) >= 1 ){
         return true;
     }else return false;
@@ -118,8 +118,9 @@ function report_itsm($detail, $descr){
     $header     = get_itsm_var("itsm_header");
 
     if(isset($extension)){
-        str_replace("\$DETAIL$",$detail,$file);
-        str_replace("\$DESCRIPTION$",$descr,$file);
+        $file = str_replace("%DETAIL%",$detail,$file);
+        $file = str_replace("%DESCRIPTION%",$descr,$file);
+
         $ch = curl_init();
         curl_setopt( $ch, CURLOPT_URL, $url );
         curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, false); // TODO create a variable in database
@@ -129,7 +130,7 @@ function report_itsm($detail, $descr){
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $file );
         $result = curl_exec($ch);
         curl_close($ch);
-        return $result;
+        return $file;
     
     }else return false;
 }

@@ -30,7 +30,11 @@ class CustomActions
 	 */
 	public function ged_acknowledge($selected_events, $queue)
 	{
+        global $array_ged_queues;
+        global $database_ged;
+
         $status_itsm = get_itsm_var("itsm");
+        if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
 
         if(isset($status_itsm) && $status_itsm == "on"){
             foreach ($selected_events as $value) {
@@ -43,14 +47,13 @@ class CustomActions
                 $event_to_delete = [];
                 array_push($event_to_delete, $value);
         
-                $sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = ?";
-                $result = sqlrequest($database_ged, $sql, false, array("s",(string)$id));
+                $sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = $id";
+                $result = sqlrequest($database_ged, $sql, false);
                 $event = mysqli_fetch_assoc($result);
                 $detail = "ip : ".$event["ip_address"]."<br/>service : ".$event["service"]."<br/>comment : ".$event["comments"];
                 $description = $event["description"];
             }
             $result = report_itsm($detail,$description);
-            insert_itsm_var("log_itsm",$result);
             return $result;
         }else return false;
 	}
