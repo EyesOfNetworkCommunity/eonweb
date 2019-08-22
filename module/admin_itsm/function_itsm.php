@@ -110,7 +110,7 @@ function get_itsm_state(){
  * This function create the http request to the external server itsm
  * ie : curl -v --header "Content-Type: text/xml;charset=UTF-8" --header "SOAPAction: mc_issue_add_CD74" --data @request-add.xml https://localhost/api/soap/mantisconnect.php
  */
-function report_itsm($detail, $descr){
+function report_itsm($detail, $descr, $array_vars=array()){
     $path       = get_itsm_var("itsm_file");
     $extension  = explode(".",basename($path))[1];
     $file       = file_get_contents($path);
@@ -128,18 +128,13 @@ function report_itsm($detail, $descr){
         $token_user = get_itsm_var("itsm_user_token");
         $array_token_session = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_user,$token_app),$url."/initSession","");
 	$token_session = json_decode($array_token_session);
-	//var_dump($token_session);
         $file = str_replace("%DETAIL%",$detail,$file);
         $file = str_replace("%DESCRIPTION%",$descr,$file);
-        //var_dump($file);
+	for($array_vars as $key=>$value){
+		$file = str_replace($key,$value,$file);
+	}
 	$result = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_app,$header.$token_session->session_token),$url."/Ticket",$file,"post");
-        var_dump($result);
-        //var_dump($header.$token_session["session_token"]);
-        //var_dump($header);
-        //var_dump($token_session->session_token);
-        //var_dump($token_app);
-	
-	//insert_itsm_var("itsm_log",);
+	var_dump($result);
         return true;
 
     }else return false;
@@ -166,10 +161,7 @@ function curl_call($headers,$url,$file,$type="get",$ssl=false){
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $file);
     }
 
-    var_dump($headers);
-    var_dump($url);
     $result = curl_exec($ch);
-    //var_dump(curl_getinfo($ch, CURLINFO_HEADER_OUT));
     curl_close($ch);
     return $result;
 }
