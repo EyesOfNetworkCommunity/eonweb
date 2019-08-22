@@ -124,13 +124,23 @@ function report_itsm($detail, $descr){
         return $result;
 
     }else if($extension == "json"){
-        $token_app = get_itsm_var("itsm_user_token");
-        $token_user = get_itsm_var("itsm_app_token");
-        $token_session = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_user,$token_app),$url."/initSession","");
+        $token_app = get_itsm_var("itsm_app_token");
+        $token_user = get_itsm_var("itsm_user_token");
+        $array_token_session = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_user,$token_app),$url."/initSession","");
+	$token_session = json_decode($array_token_session);
+	//var_dump($token_session);
         $file = str_replace("%DETAIL%",$detail,$file);
         $file = str_replace("%DESCRIPTION%",$descr,$file);
-        $result = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$header.$token_session,$token_app),$url."/Ticket/",$file,"post");
-        return $result;
+        //var_dump($file);
+	$result = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_app,$header.$token_session->session_token),$url."/Ticket",$file,"post");
+        var_dump($result);
+        //var_dump($header.$token_session["session_token"]);
+        //var_dump($header);
+        //var_dump($token_session->session_token);
+        //var_dump($token_app);
+	
+	//insert_itsm_var("itsm_log",);
+        return true;
 
     }else return false;
 }
@@ -156,7 +166,10 @@ function curl_call($headers,$url,$file,$type="get",$ssl=false){
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $file);
     }
 
+    var_dump($headers);
+    var_dump($url);
     $result = curl_exec($ch);
+    //var_dump(curl_getinfo($ch, CURLINFO_HEADER_OUT));
     curl_close($ch);
     return $result;
 }

@@ -50,8 +50,9 @@ class CustomActions
                 $sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = $id";
                 $result = sqlrequest($database_ged, $sql, false);
                 $event = mysqli_fetch_assoc($result);
-                $detail = "ip : ".$event["ip_address"]."<br/>service : ".$event["service"]."<br/>comment : ".$event["comments"];
-                $description = $event["description"];
+                $detail = "Supervision: ".$event["equipment"]." service : ".$event["service"];
+                //$detail = "ip : ".$event["ip_address"]." service : ".$event["service"]." comment : ".$event["comments"];
+                $description = "ip : ".$event["ip_address"]." service : ".$event["service"]." comment : ".$event["comments"]." description : ".$event["description"];
             }
             $result = report_itsm($detail,$description);
             return $result;

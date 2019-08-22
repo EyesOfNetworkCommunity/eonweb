@@ -60,7 +60,7 @@ elseif(!in_array($queue,$array_ged_queues)) { $queue="active"; }
 				ownDisown($selected_events, $queue, $global_action);
 				$CustomActions->ged_own($selected_events, $queue, $global_action);
 			}elseif($global_action == "6"){
-				$CustomActions->ged_acknowledge($selected_events, $queue);
+				$CustomActions->ged_acknowledge($selected_events, $queue);				
 				acknowledge($selected_events, $queue);
 			}
 			break;
