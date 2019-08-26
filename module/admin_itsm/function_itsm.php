@@ -112,8 +112,10 @@ function get_itsm_state(){
  */
 function report_itsm($detail, $descr, $array_vars=array()){
     $path       = get_itsm_var("itsm_file");
+    $path2       = get_itsm_var("itsm_file2");
     $extension  = explode(".",basename($path))[1];
     $file       = file_get_contents($path);
+    $file2       = file_get_contents($path2);
     $url        = get_itsm_var("itsm_url");
     $header     = get_itsm_var("itsm_header");
 
@@ -134,17 +136,17 @@ function report_itsm($detail, $descr, $array_vars=array()){
 		$file = str_replace($key,$value,$file);
 	}
 	$result = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_app,$header.$token_session->session_token),$url."/Ticket",$file,"post");
-	$ticket_id = json_decode($result)->id;
-	$ticket_id = $result['id'];
-	//settype($ticket_id, "integer");
+	$return = json_decode($result,true);
+	$ticket_id = $return[0][id];
         var_dump($ticket_id);
-	insert_itsm_var("itsm_log",$ticket_id);
-        //var_dump($header.$token_session["session_token"]);
-        //var_dump($header);
-        //var_dump($token_session->session_token);
-        //var_dump($token_app);
 	
-	//insert_itsm_var("itsm_log",);
+	$file2 = str_replace("%TICKET%",$ticket_id,$file2);
+	foreach($array_vars as $key=>$value){
+		$file2 = str_replace($key,$value,$file2);
+	}
+	$group = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_app,$header.$token_session->session_token),$url."/Ticket/".$ticket_id."/group_ticket",$file2,"post");
+        var_dump($group);
+
         return true;
 
     }else return false;
