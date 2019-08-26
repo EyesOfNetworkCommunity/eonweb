@@ -1,1 +1,1 @@
-{"input": [{"name": "%DETAIL%", "content": "%DESCRIPTION%", "entities_id": 479, "groups_id": "%GROUP%", "requesttypes_id":7, "urgency":3,"impact":3,"priority":3,"itilcategories_id":5}]}
+{"input": [{"name": "%DETAIL%", "content": "%DESCRIPTION%", "entities_id": 479, "users_id_recipient": "%GROUP%", "requesttypes_id":7, "urgency":3,"impact":3,"priority":3,"itilcategories_id":5}]}

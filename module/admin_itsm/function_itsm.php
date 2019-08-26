@@ -128,10 +128,8 @@ function report_itsm($detail, $descr, $array_vars=array()){
         $token_user = get_itsm_var("itsm_user_token");
         $array_token_session = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_user,$token_app),$url."/initSession","");
 	$token_session = json_decode($array_token_session);
-	//var_dump($token_session);
         $file = str_replace("%DETAIL%",$detail,$file);
         $file = str_replace("%DESCRIPTION%",$descr,$file);
-        //var_dump($file);
 	foreach($array_vars as $key=>$value){
 		$file = str_replace($key,$value,$file);
 	}
@@ -173,10 +171,7 @@ function curl_call($headers,$url,$file,$type="get",$ssl=false){
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $file);
     }
 
-    //var_dump($headers);
-    //var_dump($url);
     $result = curl_exec($ch);
-    //var_dump(curl_getinfo($ch, CURLINFO_HEADER_OUT));
     curl_close($ch);
     return $result;
 }
