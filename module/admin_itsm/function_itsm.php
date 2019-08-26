@@ -130,7 +130,7 @@ function report_itsm($detail, $descr, $array_vars=array()){
 	$token_session = json_decode($array_token_session);
         $file = str_replace("%DETAIL%",$detail,$file);
         $file = str_replace("%DESCRIPTION%",$descr,$file);
-	for($array_vars as $key=>$value){
+	foreach($array_vars as $key=>$value){
 		$file = str_replace($key,$value,$file);
 	}
 	$result = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_app,$header.$token_session->session_token),$url."/Ticket",$file,"post");
