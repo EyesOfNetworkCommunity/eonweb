@@ -25,14 +25,17 @@
  * 
  * @return boolean
  */
-function upload_file($file, $dir="uploaded_file"){
-    $old_file = get_itsm_var("itsm_file");
-    if(file_exists($old_file)){
-        unlink($old_file);
+function upload_file($url, $file, $dir="uploaded_file"){
+    $old_file = get_itsm_file($url);
+    if($old_file != false && file_exists($old_file["file_name"])){
+        unlink($old_file["file_name"]);
     }
+
     if(isset($file)){
         $target_file = __DIR__."/".$dir."/".basename($file["name"]);
+        
         if(move_uploaded_file($file["tmp_name"], $target_file)){
+
             return true;
         }
         return false;
@@ -55,12 +58,12 @@ function verify_format($text){
 
 
 // ================== SQL FUNCTION =================== //
-function insert_itsm_var($name,$value){
+function insert_config_var($name,$value){
     global $database_eonweb;
-    $var = get_itsm_var($name);
+    $var = get_config_var($name);
     $rq = "";
     if($var != false){
-        $rq ='UPDATE configs SET value="'.$value.'" WHERE name="'.$name.'"'; 
+        $rq = 'UPDATE configs SET value="'.$value.'" WHERE name="'.$name.'"'; 
     }else{
         $rq = 'INSERT INTO configs VALUES("'.$name.'","'.$value.'")';
     }
@@ -71,10 +74,9 @@ function insert_itsm_var($name,$value){
     }catch(Exception $e) {
         return 'Exception reçue : '.$e->getMessage().'\n';
     }
-    
 }
 
-function get_itsm_var($name){
+function get_config_var($name){
     global $database_eonweb;
     $res = sqlrequest("$database_eonweb",'SELECT value FROM configs WHERE name="'.$name.'"');
     $val = false;
@@ -84,8 +86,12 @@ function get_itsm_var($name){
     return $val;
 }
 
+
+
+
+
 function change_itsm_state($state){
-    if($state != get_itsm_var("itsm")){
+    if($state != get_config_var("itsm")){
         global $database_eonweb;
         sqlrequest("$database_eonweb",'UPDATE configs set value="'.$state.'" WHERE name="itsm"');
     }
@@ -93,7 +99,7 @@ function change_itsm_state($state){
 }
 
 function get_itsm_state(){
-    $state = get_itsm_var("itsm");
+    $state = get_config_var("itsm");
     if(!empty($state) && $state=="on"){
         return '<button class="btn btn-success" id="btn_activate" value="off">'.getLabel("label.admin_itsm.on").'</button>';
     }elseif((!empty($state) && $state=="off")){
@@ -111,11 +117,11 @@ function get_itsm_state(){
  * ie : curl -v --header "Content-Type: text/xml;charset=UTF-8" --header "SOAPAction: mc_issue_add_CD74" --data @request-add.xml https://localhost/api/soap/mantisconnect.php
  */
 function report_itsm($detail, $descr){
-    $path       = get_itsm_var("itsm_file");
+    $path       = get_config_var("itsm_file");
     $extension  = explode(".",basename($path))[1];
     $file       = file_get_contents($path);
-    $url        = get_itsm_var("itsm_url");
-    $header     = get_itsm_var("itsm_header");
+    $url        = get_config_var("itsm_url");
+    $header     = get_config_var("itsm_header");
 
     if($extension == "xml"){
         $file = str_replace("%DETAIL%",$detail,$file);
@@ -124,22 +130,13 @@ function report_itsm($detail, $descr){
         return $result;
 
     }else if($extension == "json"){
-        $token_app = get_itsm_var("itsm_app_token");
-        $token_user = get_itsm_var("itsm_user_token");
+        $token_app = get_config_var("itsm_app_token");
+        $token_user = get_config_var("itsm_user_token");
         $array_token_session = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_user,$token_app),$url."/initSession","");
-	$token_session = json_decode($array_token_session);
-	//var_dump($token_session);
+	    $token_session = json_decode($array_token_session);
         $file = str_replace("%DETAIL%",$detail,$file);
         $file = str_replace("%DESCRIPTION%",$descr,$file);
-        //var_dump($file);
-	$result = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_app,$header.$token_session->session_token),$url."/Ticket",$file,"post");
-        var_dump($result);
-        //var_dump($header.$token_session["session_token"]);
-        //var_dump($header);
-        //var_dump($token_session->session_token);
-        //var_dump($token_app);
-	
-	//insert_itsm_var("itsm_log",);
+	    $result = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_app,$header.$token_session->session_token),$url."/Ticket",$file,"post");
         return true;
 
     }else return false;
@@ -166,8 +163,6 @@ function curl_call($headers,$url,$file,$type="get",$ssl=false){
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $file);
     }
 
-    var_dump($headers);
-    var_dump($url);
     $result = curl_exec($ch);
     //var_dump(curl_getinfo($ch, CURLINFO_HEADER_OUT));
     curl_close($ch);
@@ -199,6 +194,7 @@ function get_all_events(){
 
     return $events;
 }
+
 
 
 ?>

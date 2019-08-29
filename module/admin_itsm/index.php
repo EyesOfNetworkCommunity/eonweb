@@ -19,20 +19,18 @@
 #
 #########################################
 */
+// ini_set('display_errors','on');
+// error_reporting(E_ALL);
 
 include("../../header.php");
 include("../../side.php");
 include("function_itsm.php");
+include("classes/Itsm.php");
+include("classes/ItsmPeer.php");
 
-    $state          = get_itsm_state();
-    $itsm_file      = (get_itsm_var("itsm_file")        == false ) ? "" : basename(get_itsm_var("itsm_file"));
-    $itsm_header    = (get_itsm_var("itsm_header")      == false ) ? "" : get_itsm_var("itsm_header");    
-    $itsm_url       = (get_itsm_var("itsm_url")         == false ) ? "" : get_itsm_var("itsm_url");    
-    $itsm_acquit    = (get_itsm_var("itsm_acquit")      == false ) ? "" : get_itsm_var("itsm_acquit");
-    $itsm_create    = (get_itsm_var("itsm_create")      == false ) ? "" : get_itsm_var("itsm_create");
-    $itsm_app_token = (get_itsm_var("itsm_app_token")   == false ) ? "" : get_itsm_var("itsm_app_token");
-    $itsm_user_token= (get_itsm_var("itsm_user_token")  == false ) ? "" : get_itsm_var("itsm_user_token");
-
+$state = get_itsm_state();
+$itsmPeer = new ItsmPeer();
+$itsm_list = $itsmPeer->get_all_itsm();
 ?>
 
 
@@ -52,91 +50,54 @@ include("function_itsm.php");
             <div class="btn-group pull-right">
                     <div class="btn-group" id="result_state_itsm">
                         <?php echo $state; ?>
+                        <a href='modification_itsm.php' class="btn btn-info" role="button"><?php echo getLabel("action.add"); ?></a>
                     </div>
-                    <button class="btn btn-warning" id="btn_unlock" >
-						<?php echo getLabel("action.update"); ?>
-					</button>
             </div>
         </div>
         <div class="panel-body">
-            <form  class="form-horizontal" id="myForm" enctype="multipart/form-data">
-                <div class="form-group">
-                    
-                    <label class="control-label col-sm-2" ><?php echo getLabel("label.admin_itsm.file"); ?> :</label>
-                    <div class="col-sm-8">
-                        <div class="input-group">
-                            <label class="input-group-btn">
-                                <span class="btn btn-primary" id="btn_import">
-                                    <?php echo getLabel("action.import"); ?>&hellip; <input id="input_file" name="fileName" type="file" accept=".json,.xml" style="display: none;" >
-                                </span>
-                            </label>
-                            <input type="text" id="file_label" class="form-control" placeholder="File type : xml , json" <?php echo 'value="'.$itsm_file.'"';?> readonly>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-sm-2" for="itsm_header"><?php echo getLabel("label.admin_itsm.header"); ?>:</label>
-                    <div class="col-sm-8"> 
-                        <input type="text" class="form-control" id="itsm_header" name="itsm_header" placeholder="SoapAction : mc..." <?php echo 'value="'.$itsm_header.'"';?> >
-                    </div>
-                </div>
-                <div class="form-group" id="token_user" >
-                    <label class="control-label col-sm-2" for="itsm_user_token"><?php echo getLabel("label.admin_itsm.token_user"); ?>:</label>
-                    <div class="col-sm-8"> 
-                        <input type="text" class="form-control" id="itsm_user_token" name="itsm_user_token"  <?php echo 'value="'.$itsm_user_token.'"';?> >
-                    </div>
-                </div>
-                <div class="form-group" id="token_app" >
-                    <label class="control-label col-sm-2" for="itsm_app_token"><?php echo getLabel("label.admin_itsm.token_app"); ?>:</label>
-                    <div class="col-sm-8"> 
-                        <input type="text" class="form-control" id="itsm_app_token" name="itsm_app_token"  <?php echo 'value="'.$itsm_app_token.'"';?> >
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-sm-2" for="itsm_url"><?php echo getLabel("label.admin_itsm.url"); ?> :</label>
-                    <div class="col-sm-8"> 
-                        <input type="text" class="form-control" id="itsm_url" name="itsm_url" placeholder="http://url.com" <?php echo 'value="'.$itsm_url.'"';?> >
-                    </div>
-                </div>
-                <div class="form-group" id="options_itsm"> 
-                    <div class="col-sm-offset-2 col-sm-4">
-                        <div class="checkbox">
-                            <?php 
-                            if($itsm_create=="true"){
-                                echo '<label><input id="itsm_create" name="itsm_create" type="checkbox"  value="true" checked>'.getLabel("label.admin_itsm.create").'</label>';
-                            }else echo '<label><input id="itsm_create" name="itsm_create" type="checkbox"  value="true" >'.getLabel("label.admin_itsm.create").'</label>';
+                <div class="table-responsive">          
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th><?php echo getLabel("label.admin_itsm.url"); ?></th>
+                            <th><?php echo getLabel("label.admin_itsm.header"); ?></th>
+                            <th><?php echo getLabel("label.admin_itsm.file"); ?></th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php 
+                               
+                                foreach($itsm_list as $itsm){
+                                    echo "<tr>
+                                            <td>".$itsm->getItsm_url()."</td>
+                                            <td>";
+                                    foreach($itsm->getItsm_headers() as $header){
+                                        echo $header."</br> ";
+                                    }
+                                    
+                                    echo "  </td>
+                                            <td>".$itsm->getItsm_file()."</td>
+                                            <td>
+                                                <div class=\"btn-group\">
+                                               
+                                                    <a href='modification_itsm.php?url=".$itsm->getItsm_url()."' class=\"btn btn-success\" role=\"button\">".getLabel("action.edit")."</a>
+                                                    <button class=\"btn btn-danger\" type=\"button\" onclick='delete_itsm(this,".$itsm->getItsm_id().")'>".getLabel("action.delete")."</button>
+                                                    
+                                                </div>
+                                            </td>
+                                        </tr>";
+                                    
+                                }
                             ?>
-                        </div>
-                    </div>
-                    <div class=" col-sm-4">
-                        <div class="checkbox">
-                            <?php
-                                if($itsm_acquit == "true"){
-                                    echo '<label><input id="itsm_acquit" name="itsm_acquit" type="checkbox" value ="true" checked>'.getLabel("label.admin_itsm.acquit").'</label>';
-                                }else echo '<label><input id="itsm_acquit" name="itsm_acquit" type="checkbox" value ="true" >'.getLabel("label.admin_itsm.acquit").'</label>';
-                            ?>
-                        </div>
-                    </div>
-                  
-                   
+                        
+                        </tbody>
+                    </table>
                 </div>
-                
-            </form>
-            <div class="form-group"> 
-                    <div class="col-sm-offset-2 col-sm-4">
-                        <button class="btn btn-primary" id="btn_form" type="submit">
-                            <?php echo getLabel("action.apply"); ?>
-                        </button>
-                    </div>
-                    <div  id="info_options" class="col-sm-4 alert alert-warning" hidden>
-                        <strong><?php echo getLabel("label.admin_itsm.warn"); ?> ! </strong> <?php echo getLabel("label.admin_itsm.warn_text"); ?>
-                    </div>
-                </div>
-            
+             
 
         </div>
     </div>
- 
 
 	<br/>
 	
