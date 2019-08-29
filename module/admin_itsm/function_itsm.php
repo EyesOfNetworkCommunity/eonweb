@@ -116,12 +116,14 @@ function get_itsm_state(){
  * This function create the http request to the external server itsm
  * ie : curl -v --header "Content-Type: text/xml;charset=UTF-8" --header "SOAPAction: mc_issue_add_CD74" --data @request-add.xml https://localhost/api/soap/mantisconnect.php
  */
-function report_itsm($detail, $descr){
-    $path       = get_config_var("itsm_file");
+function report_itsm($detail, $descr, $array_vars=array()){
+    $path       = get_itsm_var("itsm_file");
+    $path2       = get_itsm_var("itsm_file2");
     $extension  = explode(".",basename($path))[1];
     $file       = file_get_contents($path);
-    $url        = get_config_var("itsm_url");
-    $header     = get_config_var("itsm_header");
+    $file2       = file_get_contents($path2);
+    $url        = get_itsm_var("itsm_url");
+    $header     = get_itsm_var("itsm_header");
 
     if($extension == "xml"){
         $file = str_replace("%DETAIL%",$detail,$file);
@@ -133,10 +135,25 @@ function report_itsm($detail, $descr){
         $token_app = get_config_var("itsm_app_token");
         $token_user = get_config_var("itsm_user_token");
         $array_token_session = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_user,$token_app),$url."/initSession","");
-	    $token_session = json_decode($array_token_session);
+
+	$token_session = json_decode($array_token_session);
         $file = str_replace("%DETAIL%",$detail,$file);
         $file = str_replace("%DESCRIPTION%",$descr,$file);
-	    $result = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_app,$header.$token_session->session_token),$url."/Ticket",$file,"post");
+	foreach($array_vars as $key=>$value){
+		$file = str_replace($key,$value,$file);
+	}
+	$result = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_app,$header.$token_session->session_token),$url."/Ticket",$file,"post");
+	$return = json_decode($result,true);
+	$ticket_id = $return[0][id];
+        var_dump($ticket_id);
+	
+	$file2 = str_replace("%TICKET%",$ticket_id,$file2);
+	foreach($array_vars as $key=>$value){
+		$file2 = str_replace($key,$value,$file2);
+	}
+	$group = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_app,$header.$token_session->session_token),$url."/Ticket/".$ticket_id."/group_ticket",$file2,"post");
+        var_dump($group);
+
         return true;
 
     }else return false;
@@ -164,7 +181,6 @@ function curl_call($headers,$url,$file,$type="get",$ssl=false){
     }
 
     $result = curl_exec($ch);
-    //var_dump(curl_getinfo($ch, CURLINFO_HEADER_OUT));
     curl_close($ch);
     return $result;
 }

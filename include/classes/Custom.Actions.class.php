@@ -28,7 +28,7 @@ class CustomActions
 	/**
 	 * Ged Acknowledge
 	 */
-	public function ged_acknowledge($selected_events, $queue)
+	public function ged_acknowledge($selected_events, $queue, $group=null)
 	{
         global $array_ged_queues;
         global $database_ged;
@@ -50,11 +50,16 @@ class CustomActions
                 $sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = $id";
                 $result = sqlrequest($database_ged, $sql, false);
                 $event = mysqli_fetch_assoc($result);
-                $detail = "Supervision: ".$event["equipment"]." service : ".$event["service"];
-                //$detail = "ip : ".$event["ip_address"]." service : ".$event["service"]." comment : ".$event["comments"];
-                $description = "ip : ".$event["ip_address"]." service : ".$event["service"]." comment : ".$event["comments"]." description : ".$event["description"];
+                $detail = $event["equipment"]." / ".$event["service"];
+                $description = "<H1>Détail de l'incident:</H1> <br>Nom d'équipement: ".$event["equipment"]."<br> Service: ".$event["service"]."<br>Adresse IP: ".$event["ip_address"]."<br><br>Description: ".$event["description"]."<br><br>Commentaire: ".$event["comments"];
+		$array_vars=array();
+		if(isset($group)) {
+			$array_vars["%GROUP%"]=$group;
+		}
             }
-            $result = report_itsm($detail,$description);
+	
+            $result = report_itsm($detail,$description,$array_vars);
+	    var_dump($result);
             return $result;
         }else return false;
 	}

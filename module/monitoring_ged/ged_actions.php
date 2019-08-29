@@ -31,6 +31,7 @@ extract($_GET);
 if(!isset($queue)) { $queue="active"; } 
 elseif(!in_array($queue,$array_ged_queues)) { $queue="active"; }
 
+if(!isset($group)) { $group=null; }
 // execute actions
 
 /*
@@ -54,27 +55,27 @@ elseif(!in_array($queue,$array_ged_queues)) { $queue="active"; }
 			editAllEvents($selected_events, $queue, $comments);
 			$CustomActions->ged_edit($selected_events, $queue, $comments);
 			if($global_action == "4"){
+				$CustomActions->ged_acknowledge($selected_events, $queue, $group);				
 				acknowledge($selected_events, $queue);
-				$CustomActions->ged_acknowledge($selected_events, $queue);
 			} elseif($global_action == "2") {
 				ownDisown($selected_events, $queue, $global_action);
 				$CustomActions->ged_own($selected_events, $queue, $global_action);
 			}elseif($global_action == "6"){
-				$CustomActions->ged_acknowledge($selected_events, $queue);				
+				$CustomActions->ged_acknowledge($selected_events, $queue, $group);				
 				acknowledge($selected_events, $queue);
 			}
 			break;
 		case 'confirm':
 			if($global_action == "4"){
+				$CustomActions->ged_acknowledge($selected_events, $queue,$group);
 				acknowledge($selected_events, $queue);
-				$CustomActions->ged_acknowledge($selected_events, $queue);
 			} elseif($global_action == "5") {
 				delete($selected_events, $queue);
 			} elseif($global_action == "2" || $global_action == "3") {
 				ownDisown($selected_events, $queue, $global_action);
 				$CustomActions->ged_own($selected_events, $queue, $global_action);
 			}elseif($global_action == "6"){
-				$CustomActions->ged_acknowledge($selected_events, $queue);				
+				$CustomActions->ged_acknowledge($selected_events, $queue, $group);				
 				acknowledge($selected_events, $queue);
 			}
 			break;

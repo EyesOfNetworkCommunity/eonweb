@@ -443,6 +443,7 @@ $(document).ready(function(){
 			comments = $("#event-comments").val();
 			action = "edit";
 		}
+		var group_itsm = $("#group").val();
 
 		$.ajax({
 			url: "ged_actions.php",
@@ -451,7 +452,8 @@ $(document).ready(function(){
 				action: action,
 				global_action: global_action,
 				selected_events: events,
-				comments: comments
+				comments: comments,
+				group: group_itsm
 			},
 			success: function(response){
 				$(".modal-body #event-message").html(response);
@@ -470,6 +472,7 @@ $(document).ready(function(){
 	// click to valid the own/disown/ack/delete
 	$(document).on("click", "#event-validation", function(){
 		var queue = $("#queue").val();
+	
 		global_action = gedaction;
 		$("#modal-loader").css("visibility", "visible");
 		$.ajax({
@@ -478,7 +481,8 @@ $(document).ready(function(){
 				queue: queue,
 				action: "confirm",
 				global_action: global_action,
-				selected_events: selected_events
+				selected_events: selected_events,
+				group:null
 			},
 			success: function(response){
 				global_action = "";
