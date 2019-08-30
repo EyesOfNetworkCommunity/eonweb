@@ -31,7 +31,7 @@ class CustomActions
 	public function ged_acknowledge($selected_events, $queue, $group=null)
 	{
         global $array_ged_queues;
-        global $database_ged;
+		$result=false;
 
         $status_itsm = get_itsm_var("itsm");
         if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
@@ -44,22 +44,20 @@ class CustomActions
                 if($ged_type == "nagios"){ $ged_type_nbr = 1; }
                 if($ged_type == "snmptrap"){ $ged_type_nbr = 2; }
         
-                $event_to_delete = [];
-                array_push($event_to_delete, $value);
-        
-                $sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = $id";
-                $result = sqlrequest($database_ged, $sql, false);
-                $event = mysqli_fetch_assoc($result);
-                $detail = $event["equipment"]." / ".$event["service"];
-                $description = "<H1>Détail de l'incident:</H1> <br>Nom d'équipement: ".$event["equipment"]."<br> Service: ".$event["service"]."<br>Adresse IP: ".$event["ip_address"]."<br><br>Description: ".$event["description"]."<br><br>Commentaire: ".$event["comments"];
-		$array_vars=array();
-		if(isset($group)) {
-			$array_vars["%GROUP%"]=$group;
-		}
+                // $sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = $id";
+                // $result = sqlrequest($database_ged, $sql, false);
+                // $event = mysqli_fetch_assoc($result);
+                // $detail = $event["equipment"]." / ".$event["service"];
+                // $description = "<H1>Détail de l'incident:</H1> <br>Nom d'équipement: ".$event["equipment"]."<br> Service: ".$event["service"]."<br>Adresse IP: ".$event["ip_address"]."<br><br>Description: ".$event["description"]."<br><br>Commentaire: ".$event["comments"];
+				
+				/* // DU CAS PART CAS 
+				$array_vars=array();
+				if(isset($group)) {
+					$array_vars["%GROUP%"]=$group;
+				}
+				*/
+				$result = report_itsm($ged_type, $queue, $id_ged);
             }
-	
-            $result = report_itsm($detail,$description,$array_vars);
-	    var_dump($result);
             return $result;
         }else return false;
 	}

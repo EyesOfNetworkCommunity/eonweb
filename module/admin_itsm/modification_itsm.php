@@ -172,13 +172,14 @@ include("classes/ItsmPeer.php");
 
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="itsm_parent">Value to transfer :</label>
-                    <div class="col-sm-3"> 
+                    <div class="col-sm-6"> 
                         <select class="form-control" id="itsm_parent" name="itsm_parent" >
                             <option></option>
                             <?php
                             if($itsm!=false){
                                 foreach($itsm_parents as $parent){
                                     $id_parent = $itsm->getItsm_parent();
+                                    
                                     if(isset($id_parent) && $parent->getItsm_id() == $id_parent ){
                                         echo "<option value=\"".$id_parent."\" selected>".$parent->getItsm_url()."</option>";
                                     }else{
@@ -190,21 +191,20 @@ include("classes/ItsmPeer.php");
                             
                         </select>
                     </div>
-                    <div class="col-sm-3" id="select_parent_champ"> 
-                        <select class="form-control" name="itsm_parent_champ" >
-                            <option ></option>
-                        </select>
-                    </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="itsm_request_return_value">Value to handle :</label>
                     <div class="col-sm-6" id="itsm_request_return_value">
                         <button type="button" id="generate_list" class="btn btn-info">Generate list</button>
-                        <!-- <select class="form-control" id="itsm_request_return_value" name="itsm_value" >
-                            <option></option>
-                            <option value=""></option>
-                        </select> -->
+                        <!--  <input list="champs"  class="form-control" id="itsm_parent_champ" name="itsm_parent_champ">
+                        <datalist id="champs">
+                            <option >
+                            <option value="Firefox">
+                            <option value="Chrome">
+                            <option value="Opera">
+                            <option value="Safari">
+                        </datalist> -->
                     </div>
                     
                 </div>

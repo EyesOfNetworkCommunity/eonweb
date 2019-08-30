@@ -113,50 +113,35 @@ function get_itsm_state(){
 
 
 /**
- * This function create the http request to the external server itsm
+ * This function create the http request to the external server itsm used in include/classes/Custom.Action.class.php
  * ie : curl -v --header "Content-Type: text/xml;charset=UTF-8" --header "SOAPAction: mc_issue_add_CD74" --data @request-add.xml https://localhost/api/soap/mantisconnect.php
  */
-function report_itsm($detail, $descr, $array_vars=array()){
-    $path       = get_itsm_var("itsm_file");
-    $path2       = get_itsm_var("itsm_file2");
-    $extension  = explode(".",basename($path))[1];
-    $file       = file_get_contents($path);
-    $file2       = file_get_contents($path2);
-    $url        = get_itsm_var("itsm_url");
-    $header     = get_itsm_var("itsm_header");
+function report_itsm($ged_type=NULL, $queue=NULL, $id_ged=NULL, $array_vars=array()){
+    
+    $itsmPeer   = new ItsmPeer();
+    $itsmChilds = $itsmPeer->getItsmChilds();
+    $previous   = false;
+    foreach($itsmChilds as $child){
+        $result = $child->execute_itsm($previous, $ged_type, $queue, $id_ged);
+        if($result!=false ){
+            if($result == true){
+                $previous=false;
+            }else{
+                $previous=$result;
+            }
+        }else{
+            return false;
+        }
+    }
+    return true;
+}
 
-    if($extension == "xml"){
-        $file = str_replace("%DETAIL%",$detail,$file);
-        $file = str_replace("%DESCRIPTION%",$descr,$file);
-        $result = curl_call(array('Content-Type: text/'.$extension.';charset=UTF-8',$header),$url,$file,"post");
-        return $result;
-
-    }else if($extension == "json"){
-        $token_app = get_config_var("itsm_app_token");
-        $token_user = get_config_var("itsm_user_token");
-        $array_token_session = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_user,$token_app),$url."/initSession","");
-
-	$token_session = json_decode($array_token_session);
-        $file = str_replace("%DETAIL%",$detail,$file);
-        $file = str_replace("%DESCRIPTION%",$descr,$file);
-	foreach($array_vars as $key=>$value){
-		$file = str_replace($key,$value,$file);
-	}
-	$result = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_app,$header.$token_session->session_token),$url."/Ticket",$file,"post");
-	$return = json_decode($result,true);
-	$ticket_id = $return[0][id];
-        var_dump($ticket_id);
-	
-	$file2 = str_replace("%TICKET%",$ticket_id,$file2);
-	foreach($array_vars as $key=>$value){
-		$file2 = str_replace($key,$value,$file2);
-	}
-	$group = curl_call(array('Content-Type: application/'.$extension.';charset=UTF-8',$token_app,$header.$token_session->session_token),$url."/Ticket/".$ticket_id."/group_ticket",$file2,"post");
-        var_dump($group);
-
-        return true;
-
-    }else return false;
+function get_champ_ged($champ, $ged_type, $queue, $id_ged){
+    global $database_ged;
+    $sql = "SELECT ".$champ." FROM ".$ged_type."_queue_".$queue." WHERE id = $id_ged";
+    $result = sqlrequest($database_ged, $sql, false);
+    $event = mysqli_fetch_assoc($result);
+    return $event[$champ];
 }
 
 /**

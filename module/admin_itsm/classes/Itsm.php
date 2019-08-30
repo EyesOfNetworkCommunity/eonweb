@@ -28,8 +28,9 @@ class Itsm{
     public $itsm_url;
     public $itsm_file;
     public $itsm_parent=NULL; //id un seul parents si y'en a un on execute
-    public $itsm_parent_champ=NULL;
+    public $itsm_return_champ;//
     public $itsm_order;
+    public $itsm_type_request;//
     public $itsm_headers = array(); // array("key"=>"value")
     public $itsm_vars = array();//array d'object
 
@@ -41,14 +42,14 @@ class Itsm{
 
     function save(){
         if(isset($this->itsm_id)){
-            //update
-            $sql    = 'UPDATE itsm SET itsm_url ="'.$this->itsm_url.'", itsm_file="'.$this->itsm_file.'", itsm_ordre='.$this->itsm_ordre.', itsm_parent =  '.$this->itsm_parent.' , itsm_parent_champ = "'.$this->itsm_parent_champ.'" WHERE itsm_id = '.$this->itsm_id;
+            //update 
+            $sql    = 'UPDATE itsm SET itsm_url ="'.$this->itsm_url.'", itsm_file="'.$this->itsm_file.'", itsm_ordre='.$this->itsm_ordre.', itsm_parent =  '.$this->itsm_parent.' , itsm_return_champ = "'.$this->itsm_return_champ.'" , itsm_type_request = "'.$this->itsm_type_request.'" WHERE itsm_id = '.$this->itsm_id;
             $this->maj_headers_db();
             $this->maj_vars_db();
             $result = sqlrequest($this->database_eonweb,$sql);
         }else{
             //insert
-            $sql = 'INSERT INTO itsm(itsm_url, itsm_file, itsm_order, itsm_parent, itsm_parent_champ) VALUES("'.$this->itsm_url.'", "'.$this->itsm_file.'", '.$this->itsm_order.', '.$this->itsm_parent.', "'.$this->itsm_parent_champ.'")';
+            $sql = 'INSERT INTO itsm(itsm_url, itsm_file, itsm_order, itsm_parent, itsm_return_champ, itsm_type_request) VALUES("'.$this->itsm_url.'", "'.$this->itsm_file.'", '.$this->itsm_order.', '.$this->itsm_parent.', "'.$this->itsm_return_champ.'", "'.$this->itsm_type_request.'")';
             $result = sqlrequest($this->database_eonweb,$sql);
             if($result){
                 $this->maj_headers_db();
@@ -72,6 +73,49 @@ class Itsm{
 
     function deleteHeader($itsm_header_id){
         unset($this->itsm_headers[$itsm_header_id]);
+    }
+
+    function execute_itsm($previous=false, $ged_type=NULL, $queue=NULL, $id_ged=NULL){
+        $value_parent = false;
+        if(isset($this->itsm_parent)){
+            $parent = $itsmPeer->getItsmById($this->itsm_parent);
+            $value_parent = $parent->execute_itsm();
+        }
+
+        $headers = array();
+        foreach($this->itsm_headers as $header){
+            if(preg_match("%PARENT_VALUE%",$header)==1 && $value_parent != false){
+                $header = str_replace("%PARENT_VALUE%",$value_parent, $header);
+            } 
+            array_push($headers,$header);
+        }
+
+        $extension              = explode(".",basename($this->itsm_file))[1];
+        $file_content           = file_get_contents($this->itsm_file);
+        $content_type_header    = ($extension == "xml")? 'Content-Type: text/xml;charset=UTF-8':'Content-Type: application/json;charset=UTF-8';
+        array_push($headers,$content_type_header);
+        
+        foreach($itsm_vars as $key=>$value){
+            $value_champ_ged = get_champ_ged($value, $ged_type, $queue, $id_ged);
+            $file_content = str_replace($key,$value_champ_ged,$file_content);
+        }
+
+        if(preg_match("%PREVIOUS%",$file_content)==1 && $previous != false){
+            $file_content = str_replace("%PREVIOUS%",$previous, $file_content);
+        }
+
+        $url=$this->itsm_url;
+        if(preg_match("%PREVIOUS%",$this->itsm_url)==1 && $previous != false){
+            $url = str_replace("%PREVIOUS%",$previous, $url);
+        }
+
+        $result = curl_call($headers,$url,$file_content,$this->itsm_type_request); 
+        if($extension == "json"){
+            $json_obj = json_decode($result,true);
+	        $result = $json_obj[0][$this->itsm_return_champ];
+        }else return true;
+
+        return $result;
     }
 
     private function maj_headers_db(){
@@ -236,26 +280,6 @@ class Itsm{
     }
 
     /**
-     * Get the value of itsm_parent_champ
-     */ 
-    public function getItsm_parent_champ()
-    {
-        return $this->itsm_parent_champ;
-    }
-
-    /**
-     * Set the value of itsm_parent_champ
-     *
-     * @return  self
-     */ 
-    public function setItsm_parent_champ($itsm_parent_champ)
-    {
-        $this->itsm_parent_champ = $itsm_parent_champ;
-
-        return $this;
-    }
-
-    /**
      * Get the value of itsm_vars
      */ 
     public function getItsm_vars()
@@ -271,6 +295,46 @@ class Itsm{
     public function setItsm_vars($itsm_vars)
     {
         $this->itsm_vars = $itsm_vars;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of itsm_type_request
+     */ 
+    public function getItsm_type_request()
+    {
+        return $this->itsm_type_request;
+    }
+
+    /**
+     * Set the value of itsm_type_request
+     *
+     * @return  self
+     */ 
+    public function setItsm_type_request($itsm_type_request)
+    {
+        $this->itsm_type_request = $itsm_type_request;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of itsm_return_champ
+     */ 
+    public function getItsm_return_champ()
+    {
+        return $this->itsm_return_champ;
+    }
+
+    /**
+     * Set the value of itsm_return_champ
+     *
+     * @return  self
+     */ 
+    public function setItsm_return_champ($itsm_return_champ)
+    {
+        $this->itsm_return_champ = $itsm_return_champ;
 
         return $this;
     }

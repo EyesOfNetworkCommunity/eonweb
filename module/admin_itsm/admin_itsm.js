@@ -32,6 +32,8 @@ $(document).ready(function(){
 	}
 	
 	$("#input_file").prop('disabled', true);
+	$("#itsm_parent").prop('disabled',true);
+	$("#itsm_parent_champ").prop('disabled',true);
 	$(".itsm_header").prop('disabled', true);
 	$(".select_champ").prop('disabled', true);
 	$(".itsm_var").prop('disabled', true);
@@ -44,6 +46,8 @@ $(document).ready(function(){
 	
 	$("#btn_unlock").click(function(){
 		$("#btn_import").show();
+		$("#itsm_parent").prop('disabled',false);
+		$("#itsm_parent_champ").prop('disabled',false);
 		$("#input_file").prop('disabled', false);
 		$(".itsm_header").prop('disabled', false);
 		$(".select_champ").prop('disabled', false);
@@ -54,6 +58,10 @@ $(document).ready(function(){
 		$("#itsm_create").prop('disabled', false);
 		$("#itsm_acquit").prop('disabled', false);
 		$("#btn_form").prop('disabled',false);
+	});
+
+	$("#generate_list").click(function(){
+
 	});
 	
 	$("#input_file").change(function() {
@@ -132,6 +140,8 @@ $(document).ready(function(){
 				//$("#result").html($("#log"));
 				$("#btn_import").hide();
 				$("#input_file").prop('disabled', true);
+				$("#itsm_parent").prop('disabled',true);
+				$("#itsm_parent_champ").prop('disabled',true);
 				$(".itsm_header").prop('disabled', true);
 				$(".itsm_var").prop('disabled', true);
 				$(".select_champ").prop('disabled', true);

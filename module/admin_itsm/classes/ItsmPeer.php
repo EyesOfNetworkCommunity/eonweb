@@ -30,7 +30,7 @@ class ItsmPeer {
     function getItsmByUrl($url_name){
         global $database_eonweb;
         try{
-            $result = sqlrequest("$database_eonweb","SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_parent_champ FROM itsm WHERE itsm_url = \"$url_name\"");
+            $result = sqlrequest("$database_eonweb","SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_type_request, itsm_return_champ FROM itsm WHERE itsm_url = \"".$url_name."\"");
             if($result != false){
                 $row = $result->fetch_assoc();
                 $itsm = new Itsm();
@@ -39,7 +39,8 @@ class ItsmPeer {
                 $itsm->setItsm_file($row["itsm_file"]);
                 $itsm->setItsm_order($row["itsm_ordre"]);
                 $itsm->setItsm_parent($row["itsm_parent"]);
-                $itsm->setItsm_parent_champ($row["itsm_parent_champ"]);
+                $itsm->setItsm_return_champ($row["itsm_return_champ"]);
+                $itsm->setItsm_type_request($row["itsm_type_request"]);
                 $itsm->setItsm_headers($this->getItsmHeadersByItsmId($itsm->getItsm_id()));
                 $itsm->setItsm_vars($this->getItsmVarByItsmId($itsm->getItsm_id()));
                 return $itsm;
@@ -56,7 +57,7 @@ class ItsmPeer {
     function getItsmById($itsm_id){
         global $database_eonweb;
         try{
-            $result = sqlrequest("$database_eonweb","SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_parent_champ FROM itsm WHERE itsm_id = $itsm_id");
+            $result = sqlrequest("$database_eonweb","SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_type_request, itsm_return_champ FROM itsm WHERE itsm_id = ".$itsm_id);
             if($result != false){
                 $row = $result->fetch_assoc();
                 $itsm = new Itsm();
@@ -65,7 +66,8 @@ class ItsmPeer {
                 $itsm->setItsm_file($row["itsm_file"]);
                 $itsm->setItsm_order($row["itsm_ordre"]);
                 $itsm->setItsm_parent($row["itsm_parent"]);
-                $itsm->setItsm_parent_champ($row["itsm_parent_champ"]);
+                $itsm->setItsm_return_champ($row["itsm_return_champ"]);
+                $itsm->setItsm_type_request($row["itsm_type_request"]);
                 $itsm->setItsm_headers($this->getItsmHeadersByItsmId($itsm->getItsm_id()));
                 $itsm->setItsm_vars($this->getItsmVarByItsmId($itsm->getItsm_id()));
                 return $itsm;
@@ -119,12 +121,12 @@ class ItsmPeer {
     }
 
     /**
-     * @return array of itsm object
+     * @return array of itsm witch is a child 
      */
-    function get_all_itsm(){
+    function getItsmChilds(){
         global $database_eonweb;
         try{
-            $result = sqlrequest("$database_eonweb","SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_parent_champ FROM itsm");
+            $result = sqlrequest("$database_eonweb","SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_type_request, itsm_return_champ FROM itsm WHERE itsm_id NOT IN (SELECT DISTINCT itsm_parent FROM itsm)");
             $tab_itsm = array();
             if($result != false){
                 while($row = $result->fetch_assoc()){
@@ -134,8 +136,40 @@ class ItsmPeer {
                     $itsm->setItsm_file($row["itsm_file"]);
                     $itsm->setItsm_order($row["itsm_ordre"]);
                     $itsm->setItsm_parent($row["itsm_parent"]);
-                    $itsm->setItsm_parent_champ($row["itsm_parent_champ"]);
+                    $itsm->setItsm_return_champ($row["itsm_return_champ"]);
+                    $itsm->setItsm_type_request($row["itsm_type_request"]);
                     $itsm->setItsm_headers($this->getItsmHeadersByItsmId($itsm->getItsm_id()));
+                    $itsm->setItsm_vars($this->getItsmVarByItsmId($itsm->getItsm_id()));
+                    array_push($tab_itsm, $itsm);
+                }
+            }
+            return $tab_itsm;
+        }catch(Exception $e) {
+            return 'Exception reçue : '.$e->getMessage().'\n';
+        }
+    }
+    
+
+    /**
+     * @return array of itsm object
+     */
+    function get_all_itsm(){
+        global $database_eonweb;
+        try{
+            $result = sqlrequest("$database_eonweb","SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_type_request, itsm_return_champ FROM itsm");
+            $tab_itsm = array();
+            if($result != false){
+                while($row = $result->fetch_assoc()){
+                    $itsm = new Itsm();
+                    $itsm->setItsm_id($row["itsm_id"]);
+                    $itsm->setItsm_url($row["itsm_url"]);
+                    $itsm->setItsm_file($row["itsm_file"]);
+                    $itsm->setItsm_order($row["itsm_ordre"]);
+                    $itsm->setItsm_parent($row["itsm_parent"]);
+                    $itsm->setItsm_return_champ($row["itsm_return_champ"]);
+                    $itsm->setItsm_type_request($row["itsm_type_request"]);
+                    $itsm->setItsm_headers($this->getItsmHeadersByItsmId($itsm->getItsm_id()));
+                    $itsm->setItsm_vars($this->getItsmVarByItsmId($itsm->getItsm_id()));
                     array_push($tab_itsm, $itsm);
                 }
             }
