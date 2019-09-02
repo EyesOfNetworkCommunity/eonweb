@@ -118,7 +118,7 @@ $array_action_option = array(
 
 $array_action_itsm = array(
 	0 => "action.details",
-	1 => "action.edit",
+	4 => "action.ack",
 	6 => "label.admin_itsm.ged_btn_create",
 );
 

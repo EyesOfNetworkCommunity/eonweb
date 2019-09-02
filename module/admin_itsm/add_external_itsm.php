@@ -39,13 +39,18 @@ if($_FILES["fileName"]["size"] > 0){
     }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">The File verification failed, please verify the conformity of the file you want to upload.</div>"; 
 }
 
+if(!empty($_POST['itsm_header'])){
+    if(insert_itsm_var("itsm_header",$_POST['itsm_header'])){
+        $message .= "<div class=\"alert alert-success\" role=\"alert\">".$_POST['itsm_header']." succesfully saved.</div>";
+    }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$_POST['itsm_header']." failed to be saved.</div>";
+}
 
-if(insert_itsm_var("itsm_header",$_POST['itsm_header'])){
-    $message .= "<div class=\"alert alert-success\" role=\"alert\">".$_POST['itsm_header']." succesfully saved.</div>";
-}else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$_POST['itsm_header']." failed to be saved.</div>";
-if(insert_itsm_var("itsm_url",$_POST['itsm_url'])){
-    $message .= "<div class=\"alert alert-success\" role=\"alert\">".$_POST['itsm_url']." succesfully saved.</div>";
-}else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$_POST['itsm_url']." failed to be saved.</div>";
+if(!empty($_POST['itsm_url'])){
+    if(insert_itsm_var("itsm_url",$_POST['itsm_url'])){
+        $message .= "<div class=\"alert alert-success\" role=\"alert\">".$_POST['itsm_url']." succesfully saved.</div>";
+    }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$_POST['itsm_url']." failed to be saved.</div>";
+    
+}
 
 $itsm_create = "false";
 $itsm_acquit = "false";
