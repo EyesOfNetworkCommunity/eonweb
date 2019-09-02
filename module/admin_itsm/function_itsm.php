@@ -16,7 +16,7 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
+# 
 #########################################
 */
 /**
@@ -26,22 +26,19 @@
  * @return boolean
  */
 function upload_file($url, $file, $dir="uploaded_file"){
-    $old_file = get_itsm_file($url);
-    if($old_file != false && file_exists($old_file["file_name"])){
-        unlink($old_file["file_name"]);
+    $path_file = __DIR__."/".$dir."/".basename($file["name"]);
+    if(file_exists($path_file)){
+        unlink($path_file);
     }
 
-    if(isset($file)){
-        $target_file = __DIR__."/".$dir."/".basename($file["name"]);
+    $path_file = __DIR__."/".$dir."/".basename($file["name"]);
         
-        if(move_uploaded_file($file["tmp_name"], $target_file)){
+    if(move_uploaded_file($file["tmp_name"], $path_file)){
 
-            return true;
-        }
-        return false;
+        return true;
     }
-    
     return false;
+
 }
 
 /**

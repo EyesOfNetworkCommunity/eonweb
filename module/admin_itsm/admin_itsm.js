@@ -19,52 +19,60 @@
 #########################################
 */
 
-
+function delete_itsm( id){
+	var formData = new FormData();
+	formData.append('itsm_id', id);
+	formData.append('action',"delete_external_itsm");
+	$.ajax({
+		type		: 'POST', // define the type of HTTP verb we want to use (POST for our form)
+		url		    : 'ajax.php', // the url where we want to POST
+		data		: formData, // our data object
+		dataType	: 'html', // what type of data do we expect back from the server
+		processData: false,
+		contentType: false,
+		beforeSend:function(){
+			$('#result').html('Loading......');
+		},
+		success : function(result){ // success est toujours en place, bien sûr !
+			location.reload();
+		},
+		error : function(resultat, statut, erreur){
+			$("#result").html(resultat);
+		}
+	});
+}
 
 $(document).ready(function(){
-	$("#btn_import").hide();
-	if($("#itsm_app_token").val() == ""){
-		$("#token_app").hide();
-	}
-
-	if($("#itsm_user_token").val() == ""){
-		$("#token_user").hide();
-	}
 	
-	$("#input_file").prop('disabled', true);
-	$("#itsm_parent").prop('disabled',true);
-	$("#itsm_parent_champ").prop('disabled',true);
-	$(".itsm_header").prop('disabled', true);
-	$(".select_champ").prop('disabled', true);
-	$(".itsm_var").prop('disabled', true);
-	$("#itsm_app_token").prop('disabled', true);
-	$("#itsm_user_token").prop('disabled', true);
-	$("#itsm_url").prop('disabled', true);
-	$("#itsm_create").prop('disabled', true);
-	$("#itsm_acquit").prop('disabled', true);
-	$("#btn_form").prop('disabled',true);
-	
-	$("#btn_unlock").click(function(){
-		$("#btn_import").show();
-		$("#itsm_parent").prop('disabled',false);
-		$("#itsm_parent_champ").prop('disabled',false);
-		$("#input_file").prop('disabled', false);
-		$(".itsm_header").prop('disabled', false);
-		$(".select_champ").prop('disabled', false);
-		$(".itsm_var").prop('disabled', false);
-		$("#itsm_url").prop('disabled', false);
-		$("#itsm_app_token").prop('disabled', false);
-		$("#itsm_user_token").prop('disabled', false);
-		$("#itsm_create").prop('disabled', false);
-		$("#itsm_acquit").prop('disabled', false);
-		$("#btn_form").prop('disabled',false);
-	});
 
 	$("#generate_list").click(function(){
+		var form = $('#myForm').get(0);
+		var formData = new FormData(form);// get the form data
+		formData.append('action',"generate_itsm_request");
+		$.ajax({
+			type		: 'POST', // define the type of HTTP verb we want to use (POST for our form)
+			url		    : 'ajax.php', // the url where we want to POST
+			data		: formData, // our data object
+			dataType	: 'html', // what type of data do we expect back from the server
+			processData: false,
+			contentType: false,
+			beforeSend:function(){
+				$('#result').html('Loading......');
+			},
+			success : function(result){ // success est toujours en place, bien sûr !
+				$("#itsm_request_return_value").html(resultat);
+			},
+			error : function(resultat, statut, erreur){
+				$("#itsm_request_return_value").html(resultat);
+			}
+		});
+	});
 
+	$("#dynamic_fields_header").on("click",".delete-header", function(){
+		$(this).closest(".form-group").remove();
 	});
 	
-	$("#input_file").change(function() {
+	$("#input_file").change(function(){
 		var fileName = $(this).val().split("\\").pop();
 		$("#file_label").val(fileName);
 		var ext = fileName.split('.').pop();
@@ -78,8 +86,7 @@ $(document).ready(function(){
 	
 	var row_header = 1;
 	$("#dynamic_fields_header").on("click","#add_empty_header", function(){
-		$(this).remove();
-		$("#dynamic_fields_header").append("<div class=\"form-group\"><label class=\"control-label col-sm-2\"></label><div class=\"col-sm-6\"><input type=\"text\" class=\"form-control\" id=\"row_header"+row_header+"\" name=\"itsm_header[]\" placeholder=\"SoapAction : mc...\" ></div><div class=\"col-sm-2\"><button type=\"button\" id=\"add_empty_header\" class=\"btn\"><i class=\"fa fa-plus\"></i></button></div></div>");
+		$("#dynamic_fields_header").append("<div class=\"form-group\"><label class=\"control-label col-sm-2\"></label><div class=\"col-sm-6\"><input type=\"text\" class=\"form-control\" id=\"row_header"+row_header+"\" name=\"itsm_header[]\" placeholder=\"SoapAction : mc...\" ></div><div class=\"col-sm-1\"><button type=\"button\"  class=\"btn btn-danger delete-header\" ><i class=\"fa fa-trash\"></i></button></div></div>");
 		row_header = row_header+1;
 	});
 
@@ -128,7 +135,7 @@ $(document).ready(function(){
 		$.ajax({
 			type		: 'POST', // define the type of HTTP verb we want to use (POST for our form)
 			url		    : 'ajax.php', // the url where we want to POST
-			data		: form_Data, // our data object
+			data		: formData, // our data object
 			dataType	: 'html', // what type of data do we expect back from the server
 			processData: false,
 			contentType: false,
@@ -137,20 +144,6 @@ $(document).ready(function(){
 			},
 			success : function(result){ // success est toujours en place, bien sûr !
 				$("#result").html(result);
-				//$("#result").html($("#log"));
-				$("#btn_import").hide();
-				$("#input_file").prop('disabled', true);
-				$("#itsm_parent").prop('disabled',true);
-				$("#itsm_parent_champ").prop('disabled',true);
-				$(".itsm_header").prop('disabled', true);
-				$(".itsm_var").prop('disabled', true);
-				$(".select_champ").prop('disabled', true);
-				$("#itsm_app_token").prop('disabled', true);
-				$("#itsm_user_token").prop('disabled', true);
-				$("#itsm_url").prop('disabled', true);
-				$("#itsm_create").prop('disabled', true);
-				$("#itsm_acquit").prop('disabled', true);
-				$("#btn_form").prop('disabled',true);
 			},
 			error : function(resultat, statut, erreur){
 				$("#result").html(resultat);

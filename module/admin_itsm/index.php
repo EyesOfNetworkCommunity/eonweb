@@ -82,7 +82,7 @@ $itsm_list = $itsmPeer->get_all_itsm();
                                                 <div class=\"btn-group\">
                                                
                                                     <a href='modification_itsm.php?url=".$itsm->getItsm_url()."' class=\"btn btn-success\" role=\"button\">".getLabel("action.edit")."</a>
-                                                    <button class=\"btn btn-danger\" type=\"button\" onclick='delete_itsm(this,".$itsm->getItsm_id().")'>".getLabel("action.delete")."</button>
+                                                    <button class=\"btn btn-danger\" type=\"button\" onclick='delete_itsm(".$itsm->getItsm_id().")'>".getLabel("action.delete")."</button>
                                                     
                                                 </div>
                                             </td>

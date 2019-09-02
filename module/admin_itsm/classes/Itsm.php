@@ -22,36 +22,37 @@
 
 
 class Itsm{
-    public $database_eonweb;
     public $itsmPeer;
     public $itsm_id;
     public $itsm_url;
     public $itsm_file;
     public $itsm_parent=NULL; //id un seul parents si y'en a un on execute
-    public $itsm_return_champ;//
-    public $itsm_order;
-    public $itsm_type_request;//
+    public $itsm_return_champ=NULL;//
+    public $itsm_order=NULL;
+    public $itsm_type_request=NULL;//
     public $itsm_headers = array(); // array("key"=>"value")
     public $itsm_vars = array();//array d'object
 
     public function __construct(){
-        global $database_eonweb;
+        
         $this->itsmPeer = new ItsmPeer();
-        $this->database_eonweb = $database_eonweb;
     }
 
     function save(){
+        global $database_eonweb;
         if(isset($this->itsm_id)){
             //update 
-            $sql    = 'UPDATE itsm SET itsm_url ="'.$this->itsm_url.'", itsm_file="'.$this->itsm_file.'", itsm_ordre='.$this->itsm_ordre.', itsm_parent =  '.$this->itsm_parent.' , itsm_return_champ = "'.$this->itsm_return_champ.'" , itsm_type_request = "'.$this->itsm_type_request.'" WHERE itsm_id = '.$this->itsm_id;
+            $sql    = 'UPDATE itsm SET itsm_url =\''.$this->itsm_url.'\', itsm_file=\''.$this->itsm_file.'\', itsm_ordre='.$this->insert_sql($this->itsm_order).', itsm_parent =  '.$this->insert_sql($this->itsm_parent).' , itsm_return_champ = \''.$this->itsm_return_champ.'\' , itsm_type_request = \''.$this->itsm_type_request.'\' WHERE itsm_id = '.$this->itsm_id;
+            $result = sqlrequest($database_eonweb,$sql);
             $this->maj_headers_db();
             $this->maj_vars_db();
-            $result = sqlrequest($this->database_eonweb,$sql);
         }else{
             //insert
-            $sql = 'INSERT INTO itsm(itsm_url, itsm_file, itsm_order, itsm_parent, itsm_return_champ, itsm_type_request) VALUES("'.$this->itsm_url.'", "'.$this->itsm_file.'", '.$this->itsm_order.', '.$this->itsm_parent.', "'.$this->itsm_return_champ.'", "'.$this->itsm_type_request.'")';
-            $result = sqlrequest($this->database_eonweb,$sql);
+            $sql = 'INSERT INTO itsm(itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_return_champ, itsm_type_request) VALUES("'.$this->itsm_url.'", "'.$this->itsm_file.'", '.$this->insert_sql($this->itsm_order).', '.$this->insert_sql($this->itsm_parent).', \''.$this->itsm_return_champ.'\', \''.$this->itsm_type_request.'\')';
+            
+            $result = sqlrequest($database_eonweb,$sql,true);
             if($result){
+                $this->itsm_id = $result;
                 $this->maj_headers_db();
                 $this->maj_vars_db();
             }
@@ -61,18 +62,10 @@ class Itsm{
     }
 
     function delete(){
+        global $database_eonweb;
         $sql = 'DELETE FROM itsm WHERE itsm_id = '.$this->itsm_id;
-        $result = sqlrequest($this->database_eonweb,$sql);
+        $result = sqlrequest($database_eonweb,$sql);
         return $result;
-    }
-
-    function addHeader($itsm_header){
-        $nb = count($this->itsm_headers);
-        $this->itsm_headers["new_$nb"];
-    }
-
-    function deleteHeader($itsm_header_id){
-        unset($this->itsm_headers[$itsm_header_id]);
     }
 
     function execute_itsm($previous=false, $ged_type=NULL, $queue=NULL, $id_ged=NULL){
@@ -119,6 +112,7 @@ class Itsm{
     }
 
     private function maj_headers_db(){
+        global $database_eonweb;
         $old_headers        = $this->itsmPeer->getItsmHeadersByItsmId($this->itsm_id);
         $headers_to_delete  = array_diff($old_headers, $this->itsm_headers);
         $headers_to_add     = array_diff($this->itsm_headers, $old_headers);
@@ -126,36 +120,42 @@ class Itsm{
         $sql_add            = 'INSERT INTO itsm_header(header,itsm_id) VALUES';
         
         foreach($headers_to_delete as $key=>$value){
-            sqlrequest($this->database_eonweb,$sql_delete.$key);
+            var_dump($sql_delete.$key);
+            sqlrequest($database_eonweb,$sql_delete.$key);
         }
 
-        foreach($headers_to_add as $key=>$value){
-            if(preg_match("new_", $key) === 1 ){
-                sqlrequest($this->database_eonweb,$sql_add.'("'.$value.'", '.$this->itsm_id.')');
-            }
+        foreach($headers_to_add as $key=>$value){ 
+            sqlrequest($database_eonweb,$sql_add.'(\''.$value.'\', '.$this->itsm_id.')');
         }
     }
 
-    private function maj_vars_db(){
+    private function maj_vars_db(){ 
+        global $database_eonweb;
         $old_vars       = $this->itsmPeer->getItsmVarByItsmId($this->itsm_id);
         $vars_to_delete = array_diff($old_vars, $this->itsm_vars);
-        $sql_delete     = 'DELETE FROM itsm_var WHERE itsm_id = '.$this->itsm_id.' AND itsm_var_name="';
+        $sql_delete     = 'DELETE FROM itsm_var WHERE itsm_id = '.$this->itsm_id.' AND itsm_var_name=\'';
         $sql_add        = 'INSERT INTO itsm_var(itsm_id, itsm_var_name, champ_ged_id) VALUES';
         $champs_ged     =  $this->itsmPeer->getListChampGed();
 
         foreach($vars_to_delete as $key=>$value){
-            sqlrequest($this->database_eonweb,$sql_delete.$key.'"');
+            sqlrequest($database_eonweb,$sql_delete.$key.'\'');
         }
 
-        foreach($this->getItsm_vars as $key=>$value){
+        foreach($this->itsm_vars as $key=>$value){
             $key_ged = array_search($value, $champs_ged);
             if(array_key_exists($key,$old_vars)){
-                sqlrequest($this->database_eonweb,'UPDATE FROM itsm_var SET champ_ged_id ='.$key_ged.' WHERE itsm_var_name="'.$key.'" AND itsm_id='.$this->itsm_id);
+                sqlrequest($database_eonweb,'UPDATE FROM itsm_var SET champ_ged_id ='.$key_ged.' WHERE itsm_var_name="'.$key.'" AND itsm_id='.$this->itsm_id);
             }else{
-                sqlrequest($this->database_eonweb,$sql_add.'('.$this->itsm_id.', "'.$key.'", '.$key_ged.')');
+                sqlrequest($database_eonweb,$sql_add.'('.$this->itsm_id.', "'.$key.'", '.$key_ged.')');
             }
         }
 
+    }
+
+    function insert_sql($var){
+        if(isset($var)){
+            return $var;
+        }else return "NULL";
     }
 //===============GETTER AND SETTER ==========================
     

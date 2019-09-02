@@ -40,7 +40,6 @@ include("classes/ItsmPeer.php");
 
 ?>
 
-
 <div id="page-wrapper">
 
 	<div class="row">
@@ -57,10 +56,11 @@ include("classes/ItsmPeer.php");
             <div class="btn-group pull-right">
                     <div class="btn-group" id="result_state_itsm">
                         <?php echo $state; ?>
+                    
+                    <a href="index.php" class="btn btn-info" id="btn_return" role="button">
+                    <i class="fa fa-reply"></i>
+					</a>
                     </div>
-                    <button class="btn btn-warning" id="btn_unlock" >
-						<?php echo getLabel("action.update"); ?>
-					</button>
             </div>
         </div>
         <div class="panel-body">
@@ -87,7 +87,9 @@ include("classes/ItsmPeer.php");
                 </div>
                 <div id="dynamic_fields_header">
                     <div class="form-group">
-                    <label class="control-label col-sm-2"><?php echo getLabel("label.admin_itsm.header").":"; ?></label>
+                        <label class="control-label col-sm-2 first"><?php echo getLabel("label.admin_itsm.header").":"; ?></label>        
+                        <div class="col-sm-1"><button type="button" id="add_empty_header" class="btn"><i class="fa fa-plus"></i></button></div>
+                    </div>
                     <?php 
                         $nb = 0;
                         if($itsm!=false && count($itsm->getItsm_headers())>0){
@@ -95,26 +97,27 @@ include("classes/ItsmPeer.php");
                             $header_key_list = array_keys($itsm->getItsm_headers());
                             $last_key = end($header_key_list);
                             foreach($itsm->getItsm_headers() as $key=>$value){
-                                echo (($nb==0) ? "" : "<div class=\"form-group\">
-                                <label class=\"control-label col-sm-2\">".getLabel("label.admin_itsm.header")." : </label>")."
+                                echo "<div class=\"form-group\">
+                                        <label class=\"control-label col-sm-2\"></label>
                                         <div class=\"col-sm-6\"> 
                                             <input type=\"text\" class=\"form-control itsm_header\" id=\"itsm_header_".$nb."\" name=\"itsm_header[]\" placeholder=\"SoapAction : mc...\" value=\"".$value."\">
                                         </div>
-                                        ".(($key === $last_key) ? "<div class=\"col-sm-2\"><button type=\"button\" id=\"add_empty_header\" class=\"btn\"><i class=\"fa fa-plus\"></i></button></div>" : "")."</div>";
+                                        <div class=\"col-sm-2\"><button type=\"button\" id=\"delete_header_".$key."\" class=\"btn btn-danger delete-header\" ><i class=\"fa fa-trash\"></i></button></div>
+                                    </div>";
                                 $nb ++;
                             }
                             
 
                         }else{
-                            echo "
+                            echo "<div class=\"form-group\">
+                            <label class=\"control-label col-sm-2\"></label>
                                 <div class=\"col-sm-6\"> 
                                     <input type=\"text\" class=\"form-control itsm_header\" id=\"itsm_header_".$nb."\" name=\"itsm_header[]\" placeholder=\"SoapAction : mc...\" >
                                 </div>
-                                <div class=\"col-sm-2\"><button type=\"button\" id=\"add_empty_header\" class=\"btn\"><i class=\"fa fa-plus\"></i></button></div>
+                                <div class=\"col-sm-2\"><button type=\"button\" class=\"btn btn-danger delete-header\" ><i class=\"fa fa-trash\"></i></button></div>
                             </div>";
                         }
                     ?>
-                
                 </div>
 
                 <div id="dynamic_fields_var">
@@ -171,7 +174,7 @@ include("classes/ItsmPeer.php");
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label col-sm-2" for="itsm_parent">Value to transfer :</label>
+                    <label class="control-label col-sm-2" for="itsm_parent"><?php echo getLabel("label.admin_itsm.parent").":"; ?></label>
                     <div class="col-sm-6"> 
                         <select class="form-control" id="itsm_parent" name="itsm_parent" >
                             <option></option>
@@ -194,9 +197,9 @@ include("classes/ItsmPeer.php");
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label col-sm-2" for="itsm_request_return_value">Value to handle :</label>
+                    <label class="control-label col-sm-2" for="itsm_request_return_value"><?php echo getLabel("label.admin_itsm.return_val").":"; ?></label>
                     <div class="col-sm-6" id="itsm_request_return_value">
-                        <button type="button" id="generate_list" class="btn btn-info">Generate list</button>
+                        <button type="button" id="generate_list" class="btn btn-info"><?php echo getLabel("label.admin_itsm.btn_generate"); ?></button>
                         <!--  <input list="champs"  class="form-control" id="itsm_parent_champ" name="itsm_parent_champ">
                         <datalist id="champs">
                             <option >

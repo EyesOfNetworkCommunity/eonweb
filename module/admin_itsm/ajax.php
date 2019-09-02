@@ -19,6 +19,9 @@
 #
 #########################################
 */
+
+ini_set('display_errors','on');
+error_reporting(E_ALL);
 include_once("../../include/config.php");
 include_once("../../include/function.php");
 include_once("./function_itsm.php");
@@ -27,42 +30,56 @@ include("classes/ItsmPeer.php");
 
 if($_POST["action"] == "add_external_itsm"){
     $message ="<div id='log'>";
-    if(isset($_POST["itsm_url_id"])){
-        $url_id = $_POST["itsm_url_id"];
-    }else $url_id = false;
-    if(insert_itsm_url($_POST['itsm_url'],$url_id)){
-        $message .= "<div class=\"alert alert-success\" role=\"alert\">".$_POST['itsm_url']." succesfully saved.</div>";
-    }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$_POST['itsm_url']." failed to be saved.</div>";
+    $itsmPeer= new ItsmPeer();
+    if(!empty($_POST["itsm_url_id"])){
+        $itsm = $itsmPeer->getItsmById($_POST["itsm_url_id"]);
+    }else{
+        $itsm = new Itsm();
+    }
 
-    if($_FILES["fileName"]["size"] > 0){
-        if(isset($_POST["itsm_file_id"])){
-            $file_id = $_POST["itsm_file_id"];
-        }else $file_id = false;
-        $contenus = file_get_contents($_FILES["fileName"]['tmp_name']);
-        if(verify_format($contenus)){
+    if($itsm != false){
+        if(!empty($_POST["itsm_url"])){
+            $itsm->setItsm_url($_POST["itsm_url"]);
+        }
+
+        if(!empty($_POST["itsm_header"])){
+            $newarray_header = array();
+            foreach($_POST["itsm_header"] as $header){
+                array_push($newarray_header,$header);
+            }
+            $itsm->setItsm_headers($newarray_header);
+        }
+
+        if(!empty($_POST["itsm_var"])){
+        $newdict_var = array();
+        foreach($_POST["itsm_var"] as $var){
+            $newdict_var[$var["var_name"]] = $var["champ_ged_id"];
+        } 
+        $itsm->setItsm_vars($newdict_var);
+        }
+
+        if(!empty($_POST["itsm_parent"])){
+            $itsm->setItsm_parent($_POST["itsm_parent"]);
+        }
+
+        if($_FILES["fileName"]["size"] > 0){
+            // $contenus = file_get_contents($_FILES["fileName"]['tmp_name']);
             if(upload_file($_POST['itsm_url'],$_FILES["fileName"])){
                 $message .= "<div class=\"alert alert-success\" role=\"alert\">File uploaded.</div>";
-                if( insert_itsm_file($_POST['itsm_url'],__DIR__."/"."uploaded_file/".$_FILES["fileName"]["name"],$file_id)){
-                    $message .= "<div class=\"alert alert-success\" role=\"alert\">".$_FILES["fileName"]["name"]." succesfully saved. </div>";
-                }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$_FILES["fileName"]["name"]." failed to be saved.</div>";
-                
+                $itsm->setItsm_file(__DIR__."/"."uploaded_file/".$_FILES["fileName"]["name"]);
             }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">File failed to be upload, nothing else have been executed.</div>";
 
-        }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">The File verification failed, please verify the conformity of the file you want to upload.</div>"; 
-    }
+        }
 
-    foreach($_POST["itsm_header"] as $header){
-        if(insert_itsm_header($_POST['itsm_url'],$header)){
-            $message .= "<div class=\"alert alert-success\" role=\"alert\">".$header." succesfully saved.</div>";
-        }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$header." failed to be saved.</div>";
-    
+        $id_test = $itsm->save();
+
+        var_dump($id_test);
     }
-    
 
     $itsm_create = "false";
     $itsm_acquit = "false";
-    if(isset($_POST['itsm_create'])) $itsm_create = "true";
-    if(isset($_POST['itsm_acquit'])) $itsm_acquit = "true";
+    if(!empty($_POST['itsm_create'])) $itsm_create = "true";
+    if(!empty($_POST['itsm_acquit'])) $itsm_acquit = "true";
 
     if(insert_config_var("itsm_create",$itsm_create)){
         $message .= "<div class=\"alert alert-success\" role=\"alert\">".$itsm_create." create succesfully saved.</div>";
@@ -104,6 +121,10 @@ if($_POST["action"] == "add_external_itsm"){
         </div>
             <div class=\"col-sm-2\"><button type=\"button\" id=\"add_empty_var\" class=\"btn\"><i class=\"fa fa-plus\"></i></button></div>
         </div>";
+}else if ($_POST["action"] == "delete_external_itsm"){
+    $itsmPeer= new ItsmPeer();
+    $itsm = $itsmPeer->getItsmById($_POST["itsm_id"]);
+    $itsm->delete();
 }
 
 ?>
