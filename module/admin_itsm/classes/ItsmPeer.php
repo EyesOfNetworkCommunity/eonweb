@@ -31,7 +31,8 @@ class ItsmPeer {
         global $database_eonweb;
         try{
             $result = sqlrequest("$database_eonweb","SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_type_request, itsm_return_champ FROM itsm WHERE itsm_url = \"".$url_name."\"");
-            if($result != false){
+           
+            if(mysqli_num_rows($result)>0 ){
                 $row = $result->fetch_assoc();
                 $itsm = new Itsm();
                 $itsm->setItsm_id($row["itsm_id"]);
@@ -58,7 +59,7 @@ class ItsmPeer {
         global $database_eonweb;
         try{
             $result = sqlrequest("$database_eonweb","SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_type_request, itsm_return_champ FROM itsm WHERE itsm_id = ".$itsm_id);
-            if($result != false){
+            if(mysqli_num_rows($result)>0){
                 $row = $result->fetch_assoc();
                 $itsm = new Itsm();
                 $itsm->setItsm_id($row["itsm_id"]);
@@ -100,8 +101,10 @@ class ItsmPeer {
         $sql = 'SELECT itsm_var_name, champ_ged_name  FROM itsm_var, itsm_champ_ged WHERE itsm_id ='.$itsm_id.' AND itsm_var.champ_ged_id = itsm_champ_ged.champ_ged_id';
         $result = sqlrequest($database_eonweb, $sql);
         $itsm_vars = array();
-        while($row = $result->fetch_assoc()){
-            $itsm_vars[$row["itsm_var_name"]] = $row["champ_ged_name"];
+        if($result !=false){
+            while($row = $result->fetch_assoc()){
+                $itsm_vars[$row["itsm_var_name"]] = $row["champ_ged_name"];
+            }
         }
         return $itsm_vars;
     }
@@ -114,8 +117,10 @@ class ItsmPeer {
         $sql = 'SELECT itsm_header_id, header FROM itsm_header WHERE itsm_id ='.$itsm_id;
         $result = sqlrequest($database_eonweb, $sql);
         $itsm_headers = array();
-        while($row = $result->fetch_assoc()){
-            $itsm_headers[$row["itsm_header_id"]] = $row["header"];
+        if($result !=false){
+            while($row = $result->fetch_assoc()){
+                $itsm_headers[$row["itsm_header_id"]] = $row["header"];
+            }
         }
         return $itsm_headers;
     }
@@ -149,6 +154,19 @@ class ItsmPeer {
         }
     }
     
+    /**
+     * @return number of itsm
+     */
+    function count_itsm(){
+        global $database_eonweb;
+        try{
+            $result = sqlrequest("$database_eonweb","SELECT COUNT(*) AS nb FROM itsm ORDER BY itsm_ordre");
+            $row = mysqli_fetch_assoc($result);
+            return intval($row["nb"]);
+        }catch(Exception $e) {
+            return 'Exception reçue : '.$e->getMessage().'\n';
+        }
+    }
 
     /**
      * @return array of itsm object
@@ -156,7 +174,7 @@ class ItsmPeer {
     function get_all_itsm(){
         global $database_eonweb;
         try{
-            $result = sqlrequest("$database_eonweb","SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_type_request, itsm_return_champ FROM itsm");
+            $result = sqlrequest("$database_eonweb","SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_type_request, itsm_return_champ FROM itsm ORDER BY itsm_ordre");
             $tab_itsm = array();
             if($result != false){
                 while($row = $result->fetch_assoc()){

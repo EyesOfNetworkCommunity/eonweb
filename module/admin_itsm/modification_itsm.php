@@ -85,6 +85,26 @@ include("classes/ItsmPeer.php");
                         </div>
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="itsm_url"><?php echo getLabel("label.admin_itsm.type_request"); ?> :</label>
+                    <div class="col-sm-6"> 
+                    <select class="form-control select_champ" name="itsm_type_request" >
+                    <?php if($itsm!=false){
+                            $type = $itsm->getItsm_type_request();
+                            if(isset($type) &&  $type== "post"){
+                                echo "<option value=\"post\" selected>POST</option>
+                                <option value=\"get\" >GET</option>";
+                            }else{
+                                echo"<option value=\"post\" >POST</option>
+                                <option value=\"get\" selected>GET</option>";
+                            }
+                    }else echo "<option value=\"post\" >POST</option> <option value=\"get\" selected>GET</option>";
+                    ?>               
+                                        
+                    </select>
+                    </div>
+                </div>
                 <div id="dynamic_fields_header">
                     <div class="form-group">
                         <label class="control-label col-sm-2 first"><?php echo getLabel("label.admin_itsm.header").":"; ?></label>        
@@ -135,8 +155,7 @@ include("classes/ItsmPeer.php");
                                             <input type=\"text\" class=\"form-control \" id=\"itsm_var_".$nb."\" name=\"itsm_var[".$nb."][var_name]\" placeholder=\"%COMMENTAIRE%\" value=\"".$key."\" disabled>
                                         </div>
                                         <div class=\"col-sm-3 select\"> 
-                                        <select class=\"form-control select_champ\" name=\"itsm_var[".$nb."][champ_ged_id]\" >
-                                        <option ></option>";
+                                        <select class=\"form-control select_champ\" name=\"itsm_var[".$nb."][champ_ged_id]\" >";
                                         foreach($itsm_champ_ged as $key2=>$value2){
                                             if($value==$value2){
                                                 echo "<option value=\"".$key2."\" selected>".$value2."</option>";

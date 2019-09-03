@@ -41,19 +41,6 @@ function upload_file($url, $file, $dir="uploaded_file"){
 
 }
 
-/**
- * Verify if the given file contains the variable allowing the program to 
- * send to the external ticketing tools a personalized tickets.
- * @return Boolean 
- */
-function verify_format($text){
-    preg_match('/%DETAIL%|%DESCRIPTION%/', $text, $matches);
-    if(count($matches) >= 1 ){
-        return true;
-    }else return false;
-}
-
-
 // ================== SQL FUNCTION =================== //
 function insert_config_var($name,$value){
     global $database_eonweb;
@@ -82,9 +69,6 @@ function get_config_var($name){
     }
     return $val;
 }
-
-
-
 
 
 function change_itsm_state($state){

@@ -34,10 +34,18 @@ if($_POST["action"] == "add_external_itsm"){
     if(!empty($_POST["itsm_url_id"])){
         $itsm = $itsmPeer->getItsmById($_POST["itsm_url_id"]);
     }else{
-        $itsm = new Itsm();
+        $itsm = $itsmPeer->getItsmByUrl($_POST["itsm_url"]);
+        if($itsm == false){
+            $itsm = new Itsm();
+        }else{
+            $message .= "<div class=\"alert alert-danger\" role=\"alert\">You try to create an Itsm with an url already used.</div>";
+        }
+        
     }
 
     if($itsm != false){
+        $itsm->setItsm_type_request($_POST["itsm_type_request"]);
+
         if(!empty($_POST["itsm_url"])){
             $itsm->setItsm_url($_POST["itsm_url"]);
         }
@@ -49,13 +57,13 @@ if($_POST["action"] == "add_external_itsm"){
             }
             $itsm->setItsm_headers($newarray_header);
         }
-
+        var_dump($_POST["itsm_var"]);
         if(!empty($_POST["itsm_var"])){
-        $newdict_var = array();
-        foreach($_POST["itsm_var"] as $var){
-            $newdict_var[$var["var_name"]] = $var["champ_ged_id"];
-        } 
-        $itsm->setItsm_vars($newdict_var);
+            $newdict_var = array();
+            foreach($_POST["itsm_var"] as $var){
+                $newdict_var[$var["var_name"]] = $var["champ_ged_id"];
+            } 
+            $itsm->setItsm_vars($newdict_var);
         }
 
         if(!empty($_POST["itsm_parent"])){
@@ -70,10 +78,15 @@ if($_POST["action"] == "add_external_itsm"){
             }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">File failed to be upload, nothing else have been executed.</div>";
 
         }
+        $nb_itsm=$itsmPeer->count_itsm();
+        $itsm->setItsm_order(intval($nb_itsm)+1);
 
-        $id_test = $itsm->save();
-
-        var_dump($id_test);
+        $id = $itsm->save();
+        if($id > 0 ){
+            $message .= "<div class=\"alert alert-success\" role=\"alert\">".$itsm->getItsm_url()." succesfully saved. Is id is : ".$id."</div>";
+        }else {
+            $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$_POST["itsm_url"]." failed to saved.</div>";
+        }
     }
 
     $itsm_create = "false";

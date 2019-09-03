@@ -172,6 +172,7 @@
 	"label.admin_itsm.warn_text" : "Si vous avez sélectionné ces options, vous risquez de créer une sur-création de ticket.",
 	"label.admin_itsm.itsm_setting" :"Configuration itsm" ,
 	"label.admin_itsm.url":"Adresse",
+	"label.admin_itsm.type_request":"Type de requête",
 	"label.admin_itsm.token_user":"Token utilisateur",
 	"label.admin_itsm.token_app":"Token applicatif",
 	"label.admin_itsm.header":"En-têtes",

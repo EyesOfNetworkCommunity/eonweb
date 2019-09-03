@@ -29,7 +29,7 @@ class Itsm{
     public $itsm_parent=NULL; //id un seul parents si y'en a un on execute
     public $itsm_return_champ=NULL;//
     public $itsm_order=NULL;
-    public $itsm_type_request=NULL;//
+    public $itsm_type_request="get";//
     public $itsm_headers = array(); // array("key"=>"value")
     public $itsm_vars = array();//array d'object
 
@@ -49,7 +49,6 @@ class Itsm{
         }else{
             //insert
             $sql = 'INSERT INTO itsm(itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_return_champ, itsm_type_request) VALUES("'.$this->itsm_url.'", "'.$this->itsm_file.'", '.$this->insert_sql($this->itsm_order).', '.$this->insert_sql($this->itsm_parent).', \''.$this->itsm_return_champ.'\', \''.$this->itsm_type_request.'\')';
-            
             $result = sqlrequest($database_eonweb,$sql,true);
             if($result){
                 $this->itsm_id = $result;
@@ -120,7 +119,6 @@ class Itsm{
         $sql_add            = 'INSERT INTO itsm_header(header,itsm_id) VALUES';
         
         foreach($headers_to_delete as $key=>$value){
-            var_dump($sql_delete.$key);
             sqlrequest($database_eonweb,$sql_delete.$key);
         }
 
@@ -135,18 +133,18 @@ class Itsm{
         $vars_to_delete = array_diff($old_vars, $this->itsm_vars);
         $sql_delete     = 'DELETE FROM itsm_var WHERE itsm_id = '.$this->itsm_id.' AND itsm_var_name=\'';
         $sql_add        = 'INSERT INTO itsm_var(itsm_id, itsm_var_name, champ_ged_id) VALUES';
-        $champs_ged     =  $this->itsmPeer->getListChampGed();
 
         foreach($vars_to_delete as $key=>$value){
             sqlrequest($database_eonweb,$sql_delete.$key.'\'');
         }
 
         foreach($this->itsm_vars as $key=>$value){
-            $key_ged = array_search($value, $champs_ged);
+            // $value = id champ_ged
+            var_dump($value);
             if(array_key_exists($key,$old_vars)){
-                sqlrequest($database_eonweb,'UPDATE FROM itsm_var SET champ_ged_id ='.$key_ged.' WHERE itsm_var_name="'.$key.'" AND itsm_id='.$this->itsm_id);
+                sqlrequest($database_eonweb,'UPDATE FROM itsm_var SET champ_ged_id ='.$value.' WHERE itsm_var_name=\''.$key.'\' AND itsm_id='.$this->itsm_id);
             }else{
-                sqlrequest($database_eonweb,$sql_add.'('.$this->itsm_id.', "'.$key.'", '.$key_ged.')');
+                sqlrequest($database_eonweb,$sql_add.'('.$this->itsm_id.', \''.$key.'\', '.$value.')');
             }
         }
 

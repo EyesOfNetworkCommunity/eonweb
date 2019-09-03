@@ -19,7 +19,7 @@
 #########################################
 */
 
-function delete_itsm( id){
+function delete_itsm(id){
 	var formData = new FormData();
 	formData.append('itsm_id', id);
 	formData.append('action',"delete_external_itsm");

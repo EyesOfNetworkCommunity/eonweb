@@ -273,17 +273,17 @@ function edit($selected_events, $queue)
 	$sql = "SELECT comments FROM ".$ged_type."_queue_".$queue." WHERE id = ?";
 	$result = sqlrequest($database_ged, $sql, false, array("s",(string)$id));
 	$event = mysqli_fetch_assoc($result);
-
+	// <label for='group'>Affectation : </label>
+	// 		<select class='form-control' id='group'>
+    //                  	   <option value='2' selected>GROUPE_SYSTEME</option>
+    //                  	   <option value='292'>GROUPE_RESEAU</option>
+    //                  	   <option value='3'>GROUPE_DBA</option>
+    //                  	   <option value='113'>GROUPE_ESHOP_RUN</option>
+    //                  	 </select>
+	// 		
 	echo "
 	<form id='edit-event-form'>
 		<div class='form-group'>
-			<label for='group'>Affectation : </label>
-			<select class='form-control' id='group'>
-                     	   <option value='2' selected>GROUPE_SYSTEME</option>
-                     	   <option value='292'>GROUPE_RESEAU</option>
-                     	   <option value='3'>GROUPE_DBA</option>
-                     	   <option value='113'>GROUPE_ESHOP_RUN</option>
-                     	 </select>
 			<label>".getLabel("label.add_comment")."</label>
 			<textarea id='event-comments' class='form-control textarea' rows='10'>".$event["comments"]."</textarea>
 		</div>
