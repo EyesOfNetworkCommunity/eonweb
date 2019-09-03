@@ -426,10 +426,12 @@ $(document).ready(function(){
 
 		if(global_action== 6){
 			$('#confirmation-event-validation').click();
+		}else{
+			$("#confirmation-modal-title").html(dictionnary[action_title]);
+			$("#confirmation-modal").modal();
 		}
 		
-		$("#confirmation-modal-title").html(dictionnary[action_title]);
-		$("#confirmation-modal").modal();
+		
 	});
 	
 	// click to confirm event edit/own/ack
