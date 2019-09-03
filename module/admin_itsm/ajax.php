@@ -138,6 +138,11 @@ if($_POST["action"] == "add_external_itsm"){
     $itsmPeer= new ItsmPeer();
     $itsm = $itsmPeer->getItsmById($_POST["itsm_id"]);
     $itsm->delete();
+}else if ($_POST["action"] == "generate_itsm_request"){
+    echo "<input list=\champs_generate\  class=\form-control\ id=\itsm_generate_champ\ name=\itsm_return_champ\>
+            <datalist id=\champs_generate\>
+                <option >
+            </datalist>";
 }
 
 ?>

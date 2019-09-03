@@ -56,14 +56,8 @@ $(document).ready(function(){
 			dataType	: 'html', // what type of data do we expect back from the server
 			processData: false,
 			contentType: false,
-			beforeSend:function(){
-				$('#result').html('Loading......');
-			},
 			success : function(result){ // success est toujours en place, bien sûr !
-				$("#itsm_request_return_value").html(resultat);
-			},
-			error : function(resultat, statut, erreur){
-				$("#itsm_request_return_value").html(resultat);
+				$("#itsm_request_return_value").html(result);
 			}
 		});
 	});
