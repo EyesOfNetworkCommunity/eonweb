@@ -47,9 +47,9 @@ function insert_config_var($name,$value){
     $var = get_config_var($name);
     $rq = "";
     if($var != false){
-        $rq = 'UPDATE configs SET value="'.$value.'" WHERE name="'.$name.'"'; 
+        $rq = 'UPDATE configs SET value=\''.$value.'\' WHERE name=\''.$name.'\''; 
     }else{
-        $rq = 'INSERT INTO configs VALUES("'.$name.'","'.$value.'")';
+        $rq = 'INSERT INTO configs VALUES(\''.$name.'\',\''.$value.'\')';
     }
 
     try{
@@ -101,9 +101,12 @@ function report_itsm($ged_type=NULL, $queue=NULL, $id_ged=NULL, $array_vars=arra
     
     $itsmPeer   = new ItsmPeer();
     $itsmChilds = $itsmPeer->getItsmChilds();
+    //error_log("function_itsm.php : ".."\n", 3 , "/srv/eyesofnetwork/eonweb/module/admin_itsm/uploaded_file/log");
     $previous   = false;
     foreach($itsmChilds as $child){
+        
         $result = $child->execute_itsm($previous, $ged_type, $queue, $id_ged);
+        error_log("function_itsm.php result curl : ".$result."\n", 3 , "/srv/eyesofnetwork/eonweb/module/admin_itsm/uploaded_file/log");
         if($result!=false ){
             if($result == true){
                 $previous=false;
@@ -145,7 +148,7 @@ function curl_call($headers,$url,$file,$type="get",$ssl=false){
         curl_setopt( $ch, CURLOPT_POST, true );
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $file);
     }
-
+    error_log("function_itsm.php file curl : ".$file."\n", 3 , "/srv/eyesofnetwork/eonweb/module/admin_itsm/uploaded_file/log");
     $result = curl_exec($ch);
     curl_close($ch);
     return $result;

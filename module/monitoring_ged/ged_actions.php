@@ -22,9 +22,11 @@
 
 include("../../include/config.php");
 include("../../include/arrays.php");
+include("../../module/admin_itsm/function_itsm.php");
+include("../../module/admin_itsm/classes/Itsm.php");
+include("../../module/admin_itsm/classes/ItsmPeer.php");
 include_once("../../include/function.php"); 
 include("./ged_functions.php");
-include_once("../admin_itsm/function_itsm.php");
 
 // create variables from $_GET
 extract($_GET);
@@ -44,6 +46,7 @@ if(!isset($group)) { $group=null; }
  */
 
  if(isset($action) && $action != "" && (isset($selected_events) && count($selected_events) > 0) || isset($filter_name) || isset($filter) ){
+	//error_log("ged_action.php :".$action." \n", 3 , "/srv/eyesofnetwork/eonweb/module/admin_itsm/uploaded_file/log");
 	switch ($action) {
 		case "0":
 			details($selected_events, $queue);
@@ -56,21 +59,20 @@ if(!isset($group)) { $group=null; }
 			break;
 		case 'edit':
 			editAllEvents($selected_events, $queue, $comments);
-			$CustomActions->ged_edit($selected_events, $queue, $comments);
 			if($global_action == "4"){
-				$CustomActions->ged_acknowledge($selected_events, $queue, $group);				
+				$CustomActions->ged_acknowledge($selected_events, $queue);				
 				acknowledge($selected_events, $queue);
 			} elseif($global_action == "2") {
 				ownDisown($selected_events, $queue, $global_action);
 				$CustomActions->ged_own($selected_events, $queue, $global_action);
 			}elseif($global_action == "6"){
-				$CustomActions->ged_acknowledge($selected_events, $queue, $group);				
+				$CustomActions->ged_acknowledge($selected_events, $queue);				
 				acknowledge($selected_events, $queue);
 			}
 			break;
 		case 'confirm':
 			if($global_action == "4"){
-				$CustomActions->ged_acknowledge($selected_events, $queue,$group);
+				$CustomActions->ged_acknowledge($selected_events, $queue);
 				acknowledge($selected_events, $queue);
 			} elseif($global_action == "5") {
 				delete($selected_events, $queue);
@@ -78,7 +80,7 @@ if(!isset($group)) { $group=null; }
 				ownDisown($selected_events, $queue, $global_action);
 				$CustomActions->ged_own($selected_events, $queue, $global_action);
 			}elseif($global_action == "6"){
-				$CustomActions->ged_acknowledge($selected_events, $queue, $group);				
+				$CustomActions->ged_acknowledge($selected_events, $queue);				
 				acknowledge($selected_events, $queue);
 			}
 			break;

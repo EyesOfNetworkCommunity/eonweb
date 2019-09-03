@@ -101,7 +101,7 @@ class ItsmPeer {
         $sql = 'SELECT itsm_var_name, champ_ged_name  FROM itsm_var, itsm_champ_ged WHERE itsm_id ='.$itsm_id.' AND itsm_var.champ_ged_id = itsm_champ_ged.champ_ged_id';
         $result = sqlrequest($database_eonweb, $sql);
         $itsm_vars = array();
-        if($result !=false){
+        if(mysqli_num_rows($result)>0){
             while($row = $result->fetch_assoc()){
                 $itsm_vars[$row["itsm_var_name"]] = $row["champ_ged_name"];
             }
@@ -117,7 +117,7 @@ class ItsmPeer {
         $sql = 'SELECT itsm_header_id, header FROM itsm_header WHERE itsm_id ='.$itsm_id;
         $result = sqlrequest($database_eonweb, $sql);
         $itsm_headers = array();
-        if($result !=false){
+        if(mysqli_num_rows($result)>0){
             while($row = $result->fetch_assoc()){
                 $itsm_headers[$row["itsm_header_id"]] = $row["header"];
             }
@@ -131,9 +131,12 @@ class ItsmPeer {
     function getItsmChilds(){
         global $database_eonweb;
         try{
-            $result = sqlrequest("$database_eonweb","SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_type_request, itsm_return_champ FROM itsm WHERE itsm_id NOT IN (SELECT DISTINCT itsm_parent FROM itsm)");
+            $result = sqlrequest($database_eonweb,"SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_type_request, itsm_return_champ FROM itsm WHERE itsm_id NOT IN (SELECT DISTINCT itsm_parent FROM itsm WHERE itsm_parent <> NULL)");
             $tab_itsm = array();
-            if($result != false){
+            $nb = mysqli_num_rows($result);
+            //error_log("itsmPeer.php : $nb \n", 3 , "/srv/eyesofnetwork/eonweb/module/admin_itsm/uploaded_file/log");
+
+            if(mysqli_num_rows($result)>0){
                 while($row = $result->fetch_assoc()){
                     $itsm = new Itsm();
                     $itsm->setItsm_id($row["itsm_id"]);
@@ -145,6 +148,7 @@ class ItsmPeer {
                     $itsm->setItsm_type_request($row["itsm_type_request"]);
                     $itsm->setItsm_headers($this->getItsmHeadersByItsmId($itsm->getItsm_id()));
                     $itsm->setItsm_vars($this->getItsmVarByItsmId($itsm->getItsm_id()));
+                    //error_log("itsmPeer.php : ".$row["itsm_id"]."\n", 3 , "/srv/eyesofnetwork/eonweb/module/admin_itsm/uploaded_file/log");
                     array_push($tab_itsm, $itsm);
                 }
             }

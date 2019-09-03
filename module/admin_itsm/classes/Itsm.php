@@ -70,7 +70,7 @@ class Itsm{
     function execute_itsm($previous=false, $ged_type=NULL, $queue=NULL, $id_ged=NULL){
         $value_parent = false;
         if(isset($this->itsm_parent)){
-            $parent = $itsmPeer->getItsmById($this->itsm_parent);
+            $parent = $this->itsmPeer->getItsmById($this->itsm_parent);
             $value_parent = $parent->execute_itsm();
         }
 
@@ -85,12 +85,16 @@ class Itsm{
         $extension              = explode(".",basename($this->itsm_file))[1];
         $file_content           = file_get_contents($this->itsm_file);
         $content_type_header    = ($extension == "xml")? 'Content-Type: text/xml;charset=UTF-8':'Content-Type: application/json;charset=UTF-8';
+        insert_config_var("log",$content_type_header);
         array_push($headers,$content_type_header);
         
-        foreach($itsm_vars as $key=>$value){
-            $value_champ_ged = get_champ_ged($value, $ged_type, $queue, $id_ged);
-            $file_content = str_replace($key,$value_champ_ged,$file_content);
+        if(isset($id_ged)){
+            foreach($this->itsm_vars as $key=>$value){
+                $value_champ_ged = get_champ_ged($value, $ged_type, $queue, $id_ged);
+                $file_content = str_replace($key,$value_champ_ged,$file_content);
+            }
         }
+        
 
         if(preg_match("%PREVIOUS%",$file_content)==1 && $previous != false){
             $file_content = str_replace("%PREVIOUS%",$previous, $file_content);

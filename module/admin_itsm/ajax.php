@@ -20,8 +20,8 @@
 #########################################
 */
 
-ini_set('display_errors','on');
-error_reporting(E_ALL);
+// ini_set('display_errors','on');
+// error_reporting(E_ALL);
 include_once("../../include/config.php");
 include_once("../../include/function.php");
 include_once("./function_itsm.php");
@@ -40,7 +40,6 @@ if($_POST["action"] == "add_external_itsm"){
         }else{
             $message .= "<div class=\"alert alert-danger\" role=\"alert\">You try to create an Itsm with an url already used.</div>";
         }
-        
     }
 
     if($itsm != false){
@@ -124,7 +123,7 @@ if($_POST["action"] == "add_external_itsm"){
             </div>
             <div class=\"col-sm-3\"> 
                 <select class=\"form-control select_champ\" name=\"itsm_var[add_".$nb."][champ_ged_id]\" >
-                <option ></option>";
+                ";
                 
                 foreach($itsm_champ_ged as $key=>$value){
                     echo "<option value=\"".$key."\">".$value."</option>";

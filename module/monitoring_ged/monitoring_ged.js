@@ -424,9 +424,8 @@ $(document).ready(function(){
 			global_action = 6;
 		}
 		
-		if(global_action== 6){
+		if(global_action == 6){
 			$('#confirmation-event-validation').click();
-
 		}else{
 			$("#confirmation-modal-title").html(dictionnary[action_title]);
 			$("#confirmation-modal").modal();
@@ -459,8 +458,7 @@ $(document).ready(function(){
 				action: action,
 				global_action: global_action,
 				selected_events: events,
-				comments: comments,
-				//group: group_itsm
+				comments: comments
 			},
 			success: function(response){
 				$(".modal-body #event-message").html(response);
@@ -488,8 +486,7 @@ $(document).ready(function(){
 				queue: queue,
 				action: "confirm",
 				global_action: global_action,
-				selected_events: selected_events,
-				group:null
+				selected_events: selected_events
 			},
 			success: function(response){
 				global_action = "";

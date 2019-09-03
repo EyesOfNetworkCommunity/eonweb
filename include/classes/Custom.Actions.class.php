@@ -28,18 +28,20 @@ class CustomActions
 	/**
 	 * Ged Acknowledge
 	 */
-	public function ged_acknowledge($selected_events, $queue, $group=null)
+	public function ged_acknowledge($selected_events, $queue)
 	{
         global $array_ged_queues;
 		$result=false;
-
-        $status_itsm = get_itsm_var("itsm");
+		
+		
+		$status_itsm = get_config_var("itsm");
+		//error_log("Custom.Action.class.php : ".$status_itsm."\n", 3 , "/srv/eyesofnetwork/eonweb/module/admin_itsm/uploaded_file/log");
         if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
 
         if(isset($status_itsm) && $status_itsm == "on"){
             foreach ($selected_events as $value) {
                 $value_parts = explode(":", $value);
-                $id = $value_parts[0];
+                $id_ged = $value_parts[0];
                 $ged_type = $value_parts[1];
                 if($ged_type == "nagios"){ $ged_type_nbr = 1; }
                 if($ged_type == "snmptrap"){ $ged_type_nbr = 2; }
@@ -57,8 +59,9 @@ class CustomActions
 				}
 				*/
 				$result = report_itsm($ged_type, $queue, $id_ged);
-            }
-            return $result;
+			}
+			
+            return true;
         }else return false;
 	}
 
