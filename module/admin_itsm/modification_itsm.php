@@ -219,7 +219,7 @@ include("classes/ItsmPeer.php");
 
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="itsm_request_return_value"><?php echo getLabel("label.admin_itsm.return_val").":"; ?></label>
-                    <div class="col-sm-4" id="itsm_request_return_value">
+                    <div class="col-sm-6" id="itsm_request_return_value">
                         <?php 
                             if($itsm!=false){
                                 echo "<input list=\"champs_generate\"  class=\"form-control\" id=\"itsm_generate_champ\" name=\"itsm_return_champ\" value=\"".$itsm->getItsm_return_champ()."\">
