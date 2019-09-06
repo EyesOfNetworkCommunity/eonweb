@@ -71,16 +71,16 @@ $itsm_list = $itsmPeer->get_all_itsm();
                                
                                 foreach($itsm_list as $itsm){
                                     echo "<tr>
-                                            <td >".$itsm->getItsm_url()."</td>
-                                            <td >".$itsm->getItsm_type_request()."</td>
-                                            <td >";
+                                            <td class=\"col-md-3\">".$itsm->getItsm_url()."</td>
+                                            <td class=\"col-md-0\">".$itsm->getItsm_type_request()."</td>
+                                            <td class=\"col-md-2\">";
                                     foreach($itsm->getItsm_headers() as $header){
                                         echo $header."</br> ";
                                     }
                                     
                                     echo "  </td>
-                                            <td >".$itsm->getItsm_file()."</td>
-                                            <td class=\"col-md-6\">
+                                            <td class=\"col-md-4\">".$itsm->getItsm_file()."</td>
+                                            <td class=\"col-md-2\">
                                                 <div class=\"btn-group\">
                                                
                                                     <a href='modification_itsm.php?url=".$itsm->getItsm_url()."' class=\"btn btn-success\" role=\"button\">".getLabel("action.edit")."</a>

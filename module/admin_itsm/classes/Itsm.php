@@ -145,7 +145,6 @@ class Itsm{
 
         foreach($this->itsm_vars as $key=>$value){
             // $value = id champ_ged
-            var_dump($value);
             if(array_key_exists($key,$old_vars)){
                 sqlrequest($database_eonweb,'UPDATE FROM itsm_var SET champ_ged_id ='.$value.' WHERE itsm_var_name=\''.$key.'\' AND itsm_id='.$this->itsm_id);
             }else{
