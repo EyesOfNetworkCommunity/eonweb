@@ -57,7 +57,7 @@ $(document).ready(function(){
 			processData: false,
 			contentType: false,
 			success : function(result){ // success est toujours en place, bien sûr !
-				$("#itsm_request_return_value").html(result);
+				$("#champs_generate").html(result);
 			}
 		});
 	});

@@ -82,11 +82,12 @@ class Itsm{
             array_push($headers,$header);
         }
 
-        $extension              = explode(".",basename($this->itsm_file))[1];
-        $file_content           = file_get_contents($this->itsm_file);
-        $content_type_header    = ($extension == "xml")? 'Content-Type: text/xml;charset=UTF-8':'Content-Type: application/json;charset=UTF-8';
-        insert_config_var("log",$content_type_header);
-        array_push($headers,$content_type_header);
+        if(isset($this->itsm_file)){
+            $extension              = explode(".",basename($this->itsm_file))[1];
+            $file_content           = file_get_contents($this->itsm_file);
+        }else $file_content = "";
+        
+        //$content_type_header    = ($extension == "xml")? 'Content-Type: text/xml;charset=UTF-8':'Content-Type: application/json;charset=UTF-8';
         
         if(isset($id_ged)){
             foreach($this->itsm_vars as $key=>$value){
@@ -106,8 +107,8 @@ class Itsm{
         }
 
         $result = curl_call($headers,$url,$file_content,$this->itsm_type_request); 
-        if($extension == "json"){
-            $json_obj = json_decode($result,true);
+        $json_obj = json_decode($result,true);
+        if(isset($json_obj)){
 	        $result = $json_obj[0][$this->itsm_return_champ];
         }else return true;
 

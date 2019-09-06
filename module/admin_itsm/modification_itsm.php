@@ -219,18 +219,23 @@ include("classes/ItsmPeer.php");
 
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="itsm_request_return_value"><?php echo getLabel("label.admin_itsm.return_val").":"; ?></label>
-                    <div class="col-sm-6" id="itsm_request_return_value">
-                        <button type="button" id="generate_list" class="btn btn-info"><?php echo getLabel("label.admin_itsm.btn_generate"); ?></button>
-                        <!--  <input list="champs"  class="form-control" id="itsm_parent_champ" name="itsm_parent_champ">
-                        <datalist id="champs">
-                            <option >
-                            <option value="Firefox">
-                            <option value="Chrome">
-                            <option value="Opera">
-                            <option value="Safari">
-                        </datalist> -->
+                    <div class="col-sm-4" id="itsm_request_return_value">
+                        <?php 
+                            if($itsm!=false){
+                                echo "<input list=\"champs_generate\"  class=\"form-control\" id=\"itsm_generate_champ\" name=\"itsm_return_champ\" value=\"".$itsm->getItsm_return_champ()."\">
+                                        <datalist id=\"champs_generate\">
+                                        </datalist>";
+    
+                            }else{
+                                echo "<input list=\"champs_generate\"  class=\"form-control\" id=\"itsm_generate_champ\" name=\"itsm_return_champ\">
+                                <datalist id=\"champs_generate\">
+                                </datalist>";
+                            }
+                        ?>
                     </div>
-                    
+                    <div class="col-sm-2">
+                        <button type="button" id="generate_list" class="btn btn-info"><?php echo getLabel("label.admin_itsm.btn_generate"); ?></button>
+                    </div>
                 </div>
                 
                 <div class="form-group" id="options_itsm"> 

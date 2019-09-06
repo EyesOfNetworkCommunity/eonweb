@@ -20,8 +20,8 @@
 #########################################
 */
 
-// ini_set('display_errors','on');
-// error_reporting(E_ALL);
+ini_set('display_errors','on');
+error_reporting(E_ALL);
 include_once("../../include/config.php");
 include_once("../../include/function.php");
 include_once("./function_itsm.php");
@@ -49,6 +49,10 @@ if($_POST["action"] == "add_external_itsm"){
             $itsm->setItsm_url($_POST["itsm_url"]);
         }
 
+        if(!empty($_POST["itsm_return_champ"])){
+            $itsm->setItsm_return_champ($_POST["itsm_return_champ"]);
+        }
+
         if(!empty($_POST["itsm_header"])){
             $newarray_header = array();
             foreach($_POST["itsm_header"] as $header){
@@ -56,7 +60,7 @@ if($_POST["action"] == "add_external_itsm"){
             }
             $itsm->setItsm_headers($newarray_header);
         }
-        var_dump($_POST["itsm_var"]);
+        
         if(!empty($_POST["itsm_var"])){
             $newdict_var = array();
             foreach($_POST["itsm_var"] as $var){
@@ -138,10 +142,41 @@ if($_POST["action"] == "add_external_itsm"){
     $itsm = $itsmPeer->getItsmById($_POST["itsm_id"]);
     $itsm->delete();
 }else if ($_POST["action"] == "generate_itsm_request"){
-    echo "<input list=\champs_generate\  class=\form-control\ id=\itsm_generate_champ\ name=\itsm_return_champ\>
-            <datalist id=\champs_generate\>
-                <option >
-            </datalist>";
+    $newarray_header = array();
+    $newdict_var = array();
+    $contenus ="";
+    if(!empty($_POST["itsm_header"])){
+        foreach($_POST["itsm_header"] as $header){
+            array_push($newarray_header,$header);
+        }
+    }
+
+    if(!empty($_POST["itsm_parent"])){
+        $itsm = $itsmPeer->getItsmById($_POST["itsm_parent"]);
+        $parent_value = $itsm->execute_itsm();
+        $headers=array();
+        foreach($newarray_header as $header){
+            if(preg_match("%PARENT_VALUE%",$header)==1 && $parent_value != false){
+                $header = str_replace("%PARENT_VALUE%",$parent_value, $header);
+            } 
+            array_push($headers,$header);
+        }
+        $newarray_header = $headers;
+    }
+
+    if($_FILES["fileName"]["size"] > 0){
+        $contenus = file_get_contents($_FILES["fileName"]['tmp_name']);
+    }
+
+    $opt = "";
+    $result = curl_call($newarray_header,$_POST["itsm_url"],$contenus,$_POST["itsm_type_request"]);
+    $json_obj = json_decode($result,true);
+    if(isset($json_obj)){
+        foreach($json_obj as $key=>$value){
+            $opt .= "<option value=\"".$key."\">";
+        }
+    }
+    echo "<option  >".$opt;
 }
 
 ?>
