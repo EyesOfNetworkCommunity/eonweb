@@ -141,16 +141,19 @@ include("classes/ItsmPeer.php");
                 </div>
 
                 <div id="dynamic_fields_var">
-                <div class="form-group">
-                        <label class="control-label col-sm-2"><?php echo getLabel("label.admin_itsm.var").":"; ?></label>
+                    <div class="form-group">
+                            <label class="control-label col-sm-2"><?php echo getLabel("label.admin_itsm.var").":"; ?></label>
+                            <div class="col-sm-1"><button type="button" id="add_empty_var" class="btn"><i class="fa fa-plus"></i></button></div>
+                    </div>
+
                     <?php 
                         $nb = 0;
                         if($itsm!=false && count($itsm->getItsm_vars())>0 ){
                             $var_key_list = array_keys($itsm->getItsm_vars());
                             $last_key = end($var_key_list);
                             foreach($itsm->getItsm_vars() as $key=>$value){
-                                echo (($nb==0) ? "" : "<div class=\"form-group\">
-                                        <label class=\"control-label col-sm-2\">".getLabel("label.admin_itsm.header")." : </label>")."
+                                echo "<div class=\"form-group\">
+                                        <label class=\"control-label col-sm-2\"></label>
                                         <div class=\"col-sm-3 input\"> 
                                             <input type=\"text\" class=\"form-control \" id=\"itsm_var_".$nb."\" name=\"itsm_var[".$nb."][var_name]\" placeholder=\"%COMMENTAIRE%\" value=\"".$key."\" disabled>
                                         </div>
@@ -166,14 +169,15 @@ include("classes/ItsmPeer.php");
                                         }
                                    
                                 echo "</select>
-                                    </div>".(($key === $last_key) ? "<div class=\"col-sm-2\"><button type=\"button\" id=\"add_empty_var\" class=\"btn\"><i class=\"fa fa-plus\"></i></button></div>" : "")."</div>";
+                                    </div><div class=\"col-sm-2\"><button type=\"button\" class=\"btn btn-danger delete-var\" ><i class=\"fa fa-trash\"></i></button></div> </div>";
                                 $nb ++;
                             }
                             
 
                         }else{
-                            echo "
-                            <div class=\"col-sm-3 input\"> 
+                            echo "<div class=\"form-group\">
+                                    <label class=\"control-label col-sm-2\"></label>
+                                <div class=\"col-sm-3 input\"> 
                                     <input type=\"text\" class=\"form-control itsm_var\" id=\"itsm_var_".$nb."\" name=\"itsm_var[".$nb."][var_name]\" placeholder=\"%DETAILS%\" >
                                 </div>
                                 <div class=\"col-sm-3 select\"> 
@@ -185,13 +189,11 @@ include("classes/ItsmPeer.php");
                                    
                             echo " </select>
                             </div>
-                                <div class=\"col-sm-2\"><button type=\"button\" id=\"add_empty_var\" class=\"btn\"><i class=\"fa fa-plus\"></i></button></div>
+                            <div class=\"col-sm-2\"><button type=\"button\" class=\"btn btn-danger delete-var\" ><i class=\"fa fa-trash\"></i></button></div>
                             </div>";
                         }
                     ?>
-                
                 </div>
-
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="itsm_parent"><?php echo getLabel("label.admin_itsm.parent").":"; ?></label>
                     <div class="col-sm-6"> 

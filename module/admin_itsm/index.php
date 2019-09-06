@@ -58,8 +58,9 @@ $itsm_list = $itsmPeer->get_all_itsm();
                 <div class="table-responsive">          
                     <table class="table">
                         <thead>
-                        <tr>
+                        <!-- <tr> colspan="2" -->
                             <th><?php echo getLabel("label.admin_itsm.url"); ?></th>
+                            <th>Type</th>
                             <th><?php echo getLabel("label.admin_itsm.header"); ?></th>
                             <th><?php echo getLabel("label.admin_itsm.file"); ?></th>
                             <th>Action</th>
@@ -70,15 +71,16 @@ $itsm_list = $itsmPeer->get_all_itsm();
                                
                                 foreach($itsm_list as $itsm){
                                     echo "<tr>
-                                            <td>".$itsm->getItsm_url()."</td>
-                                            <td>";
+                                            <td >".$itsm->getItsm_url()."</td>
+                                            <td >".$itsm->getItsm_type_request()."</td>
+                                            <td >";
                                     foreach($itsm->getItsm_headers() as $header){
                                         echo $header."</br> ";
                                     }
                                     
                                     echo "  </td>
-                                            <td>".$itsm->getItsm_file()."</td>
-                                            <td>
+                                            <td >".$itsm->getItsm_file()."</td>
+                                            <td class=\"col-md-6\">
                                                 <div class=\"btn-group\">
                                                
                                                     <a href='modification_itsm.php?url=".$itsm->getItsm_url()."' class=\"btn btn-success\" role=\"button\">".getLabel("action.edit")."</a>

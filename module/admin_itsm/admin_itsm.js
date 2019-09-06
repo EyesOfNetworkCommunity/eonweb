@@ -65,6 +65,10 @@ $(document).ready(function(){
 	$("#dynamic_fields_header").on("click",".delete-header", function(){
 		$(this).closest(".form-group").remove();
 	});
+
+	$("#dynamic_fields_var").on("click",".delete-var", function(){
+		$(this).closest(".form-group").remove();
+	});
 	
 	$("#input_file").change(function(){
 		var fileName = $(this).val().split("\\").pop();
@@ -86,7 +90,6 @@ $(document).ready(function(){
 
 	var row_var = 1;
 	$("#dynamic_fields_var").on("click","#add_empty_var", function(){
-		$(this).remove();
 		var formData = new FormData();
 		formData.append('nb', row_var);
 		formData.append('action',"add_empty_vars");

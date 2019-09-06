@@ -131,7 +131,7 @@ if($_POST["action"] == "add_external_itsm"){
             
         echo " </select>
         </div>
-            <div class=\"col-sm-2\"><button type=\"button\" id=\"add_empty_var\" class=\"btn\"><i class=\"fa fa-plus\"></i></button></div>
+            <div class=\"col-sm-2\"><button type=\"button\" class=\"btn btn-danger delete-var\" ><i class=\"fa fa-trash\"></i></button></div> 
         </div>";
 }else if ($_POST["action"] == "delete_external_itsm"){
     $itsmPeer= new ItsmPeer();
