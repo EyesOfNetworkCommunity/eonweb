@@ -169,6 +169,7 @@
 	"label.admin_itsm.ged_btn_create":"Déclarer un incident",
 	"label.admin_itsm.file" : "Fichier",
 	"label.admin_itsm.warn" : "Attention",
+	"label.admin_itsm.order":"Ordre",
 	"label.admin_itsm.warn_text" : "Si vous avez sélectionné ces options, vous risquez de créer une sur-création de ticket.",
 	"label.admin_itsm.itsm_setting" :"Configuration itsm" ,
 	"label.admin_itsm.url":"Adresse",

@@ -98,7 +98,7 @@ class ItsmPeer {
      */
     function getItsmVarByItsmId($itsm_id){
         global $database_eonweb;
-        $sql = 'SELECT itsm_var_name, champ_ged_name, itsm_champ_ged.champ_ged_id  FROM itsm_var, itsm_champ_ged WHERE itsm_id ='.$itsm_id.' AND itsm_var.champ_ged_id = itsm_champ_ged.champ_ged_id';
+        $sql = 'SELECT itsm_var_name, champ_ged_name, itsm_champ_ged.champ_ged_id as champ_ged_id FROM itsm_var, itsm_champ_ged WHERE itsm_id ='.$itsm_id.' AND itsm_var.champ_ged_id = itsm_champ_ged.champ_ged_id';
         $result = sqlrequest($database_eonweb, $sql);
         $itsm_vars = array();
         if(mysqli_num_rows($result)>0){
@@ -200,6 +200,7 @@ class ItsmPeer {
             return 'Exception reçue : '.$e->getMessage().'\n';
         }
     }
+
 }
 
 

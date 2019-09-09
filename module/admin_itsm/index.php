@@ -62,8 +62,8 @@ $itsm_list = $itsmPeer->get_all_itsm();
                             <th><?php echo getLabel("label.admin_itsm.url"); ?></th>
                             <th>Type</th>
                             <th><?php echo getLabel("label.admin_itsm.header"); ?></th>
-                            <th><?php echo getLabel("label.admin_itsm.file"); ?></th>
                             <th>Action</th>
+                            <th><?php echo getLabel("label.admin_itsm.order"); ?></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -71,22 +71,21 @@ $itsm_list = $itsmPeer->get_all_itsm();
                                
                                 foreach($itsm_list as $itsm){
                                     echo "<tr>
-                                            <td class=\"col-md-3\">".$itsm->getItsm_url()."</td>
-                                            <td class=\"col-md-0\">".$itsm->getItsm_type_request()."</td>
-                                            <td class=\"col-md-2\">";
+                                            <td class=\"col-sm-3\">".$itsm->getItsm_url()."</td>
+                                            <td class=\"col-sm-0\">".$itsm->getItsm_type_request()."</td>
+                                            <td class=\"col-sm-6\">";
                                     foreach($itsm->getItsm_headers() as $header){
                                         echo $header."</br> ";
                                     }
                                     
                                     echo "  </td>
-                                            <td class=\"col-md-4\">".$itsm->getItsm_file()."</td>
-                                            <td class=\"col-md-2\">
-                                                <div class=\"btn-group\">
-                                               
+                                            <td class=\"col-sm-2\">
                                                     <a href='modification_itsm.php?url=".$itsm->getItsm_url()."' class=\"btn btn-success\" role=\"button\">".getLabel("action.edit")."</a>
                                                     <button class=\"btn btn-danger\" type=\"button\" onclick='delete_itsm(".$itsm->getItsm_id().")'>".getLabel("action.delete")."</button>
-                                                    
-                                                </div>
+                                            </td>
+                                            <td class=\"col-sm-1\">
+                                                <button type=\"button\"  onclick='up_itsm(".$itsm->getItsm_id().")' class=\"btn btn-info\"><i class=\"fa fa-arrow-up\"></i></button>
+                                                <button type=\"button\"  onclick='down_itsm(".$itsm->getItsm_id().")' class=\"btn btn-info\"><i class=\"fa fa-arrow-down\"></i></button>
                                             </td>
                                         </tr>";
                                     

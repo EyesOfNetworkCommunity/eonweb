@@ -146,12 +146,31 @@ class Itsm{
         foreach($this->itsm_vars as $key=>$value){
             // $value = id champ_ged
             if(array_key_exists($key,$old_vars)){
-                sqlrequest($database_eonweb,'UPDATE FROM itsm_var SET champ_ged_id ='.$value.' WHERE itsm_var_name=\''.$key.'\' AND itsm_id='.$this->itsm_id);
+                sqlrequest($database_eonweb,'UPDATE itsm_var SET champ_ged_id ='.$value.' WHERE itsm_var_name=\''.$key.'\' AND itsm_id='.$this->itsm_id);
             }else{
                 sqlrequest($database_eonweb,$sql_add.'('.$this->itsm_id.', \''.$key.'\', '.$value.')');
             }
         }
 
+    }
+
+    public function up(){
+        global $database_eonweb;
+        $order = intval($this->itsm_order)-1;
+        $sql1='UPDATE itsm SET itsm_ordre = itsm_ordre+1 WHERE itsm_ordre='.$order;
+        $sql2='UPDATE itsm SET itsm_ordre = itsm_ordre-1 WHERE itsm_id='.$this->itsm_id;
+        sqlrequest($database_eonweb,$sql1);
+        sqlrequest($database_eonweb,$sql2);
+    }
+
+    public function down(){
+        global $database_eonweb;
+        $order = intval($this->itsm_order)+1;
+        $sql1='UPDATE itsm SET itsm_ordre = itsm_ordre-1 WHERE itsm_ordre='.$order;
+        $sql2='UPDATE itsm SET itsm_ordre = itsm_ordre+1 WHERE itsm_id='.$this->itsm_id;
+
+        sqlrequest($database_eonweb,$sql1);
+        sqlrequest($database_eonweb,$sql2);
     }
 
     function insert_sql($var){

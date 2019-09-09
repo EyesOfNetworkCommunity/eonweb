@@ -18,6 +18,45 @@
 #
 #########################################
 */
+function up_itsm(id){
+	var formData = new FormData();
+	formData.append('itsm_id', id);
+	formData.append('action',"up_external_itsm");
+	$.ajax({
+		type		: 'POST', // define the type of HTTP verb we want to use (POST for our form)
+		url		    : 'ajax.php', // the url where we want to POST
+		data		: formData, // our data object
+		dataType	: 'html', // what type of data do we expect back from the server
+		processData: false,
+		contentType: false,
+		success : function(result){ // success est toujours en place, bien sûr !
+			$('#result').html(result);
+		},
+		error : function(result, statut, erreur){
+			$('#result').html(result+erreur);
+		}
+	});
+}
+
+function down_itsm(id){
+	var formData = new FormData();
+	formData.append('itsm_id', id);
+	formData.append('action',"down_external_itsm");
+	$.ajax({
+		type		: 'POST', // define the type of HTTP verb we want to use (POST for our form)
+		url		    : 'ajax.php', // the url where we want to POST
+		data		: formData, // our data object
+		dataType	: 'html', // what type of data do we expect back from the server
+		processData: false,
+		contentType: false,
+		success : function(result){ // success est toujours en place, bien sûr !
+			$("#result").html(result);
+		},
+		error : function(result, statut, erreur){
+			$("#result").html(result + erreur);
+		}
+	});
+}
 
 function delete_itsm(id){
 	var formData = new FormData();

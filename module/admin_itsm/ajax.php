@@ -82,7 +82,10 @@ if($_POST["action"] == "add_external_itsm"){
 
         }
         $nb_itsm=$itsmPeer->count_itsm();
-        $itsm->setItsm_order(intval($nb_itsm)+1);
+        if($itsm->getItsm_order()==null){
+            $itsm->setItsm_order(intval($nb_itsm)+1);
+        }
+        
 
         $id = $itsm->save();
         if($id > 0 ){
@@ -141,6 +144,14 @@ if($_POST["action"] == "add_external_itsm"){
     $itsmPeer= new ItsmPeer();
     $itsm = $itsmPeer->getItsmById($_POST["itsm_id"]);
     $itsm->delete();
+}else if ($_POST["action"] == "up_external_itsm"){
+    $itsmPeer= new ItsmPeer();
+    $itsm = $itsmPeer->getItsmById($_POST["itsm_id"]);
+    $itsm->up();
+}else if ($_POST["action"] == "down_external_itsm"){
+    $itsmPeer= new ItsmPeer();
+    $itsm = $itsmPeer->getItsmById($_POST["itsm_id"]);
+    $itsm->down();
 }else if ($_POST["action"] == "generate_itsm_request"){
     $itsmPeer= new ItsmPeer();
     $newarray_header = array();
@@ -179,7 +190,7 @@ if($_POST["action"] == "add_external_itsm"){
             $opt .= "<option value=\"".$key."\">";
         }
     }else{
-        echo "<option vlue=\"ERREUR\">".$result."</option>";
+        echo "<option value=\"ERREUR\">".$result."</option>";
     }
     echo "<option  >".$opt;
 }
