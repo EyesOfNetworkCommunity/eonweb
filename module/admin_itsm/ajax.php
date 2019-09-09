@@ -142,6 +142,7 @@ if($_POST["action"] == "add_external_itsm"){
     $itsm = $itsmPeer->getItsmById($_POST["itsm_id"]);
     $itsm->delete();
 }else if ($_POST["action"] == "generate_itsm_request"){
+    $itsmPeer= new ItsmPeer();
     $newarray_header = array();
     $newdict_var = array();
     $contenus ="";
@@ -150,7 +151,7 @@ if($_POST["action"] == "add_external_itsm"){
             array_push($newarray_header,$header);
         }
     }
-
+    
     if(!empty($_POST["itsm_parent"])){
         $itsm = $itsmPeer->getItsmById($_POST["itsm_parent"]);
         $parent_value = $itsm->execute_itsm();
@@ -166,6 +167,8 @@ if($_POST["action"] == "add_external_itsm"){
 
     if($_FILES["fileName"]["size"] > 0){
         $contenus = file_get_contents($_FILES["fileName"]['tmp_name']);
+    }else if (!empty($_POST["input_file_name"])){
+        $contenus = file_get_contents($_POST["input_file_name"]);
     }
 
     $opt = "";
@@ -175,6 +178,8 @@ if($_POST["action"] == "add_external_itsm"){
         foreach($json_obj as $key=>$value){
             $opt .= "<option value=\"".$key."\">";
         }
+    }else{
+        echo "<option vlue=\"ERREUR\">".$result."</option>";
     }
     echo "<option  >".$opt;
 }

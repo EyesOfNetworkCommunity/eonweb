@@ -81,7 +81,7 @@ include("classes/ItsmPeer.php");
                                     <?php echo getLabel("action.import"); ?>&hellip; <input id="input_file" name="fileName" type="file" accept=".json,.xml" style="display: none;" >
                                 </span>
                             </label>
-                            <input type="text" id="file_label" class="form-control" placeholder="File type : xml , json" <?php if($itsm!=false){echo 'value="'.$itsm->getItsm_file().'"';}?> readonly>
+                            <input type="text" id="file_label" class="form-control" name="input_file_name" placeholder="File type : xml , json" <?php if($itsm!=false){echo 'value="'.$itsm->getItsm_file().'"';}?> readonly>
                         </div>
                     </div>
                 </div>

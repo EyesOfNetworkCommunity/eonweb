@@ -82,7 +82,7 @@ class Itsm{
             array_push($headers,$header);
         }
 
-        if(isset($this->itsm_file)){
+        if(isset($this->itsm_file) && !empty($this->itsm_file)){
             $extension              = explode(".",basename($this->itsm_file))[1];
             $file_content           = file_get_contents($this->itsm_file);
         }else $file_content = "";
@@ -108,8 +108,8 @@ class Itsm{
 
         $result = curl_call($headers,$url,$file_content,$this->itsm_type_request); 
         $json_obj = json_decode($result,true);
-        if(isset($json_obj)){
-	        $result = $json_obj[0][$this->itsm_return_champ];
+        if(isset($json_obj) && gettype($json_obj) == "array" ){
+	        $result = $json_obj[$this->itsm_return_champ];
         }else return true;
 
         return $result;

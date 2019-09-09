@@ -127,3 +127,102 @@ function_itsm.php file curl :
 function_itsm.php file curl : 
 function_itsm.php file curl : 
 function_itsm.php file curl : 
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": {
+        "name": "%TITLE%",
+        "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%",
+        "type": "2",
+        "status": "6"
+        }
+}
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": {
+        "name": "%TITLE%",
+        "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%",
+        "type": "2",
+        "status": "6"
+        }
+}
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": {
+        "name": "%TITLE%",
+        "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%",
+        "type": "2",
+        "status": "6"
+        }
+}
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": {
+        "name": "%TITLE%",
+        "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%",
+        "type": "2",
+        "status": "6"
+        }
+}
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": {
+        "name": "%TITLE%",
+        "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%",
+        "type": "2",
+        "status": "6"
+        }
+}
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": {
+        "name": "%TITLE%",
+        "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%",
+        "type": "2",
+        "status": "6"
+        }
+}
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": {
+        "name": "%TITLE%",
+        "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%",
+        "type": "2",
+        "status": "6"
+        }
+}
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": {
+        "name": "%TITLE%",
+        "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%",
+        "type": "2",
+        "status": "6"
+        }
+}
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": {
+        "name": "%TITLE%",
+        "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%",
+        "type": "2",
+        "status": "6"
+        }
+}
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": {
+        "name": "%TITLE%",
+        "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%",
+        "type": "2",
+        "status": "6"
+        }
+}
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": {
+        "name": "%TITLE%",
+        "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%",
+        "type": "2",
+        "status": "6"
+        }
+}
