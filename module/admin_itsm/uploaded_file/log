@@ -226,3 +226,183 @@ function_itsm.php file curl : {
         "status": "6"
         }
 }
+function_itsm.php file curl : 
+function_itsm.php result curl : d3hnfp1g573kh8fatiitqhn3m6
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": {
+        "name": "6",
+        "content": "Machine : 5  ( 4 ) </br>Problèmes : 3 </br>Commentaire : 2",
+        "type": "2",
+        "status": "6"
+        }
+}
+function_itsm.php result curl : 3
+function_itsm.php file curl : 
+function_itsm.php result curl : 8h6v0hbl07darib9uv4aooh803
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": [
+        {
+            "name": "6", 
+            "content": "Machine : 5  ( 4 ) </br>Problèmes : 3 </br>Commentaire : 2", 
+            "entities_id": 826, 
+            "requesttypes_id":7, 
+            "urgency":"Haute",
+            "impact":3,
+            "priority":3,
+            "itilcategories_id":5
+        }]
+}
+
+function_itsm.php result curl : 
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": [
+        {
+            "name": "%TITLE%", 
+            "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%", 
+            "entities_id": 826, 
+            "requesttypes_id":7, 
+            "urgency":"Haute",
+            "impact":3,
+            "priority":3,
+            "itilcategories_id":5
+        }]
+}
+
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": [
+        {
+            "name": "%TITLE%", 
+            "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%", 
+            "entities_id": 826, 
+            "requesttypes_id":7, 
+            "urgency":"Haute",
+            "impact":3,
+            "priority":3,
+            "itilcategories_id":5
+        }]
+}
+
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": [
+        {
+            "name": "%TITLE%", 
+            "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%", 
+            "entities_id": 826, 
+            "requesttypes_id":7, 
+            "urgency":"Haute",
+            "impact":3,
+            "priority":3,
+            "itilcategories_id":5
+        }]
+}
+
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": [
+        {
+            "name": "%TITLE%", 
+            "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%", 
+            "entities_id": 826, 
+            "requesttypes_id":7, 
+            "urgency":"Haute",
+            "impact":3,
+            "priority":3,
+            "itilcategories_id":5
+        }]
+}
+
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": [
+        {
+            "name": "%TITLE%", 
+            "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%", 
+            "entities_id": 826, 
+            "requesttypes_id":7, 
+            "urgency":"Haute",
+            "impact":3,
+            "priority":3,
+            "itilcategories_id":5
+        }]
+}
+
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": [
+        {
+            "name": "%TITLE%", 
+            "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%", 
+            "entities_id": 826, 
+            "requesttypes_id":7, 
+            "urgency":"Haute",
+            "impact":3,
+            "priority":3,
+            "itilcategories_id":5
+        }]
+}
+
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": [
+        {
+            "name": "%TITLE%", 
+            "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%", 
+            "entities_id": 826, 
+            "requesttypes_id":7, 
+            "urgency":"Haute",
+            "impact":3,
+            "priority":3,
+            "itilcategories_id":5
+        }]
+}
+
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": [
+        {
+            "name": "%TITLE%", 
+            "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%", 
+            "entities_id": 826, 
+            "requesttypes_id":7, 
+            "urgency":"Haute",
+            "impact":3,
+            "priority":3,
+            "itilcategories_id":5
+        }]
+}
+
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": [
+        {
+            "name": "%TITLE%", 
+            "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%", 
+            "entities_id": 826, 
+            "requesttypes_id":7, 
+            "urgency":"Haute",
+            "impact":3,
+            "priority":3,
+            "itilcategories_id":5
+        }]
+}
+
+function_itsm.php file curl : 
+function_itsm.php file curl : {
+    "input": [
+        {
+            "name": "%TITLE%", 
+            "content": "Machine : %HOST%  ( %IP_HOST% ) </br>Problèmes : %ERREUR% </br>Commentaire : %COMMENTS%", 
+            "entities_id": 826, 
+            "requesttypes_id":7, 
+            "urgency":"Haute",
+            "impact":3,
+            "priority":3,
+            "itilcategories_id":5
+        }]
+}
+

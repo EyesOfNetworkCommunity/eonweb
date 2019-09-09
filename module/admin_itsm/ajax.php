@@ -185,14 +185,25 @@ if($_POST["action"] == "add_external_itsm"){
     $opt = "";
     $result = curl_call($newarray_header,$_POST["itsm_url"],$contenus,$_POST["itsm_type_request"]);
     $json_obj = json_decode($result,true);
+    
     if(isset($json_obj)){
-        foreach($json_obj as $key=>$value){
-            $opt .= "<option value=\"".$key."\">";
+        if(isset($json_obj[0])){
+            echo "<div class=\"alert alert-warning\" role=\"alert\">";
+            getResult($json_obj);
+            echo "</div>";
+        }else{
+            echo "<datalist id=\"list_champs_generate\">";
+            foreach($json_obj as $key=>$value){
+                $opt .= "<option value=\"".$key."\">";
+            }
+            echo "<option  >".$opt."</datalist>";
         }
+        
+        
     }else{
         echo "<option value=\"ERREUR\">".$result."</option>";
     }
-    echo "<option  >".$opt;
+    
 }
 
 ?>

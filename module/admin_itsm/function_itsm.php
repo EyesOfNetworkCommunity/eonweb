@@ -154,6 +154,13 @@ function curl_call($headers,$url,$file,$type="get",$ssl=false){
     return $result;
 }
 
+function getResult($tab){
+    if(is_array($tab)){
+        foreach($tab as $key=>$value){
+            getResult($value);
+        }
+    }else echo $tab." ";
+}
 
 
 /**
