@@ -155,12 +155,12 @@ include("classes/ItsmPeer.php");
                                 echo "<div class=\"form-group\">
                                         <label class=\"control-label col-sm-2\"></label>
                                         <div class=\"col-sm-3 input\"> 
-                                            <input type=\"text\" class=\"form-control \" id=\"itsm_var_".$nb."\" name=\"itsm_var[".$nb."][var_name]\" placeholder=\"%COMMENTAIRE%\" value=\"".$key."\" disabled>
+                                            <input type=\"text\" class=\"form-control \" id=\"itsm_var_".$nb."\" name=\"itsm_var[".$nb."][var_name]\" placeholder=\"%COMMENTAIRE%\" value=\"".$key."\">
                                         </div>
                                         <div class=\"col-sm-3 select\"> 
                                         <select class=\"form-control select_champ\" name=\"itsm_var[".$nb."][champ_ged_id]\" >";
                                         foreach($itsm_champ_ged as $key2=>$value2){
-                                            if($value==$value2){
+                                            if(strval($value)==strval($key2)){
                                                 echo "<option value=\"".$key2."\" selected>".$value2."</option>";
                                             }else{
                                                 echo "<option value=\"".$key2."\">".$value2."</option>";
