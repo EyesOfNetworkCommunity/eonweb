@@ -153,6 +153,7 @@ if($_POST["action"] == "add_external_itsm"){
     $itsm = $itsmPeer->getItsmById($_POST["itsm_id"]);
     $itsm->down();
 }else if ($_POST["action"] == "generate_itsm_request"){
+    $return_page = array();
     $itsmPeer= new ItsmPeer();
     $newarray_header = array();
     $newdict_var = array();
@@ -182,26 +183,33 @@ if($_POST["action"] == "add_external_itsm"){
         $contenus = file_get_contents($_POST["input_file_name"]);
     }
 
-    $opt = "";
+    $opt = "<option >";
     $result = curl_call($newarray_header,$_POST["itsm_url"],$contenus,$_POST["itsm_type_request"]);
     $json_obj = json_decode($result,true);
-    
     if(isset($json_obj)){
-        if(isset($json_obj[0])){
-            echo "<div class=\"alert alert-warning\" role=\"alert\">";
-            getResult($json_obj);
-            echo "</div>";
-        }else{
-            echo "<datalist id=\"list_champs_generate\">";
-            foreach($json_obj as $key=>$value){
+        
+        
+        echo "<datalist id=\"champs_generate\">";
+
+        foreach($json_obj as $key=>$value){
+            if(is_array($value)){
+                foreach($value as $key1=>$value1){
+                    $opt .= "<option value=\"".$key1."\">";
+                }
+            }else{
                 $opt .= "<option value=\"".$key."\">";
             }
-            echo "<option  >".$opt."</datalist>";
         }
+        echo $opt."</datalist>";
         
+
+        echo "<div class=\"alert alert-warning alert-dismissible\" role=\"alert\">";
+        //var_dump($newarray_header);
+        getResult($json_obj);
+        echo "</div>";
         
     }else{
-        echo "<option value=\"ERREUR\">".$result."</option>";
+        echo "<div class=\"alert alert-warning\" role=\"alert\">".$result."</div>";
     }
     
 }

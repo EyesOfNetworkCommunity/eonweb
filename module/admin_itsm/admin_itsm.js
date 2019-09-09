@@ -96,7 +96,7 @@ $(document).ready(function(){
 			processData: false,
 			contentType: false,
 			success : function(result){ // success est toujours en place, bien sûr !
-				$("#champs_generate").html(result);
+				$("#itsm_request_return_value").append(result);
 			}
 		});
 	});

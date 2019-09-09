@@ -227,14 +227,13 @@ include("classes/ItsmPeer.php");
                             }else{
                                 echo "<input list=\"champs_generate\"  class=\"form-control\" id=\"itsm_generate_champ\" name=\"itsm_return_champ\">";
                             }
+                            
                         ?>
                     </div>
                     <div class="col-sm-1">
                         <button type="button" id="generate_list" class="btn btn-info"><?php echo getLabel("label.admin_itsm.btn_generate"); ?></button>
                     </div>
-                    <div class="col-sm-3" id="champs_generate">
-                        <datalist id="list_champs_generate"></datalist>
-                    </div>
+                    
                 </div>
                 
                 <div class="form-group" id="options_itsm"> 

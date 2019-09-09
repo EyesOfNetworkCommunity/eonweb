@@ -157,9 +157,12 @@ function curl_call($headers,$url,$file,$type="get",$ssl=false){
 function getResult($tab){
     if(is_array($tab)){
         foreach($tab as $key=>$value){
+            if(!is_integer($key)){
+                echo $key." : ";
+            } 
             getResult($value);
         }
-    }else echo $tab." ";
+    }else echo $tab." </br>";
 }
 
 

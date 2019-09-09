@@ -88,14 +88,14 @@ class Itsm{
         }else $file_content = "";
         
         //$content_type_header    = ($extension == "xml")? 'Content-Type: text/xml;charset=UTF-8':'Content-Type: application/json;charset=UTF-8';
-        
+        $tab_champGed = $this->itsmPeer->getListChampGed();
         if(isset($id_ged)){
             foreach($this->itsm_vars as $key=>$value){
-                $value_champ_ged = get_champ_ged($value, $ged_type, $queue, $id_ged);
+                
+                $value_champ_ged = get_champ_ged($tab_champGed[$value], $ged_type, $queue, $id_ged);
                 $file_content = str_replace($key,$value_champ_ged,$file_content);
             }
         }
-        
 
         if(preg_match("%PREVIOUS%",$file_content)==1 && $previous != false){
             $file_content = str_replace("%PREVIOUS%",$previous, $file_content);
