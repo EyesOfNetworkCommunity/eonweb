@@ -30,10 +30,10 @@ function up_itsm(id){
 		processData: false,
 		contentType: false,
 		success : function(result){ // success est toujours en place, bien sûr !
-			$('#result').html(result);
+			location.reload();
 		},
 		error : function(result, statut, erreur){
-			$('#result').html(result+erreur);
+			$("#result").html('<div class="alert alert-danger" role="alert">'+erreur+'</div>');
 		}
 	});
 }
@@ -50,10 +50,10 @@ function down_itsm(id){
 		processData: false,
 		contentType: false,
 		success : function(result){ // success est toujours en place, bien sûr !
-			$("#result").html(result);
+			location.reload();
 		},
 		error : function(result, statut, erreur){
-			$("#result").html(result + erreur);
+			$("#result").html('<div class="alert alert-danger" role="alert">'+erreur+'</div>');
 		}
 	});
 }
