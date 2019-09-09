@@ -31,6 +31,7 @@ include("classes/ItsmPeer.php");
 $state = get_itsm_state();
 $itsmPeer = new ItsmPeer();
 $itsm_list = $itsmPeer->get_all_itsm();
+$last = count($itsm_list);
 ?>
 
 
@@ -74,6 +75,7 @@ $itsm_list = $itsmPeer->get_all_itsm();
                                             <td class=\"col-sm-3\">".$itsm->getItsm_url()."</td>
                                             <td class=\"col-sm-0\">".$itsm->getItsm_type_request()."</td>
                                             <td class=\"col-sm-6\">";
+                                    
                                     foreach($itsm->getItsm_headers() as $header){
                                         echo $header."</br> ";
                                     }
@@ -83,10 +85,16 @@ $itsm_list = $itsmPeer->get_all_itsm();
                                                     <a href='modification_itsm.php?url=".$itsm->getItsm_url()."' class=\"btn btn-success\" role=\"button\">".getLabel("action.edit")."</a>
                                                     <button class=\"btn btn-danger\" type=\"button\" onclick='delete_itsm(".$itsm->getItsm_id().")'>".getLabel("action.delete")."</button>
                                             </td>
-                                            <td class=\"col-sm-1\">
-                                                <button type=\"button\"  onclick='up_itsm(".$itsm->getItsm_id().")' class=\"btn btn-info\"><i class=\"fa fa-arrow-up\"></i></button>
-                                                <button type=\"button\"  onclick='down_itsm(".$itsm->getItsm_id().")' class=\"btn btn-info\"><i class=\"fa fa-arrow-down\"></i></button>
-                                            </td>
+                                            <td class=\"col-sm-1\">";
+                                    if($itsm->getItsm_order() == 1){
+                                            echo "<button type=\"button\"  onclick='down_itsm(".$itsm->getItsm_id().")' class=\"btn btn-info\"><i class=\"fa fa-arrow-down\"></i></button>";
+                                    }else if($itsm->getItsm_order() == $last){
+                                        echo "<button type=\"button\"  onclick='up_itsm(".$itsm->getItsm_id().")' class=\"btn btn-info\"><i class=\"fa fa-arrow-up\"></i></button>";
+                                    }else {
+                                        echo "<button type=\"button\"  onclick='down_itsm(".$itsm->getItsm_id().")' class=\"btn btn-info\"><i class=\"fa fa-arrow-down\"></i></button>
+                                        <button type=\"button\"  onclick='up_itsm(".$itsm->getItsm_id().")' class=\"btn btn-info\"><i class=\"fa fa-arrow-up\"></i></button>";
+                                    }    
+                                    echo " </td>
                                         </tr>";
                                     
                                 }

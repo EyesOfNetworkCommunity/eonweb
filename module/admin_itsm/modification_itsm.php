@@ -114,8 +114,6 @@ include("classes/ItsmPeer.php");
                         $nb = 0;
                         if($itsm!=false && count($itsm->getItsm_headers())>0){
                             
-                            $header_key_list = array_keys($itsm->getItsm_headers());
-                            $last_key = end($header_key_list);
                             foreach($itsm->getItsm_headers() as $key=>$value){
                                 echo "<div class=\"form-group\">
                                         <label class=\"control-label col-sm-2\"></label>
