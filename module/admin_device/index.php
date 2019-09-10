@@ -200,7 +200,7 @@ include("../../side.php");
 								  order by nagios_host_template.name,nagios_host.name;";
 						$result=sqlrequest($database_cacti,$request);
 						
-						echo "<select name='hosts[]' class='form-control' size=5 multiple='multiple'>";
+						echo "<select name='hosts[]' class='form-control' size=15 multiple='multiple'>";
 						while ($line = mysqli_fetch_array($result))
 						{
 							echo "<option value='$line[0]'>&nbsp;$line[1] ($line[0])&nbsp;</option>\n";
@@ -220,7 +220,7 @@ include("../../side.php");
 				<?php
 					# --- Retrieve host array from cacti
 					$result=sqlrequest($database_cacti,"SELECT DISTINCT host.id,hostname,description FROM host ORDER BY hostname ASC");
-					echo "<select class='form-control' name='hosts_cacti[]' size=5 multiple>";
+					echo "<select class='form-control' name='hosts_cacti[]' size=15 multiple='multiple'>";
 					while ($line = mysqli_fetch_array($result))
 					{
 						echo "<option value='$line[0]'>$line[1] ($line[2])</option>";
