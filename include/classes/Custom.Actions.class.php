@@ -45,13 +45,6 @@ class CustomActions
                 $ged_type = $value_parts[1];
                 if($ged_type == "nagios"){ $ged_type_nbr = 1; }
                 if($ged_type == "snmptrap"){ $ged_type_nbr = 2; }
-        
-                // $sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = $id";
-                // $result = sqlrequest($database_ged, $sql, false);
-                // $event = mysqli_fetch_assoc($result);
-                // $detail = $event["equipment"]." / ".$event["service"];
-                // $description = "<H1>Détail de l'incident:</H1> <br>Nom d'équipement: ".$event["equipment"]."<br> Service: ".$event["service"]."<br>Adresse IP: ".$event["ip_address"]."<br><br>Description: ".$event["description"]."<br><br>Commentaire: ".$event["comments"];
-				
 				/* // DU CAS PART CAS 
 				$array_vars=array();
 				if(isset($group)) {
@@ -59,10 +52,15 @@ class CustomActions
 				}
 				*/
 				$result = report_itsm($ged_type, $queue, $id_ged);
+				if($result){
+					message(6,"Ticket created.","ok");
+				}else{
+					message(11,"An error occured during the ticket creation.","warning");
+				}
 			}
 			
             return true;
-        }else return false;
+        }else false;
 	}
 
 	/**

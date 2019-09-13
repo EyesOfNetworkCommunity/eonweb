@@ -108,11 +108,17 @@ class Itsm{
 
         $result = curl_call($headers,$url,$file_content,$this->itsm_type_request); 
         $json_obj = json_decode($result,true);
+
         if(isset($json_obj) && gettype($json_obj) == "array" ){
 	        $result = $json_obj[$this->itsm_return_champ];
         }else return true;
 
-        return $result;
+        if(empty($result)){
+            return true;
+        }else{
+            return $result;
+        }
+        
     }
 
     private function maj_headers_db(){

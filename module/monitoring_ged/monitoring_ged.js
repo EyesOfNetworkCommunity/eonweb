@@ -461,6 +461,7 @@ $(document).ready(function(){
 				comments: comments
 			},
 			success: function(response){
+				$("#messages").html(response);
 				$(".modal-body #event-message").html(response);
 				$("#confirmation-modal").modal('hide');
 				$("#ged-modal").modal('hide');
