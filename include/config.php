@@ -24,6 +24,8 @@
 // # General Information
 // #######################################
 $version="5";
+$release="3";
+$surname="Galipette"
 
 // #######################################
 // # Database config information
