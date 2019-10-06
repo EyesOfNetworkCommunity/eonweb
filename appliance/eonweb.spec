@@ -1,8 +1,9 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
 Version: 5.3
-Release: 0.eon
-Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/master.tar.gz#/%{name}-%{version}.tar.gz
+Release: 1
+#Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/master.tar.gz#/%{name}-%{version}.tar.gz
+Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
 Requires: backup-manager, cacti0, ged, ged-mysql, eon4apps, lilac, snmptt, thruk 
@@ -55,6 +56,10 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
+* Sun Oct 06 2019 Sebastien DAVOULT <d@vou.lt> - 5.3-1.eon
+- Add CSV verify
+- fix hosts_cacti lisibility
+- Adding Release name in help_about
 * Tue Jul 16 2019 Sebastien DAVOULT <d@vou.lt> - 5.3-0.eon
 - Add services unused templates
 - Add menu to list unused templates
