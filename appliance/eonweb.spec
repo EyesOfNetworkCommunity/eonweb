@@ -2,7 +2,6 @@ Summary: EyesOfNetwork Web Interface
 Name: eonweb
 Version: 5.3
 Release: 1
-#Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/master.tar.gz#/%{name}-%{version}.tar.gz
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
@@ -25,7 +24,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 EONWEB is the web frontend for the EyesOfNetwork appliance : https://www.eyesofnetwork.com.
 
 %prep
-%setup -q -n %{name}-master
+%setup -q -n %{name}-%{version}-%{release}
 
 %build
 
