@@ -286,31 +286,49 @@ if(file_exists($file)){
 
 					<?php if($queue == "active"){ ?>
 					<div id="edit-btns" class="btn-group">
-						<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<button id="edit-event-choix" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<?php echo getLabel("action.edit"); ?> <span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu">
 							<li id="edit-event"><a href="#"><?php echo getLabel("label.this"); ?></a></li>
 							<li id="edit-all-event"><a href="#"><?php echo ucfirst(getLabel("label.all")); ?></a></li>
 						</ul>
+
+						<span id="edit-event-simple">
+						<button id="edit-event" class="btn btn-primary" aria-haspopup="true" aria-expanded="false">
+							<?php echo getLabel("action.edit"); ?> 
+						</button>
+						</span>
 					</div>
 					<div id="own-btns" class="btn-group">
-						<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<button id="own-event-choix" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<?php echo getLabel("action.own"); ?> <span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu">
 							<li id="own-event"><a href="#"><?php echo getLabel("label.this"); ?></a></li>
 							<li id="own-all-event"><a href="#"><?php echo ucfirst(getLabel("label.all")); ?></a></li>
 						</ul>
+						<span id="own-event-simple">
+						<button id="own-event" class="btn btn-primary" aria-haspopup="true" aria-expanded="false">
+							<?php echo getLabel("action.own");?>
+						</button>
+						</span>
+
 					</div>
 					<div id="ack-btns" class="btn-group">
-						<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<button id ="ack-event-choix" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<?php echo getLabel("action.ack"); ?> <span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu">
 							<li id="ack-event"><a href="#"><?php echo getLabel("label.this"); ?></a></li>
 							<li id="ack-all-event"><a href="#"><?php echo ucfirst(getLabel("label.all")); ?></a></li>
 						</ul>
+						
+						<span id="ack-event-simple">
+						<button id = "ack-event" class="btn btn-primary"aria-haspopup="true" aria-expanded="false">
+							<?php echo getLabel("action.ack"); ?> 
+						</button>
+						</span>
 					</div>
 					<?php } ?>
 

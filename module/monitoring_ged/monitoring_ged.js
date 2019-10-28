@@ -368,6 +368,29 @@ $(document).ready(function(){
 					var service_name = event_infos[4];
 					$(".modal-title").html(host_name+" / "+service_name+ " ("+ (event_index + 1) +"/"+selected_events.length+")");
 					$(".modal-body #content").html(response);
+
+					$("#own-event-choix").show();
+					$("#own-event-simple").show();
+
+					$("#ack-event-choix").show();
+					$("#ack-event-simple").show();
+
+					$("#edit-event-simple").show();
+					$("#edit-event-choix").show();
+
+
+					if(selected_events.length < 2){
+						$("#own-event-choix").hide();
+						$("#ack-event-choix").hide();
+						$("#edit-event-choix").hide();
+
+					}else{
+						$("#own-event-simple").hide();
+						$("#ack-event-simple").hide();
+						$("#edit-event-simple").hide();
+
+					}
+
 				} else {
 					removeModalState();
 					$(".modal-title").html(dictionnary[action_name]);
@@ -375,6 +398,7 @@ $(document).ready(function(){
 				}
 				
 				$("#ged-modal").modal();
+
 			}
 		});
 	});
