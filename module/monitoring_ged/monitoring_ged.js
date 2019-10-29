@@ -378,11 +378,15 @@ $(document).ready(function(){
 					$("#edit-event-simple").show();
 					$("#edit-event-choix").show();
 
+					$("#details-prev").show();
+					$("#details-next").show();
 
 					if(selected_events.length < 2){
 						$("#own-event-choix").hide();
 						$("#ack-event-choix").hide();
 						$("#edit-event-choix").hide();
+						$("#details-prev").hide();
+						$("#details-next").hide();
 
 					}else{
 						$("#own-event-simple").hide();
