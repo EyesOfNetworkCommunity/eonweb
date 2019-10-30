@@ -67,7 +67,7 @@ if(!isset($group)) { $group=null; }
 				$CustomActions->ged_own($selected_events, $queue, $global_action);
 			}elseif($global_action == "6"){
 				$CustomActions->ged_acknowledge($selected_events, $queue);				
-				acknowledge($selected_events, $queue);
+				acknowledge($selected_events, $queue,$checkBoxNagios);
 			}
 			break;
 		case 'confirm':
@@ -81,7 +81,7 @@ if(!isset($group)) { $group=null; }
 				$CustomActions->ged_own($selected_events, $queue, $global_action);
 			}elseif($global_action == "6"){
 				$CustomActions->ged_acknowledge($selected_events, $queue);				
-				acknowledge($selected_events, $queue);
+				acknowledge($selected_events, $queue, $checkBoxNagios);
 			}
 			break;
 		case 'changeGedFilter':

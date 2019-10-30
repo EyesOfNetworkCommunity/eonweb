@@ -340,7 +340,7 @@ if(file_exists($file)){
 
 					<?php 
 						edit_button();
-					} ?>
+					 ?>
 
 					<button id="event-validation" type="button" class="btn btn-primary">
 						<?php echo getLabel("action.apply"); ?>
