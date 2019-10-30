@@ -315,6 +315,7 @@ if(file_exists($file)){
 						</span>
 
 					</div>
+
 					<div id="ack-btns" class="btn-group">
 						
 						<button id ="ack-event-choix" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -336,13 +337,20 @@ if(file_exists($file)){
 						<label class="form-check-label" for="checkbox-nagios"><?php echo getLabel("label.ack_in_nagios");?>:</label>
 						<input type="checkbox" class="form-check-input" id="checkbox-nagios" checked>
 					</div>
+
+					<?php 
+						edit_button();
+					} ?>
+
 					<button id="event-validation" type="button" class="btn btn-primary">
 						<?php echo getLabel("action.apply"); ?>
 					</button>
 					<button id="action-cancel" type="button" class="btn btn-default" data-dismiss="modal">
 						<?php echo getLabel("action.cancel"); ?>
 					</button>
+					
 				</div>
+				
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
@@ -375,6 +383,43 @@ if(file_exists($file)){
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 	<?php } ?>
+
+	<style>
+						.modal-loader{
+							background-color: rgba(0, 0, 0, .5);
+							z-index:3500;
+							position: absolute;
+								top: 0;
+								right: 0;
+								bottom: 0;
+								left: 0;
+						}
+						.div-loader {
+							position: fixed;
+								top: 50%;
+								left: 50%;
+							transform: translate(-50%, -50%);
+							border: 14px solid #f3f3f3;
+							border-radius: 50%;
+							border-top: 14px solid #3498db;
+							width: 80px;
+							height: 80px;
+							-webkit-animation: spin 2s linear infinite; /* Safari */
+							animation: spin 2s linear infinite;
+						}
+
+						/* Safari */
+						@-webkit-keyframes spin {
+							0% { -webkit-transform: rotate(0deg); }
+							100% { -webkit-transform: rotate(360deg); }
+						}
+
+						@keyframes spin {
+						0% { transform: rotate(0deg); }
+						100% { transform: rotate(360deg); }
+						}
+					</style>
+					<div id="modal-loader" class="modal-loader" style="visibility: hidden;"><div class="div-loader"></div></div>
 </div>
 
 <?php include("../../footer.php"); ?>

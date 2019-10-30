@@ -1,0 +1,16 @@
+
+Sep,13,2019 11:16:16 AM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Sep,13,2019 11:16:16 AM : INFO :function_itsm.php itsm::execute_itsm() return : 4008bg8pbt9ik88naj5g1l1oj4
+Sep,13,2019 11:16:16 AM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Sep,13,2019 11:16:17 AM : INFO : function_itsm.php/curl_call() file send to external tools : {
+    "input": [
+        {
+            "name": "interfaces", 
+            "content": "Machine : TOTO  ( 192.168.140.7 ) <br>Problèmes : (Service check timed out after 20.03 seconds) <br>Commentaire : TEST", 
+            "urgency":"Haute",
+            "impact":3,
+            "priority":3
+        }]
+}
+
+Sep,13,2019 11:16:17 AM : INFO :function_itsm.php itsm::execute_itsm() return : 1
