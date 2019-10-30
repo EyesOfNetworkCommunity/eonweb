@@ -359,14 +359,13 @@ function ownDisown($selected_events, $queue, $global_action)
 	}
 }
 
-function acknowledge($selected_events, $queue)
+function acknowledge($selected_events, $queue, $checkBoxNagios)
 {
 	global $array_ged_queues;
 	global $database_ged;
 	global $array_ged_packets;
 	global $path_ged_bin;
 	global $array_serv_system;
-
 	if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
 	
 	if(exec($array_serv_system["Ged agent"]["status"])==NULL) {
@@ -379,6 +378,22 @@ function acknowledge($selected_events, $queue)
 		$value_parts = explode(":", $value);
 		$id = $value_parts[0];
 		$ged_type = $value_parts[1];
+		$hostName = $value_parts[3];
+		$serviceName = $value_parts[4];
+		$isHost = explode(" ", $serviceName);
+		if($checkBoxNagios == "true"){
+			$off = 0;
+			$on = 1;
+			$date = new DateTime();
+			$timestamp = $date->getTimestamp();
+			$CommandFile="/srv/eyesofnetwork/nagios/var/log/rw/nagios.cmd";
+			if($isHost[0] == "HOST") {
+				$cmdline = '['.$timestamp.'] ACKNOWLEDGE_HOST_PROBLEM;'.$hostName.';'.$on.';'.$off.';'.$on.';' .$owner. '; Acknowleged in Ged'.PHP_EOL;
+			} else{
+				$cmdline = '['. $timestamp .'] ACKNOWLEDGE_SVC_PROBLEM;'.$hostName.';'.$serviceName.';'.$on.';'.$off.';'.$on.';' .$owner. '; Acknowleged in Ged'.PHP_EOL;
+			}
+			file_put_contents($CommandFile, $cmdline,FILE_APPEND);
+		}
 		if($ged_type == "nagios"){ $ged_type_nbr = 1; }
 		if($ged_type == "snmptrap"){ $ged_type_nbr = 2; }
 

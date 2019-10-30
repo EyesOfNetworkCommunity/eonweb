@@ -316,6 +316,7 @@ if(file_exists($file)){
 
 					</div>
 					<div id="ack-btns" class="btn-group">
+						
 						<button id ="ack-event-choix" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<?php echo getLabel("action.ack"); ?> <span class="caret"></span>
 						</button>
@@ -331,7 +332,10 @@ if(file_exists($file)){
 						</span>
 					</div>
 					<?php } ?>
-
+					<div id="check-nagios" class="form-check" style="display:inline; margin-right: 4rem">
+						<label class="form-check-label" for="checkbox-nagios"><?php echo getLabel("label.ack_in_nagios");?>:</label>
+						<input type="checkbox" class="form-check-input" id="checkbox-nagios" checked>
+					</div>
 					<button id="event-validation" type="button" class="btn btn-primary">
 						<?php echo getLabel("action.apply"); ?>
 					</button>
@@ -356,6 +360,10 @@ if(file_exists($file)){
 					<?php echo getLabel("message.confirmation"); ?>
 				</div>
 				<div id="confirmation-modal-footer" class="modal-footer">
+					<div id="check-nagios-val" class="form-check"style="display:inline; margin-right: 4rem;">
+						<label class="form-check-label" for="checkbox-nagios-val"><?php echo getLabel("label.ack_in_nagios");?>:</label>
+						<input type="checkbox" class="form-check-input" id="checkbox-nagios-val" checked>
+					</div>
 					<button id="confirmation-event-validation" type="button" class="btn btn-primary">
 						<?php echo getLabel("action.apply"); ?>
 					</button>

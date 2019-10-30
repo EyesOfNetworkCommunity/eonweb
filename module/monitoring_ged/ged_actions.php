@@ -53,7 +53,7 @@ elseif(!in_array($queue,$array_ged_queues)) { $queue="active"; }
 			editAllEvents($selected_events, $queue, $comments);
 			$CustomActions->ged_edit($selected_events, $queue, $comments);
 			if($global_action == "4"){
-				acknowledge($selected_events, $queue);
+				acknowledge($selected_events, $queue, $checkBoxNagios);
 				$CustomActions->ged_acknowledge($selected_events, $queue);
 			} elseif($global_action == "2") {
 				ownDisown($selected_events, $queue, $global_action);
@@ -62,7 +62,7 @@ elseif(!in_array($queue,$array_ged_queues)) { $queue="active"; }
 			break;
 		case 'confirm':
 			if($global_action == "4"){
-				acknowledge($selected_events, $queue);
+				acknowledge($selected_events, $queue, $checkBoxNagios);
 				$CustomActions->ged_acknowledge($selected_events, $queue);
 			} elseif($global_action == "5") {
 				delete($selected_events, $queue);

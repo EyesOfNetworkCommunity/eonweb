@@ -347,7 +347,11 @@ $(document).ready(function(){
 			},
 			beforeSend: function(){
 				$("#modal-nav, #edit-btns, #own-btns, #ack-btns, #event-validation").hide();
-				
+				$("#check-nagios").hide();
+			console.log(action);
+				if(action == 4) {
+					$("#check-nagios").show();
+				}
 				// configure modal footer according to action selected
 				switch(action){
 					case "0":
@@ -436,13 +440,15 @@ $(document).ready(function(){
 		global_action = this.id;
 		global_action_name = this.id;
 		action_title = "action.edit";
-		
+		$("#check-nagios-val").hide();
 		if(global_action == "own-event" || global_action == "own-all-event") {
 			action_title = "action.own";
 			global_action = 2;
 		} else if(global_action == "ack-event" || global_action == "ack-all-event") {
 			action_title = "action.ack";
 			global_action = 4;
+			$("#check-nagios-val").show();
+
 		}
 		
 		$("#confirmation-modal-title").html(dictionnary[action_title]);
@@ -454,10 +460,13 @@ $(document).ready(function(){
 		var queue = $("#queue").val();
 		var action = "confirm";
 		var comments = "";
-				
 		var events = [];
+		var checkBoxNagiosVal = document.getElementById("checkbox-nagios-val");
+		checkBoxNagiosVal = checkBoxNagiosVal.checked;
 		if(global_action_name == "edit-event" || global_action_name == "own-event" || global_action_name == "ack-event"){
 			events.push(selected_events[event_index]);
+			
+
 		} else {
 			events = selected_events;
 		}
@@ -474,7 +483,8 @@ $(document).ready(function(){
 				action: action,
 				global_action: global_action,
 				selected_events: events,
-				comments: comments
+				comments: comments,
+				checkBoxNagios: checkBoxNagiosVal
 			},
 			success: function(response){
 				$(".modal-body #event-message").html(response);
@@ -493,15 +503,17 @@ $(document).ready(function(){
 	// click to valid the own/disown/ack/delete
 	$(document).on("click", "#event-validation", function(){
 		var queue = $("#queue").val();
+		var checkBoxNagios = document.getElementById("checkbox-nagios");
+		checkBoxNagios = checkBoxNagios.checked;
 		global_action = gedaction;
-		
 		$.ajax({
 			url: "ged_actions.php",
 			data: {
 				queue: queue,
 				action: "confirm",
 				global_action: global_action,
-				selected_events: selected_events
+				selected_events: selected_events,
+				checkBoxNagios: checkBoxNagios
 			},
 			success: function(response){
 				global_action = "";
