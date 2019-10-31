@@ -59,6 +59,7 @@
 	"label.a_time": "Acknowledge time",
 	"label.ack_time": "Acknowledge time",
 	"label.ack_in_nagios": "Acknowledge nagios",
+	"label.ack_in_nagios_default": "Acknowledge nagios by default",
 	"label.act_event": "Active events",
 	"label.add_comment": "Add comment",
 	"label.admin_auth.auth_backend": "Authentification Backend",

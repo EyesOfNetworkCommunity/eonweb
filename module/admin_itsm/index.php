@@ -32,6 +32,10 @@ $state = get_itsm_state();
 $itsmPeer = new ItsmPeer();
 $itsm_list = $itsmPeer->get_all_itsm();
 $last = count($itsm_list);
+$itsm_acquit = (get_config_var("itsm_acquit") == false ) ? "" : get_config_var("itsm_acquit");
+$itsm_create = (get_config_var("itsm_create") == false ) ? "" : get_config_var("itsm_create");
+$itsm_thruk = (get_config_var("itsm_thruk") == false ) ? "" : get_config_var("itsm_thruk");
+
 ?>
 
 
@@ -47,11 +51,20 @@ $last = count($itsm_list);
         <div class="panel-heading clearfix">
             <h4 class="panel-title pull-left" style="padding-top: 7.5px;">
                 <?php echo getLabel("label.admin_itsm.itsm_setting"); ?>
+                
+                
+                <!--  -->
+              
+                <!--  -->
             </h4>
+            
             <div class="btn-group pull-right">
                     <div class="btn-group" id="result_state_itsm">
                         <?php echo $state; ?>
                         <a href='modification_itsm.php' class="btn btn-info" role="button"><?php echo getLabel("action.add"); ?></a>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#paramTicket">
+                    <span class="glyphicon glyphicon-cog"></span>
+                </button>
                     </div>
             </div>
         </div>
@@ -106,6 +119,27 @@ $last = count($itsm_list);
              
 
         </div>
+        <div class="modal fade" id="paramTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title" id="exampleModalLabel"><?php echo getLabel("label.admin_itsm.itsm_setting");?></h3>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form class="form-horizontal" id="myForm_config_itsm" enctype="multipart/form-data" style="display:grid; ">
+                                <label style="margin:5px"><input style="margin-right:10px" id="itsm_create" name="itsm_create" type="checkbox"  value="true" <?php  if($itsm_create=="true"){echo 'checked';} echo '>'.getLabel("label.admin_itsm.create");?></label>
+                                <label style="margin:5px"><input style="margin-right:10px" id="itsm_acquit" name="itsm_acquit" type="checkbox" value ="true" <?php  if($itsm_acquit=="true"){echo 'checked';} echo '>'.getLabel("label.admin_itsm.acquit");?></label>
+                                <label style="margin:5px"><input style="margin-right:10px" id="itsm_thruk" name="itsm_thruk" type="checkbox" value ="true" <?php  if($itsm_thruk=="true"){echo 'checked';} echo '>'.getLabel("label.ack_in_nagios_default");?></label>
+                            </form>
+                            <div class="modal-footer">
+                                <button id="btn_config_itsm" type="submit" class="btn btn-primary">Ok</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
     </div>
 
 	<br/>

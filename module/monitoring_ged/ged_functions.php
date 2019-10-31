@@ -373,6 +373,8 @@ function acknowledge($selected_events, $queue, $checkBoxNagios)
 	global $array_ged_packets;
 	global $path_ged_bin;
 	global $array_serv_system;
+	$nagios_default = (get_config_var("itsm_thruk") == false ) ? "" : get_config_var("itsm_thruk");
+
 	if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
 	
 	if(exec($array_serv_system["Ged agent"]["status"])==NULL) {
@@ -388,18 +390,21 @@ function acknowledge($selected_events, $queue, $checkBoxNagios)
 		$hostName = $value_parts[3];
 		$serviceName = $value_parts[4];
 		$isHost = explode(" ", $serviceName);
-		if($checkBoxNagios == "true"){
-			$off = 0;
-			$on = 1;
-			$date = new DateTime();
-			$timestamp = $date->getTimestamp();
-			$CommandFile="/srv/eyesofnetwork/nagios/var/log/rw/nagios.cmd";
-			if($isHost[0] == "HOST") {
-				$cmdline = '['.$timestamp.'] ACKNOWLEDGE_HOST_PROBLEM;'.$hostName.';'.$on.';'.$off.';'.$on.';' .$owner. '; Acknowleged in Ged'.PHP_EOL;
-			} else{
-				$cmdline = '['. $timestamp .'] ACKNOWLEDGE_SVC_PROBLEM;'.$hostName.';'.$serviceName.';'.$on.';'.$off.';'.$on.';' .$owner. '; Acknowleged in Ged'.PHP_EOL;
+		if($nagios_default == "true")
+		{
+			if($checkBoxNagios == "true"){
+				$off = 0;
+				$on = 1;
+				$date = new DateTime();
+				$timestamp = $date->getTimestamp();
+				$CommandFile="/srv/eyesofnetwork/nagios/var/log/rw/nagios.cmd";
+				if($isHost[0] == "HOST") {
+					$cmdline = '['.$timestamp.'] ACKNOWLEDGE_HOST_PROBLEM;'.$hostName.';'.$on.';'.$off.';'.$on.';' .$owner. '; Acknowleged in Ged'.PHP_EOL;
+				} else{
+					$cmdline = '['. $timestamp .'] ACKNOWLEDGE_SVC_PROBLEM;'.$hostName.';'.$serviceName.';'.$on.';'.$off.';'.$on.';' .$owner. '; Acknowleged in Ged'.PHP_EOL;
+				}
+				file_put_contents($CommandFile, $cmdline,FILE_APPEND);
 			}
-			file_put_contents($CommandFile, $cmdline,FILE_APPEND);
 		}
 		if($ged_type == "nagios"){ $ged_type_nbr = 1; }
 		if($ged_type == "snmptrap"){ $ged_type_nbr = 2; }
@@ -549,13 +554,19 @@ function edit_button(){
 	if(isset($itsm) && $itsm == "on" ){
 		echo "
 		<div id=\"itsm-btns\" class=\"btn-group\">
-						<button class=\"btn btn-primary dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">
+						<button id=\"itsm-choose\" class=\"btn btn-primary dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">
 							".getLabel('label.admin_itsm.ged_btn_create')." <span class=\"caret\"></span>
 						</button>
 						<ul class=\"dropdown-menu\">
 							<li id=\"itsm-event\"><a href=\"#\">".getLabel('label.this')."</a></li>
 							<li id=\"itsm-all-event\"><a href=\"#\">".ucfirst(getLabel('label.all'))."</a></li>
 						</ul>
+
+						<span id=\"itsm-simple\">
+						<button id=\"itsm-event\" class=\"btn btn-primary\" aria-haspopup=\"true\" aria-expanded=\"false\">
+							".getLabel('label.admin_itsm.ged_btn_create')."
+						</button>
+						</span>
 					</div>";
 	}else {
 		echo "

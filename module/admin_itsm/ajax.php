@@ -95,19 +95,6 @@ if($_POST["action"] == "add_external_itsm"){
         }
     }
 
-    $itsm_create = "false";
-    $itsm_acquit = "false";
-    if(!empty($_POST['itsm_create'])) $itsm_create = "true";
-    if(!empty($_POST['itsm_acquit'])) $itsm_acquit = "true";
-
-    if(insert_config_var("itsm_create",$itsm_create)){
-        $message .= "<div class=\"alert alert-success\" role=\"alert\">".$itsm_create." create succesfully saved.</div>";
-    }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$itsm_create." create failed to be saved.</div>";   
-    if(insert_config_var("itsm_acquit",$itsm_acquit)){
-        $message .= "<div class=\"alert alert-success\" role=\"alert\">".$itsm_acquit." acquit succesfully saved.</div>";
-    }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$itsm_acquit." acquit failed to be saved.</div>";
-
-
     echo $message."</div>";
 }else if ($_POST["action"] == "activate_external_itsm"){
     
@@ -212,6 +199,25 @@ if($_POST["action"] == "add_external_itsm"){
         echo "<div class=\"alert alert-warning\" role=\"alert\">".$result."</div>";
     }
     
+}else if ($_POST["action"] == "add_external_itsm_config"){
+
+    $itsm_create = "false";
+    $itsm_acquit = "false";
+    $itsm_thruk = "false";
+    $message = "";
+    if(!empty($_POST['itsm_create'])) $itsm_create = "true";
+    if(!empty($_POST['itsm_acquit'])) $itsm_acquit = "true";
+    if(!empty($_POST['itsm_thruk'])) $itsm_thruk = "true";
+
+    if(insert_config_var("itsm_create",$itsm_create)){
+        $message .= "<div class=\"alert alert-success\" role=\"alert\">".$itsm_create." create succesfully saved.</div>";
+    }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$itsm_create." create failed to be saved.</div>";   
+    if(insert_config_var("itsm_acquit",$itsm_acquit)){
+        $message .= "<div class=\"alert alert-success\" role=\"alert\">".$itsm_acquit." acquit succesfully saved.</div>";
+    }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$itsm_acquit." acquit failed to be saved.</div>";
+    if(insert_config_var("itsm_thruk",$itsm_thruk)){
+        $message .= "<div class=\"alert alert-success\" role=\"alert\">".$itsm_thruk." thruk succesfully saved.</div>";
+    }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$itsm_thruk." thruk failed to be saved.</div>";
 }
 
 ?>

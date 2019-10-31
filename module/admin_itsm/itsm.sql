@@ -15,6 +15,25 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+
+--
+-- Table structure for table `itsm_champ_ged`
+--
+
+DROP TABLE IF EXISTS `itsm_champ_ged`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `itsm_champ_ged` (
+  `champ_ged_id` int(11) NOT NULL AUTO_INCREMENT,
+  `champ_ged_name` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`champ_ged_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `itsm_champ_ged`
+--
+
 --
 -- Table structure for table `itsm`
 --
@@ -50,7 +69,7 @@ DROP TABLE IF EXISTS `itsm_header`;
 CREATE TABLE `itsm_header` (
   `itsm_header_id` int(11) NOT NULL AUTO_INCREMENT,
   `itsm_id` int(11) DEFAULT NULL,
-  `header` varchar(50) DEFAULT NULL,
+  `header` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`itsm_header_id`),
   KEY `url_id_fk` (`itsm_id`),
   CONSTRAINT `url_id_fk` FOREIGN KEY (`itsm_id`) REFERENCES `itsm` (`itsm_id`) ON DELETE CASCADE
@@ -87,23 +106,7 @@ CREATE TABLE `itsm_var` (
 --
 
 
---
--- Table structure for table `itsm_champ_ged`
---
 
-DROP TABLE IF EXISTS `itsm_champ_ged`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `itsm_champ_ged` (
-  `champ_ged_id` int(11) NOT NULL AUTO_INCREMENT,
-  `champ_ged_name` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`champ_ged_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `itsm_champ_ged`
---
 
 LOCK TABLES `itsm_champ_ged` WRITE;
 /*!40000 ALTER TABLE `itsm_champ_ged` DISABLE KEYS */;

@@ -390,17 +390,22 @@ $(document).ready(function(){
 					$("#details-prev").show();
 					$("#details-next").show();
 
+					$("#itsm-choose").show();
+					$("#itsm-simple").show();
+
 					if(selected_events.length < 2){
 						$("#own-event-choix").hide();
 						$("#ack-event-choix").hide();
 						$("#edit-event-choix").hide();
 						$("#details-prev").hide();
 						$("#details-next").hide();
+						$("#itsm-choose").hide();
 
 					}else{
 						$("#own-event-simple").hide();
 						$("#ack-event-simple").hide();
 						$("#edit-event-simple").hide();
+						$("#itsm-simple").hide();
 
 					}
 

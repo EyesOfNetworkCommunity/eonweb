@@ -234,28 +234,7 @@ include("classes/ItsmPeer.php");
                     
                 </div>
                 
-                <div class="form-group" id="options_itsm"> 
-                    <div class="col-sm-offset-2 col-sm-4">
-                        <div class="checkbox">
-                            <?php 
-                            if($itsm_create=="true"){
-                                echo '<label><input id="itsm_create" name="itsm_create" type="checkbox"  value="true" checked>'.getLabel("label.admin_itsm.create").'</label>';
-                            }else echo '<label><input id="itsm_create" name="itsm_create" type="checkbox"  value="true" >'.getLabel("label.admin_itsm.create").'</label>';
-                            ?>
-                        </div>
-                    </div>
-                    <div class=" col-sm-4">
-                        <div class="checkbox">
-                            <?php
-                                if($itsm_acquit == "true"){
-                                    echo '<label><input id="itsm_acquit" name="itsm_acquit" type="checkbox" value ="true" checked>'.getLabel("label.admin_itsm.acquit").'</label>';
-                                }else echo '<label><input id="itsm_acquit" name="itsm_acquit" type="checkbox" value ="true" >'.getLabel("label.admin_itsm.acquit").'</label>';
-                            ?>
-                        </div>
-                    </div>
-                  
-                   
-                </div>
+               
                 
             </form>
             <div class="form-group"> 

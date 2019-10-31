@@ -14,3 +14,233 @@ Sep,13,2019 11:16:17 AM : INFO : function_itsm.php/curl_call() file send to exte
 }
 
 Sep,13,2019 11:16:17 AM : INFO :function_itsm.php itsm::execute_itsm() return : 1
+Oct,31,2019 11:33:07 AM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 11:33:07 AM : INFO : function_itsm.php/curl_call() file send to external tools : {
+    "input": 
+    [
+        {
+            "name": "%NAME%",
+            "content": "%HOST% %IP%",
+            "groups_id": "2",
+            "urgency":3,
+            "impact":3,
+            "priority":3
+        }
+    ]
+}
+Oct,31,2019 11:33:45 AM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 11:33:46 AM : INFO :function_itsm.php itsm::execute_itsm() return : 7esdsv9n9c4dv7905pg04o8li0
+Oct,31,2019 11:33:46 AM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 11:33:46 AM : INFO : function_itsm.php/curl_call() file send to external tools : {
+    "input": 
+    [
+        {
+            "name": "(Service check timed out after 20.02 seconds)",
+            "content": "Moi 192.198.80.1",
+            "groups_id": "2",
+            "urgency":3,
+            "impact":3,
+            "priority":3
+        }
+    ]
+}
+Oct,31,2019 11:33:46 AM : INFO :function_itsm.php itsm::execute_itsm() return : 1
+Oct,31,2019 11:45:59 AM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 11:45:59 AM : INFO : function_itsm.php/curl_call() file send to external tools : {
+    "input": 
+    [
+        {
+            "name": "%NAME%",
+            "content": "%HOST% %IP%",
+            "groups_id": "2",
+            "urgency":3,
+            "impact":3,
+            "priority":3
+        }
+    ]
+}
+Oct,31,2019 11:46:25 AM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 11:49:37 AM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 11:49:38 AM : INFO : function_itsm.php/curl_call() file send to external tools : {
+    "input": 
+    [
+        {
+            "name": "%NAME%",
+            "content": "%HOST% %IP%",
+            "groups_id": "2",
+            "urgency":3,
+            "impact":3,
+            "priority":3
+        }
+    ]
+}
+Oct,31,2019 11:51:22 AM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 11:51:22 AM : INFO :function_itsm.php itsm::execute_itsm() return : s6flutdvrbl39u6qg2blt9ocb2
+Oct,31,2019 11:51:22 AM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 11:51:22 AM : INFO : function_itsm.php/curl_call() file send to external tools : {
+    "input": 
+    [
+        {
+            "name": "de",
+            "content": "MoiApi 192.168.80.1",
+            "groups_id": "2",
+            "urgency":3,
+            "impact":3,
+            "priority":3
+        }
+    ]
+}
+Oct,31,2019 11:51:23 AM : INFO :function_itsm.php itsm::execute_itsm() return : 1
+Oct,31,2019 01:36:21 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 01:36:21 PM : INFO :function_itsm.php itsm::execute_itsm() return : oi0i41qnv4dcme2tr1us7dhb37
+Oct,31,2019 01:36:21 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 01:36:21 PM : INFO : function_itsm.php/curl_call() file send to external tools : {
+    "input": 
+    [
+        {
+            "name": "mm",
+            "content": "localhost 127.0.0.1",
+            "groups_id": "2",
+            "urgency":3,
+            "impact":3,
+            "priority":3
+        }
+    ]
+}
+Oct,31,2019 01:36:21 PM : INFO :function_itsm.php itsm::execute_itsm() return : 1
+Oct,31,2019 04:34:00 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 04:34:01 PM : INFO :function_itsm.php itsm::execute_itsm() return : lkm1ut7e63upmc6n9oh86pv536
+Oct,31,2019 04:34:01 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 04:34:02 PM : INFO : function_itsm.php/curl_call() file send to external tools : {
+    "input": 
+    [
+        {
+            "name": "jyjy",
+            "content": "localhost 127.0.0.1",
+            "groups_id": "2",
+            "urgency":3,
+            "impact":3,
+            "priority":3
+        }
+    ]
+}
+Oct,31,2019 04:34:02 PM : INFO :function_itsm.php itsm::execute_itsm() return : 1
+Oct,31,2019 04:44:50 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 04:44:51 PM : INFO :function_itsm.php itsm::execute_itsm() return : o1rikgtl3364j2p8e64n61p802
+Oct,31,2019 04:44:51 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 04:44:51 PM : INFO : function_itsm.php/curl_call() file send to external tools : {
+    "input": 
+    [
+        {
+            "name": "connect to address 192.168.80.1 and port 80: Connexion refusée",
+            "content": "MoiApi 192.168.80.1",
+            "groups_id": "2",
+            "urgency":3,
+            "impact":3,
+            "priority":3
+        }
+    ]
+}
+Oct,31,2019 04:44:52 PM : INFO :function_itsm.php itsm::execute_itsm() return : 1
+Oct,31,2019 04:46:28 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 04:46:29 PM : INFO :function_itsm.php itsm::execute_itsm() return : 4nuljc3h04oabal7q3guonadu5
+Oct,31,2019 04:46:29 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 04:46:29 PM : INFO : function_itsm.php/curl_call() file send to external tools : {
+    "input": 
+    [
+        {
+            "name": "connect to address 192.168.80.1 and port 80: Connexion refusée",
+            "content": "MoiApi 192.168.80.1",
+            "groups_id": "2",
+            "urgency":3,
+            "impact":3,
+            "priority":3
+        }
+    ]
+}
+Oct,31,2019 04:46:29 PM : INFO :function_itsm.php itsm::execute_itsm() return : 1
+Oct,31,2019 04:47:08 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 04:47:08 PM : INFO :function_itsm.php itsm::execute_itsm() return : ss9scbf6bcr8560271afus01l1
+Oct,31,2019 04:47:08 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 04:47:08 PM : INFO : function_itsm.php/curl_call() file send to external tools : {
+    "input": 
+    [
+        {
+            "name": "connect to address 192.168.80.1 and port 80: Connexion refusée",
+            "content": "MoiApi 192.168.80.1",
+            "groups_id": "2",
+            "urgency":3,
+            "impact":3,
+            "priority":3
+        }
+    ]
+}
+Oct,31,2019 04:47:09 PM : INFO :function_itsm.php itsm::execute_itsm() return : 1
+Oct,31,2019 04:47:18 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 04:47:19 PM : INFO :function_itsm.php itsm::execute_itsm() return : p995okm3sdgt7qim3rjcjmn093
+Oct,31,2019 04:47:19 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 04:47:19 PM : INFO : function_itsm.php/curl_call() file send to external tools : {
+    "input": 
+    [
+        {
+            "name": "rrr",
+            "content": "localhost 127.0.0.1",
+            "groups_id": "2",
+            "urgency":3,
+            "impact":3,
+            "priority":3
+        }
+    ]
+}
+Oct,31,2019 04:47:19 PM : INFO :function_itsm.php itsm::execute_itsm() return : 1
+Oct,31,2019 04:48:19 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 04:48:19 PM : INFO :function_itsm.php itsm::execute_itsm() return : oc2q6dgcu1ns0bph1r6s544tf2
+Oct,31,2019 04:48:19 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 04:48:20 PM : INFO : function_itsm.php/curl_call() file send to external tools : {
+    "input": 
+    [
+        {
+            "name": "tt",
+            "content": "localhost 127.0.0.1",
+            "groups_id": "2",
+            "urgency":3,
+            "impact":3,
+            "priority":3
+        }
+    ]
+}
+Oct,31,2019 04:48:20 PM : INFO :function_itsm.php itsm::execute_itsm() return : 1
+Oct,31,2019 04:49:04 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 04:49:05 PM : INFO :function_itsm.php itsm::execute_itsm() return : 6bao43pd0f9v94vtc8402o3qv5
+Oct,31,2019 04:49:05 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 04:49:05 PM : INFO : function_itsm.php/curl_call() file send to external tools : {
+    "input": 
+    [
+        {
+            "name": "tt",
+            "content": "localhost 127.0.0.1",
+            "groups_id": "2",
+            "urgency":3,
+            "impact":3,
+            "priority":3
+        }
+    ]
+}
+Oct,31,2019 04:49:05 PM : INFO :function_itsm.php itsm::execute_itsm() return : 1
+Oct,31,2019 04:50:29 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 04:50:30 PM : INFO :function_itsm.php itsm::execute_itsm() return : 10k9s9d5j8oejionph1k77l8f2
+Oct,31,2019 04:50:30 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Oct,31,2019 04:50:30 PM : INFO : function_itsm.php/curl_call() file send to external tools : {
+    "input": 
+    [
+        {
+            "name": "yy",
+            "content": "localhost 127.0.0.1",
+            "groups_id": "2",
+            "urgency":3,
+            "impact":3,
+            "priority":3
+        }
+    ]
+}
+Oct,31,2019 04:50:30 PM : INFO :function_itsm.php itsm::execute_itsm() return : 1
