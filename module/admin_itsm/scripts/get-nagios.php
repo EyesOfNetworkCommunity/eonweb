@@ -40,14 +40,14 @@ $itsm   = get_itsm_var("itsm");
 $create = get_itsm_var("itsm_create");
 $acquit = get_itsm_var("itsm_acquit");
 $queue  = "active";
-
+if($checkBoxNagios == NULL) {$checkBoxNagios = "false";}
 if($itsm == "on"){
     if($create == "true"){
         $selected_events = get_all_events();
         if(!empty($selected_events)){
             $CustomActions->ged_acknowledge($selected_events, $queue);
             if($acquit == "true"){
-                acknowledge($selected_events, $queue);
+                acknowledge($selected_events, $queue, $checkBoxNagios);
             }
         }else exit(1);
     }

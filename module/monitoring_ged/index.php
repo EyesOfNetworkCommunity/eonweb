@@ -24,6 +24,9 @@ include("../../header.php");
 include("../../side.php");
 include("ged_functions.php");
 
+$nagios_default =  mysqli_result(sqlrequest("eonweb", "SELECT value FROM configs WHERE name=\"itsm_thruk\""));
+$itsm =  mysqli_result(sqlrequest("eonweb", "SELECT value FROM configs WHERE name=\"itsm\""));
+
 $queue = "active";
 if(isset($_GET["q"]) && $_GET["q"] == "history"){
 	$queue = "history";
@@ -333,12 +336,21 @@ if(file_exists($file)){
 						</span>
 					</div>
 					<?php } ?>
+					
+					
+					<?php if($itsm == "on") {if($nagios_default == "true") { ?>
 					<div id="check-nagios" class="form-check" style="display:inline; margin-right: 4rem">
 						<label class="form-check-label" for="checkbox-nagios"><?php echo getLabel("label.ack_in_nagios");?>:</label>
 						<input type="checkbox" class="form-check-input" id="checkbox-nagios" checked>
 					</div>
 
 					<?php 
+					}} else { ?>
+						<div id="check-nagios" class="form-check" style="display:inline; margin-right: 4rem">
+						<label class="form-check-label" for="checkbox-nagios"><?php echo getLabel("label.ack_in_nagios");?>:</label>
+						<input type="checkbox" class="form-check-input" id="checkbox-nagios" checked>
+					</div>
+					<?php }
 						edit_button();
 					 ?>
 
@@ -368,10 +380,18 @@ if(file_exists($file)){
 					<?php echo getLabel("message.confirmation"); ?>
 				</div>
 				<div id="confirmation-modal-footer" class="modal-footer">
+				<?php if($itsm = "on") {if($nagios_default == "true") { ?>
+
 					<div id="check-nagios-val" class="form-check"style="display:inline; margin-right: 4rem;">
 						<label class="form-check-label" for="checkbox-nagios-val"><?php echo getLabel("label.ack_in_nagios");?>:</label>
 						<input type="checkbox" class="form-check-input" id="checkbox-nagios-val" checked>
 					</div>
+				<?php }} else { ?>
+					<div id="check-nagios-val" class="form-check"style="display:inline; margin-right: 4rem;">
+						<label class="form-check-label" for="checkbox-nagios-val"><?php echo getLabel("label.ack_in_nagios");?>:</label>
+						<input type="checkbox" class="form-check-input" id="checkbox-nagios-val" checked>
+					</div>
+				<?php } ?>
 					<button id="confirmation-event-validation" type="button" class="btn btn-primary">
 						<?php echo getLabel("action.apply"); ?>
 					</button>

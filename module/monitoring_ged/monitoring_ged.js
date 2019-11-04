@@ -479,7 +479,11 @@ $(document).ready(function(){
 		var comments = "";
 		var events = [];
 		var checkBoxNagiosVal = document.getElementById("checkbox-nagios-val");
-		checkBoxNagiosVal = checkBoxNagiosVal.checked;
+		if( checkBoxNagiosVal != null) {
+			checkBoxNagiosVal = checkBoxNagiosVal.checked;
+		} else { 
+			checkBoxNagiosVal = "false";
+		}
 		if(global_action_name == "edit-event" || global_action_name == "own-event" || global_action_name == "ack-event" || global_action_name == "itsm-event" ){
 
 			events.push(selected_events[event_index]);
@@ -524,7 +528,11 @@ $(document).ready(function(){
 	$(document).on("click", "#event-validation", function(){
 		var queue = $("#queue").val();
 		var checkBoxNagios = document.getElementById("checkbox-nagios");
-		checkBoxNagios = checkBoxNagios.checked;
+		if( checkBoxNagios != null) {
+			checkBoxNagios = checkBoxNagios.checked;
+		} else { 
+			checkBoxNagios = "false";
+		}
 		global_action = gedaction;
 		$("#modal-loader").css("visibility", "visible");
 		$.ajax({

@@ -135,7 +135,7 @@ $itsm_thruk = (get_config_var("itsm_thruk") == false ) ? "" : get_config_var("it
                                 <label style="margin:5px"><input style="margin-right:10px" id="itsm_thruk" name="itsm_thruk" type="checkbox" value ="true" <?php  if($itsm_thruk=="true"){echo 'checked';} echo '>'.getLabel("label.ack_in_nagios_default");?></label>
                             </form>
                             <div class="modal-footer">
-                                <button id="btn_config_itsm" type="submit" class="btn btn-primary">Ok</button>
+                                <button id="btn_config_itsm" type="submit" class="btn btn-primary" data-dismiss="modal">Ok</button>
                             </div>
                         </div>
                     </div>

@@ -374,6 +374,7 @@ function acknowledge($selected_events, $queue, $checkBoxNagios)
 	global $path_ged_bin;
 	global $array_serv_system;
 	$nagios_default = (get_config_var("itsm_thruk") == false ) ? "" : get_config_var("itsm_thruk");
+	$itsm = (get_config_var("itsm") == false ) ? "" : get_config_var("itsm");
 
 	if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
 	
@@ -390,9 +391,24 @@ function acknowledge($selected_events, $queue, $checkBoxNagios)
 		$hostName = $value_parts[3];
 		$serviceName = $value_parts[4];
 		$isHost = explode(" ", $serviceName);
-		if($nagios_default == "true")
-		{
-			if($checkBoxNagios == "true"){
+		if($itsm == "on") {
+			if($nagios_default == "true") {
+				if($checkBoxNagios == "true") {
+					$off = 0;
+					$on = 1;
+					$date = new DateTime();
+					$timestamp = $date->getTimestamp();
+					$CommandFile="/srv/eyesofnetwork/nagios/var/log/rw/nagios.cmd";
+					if($isHost[0] == "HOST") {
+						$cmdline = '['.$timestamp.'] ACKNOWLEDGE_HOST_PROBLEM;'.$hostName.';'.$on.';'.$off.';'.$on.';' .$owner. '; Acknowleged in Ged'.PHP_EOL;
+					} else{
+						$cmdline = '['. $timestamp .'] ACKNOWLEDGE_SVC_PROBLEM;'.$hostName.';'.$serviceName.';'.$on.';'.$off.';'.$on.';' .$owner. '; Acknowleged in Ged'.PHP_EOL;
+					}
+					file_put_contents($CommandFile, $cmdline,FILE_APPEND);
+				}
+			}
+		} else {
+			if($checkBoxNagios == "true") {
 				$off = 0;
 				$on = 1;
 				$date = new DateTime();
@@ -405,6 +421,7 @@ function acknowledge($selected_events, $queue, $checkBoxNagios)
 				}
 				file_put_contents($CommandFile, $cmdline,FILE_APPEND);
 			}
+
 		}
 		if($ged_type == "nagios"){ $ged_type_nbr = 1; }
 		if($ged_type == "snmptrap"){ $ged_type_nbr = 2; }
@@ -567,17 +584,6 @@ function edit_button(){
 							".getLabel('label.admin_itsm.ged_btn_create')."
 						</button>
 						</span>
-					</div>";
-	}else {
-		echo "
-		<div id=\"ack-btns\" class=\"btn-group\">
-						<button class=\"btn btn-primary dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">
-							".getLabel('action.ack')." <span class=\"caret\"></span>
-						</button>
-						<ul class=\"dropdown-menu\">
-							<li id=\"ack-event\"><a href=\"#\">".getLabel('label.this')."</a></li>
-							<li id=\"ack-all-event\"><a href=\"#\">".ucfirst(getLabel('label.all'))."</a></li>
-						</ul>
 					</div>";
 	}
 }
