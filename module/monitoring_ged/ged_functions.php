@@ -400,9 +400,9 @@ function acknowledge($selected_events, $queue, $checkBoxNagios)
 					$timestamp = $date->getTimestamp();
 					$CommandFile="/srv/eyesofnetwork/nagios/var/log/rw/nagios.cmd";
 					if($isHost[0] == "HOST") {
-						$cmdline = '['.$timestamp.'] ACKNOWLEDGE_HOST_PROBLEM;'.$hostName.';'.$on.';'.$off.';'.$on.';' .$owner. '; Acknowleged in Ged'.PHP_EOL;
+						$cmdline = '['.$timestamp.'] ACKNOWLEDGE_HOST_PROBLEM;'.$hostName.';'.$on.';'.$on.';'.$off.';' .$owner. '; Acknowleged in Ged'.PHP_EOL;
 					} else{
-						$cmdline = '['. $timestamp .'] ACKNOWLEDGE_SVC_PROBLEM;'.$hostName.';'.$serviceName.';'.$on.';'.$off.';'.$on.';' .$owner. '; Acknowleged in Ged'.PHP_EOL;
+						$cmdline = '['. $timestamp .'] ACKNOWLEDGE_SVC_PROBLEM;'.$hostName.';'.$serviceName.';'.$on.';'.$on.';'.$off.';' .$owner. '; Acknowleged in Ged'.PHP_EOL;
 					}
 					file_put_contents($CommandFile, $cmdline,FILE_APPEND);
 				}

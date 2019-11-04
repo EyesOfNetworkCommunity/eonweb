@@ -115,10 +115,22 @@ $(document).ready(function(){
 		var ext = fileName.split('.').pop();
 	});
 
-	$("#options_itsm").hover(function(){
-		$("#info_options").show();
+	$("#what_auto_create_itsm").hover(function(){
+		$("#auto_create_itsm").show();
 	},function(){
-		$("#info_options").hide();
+		$("#auto_create_itsm").hide();
+	});
+
+	$("#what_auto_ack").hover(function(){
+		$("#auto_ack").show();
+	},function(){
+		$("#auto_ack").hide();
+	});
+
+	$("#what_ack_thruk").hover(function(){
+		$("#ack_thruk").show();
+	},function(){
+		$("#ack_thruk").hide();
 	});
 	
 	var row_header = 1;
@@ -187,31 +199,6 @@ $(document).ready(function(){
 		});
 	   
 	});
-	
-	$("#btn_config_itsm").click(function(){
-		var form = $('#myForm_config_itsm').get(0);
-		var formData = new FormData(form);// get the form data
-		formData.append('action',"add_external_itsm_config");
-		$.ajax({
-			type		: 'POST', // define the type of HTTP verb we want to use (POST for our form)
-			url		    : 'ajax.php', // the url where we want to POST
-			data		: formData, // our data object
-			dataType	: 'html', // what type of data do we expect back from the server
-			processData: false,
-			contentType: false,
-			beforeSend:function(){
-				$('#result').html('Loading......');
-			},
-			success : function(result){ // success est toujours en place, bien sûr !
-				$("#result").html(result);
-			},
-			error : function(resultat, statut, erreur){
-				$("#result").html(resultat);
-			}
-		});
-	   
-	});
-
 
 });
 

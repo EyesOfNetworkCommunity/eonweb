@@ -44,20 +44,16 @@ $itsm_thruk = (get_config_var("itsm_thruk") == false ) ? "" : get_config_var("it
 	<div class="row">
 		<div class="col-lg-12">
 			<h1 class="page-header"><?php echo getLabel("label.admin_itsm.title"); ?> <span class="badge badge-dark">béta</span></h1>
-		</div>
+        </div>
+        <h4><?php echo getLabel(	"label.admin_itsm.description"); ?>
+</h4>
 	</div>
     
     <div class="panel panel-default">
         <div class="panel-heading clearfix">
             <h4 class="panel-title pull-left" style="padding-top: 7.5px;">
                 <?php echo getLabel("label.admin_itsm.itsm_setting"); ?>
-                
-                
-                <!--  -->
-              
-                <!--  -->
             </h4>
-            
             <div class="btn-group pull-right">
                     <div class="btn-group" id="result_state_itsm">
                         <?php echo $state; ?>
@@ -95,8 +91,8 @@ $itsm_thruk = (get_config_var("itsm_thruk") == false ) ? "" : get_config_var("it
                                     
                                     echo "  </td>
                                             <td class=\"col-sm-2\">
-                                                    <a href='modification_itsm.php?url=".$itsm->getItsm_url()."' class=\"btn btn-success\" role=\"button\">".getLabel("action.edit")."</a>
-                                                    <button class=\"btn btn-danger\" type=\"button\" onclick='delete_itsm(".$itsm->getItsm_id().")'>".getLabel("action.delete")."</button>
+                                                    <a style =\"width: -webkit-fill-available;max-width: 90px; margin-bottom: 5px; \" href='modification_itsm.php?url=".$itsm->getItsm_url()."' class=\"btn btn-success\" role=\"button\">".getLabel("action.edit")."</a>
+                                                    <button style =\"width: -webkit-fill-available;max-width: 90px; margin-bottom: 5px; \" class=\"btn btn-danger\" type=\"button\" onclick='delete_itsm(".$itsm->getItsm_id().")'>".getLabel("action.delete")."</button>
                                             </td>
                                             <td class=\"col-sm-1\">";
                                     if($itsm->getItsm_order() == 1){
@@ -130,10 +126,22 @@ $itsm_thruk = (get_config_var("itsm_thruk") == false ) ? "" : get_config_var("it
                         </div>
                         <div class="modal-body">
                             <form class="form-horizontal" id="myForm_config_itsm" enctype="multipart/form-data" style="display:grid; ">
-                                <label style="margin:5px"><input style="margin-right:10px" id="itsm_create" name="itsm_create" type="checkbox"  value="true" <?php  if($itsm_create=="true"){echo 'checked';} echo '>'.getLabel("label.admin_itsm.create");?> <span class="glyphicon glyphicon-question-sign"></span></label>
-                                <label style="margin:5px"><input style="margin-right:10px" id="itsm_acquit" name="itsm_acquit" type="checkbox" value ="true" <?php  if($itsm_acquit=="true"){echo 'checked';} echo '>'.getLabel("label.admin_itsm.acquit");?> <span class="glyphicon glyphicon-question-sign"></span></label>
-                                <label style="margin:5px"><input style="margin-right:10px" id="itsm_thruk" name="itsm_thruk" type="checkbox" value ="true" <?php  if($itsm_thruk=="true"){echo 'checked';} echo '>'.getLabel("label.ack_in_nagios_default");?> <span class="glyphicon glyphicon-question-sign"></span></label>
+                                <label style="margin:5px"><input style="margin-right:10px" id="itsm_create" name="itsm_create" type="checkbox"  value="true" <?php  if($itsm_create=="true"){echo 'checked';} echo '>'.getLabel("label.admin_itsm.create");?> <span id="what_auto_create_itsm" class="glyphicon glyphicon-question-sign"></span></label>
+                                
+                                <label style="margin:5px"><input style="margin-right:10px" id="itsm_acquit" name="itsm_acquit" type="checkbox" value ="true" <?php  if($itsm_acquit=="true"){echo 'checked';} echo '>'.getLabel("label.admin_itsm.acquit");?> <span id="what_auto_ack" class="glyphicon glyphicon-question-sign"></span></label>
+                                
+                                <label style="margin:5px"><input style="margin-right:10px" id="itsm_thruk" name="itsm_thruk" type="checkbox" value ="true" <?php  if($itsm_thruk=="true"){echo 'checked';} echo '>'.getLabel("label.ack_in_nagios_default");?> <span id="what_ack_thruk" class="glyphicon glyphicon-question-sign"></span></label>
+                          
                             </form>
+                            <div id="auto_create_itsm" style="position:absolute" class="col-md-6 alert alert-warning" hidden>
+                                <strong><?php echo getLabel("label.admin_itsm.warn"); ?> ! </strong> <?php echo getLabel("label.admin_itsm.warn_text"); ?>
+                            </div>
+                            <div id="auto_ack" style="position:absolute" class="col-md-6 alert alert-warning" hidden>
+                                <strong><?php echo getLabel("label.admin_itsm.warn"); ?> ! </strong> <?php echo getLabel("label.admin_itsm.warn_text"); ?>
+                            </div>
+                            <div id="ack_thruk" style="position:absolute" class="col-md-6 alert alert-warning" hidden>
+                                <?php echo getLabel("label.admin_itsm.ack_thruk"); ?>
+                            </div>
                             <div class="modal-footer">
                                 <button id="btn_config_itsm" type="submit" class="btn btn-primary" data-dismiss="modal">Ok</button>
                             </div>
