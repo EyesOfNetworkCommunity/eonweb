@@ -130,9 +130,9 @@ $itsm_thruk = (get_config_var("itsm_thruk") == false ) ? "" : get_config_var("it
                         </div>
                         <div class="modal-body">
                             <form class="form-horizontal" id="myForm_config_itsm" enctype="multipart/form-data" style="display:grid; ">
-                                <label style="margin:5px"><input style="margin-right:10px" id="itsm_create" name="itsm_create" type="checkbox"  value="true" <?php  if($itsm_create=="true"){echo 'checked';} echo '>'.getLabel("label.admin_itsm.create");?></label>
-                                <label style="margin:5px"><input style="margin-right:10px" id="itsm_acquit" name="itsm_acquit" type="checkbox" value ="true" <?php  if($itsm_acquit=="true"){echo 'checked';} echo '>'.getLabel("label.admin_itsm.acquit");?></label>
-                                <label style="margin:5px"><input style="margin-right:10px" id="itsm_thruk" name="itsm_thruk" type="checkbox" value ="true" <?php  if($itsm_thruk=="true"){echo 'checked';} echo '>'.getLabel("label.ack_in_nagios_default");?></label>
+                                <label style="margin:5px"><input style="margin-right:10px" id="itsm_create" name="itsm_create" type="checkbox"  value="true" <?php  if($itsm_create=="true"){echo 'checked';} echo '>'.getLabel("label.admin_itsm.create");?> <span class="glyphicon glyphicon-question-sign"></span></label>
+                                <label style="margin:5px"><input style="margin-right:10px" id="itsm_acquit" name="itsm_acquit" type="checkbox" value ="true" <?php  if($itsm_acquit=="true"){echo 'checked';} echo '>'.getLabel("label.admin_itsm.acquit");?> <span class="glyphicon glyphicon-question-sign"></span></label>
+                                <label style="margin:5px"><input style="margin-right:10px" id="itsm_thruk" name="itsm_thruk" type="checkbox" value ="true" <?php  if($itsm_thruk=="true"){echo 'checked';} echo '>'.getLabel("label.ack_in_nagios_default");?> <span class="glyphicon glyphicon-question-sign"></span></label>
                             </form>
                             <div class="modal-footer">
                                 <button id="btn_config_itsm" type="submit" class="btn btn-primary" data-dismiss="modal">Ok</button>
