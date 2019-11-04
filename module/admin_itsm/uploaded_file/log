@@ -720,3 +720,54 @@ Nov,04,2019 11:44:11 AM : INFO : function_itsm.php/curl_call() file send to exte
     ]
 }
 Nov,04,2019 11:44:12 AM : INFO :function_itsm.php itsm::execute_itsm() return : 1
+Nov,04,2019 01:34:20 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Nov,04,2019 01:34:20 PM : INFO :function_itsm.php itsm::execute_itsm() return : duulkvuq7ggkhat8ba6ov52377
+Nov,04,2019 01:34:20 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Nov,04,2019 01:34:21 PM : INFO : function_itsm.php/curl_call() file send to external tools : {
+    "input": 
+    [
+        {
+            "name": "yyy",
+            "content": "localhost 127.0.0.1",
+            "groups_id": "2",
+            "urgency":3,
+            "impact":3,
+            "priority":3
+        }
+    ]
+}
+Nov,04,2019 01:34:21 PM : INFO :function_itsm.php itsm::execute_itsm() return : 1
+Nov,04,2019 01:47:37 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Nov,04,2019 01:47:37 PM : INFO :function_itsm.php itsm::execute_itsm() return : 9iupmj53cii24mpps577renbh1
+Nov,04,2019 01:47:37 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Nov,04,2019 01:47:38 PM : INFO : function_itsm.php/curl_call() file send to external tools : {
+    "input": 
+    [
+        {
+            "name": "connect to address 192.168.80.1 and port 80: Connexion refusée",
+            "content": "MoiApi 192.168.80.1",
+            "groups_id": "2",
+            "urgency":3,
+            "impact":3,
+            "priority":3
+        }
+    ]
+}
+Nov,04,2019 01:47:38 PM : INFO :function_itsm.php itsm::execute_itsm() return : 1
+Nov,04,2019 01:47:38 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Nov,04,2019 01:47:38 PM : INFO :function_itsm.php itsm::execute_itsm() return : fbdg9ia0gfle2bqtm23h62irq3
+Nov,04,2019 01:47:38 PM : INFO : function_itsm.php/curl_call() file send to external tools : 
+Nov,04,2019 01:47:39 PM : INFO : function_itsm.php/curl_call() file send to external tools : {
+    "input": 
+    [
+        {
+            "name": "yyy",
+            "content": "localhost 127.0.0.1",
+            "groups_id": "2",
+            "urgency":3,
+            "impact":3,
+            "priority":3
+        }
+    ]
+}
+Nov,04,2019 01:47:39 PM : INFO :function_itsm.php itsm::execute_itsm() return : 1
