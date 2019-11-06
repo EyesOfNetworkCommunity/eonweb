@@ -1,14 +1,15 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
-Version: 5.2
-Release: 6.eon
-Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/master.tar.gz#/%{name}-%{version}.tar.gz
+Version: 5.3
+Release: 2
+Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
 Requires: backup-manager, cacti0, ged, ged-mysql, eon4apps, lilac, snmptt, thruk 
 Requires: httpd, mariadb-server, mod_auth_eon, mod_perl
-Requires: php, php-mysql, php-ldap, php-process, php-xml
-Requires: nagios >= 3.0, nagios-plugins >= 1.4.0, nagvis, nagiosbp, notifier, nagios-plugins-nrpe, pnp4nagios
+Requires: php, php-mysqlnd, php-ldap, php-process, php-xml
+Requires: nagios >= 3.0, nagios-plugins >= 1.4.0, nagvis, nagiosbp, notifier, nagios-plugins-nrpe
+Requires: grafana, histou
 Requires: net-snmp,net-snmp-perl
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
@@ -24,7 +25,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 EONWEB is the web frontend for the EyesOfNetwork appliance : https://www.eyesofnetwork.com.
 
 %prep
-%setup -q -n %{name}-master
+%setup -q -n %{name}-%{version}-%{release}
 
 %build
 
@@ -55,6 +56,20 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
+* Mon Nov 04 2019 Sebastien DAVOULT <d@vou.lt> - 5.3-2.eon
+- Replacing php-mysql by php-mysqlnd
+- Adding Cron task for InfluxDB Backups
+
+* Sun Oct 06 2019 Sebastien DAVOULT <d@vou.lt> - 5.3-1.eon
+- Add CSV verify
+- fix hosts_cacti lisibility
+- Adding Release name in help_about
+* Tue Jul 16 2019 Sebastien DAVOULT <d@vou.lt> - 5.3-0.eon
+- Add services unused templates
+- Add menu to list unused templates
+- Update function_bp.php
+- fix nagios cfg file syle
+
 * Thu Dec 13 2018 Jean-Philippe Levy <jeanphilippe.levy@gmail.com> - 5.2-6.eon
 - fix database to 5.2.1
 

@@ -125,8 +125,8 @@
                             "target":"_blank"
                         },
                         {
-                            "name":"menu.link.pnp4nagios",
-                            "url":"/pnp4nagios/",
+                            "name":"menu.link.grafana",
+                            "url":"/grafana/",
                             "target":"_blank"
                         }
                     ]
@@ -384,3 +384,4 @@
         }
     ]
 }
+
