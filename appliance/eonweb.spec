@@ -2,7 +2,6 @@ Summary: EyesOfNetwork Web Interface
 Name: eonweb
 Version: 5.3
 Release: 2
-#Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/master.tar.gz#/%{name}-%{version}.tar.gz
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
