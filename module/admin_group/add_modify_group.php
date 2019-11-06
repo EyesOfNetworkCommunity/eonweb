@@ -154,7 +154,14 @@ function update_group($count_menu_item,$group_id,$group_name,$group_descr,$group
 		// Update into eonweb
 		sqlrequest("$database_eonweb","UPDATE groups set group_name='$group_name', group_descr='$group_descr', group_type='$group_type', group_dn='$group_dn' where group_id='$group_id'");
 		// Update into lilac
-		sqlrequest("$database_lilac", "UPDATE nagios_contact_group SET name='$group_name', alias='$group_descr' WHERE name='$old_group'");
+		require_once('/srv/eyesofnetwork/lilac/includes/config.inc');
+		$ncg = NagiosContactGroupPeer::getByName($old_group);
+		if($ncg){
+			$ncg->setName($group_name);
+			$ncg->setAlias($group_descr);
+			$ncg->save();
+		}
+
 		logging("admin_group","UPDATE : $group_id $group_name $group_descr");
 		if($message){ message(8," : Group updated",'ok'); }
 	}
@@ -199,7 +206,13 @@ function insert_group($group_name,$group_descr,$group_type,$ldap_group_name)
 		$group_id=mysqli_result(sqlrequest("$database_eonweb","SELECT group_id, group_descr FROM groups WHERE group_name='$group_name'"),0,"group_id");
 		sqlrequest("$database_eonweb","INSERT INTO groupright (group_id) VALUES('$group_id')");
 		// Insert into lilac
-		sqlrequest("$database_lilac", "INSERT INTO nagios_contact_group (id, name, alias) VALUES('', '$group_name', '$group_descr')");
+		require_once('/srv/eyesofnetwork/lilac/includes/config.inc');
+		$contact_grp_array = array(
+			"contactgroup_name"=>$group_name,
+			"alias"=>$group_descr
+		);
+		$lilac->add_contactgroup($contact_grp_array);
+
 		logging("admin_group","INSERT : $group_id $group_name $group_descr $group_type");
 		message(8," : Group inserted",'ok');
 	}

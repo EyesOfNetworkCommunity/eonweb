@@ -780,7 +780,31 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 
 			// Insert into lilac
 			$lilac_period=mysqli_result(sqlrequest("$database_lilac","SELECT id FROM nagios_timeperiod limit 1"),0,"id");
-			sqlrequest("$database_lilac","INSERT INTO nagios_contact (id,name,alias,email,host_notifications_enabled,service_notifications_enabled,host_notification_period,service_notification_period,host_notification_on_down,host_notification_on_unreachable,host_notification_on_recovery,host_notification_on_flapping,service_notification_on_warning,service_notification_on_unknown,service_notification_on_critical,service_notification_on_recovery,service_notification_on_flapping,can_submit_commands,retain_status_information,retain_nonstatus_information,host_notification_on_scheduled_downtime) VALUES('','$user_name','$user_descr','$user_mail', 1, 1, '$lilac_period', '$lilac_period', 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1 ,1, 1, 1);");
+			
+			require_once('/srv/eyesofnetwork/lilac/includes/config.inc');
+			$contact_array = array(
+				"contact_name"=>$user_name,
+				"alias"=>$user_descr,
+				"email"=>$user_mail,
+				"host_notifications_enabled"=>1,
+				"service_notifications_enabled"=>1,
+				"host_notification_period"=>$lilac_period,
+				"service_notification_period"=>$lilac_period,
+				"host_notification_on_down"=>1,
+				"host_notification_on_unreachable"=>1,
+				"host_notification_on_recovery"=>1,
+				"host_notification_on_flapping"=>1,
+				"service_notification_on_warning"=>1,
+				"service_notification_on_unknown"=>1,
+				"service_notification_on_critical"=>1,
+				"service_notification_on_recovery"=>1,
+				"service_notification_on_flapping"=>1,
+				"can_submit_commands"=>1,
+				"retain_status_information"=>1,
+				"retain_nonstatus_information"=>1,
+				"host_notification_on_scheduled_downtime"=>1
+			);
+			$lilac->add_contact($contact_array);
 
 			// Lilac contact_group_member
 			$lilac_contactgroupid=mysqli_result(sqlrequest("$database_lilac","SELECT id FROM nagios_contact_group WHERE name='$group_name'"),0,"id");
