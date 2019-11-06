@@ -104,7 +104,7 @@
 	"label.admin_group.title": "Groups management",
 	"label.admin_group.title_new": "New group",
 	"label.admin_group.title_upd": "Group settings",
-	"label.admin_import_device.title": "CSV nagios verify and upload",
+	"label.admin_import_device.title": "CSV nagios upload",
 	"label.admin_logs.title": "Logs",
 	"label.admin_notifier.config": "General configuration",
 	"label.admin_notifier.contacts": "Contacts",
@@ -250,8 +250,8 @@
 	"label.home_about.product8.url": "http://www.nagvis.org",
 	"label.home_about.product9": "weathermap - Network maps utility",
 	"label.home_about.product9.url": "http://www.network-weathermap.com",
-	"label.home_about.product10": "pnp4nagios - Data collection and graphing for Nagios",
-	"label.home_about.product10.url": "http://www.pnp4nagios.org/",
+	"label.home_about.product10": "grafana - The open platform for beautiful analytics and monitoring",
+	"label.home_about.product10.url": "https://grafana.com/",
 	"label.home_about.product11": "glpi - Asset management",
 	"label.home_about.product11.url": "http://www.glpi-project.org",
 	"label.home_about.product12": "ocsinventory-ng - Inventory and deployment",
@@ -411,6 +411,7 @@
 	"menu.link.fusion_inventory": "FusionInventory",
 	"menu.link.ged": "Ged",
 	"menu.link.glpi": "GLPI",
+	"menu.link.grafana": "Grafana",
 	"menu.link.groups": "Groups",
 	"menu.link.history_events": "History events",
 	"menu.link.impact_view": "Impacts View",
@@ -431,7 +432,6 @@
 	"menu.link.per_metric": "Per metric",
 	"menu.link.performances": "Performances",
 	"menu.link.planned_downtime": "Planned downtimes",
-	"menu.link.pnp4nagios": "Pnp4nagios",
 	"menu.link.problems": "Problems",
 	"menu.link.process": "Process",
 	"menu.link.recurring_planned_downtime": "Recurring planned downtimes",
@@ -514,3 +514,4 @@
 	"navbarlink.discovery": "Discovery",
 	"navbarlink.xml_import": "XML import"
 }
+
