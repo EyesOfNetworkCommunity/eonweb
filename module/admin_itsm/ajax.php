@@ -211,13 +211,31 @@ if($_POST["action"] == "add_external_itsm"){
 
     if(insert_config_var("itsm_create",$itsm_create)){
         $message .= "<div class=\"alert alert-success\" role=\"alert\">".$itsm_create." create succesfully saved.</div>";
-    }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$itsm_create." create failed to be saved.</div>";   
+        $description = "itsm var config itsm_create: ".$itsm_create." succesfully saved";
+        logging("itsm", $description, $_COOKIE['user_name']);
+    }else {
+        $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$itsm_create." create failed to be saved.</div>";
+        $description = "itsm var config itsm_create: ".$itsm_create." failed to saved";
+        logging("itsm", $description, $_COOKIE['user_name']);
+    }   
     if(insert_config_var("itsm_acquit",$itsm_acquit)){
         $message .= "<div class=\"alert alert-success\" role=\"alert\">".$itsm_acquit." acquit succesfully saved.</div>";
-    }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$itsm_acquit." acquit failed to be saved.</div>";
+        $description = "itsm var config itsm_acquit: ".$itsm_acquit." succesfully saved";
+        logging("itsm", $description, $_COOKIE['user_name']);
+    }else {
+        $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$itsm_acquit." acquit failed to be saved.</div>";
+        $description = "itsm var config itsm_acquit: ".$itsm_acquit." failed to saved";
+        logging("itsm", $description, $_COOKIE['user_name']);
+    }
     if(insert_config_var("itsm_thruk",$itsm_thruk)){
         $message .= "<div class=\"alert alert-success\" role=\"alert\">".$itsm_thruk." thruk succesfully saved.</div>";
-    }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$itsm_thruk." thruk failed to be saved.</div>";
+        $description = "itsm var config itsm_thruk: ".$itsm_thruk." succesfully saved";
+        logging("itsm", $description, $_COOKIE['user_name']);
+    }else {
+        $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$itsm_thruk." thruk failed to be saved.</div>";
+        $description = "itsm var config itsm_thruk: ".$itsm_thruk." failed saved";
+        logging("itsm", $description, $_COOKIE['user_name']);
+    }
 }
 
 ?>

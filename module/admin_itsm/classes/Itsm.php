@@ -46,6 +46,8 @@ class Itsm{
             $result = sqlrequest($database_eonweb,$sql);
             $this->maj_headers_db();
             $this->maj_vars_db();
+            $description = "itsm config: " . $this->itsm_url . " was updated"; 
+            logging("itsm", $description, $_COOKIE['user_name']);
         }else{
             //insert
             $sql = 'INSERT INTO itsm(itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_return_champ, itsm_type_request) VALUES("'.$this->itsm_url.'", "'.$this->itsm_file.'", '.$this->insert_sql($this->itsm_order).', '.$this->insert_sql($this->itsm_parent).', \''.$this->itsm_return_champ.'\', \''.$this->itsm_type_request.'\')';
@@ -55,6 +57,8 @@ class Itsm{
                 $this->maj_headers_db();
                 $this->maj_vars_db();
             }
+            $description = "itsm config: " . $this->itsm_url . " was created"; 
+            logging("itsm", $description, $_COOKIE['user_name']);
         }
         
         return $result;
@@ -108,7 +112,6 @@ class Itsm{
 
         $result = curl_call($headers,$url,$file_content,$this->itsm_type_request); 
         $json_obj = json_decode($result,true);
-
         if(isset($json_obj) && gettype($json_obj) == "array" ){
 	        $result = $json_obj[$this->itsm_return_champ];
         }else return true;
