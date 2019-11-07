@@ -96,7 +96,17 @@ $(document).ready(function(){
 			processData: false,
 			contentType: false,
 			success : function(result){ // success est toujours en place, bien sûr !
-				$("#itsm_request_return_value").append(result);
+				var itsmreturn = document.getElementById("itsm_request_return_value");
+				var children = itsmreturn.childNodes;
+				while( children.length >= 3) {
+					// La liste n'est pas une copie, elle sera donc réindexée à chaque appel
+					itsmreturn.removeChild( children[2]);
+				}
+				
+				
+				 		
+				  $("#itsm_request_return_value").append(result);
+
 			}
 		});
 	});

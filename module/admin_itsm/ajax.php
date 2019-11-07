@@ -101,6 +101,11 @@ if($_POST["action"] == "add_external_itsm"){
     $result ="";
     $result = change_itsm_state($_POST["state"]);
     echo $result;
+    if($_POST["state"]=="off"){
+        logging("itsm","User disabled itsm",$login);
+    }else{
+        logging("itsm","User enabled itsm",$login);
+    }
 
 }else if ($_POST["action"] == "delete_header_itsm" ){
     $message ="<div id='log'>";
@@ -131,6 +136,7 @@ if($_POST["action"] == "add_external_itsm"){
     $itsmPeer= new ItsmPeer();
     $itsm = $itsmPeer->getItsmById($_POST["itsm_id"]);
     $itsm->delete();
+    logging("itsm","User deleted an itsm configuration (".$itsm->getItsm_url().")",$login);
 }else if ($_POST["action"] == "up_external_itsm"){
     $itsmPeer= new ItsmPeer();
     $itsm = $itsmPeer->getItsmById($_POST["itsm_id"]);
