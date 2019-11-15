@@ -374,7 +374,6 @@ function acknowledge($selected_events, $queue, $checkBoxNagios)
 	global $path_ged_bin;
 	global $array_serv_system;
 	$nagios_default = (get_config_var("itsm_thruk") == false ) ? "" : get_config_var("itsm_thruk");
-	$itsm = (get_config_var("itsm") == false ) ? "" : get_config_var("itsm");
 
 	if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
 	
@@ -391,24 +390,9 @@ function acknowledge($selected_events, $queue, $checkBoxNagios)
 		$hostName = $value_parts[3];
 		$serviceName = $value_parts[4];
 		$isHost = explode(" ", $serviceName);
-		if($itsm == "on") {
-			if($nagios_default == "true") {
-				if($checkBoxNagios == "true") {
-					$off = 0;
-					$on = 1;
-					$date = new DateTime();
-					$timestamp = $date->getTimestamp();
-					$CommandFile="/srv/eyesofnetwork/nagios/var/log/rw/nagios.cmd";
-					if($isHost[0] == "HOST") {
-						$cmdline = '['.$timestamp.'] ACKNOWLEDGE_HOST_PROBLEM;'.$hostName.';'.$on.';'.$on.';'.$off.';' .$owner. '; Acknowleged in Ged'.PHP_EOL;
-					} else{
-						$cmdline = '['. $timestamp .'] ACKNOWLEDGE_SVC_PROBLEM;'.$hostName.';'.$serviceName.';'.$on.';'.$on.';'.$off.';' .$owner. '; Acknowleged in Ged'.PHP_EOL;
-					}
-					file_put_contents($CommandFile, $cmdline,FILE_APPEND);
-				}
-			}
-		} else {
-			if($checkBoxNagios == "true") {
+		if($nagios_default == "true")
+		{
+			if($checkBoxNagios == "true"){
 				$off = 0;
 				$on = 1;
 				$date = new DateTime();
@@ -421,7 +405,6 @@ function acknowledge($selected_events, $queue, $checkBoxNagios)
 				}
 				file_put_contents($CommandFile, $cmdline,FILE_APPEND);
 			}
-
 		}
 		if($ged_type == "nagios"){ $ged_type_nbr = 1; }
 		if($ged_type == "snmptrap"){ $ged_type_nbr = 2; }
@@ -568,7 +551,7 @@ function edit_button(){
 	global $database_eonweb;
 	$itsm_button = "";
 	$itsm = mysqli_result(sqlrequest("$database_eonweb","SELECT value FROM configs WHERE name=\"itsm\""),0);
-	if(isset($itsm) && $itsm == "on" ){
+	if(isset($itsm) && $itsm == "on" && isset($_GET["q"]) && $_GET["q"] == "active" ){
 		echo "
 		<div id=\"itsm-btns\" class=\"btn-group\">
 						<button id=\"itsm-choose\" class=\"btn btn-primary dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">
