@@ -204,7 +204,7 @@ if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 								// loop on level 3
 								foreach($menutab["menusubtab"] as $menusubtab) {
 								?>
-								<li>
+								<li style="<?php echo $menusubtab["css"];?>" >
 									<a href="#"><?php echo getLabel($menusubtab["name"]); ?> <span class="fa arrow"></span> </a>
 									<ul class="nav nav-third-level collapse">
 										<?php 

@@ -96,6 +96,7 @@
                 },
                 {
                     "name":"menu.subtab.apps",
+                    "css": "background: repeating-linear-gradient(-45deg, rgb(151, 209, 255,0.3), rgb(151, 209, 255,0.3) 5px, rgb(270, 270, 270,0.3) 5px, rgb(270, 270, 270,0.3) 10px);",
                     "link":[
                         {
                             "name":"menu.link.application_view",
