@@ -1,7 +1,7 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
 Version: 5.3
-Release: 2
+Release: 3
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
@@ -56,6 +56,9 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
+* Fri Feb 28 2020 Sebastien DAVOULT <d@vou.lt> - 5.3-3.eon
+- fix security issue #51 (SQL Inject by cookie)
+
 * Mon Nov 04 2019 Sebastien DAVOULT <d@vou.lt> - 5.3-2.eon
 - Replacing php-mysql by php-mysqlnd
 - Adding Cron task for InfluxDB Backups
