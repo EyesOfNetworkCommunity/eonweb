@@ -113,6 +113,19 @@ function sqlrequest($database,$sql,$id=false,$prepare=false){
 	return $result;
 }
 
+function connexionDB($database){
+    global $database_host;
+    global $database_username;
+    global $database_password;
+    try {
+        $dbh = new PDO("mysql:host=$database_host;dbname=$database", $database_username, $database_password);
+        return $dbh;
+    } catch (PDOException $e) {
+        print "Erreur !: " . $e->getMessage() . "<br/>";
+        die();
+    }
+}
+
 // Display array value
 function display_value($value, $key){
 	echo "$value\n";

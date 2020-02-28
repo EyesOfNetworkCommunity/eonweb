@@ -46,7 +46,15 @@ class Translator
 		
 		// Check if user default lang is defined
 		if(isset($_COOKIE['user_id'])){
-			$lang = mysqli_result(sqlrequest($database_eonweb,"select user_language from users where user_id='".$_COOKIE['user_id']."'"),0);
+			$idUser =$_COOKIE['user_id'];
+			$conn = connexionDB($database_eonweb);
+			$stmt = $conn->prepare("SELECT user_language from users where user_id= :idUser");
+			$stmt->bindParam(':idUser', $idUser);
+			$stmt->execute();
+			$result = $stmt->fetch(); 
+			$lang=$result["user_language"];
+			$stmt=null;
+			$conn=null;
 		}
 		
 		// Check if isset browser lang
