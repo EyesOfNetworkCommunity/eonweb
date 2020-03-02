@@ -28,6 +28,8 @@ include_once("./function_itsm.php");
 include("classes/Itsm.php");
 include("classes/ItsmPeer.php");
 
+$login = $_COOKIE["user_name"];
+
 if($_POST["action"] == "add_external_itsm"){
     $message ="<div id='log'>";
     $itsmPeer= new ItsmPeer();
