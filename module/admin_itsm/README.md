@@ -1,27 +1,55 @@
 # Module admin_itsm 
+## <version 1.0>
 
 Module for eonweb
 
 This module have been created to manage a connexion with an external itsm tool (like glpi, mantis ... ).
 This module take different informations to call the api of your ticket application.  
 
-A graphic interface to manage the configuration have been created and files in monitoring_ged had been modified to manage this new functionnality.
+A graphic interface to manage the configuration have been created and the interface of monitoring_ged had been modified to manage those new functionnalities.
 
 Requirements
 ------------
 
-Eyes of network
+Eyes of Network 5.2 
 
 Installation 
 ------------
 To use this module you need to have the latest version of eonweb that used all the modification given to the module monitoring_ged, included files and admin_itsm. Moreover to used all the functionality of this tool you have to modified `/srv/eyesofnetwork/ged/scripts/ged-nagios-host` and `/srv/eyesofnetwork/ged/scripts/ged-nagios-service` and add this line : 
 
-``` sh
+``` shell
     #Call script to handle itsm auto-management
     php /srv/eyesofnetwork/eonweb/module/admin_itsm/scripts/get-nagios.php
 ```
 
 The database have seen some changes to be able to handle the admin itsm module. This file `itsm.sql` will do the proper change. 
+
+Configuration
+-------------
+The configuration depends of the itsm you used. Most of those tools needs a json or xml file to be send through an api request, those files could be upload and modify with value whitch will be change by value before the request is executed. This exemple bellow will help you to create yours. 
+
+``` json
+{
+    "input": {
+        "id": "%PREVIOUS%", 
+        "group": "",
+        "type": "2",
+        "status": "6"
+        }
+}
+```
+
+Moreover most of api's request require to get a token first to then proceed other action. 
+To do this, this tool can use queries run in succession and can, thanks to reused variables, get the result from previous queries and so-called "parent" queries. (The parent request will allow for example to retrieve the TOKEN and be reused in all the following requests while the request 
+the requests that precede an other request allow the transfert of its result to one another). An exemple is for requests where one must recover at first a token then an id and finally create a ticket. It will be necessary then to use a parent request which will make it possible to recover %PARENT_VALUE% (that can be the token to securise request to the api), then a request to recover the id (of a group for example) that will be injected directly into the following creation request through a predefined variable %PREVIOUS%.
+
+graph LR
+   request_get_token -->|%PARENT_VALUE% contains the response|request_get_id & request_create_ticket & request_change_author
+   request_get_id -->|%PREVIOUS% contains the response|request_create_ticket
+   request_create_ticket -->|%PREVIOUS% contains for exemple the id of the newly ticket|request_change_author
+		
+
+
 
 Author Information
 ------------------

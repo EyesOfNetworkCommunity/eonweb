@@ -95,7 +95,7 @@ function get_itsm_state(){
 
 /**
  * This function create the http request to the external server itsm used in include/classes/Custom.Action.class.php
- * ie : curl -v --header "Content-Type: text/xml;charset=UTF-8" --header "SOAPAction: mc_issue_add_CD74" --data @request-add.xml https://localhost/api/soap/mantisconnect.php
+ * ie : curl -v --header "Content-Type: text/xml;charset=UTF-8" --header "SOAPAction: mc_issue_add" --data @request-add.xml https://localhost/api/soap/mantisconnect.php
  */
 function report_itsm($ged_type=NULL, $queue=NULL, $id_ged=NULL, $array_vars=array()){
     
