@@ -15,7 +15,7 @@ Eyes of Network 5.2
 
 Installation 
 ------------
-To use this module you need to have the latest version of eonweb that used all the modification given to the module monitoring_ged, included files and admin_itsm. Moreover to used all the functionality of this tool you have to modified `/srv/eyesofnetwork/ged/scripts/ged-nagios-host` and `/srv/eyesofnetwork/ged/scripts/ged-nagios-service` and add this line : 
+To use this module you need to have the latest version of eonweb that used all the modification given to the module monitoring_ged, included files and admin_itsm. Moreover to used all the functionality of this tool you have to modified if necessary to automatize the creation of ticket, `/srv/eyesofnetwork/ged/scripts/ged-nagios-host` and `/srv/eyesofnetwork/ged/scripts/ged-nagios-service` and add this line : 
 
 ``` shell
     #Call script to handle itsm auto-management
