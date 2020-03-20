@@ -122,13 +122,22 @@ include("../../side.php");
 					$lilac_userid=mysqli_result(sqlrequest("$database_lilac","SELECT id FROM nagios_contact WHERE name='$old_name'"),0,"id");
 					$lilac_groupid=mysqli_result(sqlrequest("$database_lilac","SELECT id FROM nagios_contact_group WHERE name='$eonweb_groupname'"),0,"id");
 					$lilac_oldgroupid=mysqli_result(sqlrequest("$database_lilac","SELECT id FROM nagios_contact_group WHERE name='$eonweb_oldgroupname'"),0,"id");
+					
+					require_once('/srv/eyesofnetwork/lilac/includes/config.inc');
+					$nc = NagiosContactPeer::getByName($old_name);
+					if($nc){
+						$nc->setName($user_name);
+						$nc->setAlias($user_descr);
+						$nc->setEmail($user_mail);
+						$nc->save();
+					}
 
-					sqlrequest("$database_lilac","UPDATE nagios_contact set name='".str_replace(","," ",$user_name)."', alias='$user_descr', email='$user_mail' WHERE name ='$old_name'");
 					sqlrequest("$database_lilac","DELETE from nagios_contact_group_member WHERE contact='$lilac_userid' and contactgroup='$lilac_groupid'");
 					sqlrequest("$database_lilac","DELETE from nagios_contact_group_member WHERE contact='$lilac_userid' and contactgroup='$lilac_oldgroupid'");
 					if($lilac_groupid!="" and $lilac_userid!="" and $user_limitation!="1")
 						sqlrequest("$database_lilac","INSERT into nagios_contact_group_member (contactgroup,contact) values('$lilac_groupid','$lilac_userid')");
 
+					
 					
 					// update user into nagvis :
 					$bdd = new PDO('sqlite:/srv/eyesofnetwork/nagvis/etc/auth.db');

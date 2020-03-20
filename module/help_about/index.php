@@ -29,7 +29,7 @@ include("../../side.php");
 
 	<div class="row">
 		<div class="col-lg-12">
-			<h1 class="page-header"><?php echo getLabel("label.home_about.title")." $version"; ?></h1>
+			<h1 class="page-header"><?php echo getLabel("label.home_about.title"); echo " $version.$release ($surname)";?></h1>
 		</div>
 	</div>
 

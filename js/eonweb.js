@@ -3,7 +3,7 @@
 #
 # Copyright (C) 2017 EyesOfNetwork Team
 # DEV NAME : Jean-Philippe LEVY
-# VERSION : 5.2
+# VERSION : 5.3
 # APPLICATION : eonweb for eyesofnetwork project
 #
 # LICENCE :
