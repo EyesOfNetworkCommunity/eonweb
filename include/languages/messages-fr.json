@@ -178,6 +178,7 @@
 	"label.admin_user.user_lang_en": "Anglais",
 	"label.admin_user.user_lang_fr": "Français",
 	"label.admin_user.user_lang_0": "Langue du navigateur",
+	"label.admin_user.user_theme": "Choisir un thême",
 	"label.admin_user.user_ldap": "Utilisateur LDAP",
 	"label.admin_user.user_limit": "Utilisateur limité",
 	"label.admin_user.user_mail": "Email de l'utilisateur",

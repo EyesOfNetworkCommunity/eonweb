@@ -19,7 +19,7 @@
 #
 #########################################
 */
-
+session_start();
 # Internationalization
 include("classes/Translator.class.php");
 
@@ -752,7 +752,7 @@ function ldap_escape($str, $login=false, $escape=false){
 }
 
 // User creation
-function insert_user($user_name, $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location, $user_mail, $user_limitation, $message, $in_nagvis = false, $in_cacti = false, $nagvis_group = false, $user_language = false){
+function insert_user($user_name, $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location, $user_mail, $user_limitation, $message, $in_nagvis = false, $in_cacti = false, $nagvis_group = false, $user_language = false, $theme = false){
 	global $database_host;
 	global $database_cacti;
 	global $database_username;
@@ -787,7 +787,7 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 			$user_password = md5($user_password1);
 			
 			// Insert into eonweb
-			sqlrequest("$database_eonweb","INSERT INTO users (user_name,user_descr,group_id,user_passwd,user_type,user_location,user_limitation,user_language) VALUES('$user_name', '$user_descr', '$user_group', '$user_password', '$user_type', '$user_location', '$user_limitation', '$user_language')");
+			sqlrequest("$database_eonweb","INSERT INTO users (user_name,user_descr,group_id,user_passwd,user_type,user_location,user_limitation,user_language,theme) VALUES('$user_name', '$user_descr', '$user_group', '$user_password', '$user_type', '$user_location', '$user_limitation', '$user_language', '$theme')");
 			$user_id=mysqli_result(sqlrequest("$database_eonweb","SELECT user_id FROM users WHERE user_name='$user_name'"),0,"user_id");
 			$group_name=mysqli_result(sqlrequest("$database_eonweb","SELECT group_name FROM groups WHERE group_id='$user_group'"),0,"group_name");
 
@@ -1347,6 +1347,43 @@ function getEonConfig($name,$type=false)
 		return $result[0];
 	}
 	
+}
+
+function startSessionTheme(){
+	global $database_eonweb;
+
+	if(isset($_COOKIE["user_name"])){
+
+			$conn = connexionDB($database_eonweb);
+			$sql = $conn->prepare("SELECT `theme` FROM users WHERE user_name = :userName");
+			$sql->bindParam("userName", $_COOKIE["user_name"]);
+			$sql->execute();
+			$result = $sql->fetch();
+			$conn = null;
+			$sql = null;
+			$theme_value = $result["theme"];
+			if($theme_value == "Default"){
+				$conn = connexionDB($database_eonweb);
+				$sql = "SELECT `theme` FROM configs";
+				$result = $conn->query($sql);
+				$data = $result->fetch();
+				$theme_value = $data["theme"];
+				$conn = null;
+				$sql = null;
+			} 
+
+			$_SESSION["theme"] = $theme_value;
+
+	} else {
+		$conn = connexionDB($database_eonweb);
+		$sql = "SELECT `theme` FROM configs";
+		$result = $conn->query($sql);
+		$data = $result->fetch();
+		$theme_value = $data["theme"];
+		$conn = null;
+		$sql = null;
+		$_SESSION["theme"] = $theme_value;
+	}
 }
 
 function checkUpdateDB(){

@@ -35,7 +35,7 @@ function ajaxCharts(link)
 			},
 			dataType: "JSON",
 			success: function(response){
-				var title = '<a style="font-size:18px;color:#333333;text-decoration:none;" class="graph_title" style="text-decoration:none;" href="'+path_nagios_status+'?hostgroup=all&style=hostdetail">Equipements Nagios</a>';
+				var title = '<a style="font-size:20px;color:#FFFFFF;text-decoration:none;" class="graph_title" style="text-decoration:none;" href="'+path_nagios_status+'?hostgroup=all&style=hostdetail">Equipements Nagios</a>';
 				if(link == "with_link"){
 					drawPieChart("container_hosts_state", title, response, "hostState", "with_link");
 				}
@@ -97,7 +97,7 @@ function ajaxCharts(link)
 		},
 		dataType: "JSON",
 		success: function(response){
-			var title = '<a style="font-size:18px;color:#333333;text-decoration:none;" class="graph_title" style="text-decoration:none;" href="/module/monitoring_ged/ged.php?q=active">Evenements actifs</a>';
+			var title = '<a style="font-size:18px;color:#FFF;text-decoration:none;" class="graph_title" style="text-decoration:none;" href="/module/monitoring_ged/ged.php?q=active">Evenements actifs</a>';
 			drawColumnChart("container_event_state_nbr_by_time", title, response);
 			$("#menu-toggle").click(function(){
 				$('#container_event_state_nbr_by_time').highcharts().reflow(); 
@@ -121,7 +121,7 @@ function drawPieChart(div_id, title, datas, column_type, link)
 		var begin_url = path_nagios_status+'?';
 		var columns = [ 
 			["pending", "up", "down", "unreachable"],
-			['grey', '#00CC33', '#FF3300', '#CC77C6'],
+			['#2CC6F7', '#00e00f', '#db0f00', '#99A2A8'],
 			['hostgroup=all&style=hostdetail&hoststatustypes=1', 'hostgroup=all&style=hostdetail&hoststatustypes=2', 'hostgroup=all&style=hostdetail&hoststatustypes=4', 'hostgroup=all&style=hostdetail&hoststatustypes=8']
 		];
 	}
@@ -130,7 +130,7 @@ function drawPieChart(div_id, title, datas, column_type, link)
 		var begin_url = path_nagios_status+'?';
 		var columns = [ 
 			["pending", "ok", "warning", "critical", "unknown"],
-			['grey', '#00CC33', '#FFA500', '#FF3300', '#CC77C6'],
+			['#2CC6F7', '#03c700', '#ff9500', '#ff2d55', '#99A2A8'],
 			['host=all&hoststatustypes=15&servicestatustypes=1&style=detail', 'host=all&hoststatustypes=15&servicestatustypes=2&style=detail', 'host=all&hoststatustypes=15&servicestatustypes=4&style=detail', 'host=all&hoststatustypes=15&servicestatustypes=16&style=detail', 'host=all&_=1467375869340&hoststatustypes=15&servicestatustypes=8&style=detail']
 		];
 	}
@@ -139,7 +139,7 @@ function drawPieChart(div_id, title, datas, column_type, link)
 		var begin_url = '/module/monitoring_ged/index.php?';
 		var columns = [ 
 			["ok", "warning", "critical", "unknown"],
-			['#00CC33', '#FFA500', '#FF3300', '#CC77C6'],
+			['#03c700', '#ff9500', '#ff2d55', '#99A2A8'],
 			["q=active&status=0", "q=active&status=1", "q=active&status=2", "q=active&status=3"]
 		];
 	}
@@ -153,10 +153,10 @@ function drawPieChart(div_id, title, datas, column_type, link)
 				name: columns[0][cpt],
 				y: datas[cpt],
 				color: {
-					radialGradient: { cx: 0.5, cy: 0.5, r: 1 },
+					linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
 					stops: [
 						[0, columns[1][cpt]],
-						[1, Highcharts.Color(columns[1][cpt]).brighten(-0.3).get('rgb')] // darken
+						[1, Highcharts.Color(columns[1][cpt]).brighten(0.16).get('rgb')] // darken
 					]
 				},
 				url: begin_url+columns[2][cpt]
@@ -233,7 +233,7 @@ function drawColumnChart(div_id, title, datas)
 	$('#'+div_id).highcharts({
 		chart: {
 			type: 'column',
-			backgroundColor: 'rgba(255, 255, 255, 0.01)',
+			backgroundColor: 'rgba(255, 255, 255, 0.00)',
 			plotShadow: false,
 			renderto: 'container',
 			marginTop: '80',
@@ -282,7 +282,7 @@ function drawColumnChart(div_id, title, datas)
 		},
 		plotOptions: {
 			column: {
-				pointPadding: 0.1,
+				pointPadding: 0.0,
 				borderWidth: 0
 			},
 			series: {

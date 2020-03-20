@@ -19,7 +19,7 @@
 #
 #########################################
 */
-
+session_start();
 include("header.php"); 
 
 logging("logout","User logged out");
@@ -36,7 +36,8 @@ setcookie("nagvis_session",FALSE,0,"/nagvis");
 setcookie("Cacti",FALSE);
 setcookie("clickedFolder",FALSE);
 setcookie("highlightedTreeviewLink",FALSE);
-
+session_unset();
+session_destroy(); 
 ?>
 
 <div class="container">

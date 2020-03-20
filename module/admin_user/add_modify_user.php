@@ -36,7 +36,7 @@ include("../../side.php");
 		function retrieve_user_info($user_id)
 		{
 			global $database_eonweb;
-			return sqlrequest("$database_eonweb","SELECT user_name, user_descr, group_id, user_passwd, user_type, user_location, user_limitation, user_language  FROM users WHERE user_id='$user_id'");
+			return sqlrequest("$database_eonweb","SELECT user_name, user_descr, group_id, user_passwd, user_type, user_location, user_limitation, user_language, theme FROM users WHERE user_id='$user_id'");
 		}
 
 		// Display user language selection  
@@ -77,11 +77,47 @@ include("../../side.php");
 
 			return $res;
 		}
+
+		// Display theme  
+		function GetThemeList() {
+
+			global $database_eonweb;
+			global $user_id;
+
+			// creation of a select and catch values
+			$conn = connexionDB($database_eonweb);
+			$sql = $conn->prepare("SELECT `theme` FROM users WHERE user_id = :userId");
+			$sql->bindParam("userId", $user_id);
+			$sql->execute();
+			$result = $sql->fetch();
+			$conn = null;
+			$sql = null;
+
+			$dir = "/srv/eyesofnetwork/eonweb/themes/";
+			$listTheme = scandir($dir);
+			$res = '<select class="form-control" name="theme">';
+			foreach($listTheme as $value) {
+				if($value != "." && $value != "..") {
+					if($value == $result["theme"]){
+						$res.="<option value='".$value."' selected=selected>".$value."</option>";
+					}
+					else if($value == "Default" && $result["theme"] == NULL){
+						$res.="<option value='".$value."' id='aa' selected=selected>".$value."</option>";
+					}
+					else{
+						$res.="<option value='".$value."'>".$value."</option>";
+					}
+				}
+			}
+			$res .= '</select>';
+
+			return $res;
+		}
 		
 		//--------------------------------------------------------
 
 		// Update User Information & Right
-		function update_user($user_id, $user_name, $user_descr, $user_group, $user_password1, $user_password2 ,$user_type, $user_location, $user_mail, $user_limitation, $old_group_id, $old_name, $create_user_in_nagvis, $create_user_in_cacti, $nagvis_role_id, $user_language)
+		function update_user($user_id, $user_name, $user_descr, $user_group, $user_password1, $user_password2 ,$user_type, $user_location, $user_mail, $user_limitation, $old_group_id, $old_name, $create_user_in_nagvis, $create_user_in_cacti, $nagvis_role_id, $user_language, $theme)
 		{
 			global $database_host;
 			global $database_cacti;
@@ -111,11 +147,11 @@ include("../../side.php");
 					if ($user_password1 != "abcdefghijklmnopqrstuvwxyz") {
 						$passwd_temp = md5($user_password1);
 						// Update into eonweb
-						sqlrequest("$database_eonweb","UPDATE users set user_name='$user_name', user_descr='$user_descr',group_id='$user_group',user_passwd='$passwd_temp',user_type='$user_type',user_location='$user_location',user_limitation='$user_limitation',user_language='$user_language' WHERE user_id ='$user_id'");
+						sqlrequest("$database_eonweb","UPDATE users set user_name='$user_name', user_descr='$user_descr',group_id='$user_group',user_passwd='$passwd_temp',user_type='$user_type',user_location='$user_location',user_limitation='$user_limitation',user_language='$user_language', theme='$theme' WHERE user_id ='$user_id'");
 					}
 					else {
 						// Update into eonweb
-						sqlrequest("$database_eonweb","UPDATE users set user_name='$user_name', user_descr='$user_descr',group_id='$user_group',user_type='$user_type',user_location='$user_location',user_limitation='$user_limitation',user_language='$user_language' WHERE user_id ='$user_id'");
+						sqlrequest("$database_eonweb","UPDATE users set user_name='$user_name', user_descr='$user_descr',group_id='$user_group',user_type='$user_type',user_location='$user_location',user_limitation='$user_limitation',user_language='$user_language', theme='$theme' WHERE user_id ='$user_id'");
 					}
 			
 					// Update into lilac
@@ -230,6 +266,7 @@ include("../../side.php");
 		$user_language = retrieve_form_data("user_language","");
 		$old_group_id = mysqli_result(sqlrequest($database_eonweb,"select group_id from users where user_id='$user_id'"),0,"group_id");
 		$old_name = retrieve_form_data("user_name_old","");
+		$theme = retrieve_form_data("theme","");
 
 		$create_user_in_nagvis = retrieve_form_data("create_user_in_nagvis","");
 		$nagvis_role_id = retrieve_form_data("nagvis_group","");
@@ -272,9 +309,9 @@ include("../../side.php");
 				
 				$user_group = retrieve_form_data("user_group","");
 				$nagvis_grp = retrieve_form_data("nagvis_group", "");
-				$user_id=insert_user(stripAccents($user_name), $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location,$user_mail,$user_limitation, true, $create_user_in_nagvis, $create_user_in_cacti, $nagvis_grp, $user_language);
+				$user_id=insert_user(stripAccents($user_name), $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location,$user_mail,$user_limitation, true, $create_user_in_nagvis, $create_user_in_cacti, $nagvis_grp, $user_language, $theme);
 				//message(8,"User location: $user_location",'ok');	// For debug pupose, to be removed
-
+				
 				// Retrieve Group Information from database
 				if($user_id){
 					$user_name_descr = retrieve_user_info($user_id);
@@ -288,6 +325,7 @@ include("../../side.php");
 					$user_location=mysqli_result($user_name_descr,0,"user_location");
 					$user_password1= "abcdefghijklmnopqrstuvwxyz";
 					$user_password2= "abcdefghijklmnopqrstuvwxyz";
+					$theme = retrieve_form_data("theme","");
 				}
 			}
 			//------------------------------------------------------------------------------------------------
@@ -304,7 +342,7 @@ include("../../side.php");
 						// ACCOUNT UPDATE (and retrieve parameters)
 						//------------------------------------------------------------------------------------------------
 			if (isset($_POST['update'])){
-				update_user($user_id, stripAccents($user_name), $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location, $user_mail, $user_limitation, $old_group_id, $old_name, $create_user_in_nagvis, $create_user_in_cacti, $nagvis_role_id, $user_language);	
+				update_user($user_id, stripAccents($user_name), $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location, $user_mail, $user_limitation, $old_group_id, $old_name, $create_user_in_nagvis, $create_user_in_cacti, $nagvis_role_id, $user_language, $theme);	
 				//message(8,"Update: User location = $user_location",'ok');	// For debug pupose, to be removed
 				//message(8,"Update: User name =  $user_name",'ok');			// For debug pupose, to be removed
 			}
@@ -445,6 +483,14 @@ include("../../side.php");
 			<label class="col-md-3"><?php echo getLabel("label.admin_user.user_lang"); ?></label>
 			<div class="col-md-9">
 				<?php echo GetUserLang(); ?>
+			</div>
+		</div>
+
+		<!-- Choose a theme -->
+		<div class="row form-group">
+			<label class="col-md-3"><?php echo getLabel("label.admin_user.user_theme"); ?></label>
+			<div class="col-md-9">
+				<?php echo GetThemeList(); ?>
 			</div>
 		</div>
 		
