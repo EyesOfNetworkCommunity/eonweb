@@ -116,6 +116,12 @@ $array_action_option = array(
 	4 => "action.ack",
 );
 
+$array_action_itsm = array(
+	0 => "action.details",
+	4 => "action.ack",
+	6 => "label.admin_itsm.ged_btn_create",
+);
+
 $array_resolve_action_option = array(
 	0 => "action.details",
 	5 => "action.delete",
@@ -157,6 +163,41 @@ $array_serv_system = array (
 			"stop" => "sudo /bin/systemctl stop snmptt ; sudo /bin/systemctl status snmptt",
 			"restart" => "sudo /bin/systemctl restart snmptt ; sudo /bin/systemctl status snmptt",
 			"reload" => "sudo /bin/systemctl reload snmptt ; sudo /bin/systemctl status snmptt")),
+        "Nagflux" => array (
+                "status" => "pidof -o $$ -o %PPID -x nagflux",
+                "proc_act" => array (
+                        "start" => "sudo /bin/systemctl start nagflux ; sudo /bin/systemctl status nagflux",
+                        "stop" => "sudo /bin/systemctl stop nagflux ; sudo /bin/systemctl status nagflux",
+                        "restart" => "sudo /bin/systemctl restart nagflux ; sudo /bin/systemctl status nagflux",
+                        "reload" => "sudo /bin/systemctl reload nagflux ; sudo /bin/systemctl status nagflux")),
+        "InfluxDB" => array (
+                "status" => "pidof -o $$ -o %PPID -x influxd",
+                "proc_act" => array (
+                        "start" => "sudo /bin/systemctl start influxd ; sudo /bin/systemctl status influxd",
+                        "stop" => "sudo /bin/systemctl stop influxd ; sudo /bin/systemctl status influxd",
+                        "restart" => "sudo /bin/systemctl restart influxd ; sudo /bin/systemctl status influxd",
+                        "reload" => "sudo /bin/systemctl reload influxd ; sudo /bin/systemctl status influxd")),
+        "Grafana instance" => array (
+                "status" => "pidof -o $$ -o %PPID -x grafana-server",
+                "proc_act" => array (
+                        "start" => "sudo /bin/systemctl start grafana-server ; sudo /bin/systemctl status grafana-server",
+                        "stop" => "sudo /bin/systemctl stop grafana-server ; sudo /bin/systemctl status grafana-server",
+                        "restart" => "sudo /bin/systemctl restart grafana-server ; sudo /bin/systemctl status grafana-server",
+                        "reload" => "sudo /bin/systemctl reload grafana-server ; sudo /bin/systemctl status grafana-server")),
+        "Apache HTTP Server" => array (
+                "status" => "pidof -o $$ -o %PPID -x httpd",
+                "proc_act" => array (
+                        "start" => "sudo /bin/systemctl start httpd ; sudo /bin/systemctl status httpd",
+                        "stop" => "sudo /bin/systemctl stop httpd ; sudo /bin/systemctl status httpd",
+                        "restart" => "sudo /bin/systemctl restart httpd ; sudo /bin/systemctl status httpd",
+                        "reload" => "sudo /bin/systemctl reload httpd ; sudo /bin/systemctl status httpd")),
+        "MariaDB database server" => array (
+                "status" => "pidof -o $$ -o %PPID -x mysqld_safe",
+                "proc_act" => array (
+                        "start" => "sudo /bin/systemctl start mariadb ; sudo /bin/systemctl status mariadb",
+                        "stop" => "sudo /bin/systemctl stop mariadb ; sudo /bin/systemctl status mariadb",
+                        "restart" => "sudo /bin/systemctl restart mariadb ; sudo /bin/systemctl status mariadb",
+                        "reload" => "sudo /bin/systemctl reload mariadb ; sudo /bin/systemctl status mariadb")),
 );
 
 $ged_active_intervals = array(

@@ -251,7 +251,9 @@ else {
 			logging("login","User logged in",$login);
 			echo "<meta http-equiv='Refresh' content='0;URL=".getDefaultPage($usrlimit)."' />";
 		}
-		else { display_login(); }
+		else { display_login(); 
+			logging("login","User failed to login",$login);
+		}
 	}
 	else { display_login(); }
 }
