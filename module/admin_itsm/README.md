@@ -11,7 +11,7 @@ A graphic interface to manage the configuration have been created and the interf
 Requirements
 ------------
 
-Eyes of Network 5.2 
+Eyes of Network 5.3 
 
 Installation 
 ------------
