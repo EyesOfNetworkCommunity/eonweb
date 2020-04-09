@@ -268,7 +268,9 @@ body {
 #EONFlatLight .panel-heading {
 	border-color: transparent;
 	background-color: transparent;
-	color: black;
+    color: black;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
 }
 
 #EONFlatLight .panel-default > .panel-heading
