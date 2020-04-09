@@ -42,16 +42,50 @@ class Itsm{
         global $database_eonweb;
         if(isset($this->itsm_id)){
             //update 
-            $sql    = 'UPDATE itsm SET itsm_url =\''.$this->itsm_url.'\', itsm_file=\''.$this->itsm_file.'\', itsm_ordre='.$this->insert_sql($this->itsm_order).', itsm_parent =  '.$this->insert_sql($this->itsm_parent).' , itsm_return_champ = \''.$this->itsm_return_champ.'\' , itsm_type_request = \''.$this->itsm_type_request.'\' WHERE itsm_id = '.$this->itsm_id;
-            $result = sqlrequest($database_eonweb,$sql);
+            $prepare = ["ssss","".$this->itsm_url,"".$this->itsm_file,"".$this->itsm_return_champ,"".$this->itsm_type_request];
+            
+            $sql    = 'UPDATE itsm SET itsm_url =?, itsm_file=? , itsm_return_champ = ? , itsm_type_request = ? ';
+            $end = 'WHERE itsm_id = ?';
+            if($this->insert_sql($this->itsm_order) != "NULL" ){
+                $sql = $sql.', itsm_ordre=? ';
+                $prepare[0] = $prepare[0]."i";
+                array_push($prepare,"".$this->insert_sql($this->itsm_order));
+            }
+            if($this->insert_sql($this->itsm_parent)!= "NULL"){
+                $sql = $sql.', itsm_parent = ? ';
+                $prepare[0] = $prepare[0]."i";
+                array_push($prepare,"".$this->insert_sql($this->itsm_parent));
+            }
+
+            $sql = $sql.$end;
+            array_push($prepare,"".$this->itsm_id);
+            $prepare[0] = $prepare[0]."i";
+            $result = sqlrequest($database_eonweb,$sql,false,$prepare);
             $this->maj_headers_db();
             $this->maj_vars_db();
             $description = "itsm config: " . $this->itsm_url . " was updated"; 
             logging("itsm", $description, $_COOKIE['user_name']);
         }else{
             //insert
-            $sql = 'INSERT INTO itsm(itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_return_champ, itsm_type_request) VALUES("'.$this->itsm_url.'", "'.$this->itsm_file.'", '.$this->insert_sql($this->itsm_order).', '.$this->insert_sql($this->itsm_parent).', \''.$this->itsm_return_champ.'\', \''.$this->itsm_type_request.'\')';
-            $result = sqlrequest($database_eonweb,$sql,true);
+            $prepare = ["ssss", "$this->itsm_url", "$this->itsm_file",  "$this->itsm_return_champ", "$this->itsm_type_request"];
+            
+            $sql = 'INSERT INTO itsm(itsm_url, itsm_file, itsm_return_champ, itsm_type_request';
+            $end = ') VALUES(?, ?, ?, ?';
+
+            if($this->insert_sql($this->itsm_order) != "NULL" ){
+                $sql = $sql.', itsm_ordre';
+                $end = $end.', ? ';
+                $prepare[0] = $prepare[0]."i";
+                array_push($prepare,"".$this->insert_sql($this->itsm_order));
+            }
+            if($this->insert_sql($this->itsm_parent)!= "NULL"){
+                $sql = $sql.', itsm_parent';
+                $end = $end.', ? ';
+                $prepare[0] = $prepare[0]."i";
+                array_push($prepare,"".$this->insert_sql($this->itsm_parent));
+            }
+            $sql = $sql.$end.")";
+            $result = sqlrequest($database_eonweb,$sql,true,$prepare);
             if($result){
                 $this->itsm_id = $result;
                 $this->maj_headers_db();
@@ -66,8 +100,8 @@ class Itsm{
 
     function delete(){
         global $database_eonweb;
-        $sql = 'DELETE FROM itsm WHERE itsm_id = '.$this->itsm_id;
-        $result = sqlrequest($database_eonweb,$sql);
+        $sql = 'DELETE FROM itsm WHERE itsm_id = ?';
+        $result = sqlrequest($database_eonweb,$sql,false,["i",''.$this->itsm_id]);
         return $result;
     }
 
@@ -155,9 +189,9 @@ class Itsm{
         foreach($this->itsm_vars as $key=>$value){
             // $value = id champ_ged
             if(array_key_exists($key,$old_vars)){
-                sqlrequest($database_eonweb,'UPDATE itsm_var SET champ_ged_id ='.$value.' WHERE itsm_var_name=\''.$key.'\' AND itsm_id='.$this->itsm_id);
+                sqlrequest($database_eonweb,'UPDATE itsm_var SET champ_ged_id =? WHERE itsm_var_name=? AND itsm_id=?',false,["isi","$value","$key","$this->itsm_id"]);
             }else{
-                sqlrequest($database_eonweb,$sql_add.'('.$this->itsm_id.', \''.$key.'\', '.$value.')');
+                sqlrequest($database_eonweb,$sql_add.'(?,?,?)',false,["isi","$this->itsm_id","$key","$value"]);
             }
         }
 

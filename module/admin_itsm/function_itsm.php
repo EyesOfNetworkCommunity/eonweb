@@ -26,19 +26,21 @@
  * @return boolean
  */
 function upload_file($url, $file, $dir="uploaded_file"){
-    $path_file = __DIR__."/".$dir."/".basename($file["name"]);
-    if(file_exists($path_file)){
-        unlink($path_file);
+    if(preg_match('#[\x00-\x1F\x7F-\x9F/\\\\]#', basename($file["name"]))){
+        return false;
+    }else{
+        $path_file = __DIR__."/".$dir."/".basename($file["name"]);
+        if(file_exists($path_file)){
+            unlink($path_file);
+        }
+
+        $path_file = __DIR__."/".$dir."/".basename($file["name"]);
+         
+        if(move_uploaded_file($file["tmp_name"], $path_file)){
+            return true;
+        }
+        return false;
     }
-
-    $path_file = __DIR__."/".$dir."/".basename($file["name"]);
-        
-    if(move_uploaded_file($file["tmp_name"], $path_file)){
-
-        return true;
-    }
-    return false;
-
 }
 
 // ================== SQL FUNCTION =================== //
@@ -46,14 +48,15 @@ function insert_config_var($name,$value){
     global $database_eonweb;
     $var = get_config_var($name);
     $rq = "";
+    $prepare=["ss","$value","$name"];
     if($var != false){
-        $rq = 'UPDATE configs SET value=\''.$value.'\' WHERE name=\''.$name.'\''; 
+        $rq = 'UPDATE configs SET value=? WHERE name=?'; 
     }else{
-        $rq = 'INSERT INTO configs VALUES(\''.$name.'\',\''.$value.'\')';
+        $rq = 'INSERT INTO configs (value,name) VALUES(?,?)';
     }
 
     try{
-        $res = sqlrequest("$database_eonweb",$rq);
+        $res = sqlrequest("$database_eonweb",$rq,false,$prepare);
         return $res;
     }catch(Exception $e) {
         return 'Exception reçue : '.$e->getMessage().'\n';
@@ -62,7 +65,7 @@ function insert_config_var($name,$value){
 
 function get_config_var($name){
     global $database_eonweb;
-    $res = sqlrequest("$database_eonweb",'SELECT value FROM configs WHERE name="'.$name.'"');
+    $res = sqlrequest("$database_eonweb",'SELECT value FROM configs WHERE name=?',false,["s","$name"]);
     $val = false;
     if(mysqli_num_rows($res) == 1 ){
         $val = mysqli_result($res , 0);
@@ -74,7 +77,7 @@ function get_config_var($name){
 function change_itsm_state($state){
     if($state != get_config_var("itsm")){
         global $database_eonweb;
-        sqlrequest("$database_eonweb",'UPDATE configs set value="'.$state.'" WHERE name="itsm"');
+        sqlrequest("$database_eonweb",'UPDATE configs set value=? WHERE name="itsm"',false,["s","$state"]);
     }
     return get_itsm_state();
 }
@@ -122,8 +125,9 @@ function report_itsm($ged_type=NULL, $queue=NULL, $id_ged=NULL, $array_vars=arra
 
 function get_champ_ged($champ, $ged_type, $queue, $id_ged){
     global $database_ged;
-    $sql = "SELECT ".$champ." FROM ".$ged_type."_queue_".$queue." WHERE id = $id_ged";
-    $result = sqlrequest($database_ged, $sql, false);
+    $prepare =["i", $id_ged];
+    $sql = "SELECT $champ FROM ".$ged_type."_queue_".$queue." WHERE id = ?";
+    $result = sqlrequest($database_ged, $sql, false,$prepare);
     $event = mysqli_fetch_assoc($result);
     return $event[$champ];
 }

@@ -81,19 +81,17 @@ if($_POST["action"] == "add_external_itsm"){
                 $message .= "<div class=\"alert alert-success\" role=\"alert\">File uploaded.</div>";
                 $itsm->setItsm_file(__DIR__."/"."uploaded_file/".$_FILES["fileName"]["name"]);
             }else $message .= "<div class=\"alert alert-danger\" role=\"alert\">File failed to be upload, nothing else have been executed.</div>";
-
         }
         $nb_itsm=$itsmPeer->count_itsm();
         if($itsm->getItsm_order()==null){
             $itsm->setItsm_order(intval($nb_itsm)+1);
         }
-        
 
         $id = $itsm->save();
         if($id > 0 ){
             $message .= "<div class=\"alert alert-success\" role=\"alert\">".$itsm->getItsm_url()." succesfully saved. Is id is : ".$id."</div>";
         }else {
-            $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$_POST["itsm_url"]." failed to saved.</div>";
+            $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$_POST["itsm_url"]." failed to saved.".$id."</div>";
         }
     }
 
@@ -197,7 +195,6 @@ if($_POST["action"] == "add_external_itsm"){
         }
         echo $opt."</datalist>";
         
-
         echo "<div class=\"alert alert-warning alert-dismissible\" role=\"alert\">";
         //var_dump($newarray_header);
         getResult($json_obj);
@@ -245,5 +242,4 @@ if($_POST["action"] == "add_external_itsm"){
         logging("itsm", $description, $_COOKIE['user_name']);
     }
 }
-
 ?>
