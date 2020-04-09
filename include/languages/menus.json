@@ -295,6 +295,11 @@
                             "name":"menu.link.logs",
                             "url":"/module/admin_logs/",
                             "target":"main"
+                        },
+                        {
+                            "name":"menu.link.itsm",
+                            "url":"/module/admin_itsm/",
+                            "target":"main"
                         }
                     ]
                 },

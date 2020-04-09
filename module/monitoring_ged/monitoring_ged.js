@@ -202,7 +202,7 @@ $(document).ready(function(){
 	
 	$('#collapseOne').on('shown.bs.collapse', function () {
 		$('#ged-search').focus();	
-	})
+	});
 	
 	$("#filter-selection").on('change', function(){
 		var filter_selection = $(this).val();
@@ -318,6 +318,7 @@ $(document).ready(function(){
 			selected_events.push(event_id+":"+event_type+":"+event_state+":"+host_name+":"+service_name);
 		});
 
+		
 		// stop here if no event selected
 		if(selected_events.length < 1){
 			return;
@@ -337,6 +338,7 @@ $(document).ready(function(){
 		if(action == 3){ action_name = "action.disown"; }
 		if(action == 4){ action_name = "action.ack"; }
 		if(action == 5){ action_name = "action.delete"; }
+		if(action == 6){ action_name = "action.create"; }
 
 		$.ajax({
 			url: "ged_actions.php",
@@ -346,14 +348,21 @@ $(document).ready(function(){
 				selected_events: events
 			},
 			beforeSend: function(){
-				$("#modal-nav, #edit-btns, #own-btns, #ack-btns, #event-validation").hide();
-				
+				$("#modal-nav, #edit-btns, #own-btns, #ack-btns, #itsm-btns, #event-validation").hide();
+				$("#check-nagios").hide();
+				console.log(action);
+				if(action == 4) {
+					$("#check-nagios").show();
+				}
+
 				// configure modal footer according to action selected
 				switch(action){
 					case "0":
-						$("#modal-nav, #own-btns, #ack-btns").show(); break;
+						$("#modal-nav, #own-btns, #ack-btns, #itsm-btns").show(); break;
 					case "1":
-						$("#modal-nav, #edit-btns, #own-btns, #ack-btns").show(); break;
+						$("#modal-nav, #edit-btns, #own-btns, #itsm-btns, #ack-btns").show(); break;
+					case "6":
+						$("#modal-nav, #edit-btns, #own-btns, #itsm-btns, #ack-btns").show(); break;
 					default:
 						$("#event-validation").show(); break;
 				}
@@ -361,13 +370,45 @@ $(document).ready(function(){
 				$("#event-message").empty();
 			},
 			success: function(response){
-				if(action == 0 || action == 1){
+				if(action == 0 || action == 1 || action == 6 ){
 					changeModalState(selected_events[event_index]);
 					var event_infos = selected_events[event_index].split(":");
 					var host_name = event_infos[3];
 					var service_name = event_infos[4];
 					$(".modal-title").html(host_name+" / "+service_name+ " ("+ (event_index + 1) +"/"+selected_events.length+")");
 					$(".modal-body #content").html(response);
+
+					$("#own-event-choix").show();
+					$("#own-event-simple").show();
+
+					$("#ack-event-choix").show();
+					$("#ack-event-simple").show();
+
+					$("#edit-event-simple").show();
+					$("#edit-event-choix").show();
+
+					$("#details-prev").show();
+					$("#details-next").show();
+
+					$("#itsm-choose").show();
+					$("#itsm-simple").show();
+
+					if(selected_events.length < 2){
+						$("#own-event-choix").hide();
+						$("#ack-event-choix").hide();
+						$("#edit-event-choix").hide();
+						$("#details-prev").hide();
+						$("#details-next").hide();
+						$("#itsm-choose").hide();
+
+					}else{
+						$("#own-event-simple").hide();
+						$("#ack-event-simple").hide();
+						$("#edit-event-simple").hide();
+						$("#itsm-simple").hide();
+
+					}
+
 				} else {
 					removeModalState();
 					$(".modal-title").html(dictionnary[action_name]);
@@ -375,6 +416,7 @@ $(document).ready(function(){
 				}
 				
 				$("#ged-modal").modal();
+
 			}
 		});
 	});
@@ -404,21 +446,30 @@ $(document).ready(function(){
 	});
 
 	// click to edit an event
-	$(document).on("click", "#edit-event, #edit-all-event, #own-event, #own-all-event, #ack-event, #ack-all-event", function(){
+	$(document).on("click", "#edit-event, #edit-all-event, #own-event, #own-all-event, #ack-event, #ack-all-event, #itsm-all-event, #itsm-event", function(){
 		global_action = this.id;
 		global_action_name = this.id;
 		action_title = "action.edit";
-		
+		$("#check-nagios-val").hide();
 		if(global_action == "own-event" || global_action == "own-all-event") {
 			action_title = "action.own";
 			global_action = 2;
 		} else if(global_action == "ack-event" || global_action == "ack-all-event") {
 			action_title = "action.ack";
 			global_action = 4;
+			$("#check-nagios-val").show();
+
+		}else if (global_action == "itsm-event" || global_action == "itsm-all-event"){
+			action_title = "action.create";
+			global_action = 6;
 		}
 		
-		$("#confirmation-modal-title").html(dictionnary[action_title]);
-		$("#confirmation-modal").modal();
+		if(global_action == 6){
+			$('#confirmation-event-validation').click();
+		}else{
+			$("#confirmation-modal-title").html(dictionnary[action_title]);
+			$("#confirmation-modal").modal();
+		}
 	});
 	
 	// click to confirm event edit/own/ack
@@ -426,19 +477,28 @@ $(document).ready(function(){
 		var queue = $("#queue").val();
 		var action = "confirm";
 		var comments = "";
-				
 		var events = [];
-		if(global_action_name == "edit-event" || global_action_name == "own-event" || global_action_name == "ack-event"){
+		var checkBoxNagiosVal = document.getElementById("checkbox-nagios-val");
+		if( checkBoxNagiosVal != null) {
+			checkBoxNagiosVal = checkBoxNagiosVal.checked;
+		} else { 
+			checkBoxNagiosVal = "false";
+		}
+		if(global_action_name == "edit-event" || global_action_name == "own-event" || global_action_name == "ack-event" || global_action_name == "itsm-event" ){
+
 			events.push(selected_events[event_index]);
+			
+
 		} else {
 			events = selected_events;
 		}
 
 		if($("#event-comments").length) {
 			comments = $("#event-comments").val();
-			action = "edit"
+			action = "edit";
 		}
-
+		//var group_itsm = $("#group").val();
+		//TODO Transformer le form edit en multi formdata to simplify the transfert of POST variable and facilitate the addition of specific development
 		$.ajax({
 			url: "ged_actions.php",
 			data: {
@@ -446,9 +506,11 @@ $(document).ready(function(){
 				action: action,
 				global_action: global_action,
 				selected_events: events,
-				comments: comments
+				comments: comments,
+				checkBoxNagios: checkBoxNagiosVal
 			},
 			success: function(response){
+				$("#messages").html(response);
 				$(".modal-body #event-message").html(response);
 				$("#confirmation-modal").modal('hide');
 				$("#ged-modal").modal('hide');
@@ -465,19 +527,26 @@ $(document).ready(function(){
 	// click to valid the own/disown/ack/delete
 	$(document).on("click", "#event-validation", function(){
 		var queue = $("#queue").val();
+		var checkBoxNagios = document.getElementById("checkbox-nagios");
+		if( checkBoxNagios != null) {
+			checkBoxNagios = checkBoxNagios.checked;
+		} else { 
+			checkBoxNagios = "false";
+		}
 		global_action = gedaction;
-		
+		$("#modal-loader").css("visibility", "visible");
 		$.ajax({
 			url: "ged_actions.php",
 			data: {
 				queue: queue,
 				action: "confirm",
 				global_action: global_action,
-				selected_events: selected_events
+				selected_events: selected_events,
+				checkBoxNagios: checkBoxNagios
 			},
 			success: function(response){
 				global_action = "";
-
+				$("#modal-loader").css("visibility", "hidden");
 				if(response.length > 0){
 					$("#messages").html(response);
 					$("#result").empty();

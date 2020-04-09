@@ -1,7 +1,7 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
 Version: 5.3
-Release: 3
+Release: 4
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
@@ -42,8 +42,18 @@ cp -afv %{buildroot}%{eonconfdir}/eonwebpurge %{buildroot}%{_sysconfdir}/cron.d/
 cp -afv %{buildroot}%{eonconfdir}/eonweb.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
 
 %post
-/bin/chmod 775 %{datadir}/cache
-/bin/chown -R root:eyesofnetwork %{datadir}
+case "$1" in
+  1)
+    # Initial install
+    /bin/chmod 775 %{datadir}/cache
+    /bin/chown -R root:eyesofnetwork %{datadir}
+  ;;
+  2)
+    # Update EON 5.3.4
+    /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.4.sql
+  ;;
+esac
+
 
 %clean
 rm -rf %{buildroot}
@@ -56,6 +66,10 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
+* Thu Apr 09 2020 Sebastien DAVOULT <d@vou.lt> - 5.3-4.eon
+- Add 5.3 Services in monitored service Management Processes
+- Add ITSM Connector Function
+
 * Fri Feb 28 2020 Sebastien DAVOULT <d@vou.lt> - 5.3-3.eon
 - fix security issue #51 (SQL Inject by cookie)
 

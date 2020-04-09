@@ -116,6 +116,12 @@ $array_action_option = array(
 	4 => "action.ack",
 );
 
+$array_action_itsm = array(
+	0 => "action.details",
+	4 => "action.ack",
+	6 => "label.admin_itsm.ged_btn_create",
+);
+
 $array_resolve_action_option = array(
 	0 => "action.details",
 	5 => "action.delete",
