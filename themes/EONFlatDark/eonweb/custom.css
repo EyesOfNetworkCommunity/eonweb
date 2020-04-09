@@ -1,0 +1,382 @@
+/*
+ * ------------------------------------------------------------------------
+ * Font Used
+ * ------------------------------------------------------------------------
+*/
+
+@font-face {
+	font-family: "Quicksand-regular";
+
+	src: url('fonts/Quicksand-Regular.ttf');
+}
+
+@font-face {
+	font-family: "Quicksand-medium";
+	src: url('fonts/Quicksand-Medium.ttf');
+}
+@font-face {
+	font-family: "Quicksand-bold";
+	src: url('fonts/Quicksand-Bold.ttf');
+}
+@font-face {
+	font-family: "Quicksand-semi-bold";
+	font-style: semi-bold;
+	src: url('fonts/Quicksand-SemiBold.ttf');
+}
+@font-face {
+	font-family: "Quicksand-light";
+	font-style: light;
+	src: url('fonts/Quicksand-Light.ttf');
+}
+
+/*
+ * ------------------------------------------------------------------------
+ * Page layout
+ * ------------------------------------------------------------------------
+*/
+
+body {
+	font-family: "Quicksand-medium";
+    background-color: #333 !important;
+    color: #aaa;
+}
+#EONFlatDark #page-wrapper{
+    background-color: #252526;
+    border-color:#252526 !important;
+}
+#EONFlatDark .sidebar{
+    background-color: #333;
+    line-height: 1.9;
+    font-size: 16px;
+}
+
+#EONFlatDark .sidebar .arrow {
+    float: right;
+    margin-top: 8px;
+}
+
+#EONFlatDark .sidebar a{
+	color: #FFFFFF  !important;
+	font-family: "Quicksand-light";
+}
+
+#EONFlatDark .sidebar a:active {
+    background-color: #333;
+}
+
+#EONFlatDark .sidebar ul li {
+    border-bottom: 1px solid #333;
+}
+.sidebar ul li a.active {
+    background-color: #333;
+}
+
+#EONFlatDark .sidebar li > a:focus {
+    background-color: #333;
+}
+
+
+#EONFlatDark .sidebar li > a:hover {
+    background-color: #333;
+}
+
+#EONFlatDark .sidebar li > a:active {
+    background-color: #333;
+}
+
+#logo_eon  {
+    width: 180px;
+}
+
+/* NAVBAR/ Barre de navigation du header */
+.navbar-default{
+    border-color: #252526;
+}
+#EONFlatDark .navbar {
+    background-color: #333;
+    box-shadow: 0px 10px 12px 1px rgba(0, 0, 0, .1);
+}
+/* Menu droit utilisateur couleur et taille texte */
+#EONFlatDark .navbar-top-links li a {
+    padding: 15px;
+    min-height: 50px;
+    color: #aaa;
+}
+
+/* Dropdown menu ATTENTION NE PAS UTILISER LA CLASSE EONFlatDark ICI */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 1px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #FFF;
+    border: 1px solid rgba(100,100,100,.03);
+    border-radius: 0px;
+    -webkit-box-shadow: 0 0px 0px rgba( 241, 241, 241 ,.0);
+    box-shadow: 0 0px 0px rgba(0,0,0,.0);
+}
+
+/*Dropdown menu séléctionné */
+
+#EONFlatDark .dropdown-menu > .active > a, .dropdown-menu > .active > a:focus, .dropdown-menu > .active > a:hover {
+    color: #FFF;
+    text-decoration: none;
+    background-color: #363636 ;
+    outline: 0;
+}
+
+
+/* boutons carré au lieu d'arrondies dans le header */
+#EONFlatDark .btn-group-xs > .btn, .btn-xs {
+    padding: 1px 7px;
+    font-size: 13px;
+    line-height: 1.5;
+    border-radius: 0px;
+}
+
+
+/* Ligne séparation Titre et contenue (tableau de bord) */
+#EONFlatDark .page-header {
+    padding-bottom: 9px;
+    margin: 15px 0 20px;
+    border-bottom: 1px solid #d8d8d8;
+    color: #ccc;   
+}
+
+
+
+#EONFlatDark .sidebar input {
+	margin: 5px 0;
+	background: none;
+	border-bottom: 1px solid white;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+}
+
+#EONFlatDark .sidebar input:focus {
+	outline: none;
+	border-bottom: 3px solid white;
+	color: white;
+}
+
+#EONFlatDark .sidebar-search{
+	margin-left: -10px;
+}
+
+::-webkit-input-placeholder {
+	color: white;
+}
+
+:-moz-placeholder {
+	/* Firefox 18- */
+	color: white;
+}
+
+::-moz-placeholder {
+	/* Firefox 19+ */
+	color: white;
+}
+
+:-ms-input-placeholder {
+	color: white;
+}
+
+/* Barre de recherche*/
+#EONFlatDark .form-control {
+	line-height: 0;
+	color: #000;
+    height: 34px;
+    padding: 6px 12px;
+	font-size: 16px;
+	border: 0px;
+	border-radius: 0px;
+	box-shadow: inset 0 0px 0px rgba(0,0,0,.0);
+	background-color: #fdfcfc ;;
+}
+
+#EONFlatDark .form-control::placeholder {
+    color: #fff;
+    opacity: 1;
+}
+
+#EONFlatDark .form-control:focus {
+    border-color: transparent;
+	outline: 0;
+
+}
+
+#EONFlatDark .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+    background-color: #ecf0f1;
+	opacity: 1;
+	border-radius: 15px;
+}
+
+#EONFlatDark .sidebar button {
+	width: 50px;
+	height: 50px;
+	background: none;
+	border: none;
+	position: absolute;
+	top: -3px;
+    margin-left: -40px;
+    color: #FFFFFF;
+}
+
+#EONFlatDark .sidebar button:hover {
+	width: 50px;
+	height: 50px;
+	background: none;
+	border: none;
+	position: absolute;
+	top: -3px;
+    left: -40px;
+    color: #FFFFFF;
+}
+
+#EONFlatDark .sidebar button:focus {
+	outline: none;
+}
+
+#EONFlatDark .fas {
+	color: white;
+	font-size: 2em;
+}
+
+
+#EONFlatDark .user-header > li > a {
+	color: black;
+	text-decoration-color: black;
+}
+#EONFlatDark .user-header{
+	border-radius: 0px;
+	color: black;
+}
+.btn-xs-header{
+	border-radius: 0px;
+}
+.dropdown-user a {
+	color: black;
+	text-decoration-color: black;
+}
+
+#EONFlatDark .panel-heading {
+	border-color: transparent;
+	background-color: transparent;
+	color: black;
+}
+
+#EONFlatDark .panel-default > .panel-heading
+{
+	color: white;
+	border-color: transparent;
+	background-color: transparent;
+	text-align: center;
+    background-color: #333;
+}
+
+#EONFlatDark .panel-body{
+background-color: #333;
+}
+#EONFlatDark .panel-heading a
+{
+	background-color: transparent;
+	color: #FFF;
+	font-family: "Quicksand-bold";
+	font-size: 20px;
+}
+
+/* Couleurs Boutons boostrap */
+#EONFlatDark .btn-primary {
+    color: #fff;
+    background-color: #7B41D8 !important;
+    border-color: #7B41D8;
+}
+
+#EONFlatDark .btn-success {
+    color: #fff;
+    background-color: #2DCE89;
+    border-color: #2DCE89;
+}
+
+#EONFlatDark .btn-danger {
+    color: #fff;
+    background-color: #ff1d46;
+    border-color: #ff1d46;
+}
+
+#EONFlatDark .btn-info {
+    color: #fff;
+    background-color: #34495e;
+    border-color: #34495e;
+}
+
+#EONFlatDark  .alert-info {
+    color: #FFFFFF;
+    background-color: #34495e;
+    border-color: #34495e;
+}
+
+#EONFlatDark .alert-danger {
+    color: #FFFFFF;
+    background-color: #e74c3c;
+    border-color: #e74c3c;
+}
+
+#EONFlatDark .alert-success {
+    color: #FFFFFF;
+    background-color: #2ecc71;
+    border-color: #2ecc71;
+}
+
+#EONFlatDark .alert-warning {
+    color: #000000;
+    background-color: #f1c40f;
+    border-color: #f1c40f;
+}
+
+/* Pagination Suivant X Precedent */
+#EONFlatDark .pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+    z-index: 3;
+    color: #fff;
+    cursor: default;
+    background-color: #7B41D8;
+    border-color: #7B41D8;
+}
+/* Precedent */
+#EONFlatDark .pagination > li:first-child > a, .pagination > li:first-child > span {
+    margin-left: 0;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+/* Suivant */
+#EONFlatDark .pagination > li:last-child > a, .pagination > li:last-child > span {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+#EONFlatDark label {
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: 700;
+    font: Quicksand;
+    font-family: "Quicksand-medium";;
+    color:#aaa;
+}
+
+.table-striped tbody tr td{
+    background-color: #333;
+}

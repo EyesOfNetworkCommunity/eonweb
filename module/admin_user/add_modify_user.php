@@ -97,15 +97,17 @@ include("../../side.php");
 			$listTheme = scandir($dir);
 			$res = '<select class="form-control" name="theme">';
 			foreach($listTheme as $value) {
-				if($value != "." && $value != "..") {
-					if($value == $result["theme"]){
-						$res.="<option value='".$value."' selected=selected>".$value."</option>";
-					}
-					else if($value == "Default" && $result["theme"] == NULL){
-						$res.="<option value='".$value."' id='aa' selected=selected>".$value."</option>";
-					}
-					else{
-						$res.="<option value='".$value."'>".$value."</option>";
+				if(is_dir($dir . $value)) {
+					if($value != "." && $value != "..") {
+						if($value == $result["theme"]){
+							$res.="<option value='".$value."' selected=selected>".$value."</option>";
+						}
+						else if($value == "Default" && $result["theme"] == NULL){
+							$res.="<option value='".$value."' id='aa' selected=selected>".$value."</option>";
+						}
+						else{
+							$res.="<option value='".$value."'>".$value."</option>";
+						}
 					}
 				}
 			}

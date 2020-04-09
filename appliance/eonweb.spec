@@ -1,11 +1,11 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
 Version: 5.3
-Release: 4
+Release: 5
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
-Requires: backup-manager, cacti0, ged, ged-mysql, eon4apps, lilac, snmptt, thruk 
+Requires: backup-manager, cacti0, ged, ged-mysql, eon4apps, lilac >= 3.1-2, snmptt, thruk 
 Requires: httpd, mariadb-server, mod_auth_eon, mod_perl
 Requires: php, php-mysqlnd, php-ldap, php-process, php-xml
 Requires: nagios >= 3.0, nagios-plugins >= 1.4.0, nagvis, nagiosbp, notifier, nagios-plugins-nrpe
@@ -40,6 +40,8 @@ cp -afv ./* %{buildroot}%{datadir}
 cp -afv %{buildroot}%{eonconfdir}/eonbackup %{buildroot}%{_sysconfdir}/cron.d/
 cp -afv %{buildroot}%{eonconfdir}/eonwebpurge %{buildroot}%{_sysconfdir}/cron.d/
 cp -afv %{buildroot}%{eonconfdir}/eonweb.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
+ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatDark/thruk/EONFlatDark/ /etc/thruk/themes/themes-enabled/EONFlatDark
+ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatLight/thruk/EONFlatLight/ /etc/thruk/themes/themes-enabled/EONFlatLight
 
 %post
 case "$1" in
@@ -50,7 +52,12 @@ case "$1" in
   ;;
   2)
     # Update EON 5.3.4
-    /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.4.sql
+    /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.4.sql 2>/dev/null
+    # Update EON 5.3.5
+    /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.5.sql 2>/dev/null
+    ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatDark/thruk/EONFlatDark/ /etc/thruk/themes/themes-enabled/EONFlatDark
+    ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatLight/thruk/EONFlatLight/ /etc/thruk/themes/themes-enabled/EONFlatLight
+    systemctl restart httpd
   ;;
 esac
 
@@ -66,6 +73,11 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
+* Thu Apr 09 2020 Sebastien DAVOULT <d@vou.lt> - 5.3-5.eon
+- Add Theme Manager
+- Add EONFlatLight theme
+- Add EONFlatDark theme
+
 * Thu Apr 09 2020 Sebastien DAVOULT <d@vou.lt> - 5.3-4.eon
 - Add 5.3 Services in monitored service Management Processes
 - Add ITSM Connector Function

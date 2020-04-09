@@ -56,6 +56,7 @@ DROP TABLE IF EXISTS `configs`;
 CREATE TABLE `configs` (
   `name` varchar(255) NOT NULL,
   `value` text NOT NULL,
+  `theme` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -265,6 +266,7 @@ CREATE TABLE `users` (
   `user_location` varchar(255) DEFAULT NULL,
   `user_limitation` tinyint(1) NOT NULL,
   `user_language` char(2) DEFAULT '0',
+  `theme` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`user_id`,`user_name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
