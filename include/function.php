@@ -1364,10 +1364,10 @@ function startSessionTheme(){
 			$theme_value = $result["theme"];
 			if($theme_value == "Default"){
 				$conn = connexionDB($database_eonweb);
-				$sql = "SELECT `theme` FROM configs";
+				$sql = "SELECT value FROM configs WHERE name = 'theme'";
 				$result = $conn->query($sql);
 				$data = $result->fetch();
-				$theme_value = $data["theme"];
+				$theme_value = $data["value"];
 				$conn = null;
 				$sql = null;
 			} 
@@ -1376,10 +1376,10 @@ function startSessionTheme(){
 
 	} else {
 		$conn = connexionDB($database_eonweb);
-		$sql = "SELECT `theme` FROM configs";
+		$sql = "SELECT value FROM configs WHERE name = 'theme'";
 		$result = $conn->query($sql);
 		$data = $result->fetch();
-		$theme_value = $data["theme"];
+		$theme_value = $data["value"];
 		$conn = null;
 		$sql = null;
 		$_SESSION["theme"] = $theme_value;
