@@ -1,2 +1,1 @@
-ALTER TABLE configs ADD theme VARCHAR(50);
 ALTER TABLE users ADD theme VARCHAR(50);

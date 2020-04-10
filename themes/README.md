@@ -13,7 +13,7 @@ You only need to create a symbolic link between the enabled theme in thruk and t
 
 `ln -s /srv/eyesofnetwork/eonweb/themes/<ThemeNameFolder>/thruk/<ThemeNameFolder>/ /etc/thruk/themes/themes-enabled/<ThemeNameFolder>`
 
-### 2 - Restart Apache
+### 3 - Restart Apache
 `systemctl restart httpd`
 
 ## Create new theme
@@ -53,6 +53,12 @@ To edit other elements in custom.css classes need to be preceded by `#<ThemeFOld
 >
 >The thruk main css must have the `<ThemeNameFolder>` name `<ThemeNameFolder>.css`
 
+
+## Define Global Theme
+
+In *eonweb* database, please add **theme** key in *configs* table.
+
+    INSERT INTO configs VALUES ('theme', 'EONFlatDark')
 
 # EONFlatLight Showcase
 

@@ -56,7 +56,6 @@ DROP TABLE IF EXISTS `configs`;
 CREATE TABLE `configs` (
   `name` varchar(255) NOT NULL,
   `value` text NOT NULL,
-  `theme` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
