@@ -202,6 +202,7 @@
 	"label.admin_user.user_lang_en": "English",
 	"label.admin_user.user_lang_fr": "French",
 	"label.admin_user.user_lang_0": "Browser language",
+	"label.admin_user.user_theme": "Choose a theme",
 	"label.admin_user.user_ldap": "LDAP user",
 	"label.admin_user.user_limit": "User limited",
 	"label.admin_user.user_mail": "User mail",

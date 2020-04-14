@@ -28,7 +28,7 @@ function display_login(){
 	global $path_logo;
 	
 	echo '
-	<div class="container">
+	<div class="container" id="login">
 		<div class="row">
 			<div class="img col-md-4 col-md-offset-4">
 				<div class="login-panel panel panel-default">
@@ -231,7 +231,7 @@ else {
 			// Create session ID
 			$sessid=rand();
 			sqlrequest($database_eonweb,"INSERT INTO sessions (session_id,user_id) VALUES ('$sessid','$usrid')");
-
+			
 			// Send cookie
 			$cookie_time = ($cookie_time=="0") ? 0 : time() + $cookie_time;
 			setcookie("session_id",$sessid,$cookie_time);
@@ -239,7 +239,7 @@ else {
 			setcookie("user_id",$usrid,$cookie_time);
 			setcookie("user_limitation",$usrlimit,$cookie_time);
 			setcookie("group_id",$grpid,$cookie_time);
-
+		
 			// Rename filters
 			$filter="$path_eonweb/$dir_imgcache/".strtolower($_POST['login'])."-ged.xml";
 			$filter_old="$path_eonweb/$dir_imgcache/".$_POST['login']."-ged.xml";

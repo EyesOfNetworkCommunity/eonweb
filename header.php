@@ -19,11 +19,12 @@
 #
 #########################################
 */
-
+session_start();
 # Global parameters
 include("include/config.php");
 include("include/arrays.php");
 include("include/function.php");
+global $database_eonweb;
 
 # Logos
 if(file_exists($path_eonweb.$path_logo_custom)) { $path_logo=$path_logo_custom; }
@@ -72,9 +73,25 @@ if(file_exists($path_eonweb.$path_logo_navbar_custom)) { $path_logo_navbar=$path
 	if(file_exists($module_css)) { 
 	?><!-- EonWeb Module CSS -->
 	<link href="<?php echo $module_css; ?>" rel="stylesheet">
-	<?php } ?>	
+	<?php } ?>
+
+	<?php
+	// Select theme
+	startSessionTheme();
+	$dir = "/srv/eyesofnetwork/eonweb/themes/";
+	$listTheme = scandir($dir);
+	$verif = 0;
+	foreach($listTheme as $value)
+	{
+		if($value == $_SESSION["theme"]) {
+			setcookie("thruk_theme", $_SESSION["theme"],time()+3600,"/thruk/");
+			echo '<link rel="stylesheet" type="text/css" href="/themes/'. $_SESSION["theme"] .'/eonweb/custom.css">';
+			$verif = 1;
+		}
+	}
+	?>
 </head>
 
-<body>
+<body <?php if($verif==1){ echo 'id='.$_SESSION["theme"];}?>>
 
 <div id="wrapper">

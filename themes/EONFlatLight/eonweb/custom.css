@@ -1,0 +1,528 @@
+/*
+ * ------------------------------------------------------------------------
+ * Font Used
+ * ------------------------------------------------------------------------
+*/
+
+@font-face {
+	font-family: "Quicksand-regular";
+
+	src: url('fonts/Quicksand-Regular.ttf');
+}
+
+@font-face {
+	font-family: "Quicksand-medium";
+	src: url('fonts/Quicksand-Medium.ttf');
+}
+@font-face {
+	font-family: "Quicksand-bold";
+	src: url('fonts/Quicksand-Bold.ttf');
+}
+@font-face {
+	font-family: "Quicksand-semi-bold";
+	font-style: semi-bold;
+	src: url('fonts/Quicksand-SemiBold.ttf');
+}
+@font-face {
+	font-family: "Quicksand-light";
+	font-style: light;
+	src: url('fonts/Quicksand-Light.ttf');
+}
+
+/*
+ * ------------------------------------------------------------------------
+ * Page layout
+ * ------------------------------------------------------------------------
+*/
+
+body {
+	font-family: "Quicksand-medium";
+	background-color: #005eb8;
+}
+#EONFlatLight #page-wrapper{
+	background-color: #EFF0F5;
+}
+
+#EONFlatLight .sidebar{
+    background-color: #005eb8;
+    line-height: 1.9;
+    font-size: 16px;
+}
+
+#EONFlatLight .sidebar .arrow {
+    float: right;
+    margin-top: 8px;
+}
+
+#EONFlatLight .sidebar a{
+	color: #FFFFFF  !important;
+	font-family: "Quicksand-light";
+}
+
+#EONFlatLight .sidebar a:active {
+    background-color: #4272C1;
+}
+
+#EONFlatLight .sidebar ul li {
+    border-bottom: 1px solid #005eb8;
+}
+.sidebar ul li a.active {
+    background-color: #4272C1;
+}
+
+#EONFlatLight .sidebar li > a:focus {
+    background-color: #4272C1;
+}
+
+
+#EONFlatLight .sidebar li > a:hover {
+    background-color: #4272C1;
+}
+
+#EONFlatLight .sidebar li > a:active {
+    background-color: #4272C1;
+}
+
+
+
+/* NAVBAR/ Barre de navigation du header */
+
+#EONFlatLight .navbar {
+    background-color: #FFFFFF;
+    box-shadow: 0px 10px 12px 1px rgba(0, 0, 0, .1);
+}
+/* Menu droit utilisateur couleur et taille texte */
+#EONFlatLight .navbar-top-links li a {
+    padding: 15px;
+    min-height: 50px;
+    color: #000000;
+}
+
+/* Dropdown menu ATTENTION NE PAS UTILISER LA CLASSE FLATTHEME ICI */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 1px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #FFF;
+    border: 1px solid rgba(100,100,100,.03);
+    border-radius: 0px;
+    -webkit-box-shadow: 0 0px 0px rgba( 241, 241, 241 ,.0);
+    box-shadow: 0 0px 0px rgba(0,0,0,.0);
+}
+
+/*Dropdown menu séléctionné */
+
+#EONFlatLight .dropdown-menu > .active > a, .dropdown-menu > .active > a:focus, .dropdown-menu > .active > a:hover {
+    color: #FFF;
+    text-decoration: none;
+    background-color: #363636 ;
+    outline: 0;
+}
+
+
+/* boutons carré au lieu d'arrondies dans le header */
+#EONFlatLight .btn-group-xs > .btn, .btn-xs {
+    padding: 1px 7px;
+    font-size: 13px;
+    line-height: 1.5;
+    border-radius: 0px;
+}
+
+
+/* Ligne séparation Titre et contenue (tableau de bord) */
+#EONFlatLight .page-header {
+    padding-bottom: 9px;
+    margin: 15px 0 20px;
+    border-bottom: 1px solid #d8d8d8;
+}
+
+
+
+#EONFlatLight .sidebar input {
+	margin: 5px 0;
+	background: none;
+	border-bottom: 1px solid white;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+}
+
+#EONFlatLight .sidebar input:focus {
+	outline: none;
+	border-bottom: 3px solid white;
+	color: white;
+}
+
+#EONFlatLight .sidebar-search{
+	margin-left: -10px;
+}
+
+::-webkit-input-placeholder {
+	color: white;
+}
+
+:-moz-placeholder {
+	/* Firefox 18- */
+	color: white;
+}
+
+::-moz-placeholder {
+	/* Firefox 19+ */
+	color: white;
+}
+
+:-ms-input-placeholder {
+	color: white;
+}
+
+/* Barre de recherche*/
+#EONFlatLight .form-control {
+	line-height: 0;
+	color: #000;
+    height: 34px;
+    padding: 6px 12px;
+	font-size: 16px;
+	border: 0px;
+	border-radius: 0px;
+	box-shadow: inset 0 0px 0px rgba(0,0,0,.0);
+	background-color: #fdfcfc ;;
+}
+
+#EONFlatLight .form-control::placeholder {
+    color: #fff;
+    opacity: 1;
+}
+
+#EONFlatLight .form-control:focus {
+    border-color: transparent;
+	outline: 0;
+
+}
+
+#EONFlatLight .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+    background-color: #ecf0f1;
+	opacity: 1;
+	border-radius: 15px;
+}
+
+#EONFlatLight .sidebar button {
+	width: 50px;
+	height: 50px;
+	background: none;
+	border: none;
+	position: absolute;
+	top: -3px;
+    margin-left: -40px;
+    color: #FFFFFF;
+}
+
+#EONFlatLight .sidebar button:hover {
+	width: 50px;
+	height: 50px;
+	background: none;
+	border: none;
+	position: absolute;
+	top: -3px;
+    left: -40px;
+    color: #FFFFFF;
+}
+
+#EONFlatLight .sidebar button:focus {
+	outline: none;
+}
+
+#EONFlatLight .fas {
+	color: white;
+	font-size: 2em;
+}
+
+
+#EONFlatLight .user-header > li > a {
+	color: black;
+	text-decoration-color: black;
+}
+#EONFlatLight .user-header{
+	border-radius: 0px;
+	color: black;
+}
+.btn-xs-header{
+	border-radius: 0px;
+}
+.dropdown-user a {
+	color: black;
+	text-decoration-color: black;
+}
+
+#EONFlatLight .panel-heading {
+	border-color: transparent;
+	background-color: transparent;
+    color: black;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+
+#EONFlatLight .panel-default > .panel-heading
+{
+	color: white;
+	border-color: transparent;
+	background-color: transparent;
+	text-align: center;
+	background-color: #662483;
+}
+
+#EONFlatLight .panel-heading a
+{
+	background-color: transparent;
+	color: #FFF;
+	font-family: "Quicksand-bold";
+	font-size: 20px;
+}
+
+/* Couleurs Boutons boostrap */
+#EONFlatLight .btn-primary {
+    color: #fff;
+    background-color: #7B41D8 !important;
+    border-color: #7B41D8;
+}
+
+#EONFlatLight .btn-success {
+    color: #fff;
+    background-color: #2ecc71;
+    border-color: #2ecc71;
+}
+
+#EONFlatLight .btn-danger {
+    color: #fff;
+    background-color: #ff1d46;
+    border-color: #ff1d46;
+}
+
+#EONFlatLight .btn-info {
+    color: #fff;
+    background-color: #34495e;
+    border-color: #34495e;
+}
+
+#EONFlatLight  .alert-info {
+    color: #FFFFFF;
+    background-color: #34495e;
+    border-color: #34495e;
+}
+
+#EONFlatLight .alert-danger {
+    color: #FFFFFF;
+    background-color: #e74c3c;
+    border-color: #e74c3c;
+}
+
+#EONFlatLight .alert-success {
+    color: #FFFFFF;
+    background-color: #2ecc71;
+    border-color: #2ecc71;
+}
+
+#EONFlatLight .alert-warning {
+    color: #000000;
+    background-color: #f1c40f;
+    border-color: #f1c40f;
+}
+
+/* Pagination Suivant X Precedent */
+#EONFlatLight .pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+    z-index: 3;
+    color: #fff;
+    cursor: default;
+    background-color: #7B41D8;
+    border-color: #7B41D8;
+}
+/* Precedent */
+#EONFlatLight .pagination > li:first-child > a, .pagination > li:first-child > span {
+    margin-left: 0;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+/* Suivant */
+#EONFlatLight .pagination > li:last-child > a, .pagination > li:last-child > span {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+#EONFlatLight label {
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: 700;
+    font: Quicksand;
+    font-family: "Quicksand-medium";
+}
+
+
+/*
+ * ------------------------------------------------------------------------
+ * Font Used
+ * ------------------------------------------------------------------------
+*/
+@font-face {
+	font-family: "Poppins-Regular";
+	font-style: light;
+	src: url('fonts/poppins/Poppins-Regular.ttf');
+}
+
+@font-face {
+	font-family: "Poppins-Medium";
+	font-style: light;
+	src: url('fonts/poppins/Poppins-Medium.ttf');
+}
+
+/*
+ * ------------------------------------------------------------------------
+ * Page layout
+ * ------------------------------------------------------------------------
+*/
+
+
+
+
+
+#login .panel-default > .panel-heading {
+    color: white;
+    border-color: transparent;
+
+    text-align: center;
+
+
+    background-color: #ffffff;
+}
+
+#login .btn-primary {
+    font-family: "Poppins-Medium";
+    color: #fff;
+    background-image: linear-gradient(to left, #00dbde 0%, #fc00ff 100%) !important;
+	border-color: transparent;
+    border-radius: 35px;
+    text-transform: uppercase;
+
+}
+
+#login .panel {
+    margin-bottom: 20px;
+	background-color: #fff;
+	border-radius: 10px;
+    border: none;
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    box-shadow: 0 1px 1px rgba(255, 255, 255, 0.05);
+}
+
+#login .panel-heading {
+    padding: 10px 15px;
+    border-bottom: 1px solid transparent;
+        border-bottom-color: transparent;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-radius: 10px;
+    background-image: url(/themes/login/images/logo.png)!important   ;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+}
+
+#login .col-md-offset-4 {
+    margin-left: 27.333%;
+}
+
+#login .col-md-4 {
+    width: 45.333%;
+}
+
+#login .login-panel {
+    margin-top: 34%;
+}
+
+#login .login-logo {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#login .panel-default > .panel-heading > img {
+    opacity: 1.0;
+}
+
+#login .form-control {
+    font-family: Poppins-Medium;
+    font-size: 16px;
+    color: #333333;
+    line-height: 1.2;
+    display: block;
+    width: 100%;
+    height: 55px;
+
+    padding: 0 7px 0 43px;
+    border-bottom: 2px solid #adadad;
+}
+
+#login .form-control::placeholder {
+    color: #adadad;
+    opacity: 1;
+    text-transform: uppercase;
+}
+
+#login .input-group-addon {
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    color: #adadad;
+    text-align: center;
+    background-color: transparent;
+    border: 0px solid #ccc;
+        border-right-color: rgb(204, 204, 204);
+        border-right-style: solid;
+        border-right-width: 0px;
+    border-radius: 0px;
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+}
+
+#login .form-group {
+    margin-bottom: 26px;
+}
+
+#login .btn-block {
+
+    display: block;
+    width: 100%;
+    margin-top: 100px;
+    margin-bottom: 40px;
+ 
+
+}
+
+#login fieldset {
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+
+    background-image: url(/themes/login/images/axians.png)   ;
+    background-position: 97% 55%;
+    background-repeat: no-repeat;
+    background-size: 23% 22%;
+}
+
+#login .footer {
+    line-height: 30px;
+    text-align: center;
+    display: none;
+}

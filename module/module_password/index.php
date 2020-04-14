@@ -37,16 +37,19 @@ include("../../side.php");
 		$usrid=$_COOKIE['user_id'];
 		$user_password1= "abcdefghijklmnopqrstuvwxyz";
 		$user_password2= "abcdefghijklmnopqrstuvwxyz";
+		$theme_session= $_SESSION["theme"];
 
 		if(isset($_POST["update"])) {
 			$user_password1 = retrieve_form_data("user_password1","");
 			$user_password2 = retrieve_form_data("user_password2","");
+			$theme = retrieve_form_data("theme","");
+
 			if (($user_password1 != "") && ($user_password1 != null) && ($user_password1 == $user_password2)) {
 				if($user_password1!="abcdefghijklmnopqrstuvwxyz") {
 					$user_password = md5($user_password1);
 
 					// Insert into eonweb
-					sqlrequest("$database_eonweb","UPDATE users set user_passwd='$user_password' WHERE user_id='$usrid';");
+					sqlrequest("$database_eonweb","UPDATE users set user_passwd='$user_password', theme='$theme' WHERE user_id='$usrid';");
 
 					// update password into nagvis if user is in
 					$bdd = new PDO('sqlite:/srv/eyesofnetwork/nagvis/etc/auth.db');
@@ -64,6 +67,12 @@ include("../../side.php");
 
 					// logging action
 					logging("admin_user","UPDATE PASSWORD : $usrid $login");
+				} else if(($theme != "") && ($theme != null)){
+					$conn = connexionDB($database_eonweb);
+					$sql = $conn->prepare("UPDATE users set theme = :setTheme WHERE user_id = :userId");
+					$sql->bindParam(":setTheme", $theme);
+					$sql->bindParam(":userId",$usrid);
+					$sql->execute();
 				}
 				message(8," : ".getLabel("message.monitoring_passwd.ok"),'ok');
 				$user_password1= "abcdefghijklmnopqrstuvwxyz";
@@ -73,6 +82,42 @@ include("../../side.php");
 				message(8," : ".getLabel("message.monitoring_passwd.error"),'warning');
 			}
 		}	
+
+		function GetThemeList() {
+
+			global $database_eonweb;
+
+			// creation of a select and catch values
+			$conn = connexionDB($database_eonweb);
+			$sql = $conn->prepare("SELECT `theme` FROM users WHERE user_id = :userId");
+			$sql->bindParam("userId", $_COOKIE["user_id"]);
+			$sql->execute();
+			$result = $sql->fetch();
+			$conn = null;
+			$sql = null;
+
+			$dir = "/srv/eyesofnetwork/eonweb/themes/";
+			$listTheme = scandir($dir);
+			$res = '<select class="form-control" name="theme">';
+			foreach($listTheme as $value) {
+				if(is_dir($dir . $value)) { 
+					if($value != "." && $value != "..") {
+						if($value == $result["theme"]){
+							$res.="<option value='".$value."' selected=selected>".$value."</option>";
+						}
+						else if($value == "Default" && $result["theme"] == NULL){
+							$res.="<option value='".$value."' selected=selected>".$value."</option>";
+						}
+						else{
+							$res.="<option value='".$value."'>".$value."</option>";
+						}
+					}
+				}
+			}
+			$res .= '</select>';
+
+			return $res;
+		}
 	?>
 	
 	<form method='POST' name='form_user'>
@@ -89,6 +134,14 @@ include("../../side.php");
 				<label class="col-md-3"><?php echo getLabel("label.monitoring_passwd.pwd2"); ?></label>
 				<div class="col-md-9">
 					<input class="form-control" type='password' name='user_password2' value='<?php echo $user_password2?>'>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="row">
+				<label class="col-md-3"><?php echo getLabel("label.admin_user.user_theme"); ?></label>
+				<div class="col-md-9">
+					<?php echo GetThemeList(); ?>
 				</div>
 			</div>
 		</div>
