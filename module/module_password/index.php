@@ -100,17 +100,15 @@ include("../../side.php");
 			$listTheme = scandir($dir);
 			$res = '<select class="form-control" name="theme">';
 			foreach($listTheme as $value) {
-				if(is_dir($dir . $value)) { 
-					if($value != "." && $value != "..") {
-						if($value == $result["theme"]){
-							$res.="<option value='".$value."' selected=selected>".$value."</option>";
-						}
-						else if($value == "Default" && $result["theme"] == NULL){
-							$res.="<option value='".$value."' selected=selected>".$value."</option>";
-						}
-						else{
-							$res.="<option value='".$value."'>".$value."</option>";
-						}
+				if($value != "." && $value != "..") {
+					if($value == $result["theme"]){
+						$res.="<option value='".$value."' selected=selected>".$value."</option>";
+					}
+					else if($value == "Default" && $result["theme"] == NULL){
+						$res.="<option value='".$value."' selected=selected>".$value."</option>";
+					}
+					else{
+						$res.="<option value='".$value."'>".$value."</option>";
 					}
 				}
 			}
@@ -118,6 +116,11 @@ include("../../side.php");
 
 			return $res;
 		}
+
+		// No password modification link if ldap user
+		$ldapsql=sqlrequest($database_eonweb,"SELECT user_type FROM users WHERE user_name='".$_COOKIE["user_name"]."';");
+		$user_type=mysqli_result($ldapsql,0,"user_type");
+		if($user_type != 1) { 
 	?>
 	
 	<form method='POST' name='form_user'>
@@ -137,6 +140,10 @@ include("../../side.php");
 				</div>
 			</div>
 		</div>
+
+		<?php
+		} 
+		?>
 		<div class="form-group">
 			<div class="row">
 				<label class="col-md-3"><?php echo getLabel("label.admin_user.user_theme"); ?></label>
