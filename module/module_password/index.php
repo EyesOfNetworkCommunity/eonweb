@@ -28,7 +28,7 @@ include("../../side.php");
 <div id="page-wrapper">
 	<div class="row">
 		<div class="col-lg-12">
-			<h1 class="page-header"><?php echo getLabel("label.monitoring_passwd.title"); ?></h1>
+			<h1 class="page-header"><?php echo getLabel("label.monitoring_profil.title"); ?></h1>
 		</div>
 	</div>
 
@@ -100,15 +100,17 @@ include("../../side.php");
 			$listTheme = scandir($dir);
 			$res = '<select class="form-control" name="theme">';
 			foreach($listTheme as $value) {
-				if($value != "." && $value != "..") {
-					if($value == $result["theme"]){
-						$res.="<option value='".$value."' selected=selected>".$value."</option>";
-					}
-					else if($value == "Default" && $result["theme"] == NULL){
-						$res.="<option value='".$value."' selected=selected>".$value."</option>";
-					}
-					else{
-						$res.="<option value='".$value."'>".$value."</option>";
+				if(is_dir($dir . $value)) { 
+					if($value != "." && $value != "..") {
+						if($value == $result["theme"]){
+							$res.="<option value='".$value."' selected=selected>".$value."</option>";
+						}
+						else if($value == "Default" && $result["theme"] == NULL){
+							$res.="<option value='".$value."' selected=selected>".$value."</option>";
+						}
+						else{
+							$res.="<option value='".$value."'>".$value."</option>";
+						}
 					}
 				}
 			}

@@ -325,6 +325,7 @@
 	"label.monitoring_passwd.pwd": "Mot de passe",
 	"label.monitoring_passwd.pwd2": "Confirmation mot de passe",
 	"label.monitoring_passwd.title": "Gestion du mot de passe",
+	"label.monitoring_profil.title": "Gestion du profil",
 	"label.monitoring_view.act_event": "Evènements actifs",
 	"label.monitoring_view.equip_nagios": "Equipements Nagios",
 	"label.monitoring_view.incident": "Incident",
