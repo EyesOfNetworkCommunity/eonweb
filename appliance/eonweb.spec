@@ -1,7 +1,7 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
 Version: 5.3
-Release: 5
+Release: 6
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
@@ -75,6 +75,9 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
+* Wed Jun 10 2020 Sebastien DAVOULT <d@vou.lt> - 5.3-6.eon
+- fix adding column in users for theme
+
 * Thu Apr 09 2020 Sebastien DAVOULT <d@vou.lt> - 5.3-5.eon
 - Add Theme Manager
 - Add EONFlatLight theme
