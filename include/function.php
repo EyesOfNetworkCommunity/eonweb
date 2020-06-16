@@ -370,10 +370,13 @@ function stripAccents($str, $charset='utf-8'){
 function logging($module,$command,$user=false){
 	global $database_eonweb;
 	global $dateformat;
-	if($user)
+	if($user){
+		$user = htmlspecialchars($user);
 		sqlrequest($database_eonweb,"insert into logs values ('','".time()."','$user','$module','$command','".$_SERVER["REMOTE_ADDR"]."');");
-	elseif(isset($_COOKIE['user_name']))
-		sqlrequest($database_eonweb,"insert into logs values ('','".time()."','".$_COOKIE['user_name']."','$module','$command','".$_SERVER["REMOTE_ADDR"]."');");
+	}elseif(isset($_COOKIE['user_name'])){
+		$user = htmlspecialchars($_COOKIE['user_name']);
+		sqlrequest($database_eonweb,"insert into logs values ('','".time()."','".$user."','$module','$command','".$_SERVER["REMOTE_ADDR"]."');");
+	}
 }
 
 // Time
