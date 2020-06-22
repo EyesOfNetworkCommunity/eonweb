@@ -19,7 +19,9 @@
 #
 #########################################
 */
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 include("header.php");
 
 // Display login Form
@@ -59,7 +61,9 @@ function display_login(){
 	
 }
 
-if(isset($_COOKIE['user_name'])){
+if(!empty($_COOKIE['user_name'])){
+	
+	if(username_available()){
 	?>
 	<script src="/bower_components/jquery/dist/jquery.min.js"></script>
 	<script>
@@ -87,6 +91,34 @@ if(isset($_COOKIE['user_name'])){
 		}
 	</script>
 	<?php include("footer.php");
+	}else{
+		?>
+	<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+	<script>
+		document.write("<body id='main'>");
+		if (window!=top){
+			top.location="/module/index.php";
+		}
+		else{
+			$("body").append('<div class="container"><div class="row">'
+							+	'<div class="img col-md-4 col-md-offset-4">'
+							+		'<div class="login-panel panel panel-default">'
+							+			'<div class="panel-heading">'
+							+				'<img class="img-responsive center-block imb-logo login-logo" src="<?php echo $path_logo; ?>" alt="logo eyesofnetwork">'
+							+			'</div>'
+							+			'<div class="panel-body">'
+							+				'<div class="alert alert-info">Sorry, It seems that the cookie have been altered</div>'
+							+				'<div class="btn-group btn-group-justified">'
+							+				'<a class="btn btn-default" href="logout.php">Se déconnecter</a>'
+							+				'</div>'
+							+			'</div>'
+							+		'</div>'
+							+	'</div>'
+							+'</div></div>');
+		}
+	</script>
+	<?php include("footer.php");
+	}
 }
 else {
 	if( isset($_POST['login']) && isset($_POST['mdp']) ){

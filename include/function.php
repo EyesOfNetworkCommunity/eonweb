@@ -69,6 +69,14 @@ function message($id, $text, $type){
 		  </p>";
 }
 
+function username_available(){
+	$request = sqlrequest("eonweb","SELECT * FROM users WHERE user_name = ".$_COOKIE["user_name"]);
+	$result = mysqli_result($request,0,"user_name");
+	if(isset($result))
+		return true;
+	else return false;
+}
+
 // Connect to Database
 function sqlrequest($database,$sql,$id=false,$prepare=false){
 

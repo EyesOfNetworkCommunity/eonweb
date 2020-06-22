@@ -19,6 +19,8 @@
 #
 #########################################
 */
+// ini_set('display_errors', 1);
+// error_reporting(E_ALL);
 
 include("../../header.php");
 include("../../side.php");
@@ -79,7 +81,9 @@ include("../monitoring_ged/ged_functions.php");
 
 		if($filter_name=="")
 			message(0," : Events filter name must be set","warning");
-		else {
+		else if (preg_match('/<script>.*<\/script>/', $filter_name) > 0){
+			message(0," : You have fallen into the dark side go away! ^^");	
+		}else {
 			// search if filter exists
 			$root = $dom->getElementsByTagName("ged")->item(0);
 			$records = $xpath->query("//ged/filters[@name='$filter_name']");
