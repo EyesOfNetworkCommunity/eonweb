@@ -212,7 +212,7 @@ include("../../side.php");
 	}
 ?>
 
-	<form action='./index.php' name='form_auth' method='GET' class='form'>
+	<form action='./index.php' name='form_auth' method='POST' class='form'>
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<?php echo getLabel("label.admin_auth.auth_backend"); ?>
