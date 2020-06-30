@@ -142,21 +142,21 @@ include("../../side.php");
 						if ($import=="ok"){
 							# --- the import is true
 							echo "<tr class='success'>";
-							echo "<td>".$item[0]."</td>";
-							echo "<td>".$item[1]."</td>";
-							echo "<td>".$item[2]."</td>";
-							echo "<td>".$item[$i]."</td>";
+							echo "<td>".htmlspecialchars($item[0])."</td>";
+							echo "<td>".htmlspecialchars($item[1])."</td>";
+							echo "<td>".htmlspecialchars($item[2])."</td>";
+							echo "<td>".htmlspecialchars($item[$i])."</td>";
 							echo "<td>Ok</td>";
 							echo "</tr>";
 						}
 						else{
 							# --- there was an error with the template name
 							echo "<tr class='danger'>";
-							echo "<td>".$item[0]."</td>";
-							echo "<td>".$item[1]."</td>";
-							echo "<td>".$item[2]."</td>";
-							echo "<td>".$item[$i]."</td>";
-							echo "<td>$import</td>";
+							echo "<td>".htmlspecialchars($item[0])."</td>";
+							echo "<td>".htmlspecialchars($item[1])."</td>";
+							echo "<td>".htmlspecialchars($item[2])."</td>";
+							echo "<td>".htmlspecialchars($item[$i])."</td>";
+							echo "<td>".htmlspecialchars($import)."</td>";
 							echo "</tr>";
 						}
 					}
@@ -198,16 +198,16 @@ include("../../side.php");
 
 				# --- Parse the uploaded csv file and extract host information
 				for ($item = fgetcsv($fic, 1024,';'); !feof($fic); $item = fgetcsv($fic, 1024,';')) {
-					$verify=verify_hosts_in_nagios($item[0]);
+					$verify=verify_hosts_in_nagios(htmlspecialchars($item[0]));
 					if ($verify){
 						echo "<tr class='ok'>";
-						echo "<td>".$item[0]."</td>";
+						echo "<td>".htmlspecialchars($item[0])."</td>";
 						echo "<td>".$verify."</td>";
 						echo "</tr>";
 					}
 					else {
 						echo "<tr class='danger'>";
-						echo "<td>".$item[0]."</td>";
+						echo "<td>".htmlspecialchars($item[0])."</td>";
 						echo "<td>&nbsp;</td>";
 						echo "</tr>";
 					}
