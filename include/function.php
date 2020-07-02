@@ -69,14 +69,6 @@ function message($id, $text, $type){
 		  </p>";
 }
 
-function username_available(){
-	$request = sqlrequest("eonweb","SELECT * FROM users WHERE user_name = ".$_COOKIE["user_name"]);
-	$result = mysqli_result($request,0,"user_name");
-	if(isset($result))
-		return true;
-	else return false;
-}
-
 // Connect to Database
 function sqlrequest($database,$sql,$id=false,$prepare=false){
 
@@ -131,6 +123,34 @@ function connexionDB($database){
     } catch (PDOException $e) {
         print "Erreur !: " . $e->getMessage() . "<br/>";
         die();
+    }
+}
+
+function sql($database, $sql, $datas = false){
+    global $database_host;
+    global $database_username;
+	global $database_password;
+	$type = str_word_count($sql, 1);
+	$type = strtoupper($type[0]);
+
+    try {
+        $dbh = new PDO("mysql:host=$database_host;dbname=$database", $database_username, $database_password);
+		$stmt = $dbh->prepare($sql);
+		
+	 	if(is_array($datas)){
+			$result = $stmt->execute($datas);
+		} else {
+			$result = $stmt->execute();
+		}
+
+		if($type == "SELECT"){
+			$result = $stmt->fetch();
+		}
+		
+		return $result;
+		
+    } catch (PDOException $e) {
+        return $e->getMessage();
     }
 }
 
