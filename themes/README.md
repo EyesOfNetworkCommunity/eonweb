@@ -55,11 +55,16 @@ To edit other elements in custom.css classes need to be preceded by `#<ThemeFOld
 
 
 ## Define Global Theme
+Connect to database
 
 In *eonweb* database, please add **theme** key in *configs* table.
 
-    INSERT INTO configs VALUES ('theme', 'EONFlatDark')
-
+    UPDATE configs SET value = 'EONFlatLight' WHERE name = 'theme';
+```
+mysql -u root -p
+#enter password
+use eonweb
+```
 # EONFlatLight Showcase
 
 ![EON](https://gymtrip.fr/axians/eon1.png)
