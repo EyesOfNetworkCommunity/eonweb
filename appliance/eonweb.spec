@@ -1,7 +1,7 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
 Version: 5.3
-Release: 6
+Release: 7
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
@@ -57,8 +57,8 @@ case "$1" in
     /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.4.sql 2>/dev/null
     # Update EON 5.3.5
     /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.5.sql 2>/dev/null
-    ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatDark/thruk/EONFlatDark/ /etc/thruk/themes/themes-enabled/EONFlatDark
-    ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatLight/thruk/EONFlatLight/ /etc/thruk/themes/themes-enabled/EONFlatLight
+    ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatDark/thruk/EONFlatDark/ /etc/thruk/themes/themes-enabled/EONFlatDark 2>/dev/null
+    ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatLight/thruk/EONFlatLight/ /etc/thruk/themes/themes-enabled/EONFlatLight 2>/dev/null
     systemctl restart httpd
   ;;
 esac
@@ -75,6 +75,15 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
+* Mon Aug 17 2020 Sebastien DAVOULT <d@vou.lt> - 5.3-7.eon
+- fix 'select_tool' access
+- fix protect login/logout logs recording
+- fix cookie management error
+- fix reflected cross site scripting
+- fix sensitive data exposed
+- enhancement SQL request function
+- fix stdout error when updating eonweb package
+
 * Wed Jun 10 2020 Sebastien DAVOULT <d@vou.lt> - 5.3-6.eon
 - fix adding column in users for theme
 
