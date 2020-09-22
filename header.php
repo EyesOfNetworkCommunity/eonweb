@@ -85,7 +85,9 @@ if(file_exists($path_eonweb.$path_logo_navbar_custom)) { $path_logo_navbar=$path
 	{
 		if($value == $_SESSION["theme"]) {
 			setcookie("thruk_theme", $_SESSION["theme"],time()+3600,"/thruk/");
-			echo '<link rel="stylesheet" type="text/css" href="/themes/'. $_SESSION["theme"] .'/eonweb/custom.css">';
+			if($_SESSION["theme"] != "Classic-v5") {
+				echo '<link rel="stylesheet" type="text/css" href="/themes/'. $_SESSION["theme"] .'/eonweb/custom.css">';
+			}
 			$verif = 1;
 		}
 	}
