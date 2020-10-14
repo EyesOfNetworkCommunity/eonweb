@@ -129,16 +129,11 @@ if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 				<i class="fa fa-user fa-fw"></i> <?php echo $_COOKIE['user_name']; ?> <i class="fa fa-caret-down"></i>
 			</a>
 			<ul class="dropdown-menu dropdown-user">
-				<?php 
-					// No password modification link if ldap user
-					$ldapsql=sqlrequest($database_eonweb,"SELECT user_type FROM users WHERE user_name='".$_COOKIE["user_name"]."';");
-					$user_type=mysqli_result($ldapsql,0,"user_type");
-					if($user_type != 1) { 
-				?>
+				 
 				<li><a href="/module/module_password/index.php"><i class="fa fa-user fa-fw"></i> <?php echo getLabel("menu.user.profile"); ?></a>
 				</li>
 				<li class="divider"></li>
-				<?php }	?>
+				 
 				<li><a href="/logout.php"><i class="fa fa-sign-out fa-fw"></i> <?php echo getLabel("menu.user.disconnect"); ?></a>
 				</li>
 			</ul>

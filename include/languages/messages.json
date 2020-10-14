@@ -325,6 +325,7 @@
 	"label.monitoring_passwd.pwd": "Password",
 	"label.monitoring_passwd.pwd2": "Password confirmation",
 	"label.monitoring_passwd.title": "Password management",
+	"label.monitoring_profil.title": "Profil management",
 	"label.monitoring_view.act_event": "Active events",
 	"label.monitoring_view.equip_nagios": "Nagios equipments",
 	"label.monitoring_view.incident": "Incident",
