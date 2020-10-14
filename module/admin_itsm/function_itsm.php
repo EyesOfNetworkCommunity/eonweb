@@ -125,7 +125,7 @@ function report_itsm($ged_type=NULL, $queue=NULL, $id_ged=NULL, $array_vars=arra
 
 function get_champ_ged($champ, $ged_type, $queue, $id_ged){
     global $database_ged;
-    $prepare =["i", $id_ged];
+    $prepare =["i", intval($id_ged)];
     $sql = "SELECT $champ FROM ".$ged_type."_queue_".$queue." WHERE id = ?";
     $result = sqlrequest($database_ged, $sql, false,$prepare);
     $event = mysqli_fetch_assoc($result);
@@ -144,7 +144,7 @@ function get_champ_ged($champ, $ged_type, $queue, $id_ged){
 function curl_call($headers,$url,$file,$type="get",$ssl=false){
     $ch = curl_init();
     curl_setopt( $ch, CURLOPT_URL, $url );
-    curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, $ssl); // TODO create a variable in database
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 

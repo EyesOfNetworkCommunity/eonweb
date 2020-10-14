@@ -30,6 +30,9 @@ mysql -u root --password=root66 ${eonwebdb} < ${eonconfdir}/eonweb.sql
 # Change DocumentRoot for apache
 sed -i 's/^DocumentRoot.*/DocumentRoot\ \"\/srv\/eyesofnetwork\/eonweb\"/g' /etc/httpd/conf/httpd.conf
 
+# Change own user for itsm directory
+chown apache:apache /srv/eyesofnetwork/eonweb/module/admin_itsm/uploaded_file
+
 # crons for eon
 cp -rf ${eonconfdir}/eonbackup /etc/cron.d/
 cp -rf ${eonconfdir}/eondowntime /etc/cron.d/
