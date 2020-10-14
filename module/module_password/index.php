@@ -33,53 +33,65 @@ include("../../side.php");
 	</div>
 
 	<?php
+	
 		$login=$_COOKIE['user_name'];
 		$usrid=$_COOKIE['user_id'];
 		$user_password1= "abcdefghijklmnopqrstuvwxyz";
 		$user_password2= "abcdefghijklmnopqrstuvwxyz";
 		$theme_session= $_SESSION["theme"];
 
+		// No password modification if ldap user
+		$ldapsql=sqlrequest($database_eonweb,"SELECT user_type FROM users WHERE user_name='". $login ."';");
+		$user_type=mysqli_result($ldapsql,0,"user_type");
+
 		if(isset($_POST["update"])) {
-			$user_password1 = retrieve_form_data("user_password1","");
-			$user_password2 = retrieve_form_data("user_password2","");
 			$theme = retrieve_form_data("theme","");
+			if($user_type != 1) { 
 
-			if (($user_password1 != "") && ($user_password1 != null) && ($user_password1 == $user_password2)) {
-				if($user_password1!="abcdefghijklmnopqrstuvwxyz") {
-					$user_password = md5($user_password1);
+				$user_password1 = retrieve_form_data("user_password1","");
+				$user_password2 = retrieve_form_data("user_password2","");
 
-					// Insert into eonweb
-					sqlrequest("$database_eonweb","UPDATE users set user_passwd='$user_password', theme='$theme' WHERE user_id='$usrid';");
+				if (($user_password1 != "") && ($user_password1 != null) && ($user_password1 == $user_password2)) {
+					if($user_password1!="abcdefghijklmnopqrstuvwxyz") {
+						$user_password = md5($user_password1);
 
-					// update password into nagvis if user is in
-					$bdd = new PDO('sqlite:/srv/eyesofnetwork/nagvis/etc/auth.db');
-					$req = $bdd->query("SELECT userId, name FROM users WHERE name='".$login."'");
-                    $nagvis_user_exist = $req->fetch();
+						// Insert into eonweb
+						sqlrequest("$database_eonweb","UPDATE users set user_passwd='$user_password', theme='$theme' WHERE user_id='$usrid';");
 
-                    // this is nagvis default salt for password encryption security
-					$nagvis_salt = '29d58ead6a65f5c00342ae03cdc6d26565e20954';
+						// update password into nagvis if user is in
+						$bdd = new PDO('sqlite:/srv/eyesofnetwork/nagvis/etc/auth.db');
+						$req = $bdd->query("SELECT userId, name FROM users WHERE name='".$login."'");
+						$nagvis_user_exist = $req->fetch();
 
-					if($nagvis_user_exist["userId"] > 0){
-						$nagvis_id = $nagvis_user_exist["userId"];
-						$hashed_password = sha1($nagvis_salt.$user_password1);
-						$bdd->exec("UPDATE users SET password = '$hashed_password' WHERE userId = $nagvis_id");
+						// this is nagvis default salt for password encryption security
+						$nagvis_salt = '29d58ead6a65f5c00342ae03cdc6d26565e20954';
+
+						if($nagvis_user_exist["userId"] > 0){
+							$nagvis_id = $nagvis_user_exist["userId"];
+							$hashed_password = sha1($nagvis_salt.$user_password1);
+							$bdd->exec("UPDATE users SET password = '$hashed_password' WHERE userId = $nagvis_id");
+						}
+
+						// logging action
+						logging("admin_user","UPDATE PASSWORD : $usrid $login");
+					} else if(($theme != "") && ($theme != null)){
+						$conn = connexionDB($database_eonweb);
+						$sql = $conn->prepare("UPDATE users set theme = :setTheme WHERE user_id = :userId");
+						$sql->bindParam(":setTheme", $theme);
+						$sql->bindParam(":userId",$usrid);
+						$sql->execute();
 					}
-
-					// logging action
-					logging("admin_user","UPDATE PASSWORD : $usrid $login");
-				} else if(($theme != "") && ($theme != null)){
-					$conn = connexionDB($database_eonweb);
-					$sql = $conn->prepare("UPDATE users set theme = :setTheme WHERE user_id = :userId");
-					$sql->bindParam(":setTheme", $theme);
-					$sql->bindParam(":userId",$usrid);
-					$sql->execute();
+					message(8," : ".getLabel("message.monitoring_passwd.ok"),'ok');
+					$user_password1= "abcdefghijklmnopqrstuvwxyz";
+					$user_password2= "abcdefghijklmnopqrstuvwxyz";
 				}
+				else {
+					message(8," : ".getLabel("message.monitoring_passwd.error"),'warning');
+				}
+			} else {
+				sqlrequest("$database_eonweb","UPDATE users set theme='$theme' WHERE user_id='$usrid';");
+				logging("admin_user","UPDATE THEME : $usrid $login");
 				message(8," : ".getLabel("message.monitoring_passwd.ok"),'ok');
-				$user_password1= "abcdefghijklmnopqrstuvwxyz";
-				$user_password2= "abcdefghijklmnopqrstuvwxyz";
-			}
-			else {
-				message(8," : ".getLabel("message.monitoring_passwd.error"),'warning');
 			}
 		}	
 
@@ -122,10 +134,13 @@ include("../../side.php");
 		// No password modification link if ldap user
 		$ldapsql=sqlrequest($database_eonweb,"SELECT user_type FROM users WHERE user_name='".$_COOKIE["user_name"]."';");
 		$user_type=mysqli_result($ldapsql,0,"user_type");
+		?>
+		<form method='POST' name='form_user'>
+		<?php
 		if($user_type != 1) { 
 	?>
 	
-	<form method='POST' name='form_user'>
+	
 		<div class="form-group">
 			<div class="row">
 				<label class="col-md-3"><?php echo getLabel("label.monitoring_passwd.pwd"); ?></label>
