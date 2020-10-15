@@ -1,7 +1,7 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
 Version: 5.3
-Release: 7
+Release: 8
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
@@ -60,6 +60,8 @@ case "$1" in
     ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatDark/thruk/EONFlatDark/ /etc/thruk/themes/themes-enabled/EONFlatDark 2>/dev/null
     ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatLight/thruk/EONFlatLight/ /etc/thruk/themes/themes-enabled/EONFlatLight 2>/dev/null
     systemctl restart httpd
+    # Update EON 5.3.8
+    /usr/bin/chown apache:apache /srv/eyesofnetwork/eonweb/module/admin_itsm/uploaded_file
   ;;
 esac
 
@@ -75,6 +77,11 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
+* Thu Oct 15 2020 Sebastien DAVOULT <d@vou.lt> - 5.3-8.eon
+- fix itsm rights and repositories
+- fix theme manager (when using AD)
+- fix theme manager (timeout on CSS files)
+
 * Mon Aug 17 2020 Sebastien DAVOULT <d@vou.lt> - 5.3-7.eon
 - fix 'select_tool' access
 - fix protect login/logout logs recording

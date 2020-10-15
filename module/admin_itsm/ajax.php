@@ -20,8 +20,8 @@
 #########################################
 */
 
-ini_set('display_errors','on');
-error_reporting(E_ALL);
+//ini_set('display_errors','on');
+//error_reporting(E_ALL);
 include_once("../../include/config.php");
 include_once("../../include/function.php");
 include_once("./function_itsm.php");
@@ -89,7 +89,7 @@ if($_POST["action"] == "add_external_itsm"){
 
         $id = $itsm->save();
         if($id > 0 ){
-            $message .= "<div class=\"alert alert-success\" role=\"alert\">".$itsm->getItsm_url()." succesfully saved. Is id is : ".$id."</div>";
+            $message .= "<div class=\"alert alert-success\" role=\"alert\">".$itsm->getItsm_url()." succesfully saved.</div>";
         }else {
             $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$_POST["itsm_url"]." failed to saved.".$id."</div>";
         }

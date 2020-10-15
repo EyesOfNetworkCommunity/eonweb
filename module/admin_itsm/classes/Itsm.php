@@ -65,6 +65,7 @@ class Itsm{
             $this->maj_vars_db();
             $description = "itsm config: " . $this->itsm_url . " was updated"; 
             logging("itsm", $description, $_COOKIE['user_name']);
+            $result = 1;
         }else{
             //insert
             $prepare = ["ssss", "$this->itsm_url", "$this->itsm_file",  "$this->itsm_return_champ", "$this->itsm_type_request"];
