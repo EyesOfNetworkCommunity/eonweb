@@ -187,9 +187,11 @@ body {
 	color: white;
 }
 
+#EONFlatLight textarea.form-control {
+    height: auto;
+}
 /* Barre de recherche*/
 #EONFlatLight .form-control {
-	line-height: 0;
 	color: #000;
     height: 34px;
     padding: 6px 12px;

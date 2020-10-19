@@ -193,9 +193,11 @@ body {
 	color: white;
 }
 
+#EONFlatDark textarea.form-control {
+    height :auto;
+}
 /* Barre de recherche*/
 #EONFlatDark .form-control {
-	line-height: 0;
 	color: #000;
     height: 34px;
     padding: 6px 12px;
@@ -351,7 +353,7 @@ background-color: #333;
     z-index: 3;
     color: #fff;
     cursor: default;
-    background-color: #7B41D8;
+    background-color: #6f6979;
     border-color: #7B41D8;
 }
 /* Precedent */
