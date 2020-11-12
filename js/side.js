@@ -72,7 +72,7 @@ function my_ajax_search()
 		success : function(response){
 			var str = '$(this).catcomplete({delay: 0, source: [';
 			$.each(response, function(i, item){
-				if(i < response.length - 1){
+				if(i < response.length){
 					$.each(response[i].data, function(j, item){
 						if(response[i].data[j].name) {
 							item_name=response[i].data[j].name;
