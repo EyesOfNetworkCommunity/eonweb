@@ -55,19 +55,21 @@ include("../../side.php");
 					for ($i = 0; $i < count($group_selected); $i++)
 					{
 						// Get group name
-						$group_res=sqlrequest("$database_eonweb","select group_name from groups where group_id='$group_selected[$i]'");
-						$group_name=mysqli_result($group_res,0,"group_name");
+						$group_res = sql($database_eonweb,"select group_name from groups where group_id=?", array($group_selected[$i]));
+						$group_name = $group_res[0]["group_name"];
 						// Get users in group
-						$users_in=sqlrequest("$database_eonweb","select user_name from users where group_id='$group_selected[$i]'");
+						$users_in=sql($database_eonweb,"select user_name from users where group_id=?", array($group_selected[$i]));
 						$users_in_names="";
-						while ($line = mysqli_fetch_array($users_in))	
+						foreach($users_in as $line){
 							$users_in_names=$line[0]." ".$users_in_names;
-
+						}
 						// Delete group if no users in
 						if($users_in_names==""){
 							// Delete in eonweb
-							sqlrequest("$database_eonweb","delete from groupright where group_id='$group_selected[$i]'");
-							sqlrequest("$database_eonweb","delete from groups where group_id='$group_selected[$i]'");
+							sql($database_eonweb,"delete from groupright where group_id=?", array($group_selected[$i]));
+
+							sql($database_eonweb,"delete from groups where group_id=?", array($group_selected[$i]));
+
 							// Delete in lilac
 							require_once('/srv/eyesofnetwork/lilac/includes/config.inc');
 							$ncg = NagiosContactGroupPeer::getByName($group_name);
@@ -107,9 +109,10 @@ include("../../side.php");
 				$usrmail = $infos[3];
 				$usrlimitation = 0;
 
-				$sql = "SELECT group_id FROM groups WHERE group_name = '$usergroup'";
-				$query = sqlrequest($database_eonweb, $sql);
-				$usergroup = mysqli_result($query,0,"group_id");
+				$sql = "SELECT group_id FROM groups WHERE group_name = ?";
+				$query = sql($database_eonweb, $sql, array($usergroup));
+
+				$usergroup = $query[0]["group_id"];
 
 				$nagvis_role_id = "";
 				// will insert in nagvis, only if checked
@@ -138,11 +141,11 @@ include("../../side.php");
 	}
 
 	//Get the name group and description group
-	$group_name_descr=sqlrequest("$database_eonweb","SELECT group_name,group_descr,group_id,group_type FROM groups ORDER BY group_name");
+	$group_name_descr=sql($database_eonweb,"SELECT group_name,group_descr,group_id,group_type FROM groups ORDER BY group_name");
 	
 	// determine if there is LDAP conf
-	$request = sqlrequest($database_eonweb, "SELECT auth_type FROM auth_settings");
-	$conf_type=mysqli_result($request,0,"auth_type");
+	$request = sql($database_eonweb, "SELECT auth_type FROM auth_settings");
+	$conf_type=$request[0]["auth_type"];
 	$ldap_conf = ($conf_type == "1") ? true : false;
 	?>
 
@@ -159,8 +162,7 @@ include("../../side.php");
 				</thead>
 				<tbody>
 				<?php
-				while ($line = mysqli_fetch_array($group_name_descr))
-				{
+				foreach($group_name_descr as $line){
 				$type = ($line[3] != "1") ? "MySQL" : "LDAP";
 				?>
 				<tr class="<?php echo $type; ?>">
