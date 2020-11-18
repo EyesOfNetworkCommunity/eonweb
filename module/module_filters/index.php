@@ -46,8 +46,8 @@ include("../monitoring_ged/ged_functions.php");
 	
 	// Verify if user limitation
 	if(isset($file)){
-		$user_exist=mysqli_result(sqlrequest("$database_eonweb","SELECT count('user_name') from users where user_name='$user_name' and user_limitation='1';"),0);
-		if($user_exist==0)
+		$user_exist=sql($database_eonweb,"SELECT count('user_name') from users where user_name=? and user_limitation='1'", array($user_name));
+		if($user_exist[0][0]==0)
 			message(0," : Not allowed","critical");
 	}
 	else {
