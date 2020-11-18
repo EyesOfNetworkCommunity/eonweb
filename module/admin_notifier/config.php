@@ -43,32 +43,32 @@ include("../../side.php");
 	    $log_file=retrieve_form_data("log_file",null); 
         $notif_file=retrieve_form_data("notif_file",null);
        
-        $sql_update = "UPDATE configs SET value='" . $debug . "' WHERE name='debug'";
-        sqlrequest($database_notifier,$sql_update,true);
-        $sql_update = "UPDATE configs SET value='" . $debug_rules . "' WHERE name='debug_rules'";
-		sqlrequest($database_notifier,$sql_update,true);
-        $sql_update = "UPDATE configs SET value='" . $log_file . "' WHERE name='log_file'";
-		sqlrequest($database_notifier,$sql_update,true);
-        $sql_update = "UPDATE configs SET value='" . $notif_file . "' WHERE name='notifsent_file'";
-		sqlrequest($database_notifier,$sql_update,true);
+        $sql_update = "UPDATE configs SET value=? WHERE name='debug'";
+        sql($database_notifier,$sql_update, array($debug));
+        $sql_update = "UPDATE configs SET value=? WHERE name='debug_rules'";
+		sql($database_notifier,$sql_update,array($debug_rules));
+        $sql_update = "UPDATE configs SET value=? WHERE name='log_file'";
+		sql($database_notifier,$sql_update, array($log_file));
+        $sql_update = "UPDATE configs SET value=? WHERE name='notifsent_file'";
+		sql($database_notifier,$sql_update, array($notif_file));
         message(6," : Configs have been updated",'ok');
     }
     else {
-        $sqlret = sqlrequest($database_notifier,"SELECT value FROM configs WHERE name='debug'");
-		if(mysqli_result($sqlret,0,"value")) {
-            $debug = mysqli_result($sqlret,0,"value");
+        $sqlret = sql($database_notifier,"SELECT value FROM configs WHERE name='debug'");
+		if($sqlret[0]["value"]) {
+            $debug = $sqlret[0]["value"];
         }
-        $sqlret = sqlrequest($database_notifier,"SELECT value FROM configs WHERE name='debug_rules'");
-		if(mysqli_result($sqlret,0,"value")) {
-            $debug_rules = mysqli_result($sqlret,0,"value");
+        $sqlret = sql($database_notifier,"SELECT value FROM configs WHERE name='debug_rules'");
+		if($sqlret[0]["value"]) {
+            $debug_rules = $sqlret[0]["value"];
         }
-        $sqlret = sqlrequest($database_notifier,"SELECT value FROM configs WHERE name='log_file'");
-		if(mysqli_result($sqlret,0,"value")) {
-            $log_file = mysqli_result($sqlret,0,"value");
+        $sqlret = sql($database_notifier,"SELECT value FROM configs WHERE name='log_file'");
+		if($sqlret[0]["value"]) {
+            $log_file = $sqlret[0]["value"];
         }
-        $sqlret = sqlrequest($database_notifier,"SELECT value FROM configs WHERE name='notifsent_file'");
-		if(mysqli_result($sqlret,0,"value")) {
-            $notif_file = mysqli_result($sqlret,0,"value");
+        $sqlret = sql($database_notifier,"SELECT value FROM configs WHERE name='notifsent_file'");
+		if($sqlret[0]["value"]) {
+            $notif_file = $sqlret[0]["value"];
         }
     }
     ?>

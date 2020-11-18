@@ -30,30 +30,31 @@ function get_field($field1, $base=false, $field2=false) {
 	
 	if($field2){
 		$request="SELECT name FROM nagios_$field1 UNION SELECT name FROM nagios_$field2";
-		$result=sqlrequest($database_lilac,$request);
+		$result=sql($database_lilac,$request);
 	}
 	else{
 		$request="SELECT name FROM $field1";
-		$result=sqlrequest($database_notifier,$request);
+		$result=sql($database_notifier,$request);
 	}
 	
 	if($field1=="service"){
 		$request="SELECT description FROM nagios_$field1 UNION SELECT name FROM nagios_$field2";
-		$result=sqlrequest($database_lilac,$request);
+		$result=sql($database_lilac,$request);
 	}
 	
 	if($base=="host"){
 		$request="SELECT name FROM $field1 WHERE type='host'";
-		$result=sqlrequest($database_notifier,$request);
+		$result=sql($database_notifier,$request);
 	}
 	elseif($base=="service"){
 		$request="SELECT name FROM $field1 WHERE type='service'";
-		$result=sqlrequest($database_notifier,$request);
+		$result=sql($database_notifier,$request);
 	}
 	
- 	while ($line = mysqli_fetch_array($result)){ 
+	foreach($result as $line) {
 		$hosts[]=$line[0];
 	}
+
 	$hosts= array_unique($hosts);
 	echo json_encode($hosts);
 }
@@ -109,11 +110,11 @@ function get_field($field1, $base=false, $field2=false) {
 	if(!empty($_POST['methods'])){
 		$rule_method_names = "";
 		foreach($_POST['methods'] as $selected){
-			$sql=sqlrequest($database_notifier,"SELECT id,name FROM methods WHERE name='".$selected."' AND type='".$_POST['type']."'");
-			if(mysqli_result($sql,0)!=FALSE) {
-				$select=mysqli_result($sql,0);
+			$sql=sql($database_notifier,"SELECT id,name FROM methods WHERE name=? AND type=?", array($selected, $_POST['type']));
+			if($sql[0]!=FALSE) {
+				$select=$sql[0];
 				$rule_method_ids.=$select.",";
-				$select=mysqli_result($sql,1);
+				$select=$sql[1];
 				$rule_method_names.=$select.",";
 			}
 		}
@@ -173,16 +174,16 @@ function get_field($field1, $base=false, $field2=false) {
 	if(isset($_POST["add"]) || isset($_POST["update"])) {
 	
 		if($rule_timeperiod && $rule_timeperiod!=""){
-			$sql=sqlrequest($database_notifier,"SELECT count(id) as count,id from timeperiods WHERE name='".$rule_timeperiod."'");
-			if(mysqli_result($sql,0,"count")!=0) {
-				$rule_timeperiod_id=mysqli_result($sql,0,"id");
+			$sql=sql($database_notifier,"SELECT count(id) as count,id from timeperiods WHERE name=?", array($rule_timeperiod));
+			if($sql[0]["count"]!=0) {
+				$rule_timeperiod_id=$sql[0]["id"];
 			}
 		}
 	
 		if($rule_name){
-			$sql_test = "SELECT count(name) FROM rules WHERE name='".$rule_name."'";
-			$rule_exist = sqlrequest($database_notifier,$sql_test);
-			$ajout=mysqli_result($rule_exist,0); 
+			$sql_test = "SELECT count(name) FROM rules WHERE name=?";
+			$rule_exist = sql($database_notifier,$sql_test, array($rule_name));
+			$ajout=$rule_exist[0]; 
 		}
 		
 		if(!$rule_notification || $rule_notification=="") {
@@ -204,26 +205,25 @@ function get_field($field1, $base=false, $field2=false) {
 		elseif((isset($_POST["add"]) && $ajout!=0) || (isset($_POST["update"]) && $ajout!=0 && $rule_name != $rule_name_old)) {
 			message(7," : This rule name already exist",'warning');
 		}elseif(isset($_POST["add"])){
-			$sql_sort_key = sqlrequest($database_notifier,"select max(sort_key+1) as sort_key from rules where type='".$rule_type."'");
-			$rule_sort_key = mysqli_result($sql_sort_key,0,"sort_key");
-			$sql_add = "INSERT INTO rules VALUES('','".$rule_name."','".$rule_type."','".$rule_debug."','".$rule_contact."',
-			'".$rule_host."','".$rule_service."','".$rule_state."','".$rule_notification."','".$rule_timeperiod_id."','".$rule_sort_key."','".$rule_track."')";
-			$rule_id = sqlrequest($database_notifier,$sql_add,true);
+			$sql_sort_key = sql($database_notifier,"select max(sort_key+1) as sort_key from rules where type=?", array($rule_type));
+			$rule_sort_key = $sql_sort_key[0]["sort_key"];
+			$sql_add = "INSERT INTO rules VALUES('',?,?,?,?,?,?,?,?,?,?,?)";
+			$rule_id = sql($database_notifier,$sql_add, array($rule_name, $rule_type, $rule_debug, $rule_contact, $rule_host, $rule_service, $rule_state, $rule_notification, $rule_timeperiod_id, $rule_sort_key, $rule_track));
 			$methodze=explode(",",$rule_method_ids);
 			foreach($methodze as $selected){
-				sqlrequest($database_notifier,"INSERT INTO rule_method VALUES('".$rule_id."', '".$selected."')",true);
+				sql($database_notifier,"INSERT INTO rule_method VALUES(?, ?)", array($rule_id, $selected));
 			}
 			message(6," : Rule have been added",'ok');
 			$rule_name_old=$rule_name;
 		}elseif(isset($_POST["update"])){
-			$sql_add = "UPDATE rules SET name='".$rule_name."', type='".$rule_type."', debug='".$rule_debug."', contact='".$rule_contact."',
-			host='".$rule_host."', service='".$rule_service."', state='".$rule_state."', notificationnumber='".$rule_notification."',timeperiod_id='".$rule_timeperiod_id."', tracking='".$rule_track."'
-			WHERE id='".$rule_id."'";
-			sqlrequest($database_notifier,$sql_add);
-			sqlrequest($database_notifier,"DELETE FROM rule_method WHERE rule_id='".$rule_id."'",true);
+			$sql_add = "UPDATE rules SET name=?, type=?, debug=?, contact=?,
+			host=?, service=?, state=?, notificationnumber=?,timeperiod_id=?, tracking=?
+			WHERE id=?";
+			sql($database_notifier,$sql_add, array($rule_name, $rule_type, $rule_debug, $rule_contact, $rule_host, $rule_service, $rule_state, $rule_notification, $rule_timeperiod_id, $rule_track));
+			sql($database_notifier,"DELETE FROM rule_method WHERE rule_id=?", array($rule_id));
 			$methodze=explode(",",$rule_method_ids);
 			foreach($methodze as $selected){
-				sqlrequest($database_notifier,"INSERT INTO rule_method VALUES('".$rule_id."', '".$selected."')",true);
+				sql($database_notifier,"INSERT INTO rule_method VALUES(?, ?)", array($rule_id, $selected));
 			}
 			message(6," : Rule have been updated",'ok');
 			$rule_name_old=$rule_name;
@@ -235,7 +235,7 @@ function get_field($field1, $base=false, $field2=false) {
 	if(isset($_GET["id"])) { $rule_id=$_GET["id"]; }
 	if($rule_id) {
 		if(is_numeric($rule_id)) {
-			$rule_sql=sqlrequest($database_notifier,"SELECT rules.id,rules.name as name,rules.type as type,debug,
+			$rule_sql=sql($database_notifier,"SELECT rules.id,rules.name as name,rules.type as type,debug,
 			contact,host,service,state,notificationnumber,timeperiods.name as timeperiod,timeperiod_id, rules.tracking as tracking,
 			GROUP_CONCAT(methods.name) as methods
 			FROM rules,timeperiods,methods,rule_method
@@ -243,23 +243,23 @@ function get_field($field1, $base=false, $field2=false) {
 			AND rules.id = rule_method.rule_id
 			AND methods.id = rule_method.method_id
 			AND methods.type = rules.type
-			AND rules.id='".$rule_id."'");
+			AND rules.id=?", array($rule_id));
 			
-			if(mysqli_result($rule_sql,0,"id")) {
-				$rule_id=mysqli_result($rule_sql,0,"id");
-				$rule_name=mysqli_result($rule_sql,0,"name");
-				$rule_name_old=mysqli_result($rule_sql,0,"name");
-				$rule_type=mysqli_result($rule_sql,0,"type");
-				$rule_debug=mysqli_result($rule_sql,0,"debug");
-				$rule_contact=mysqli_result($rule_sql,0,"contact");
-				$rule_host=mysqli_result($rule_sql,0,"host");
-				$rule_service=mysqli_result($rule_sql,0,"service");
-				$rule_state=mysqli_result($rule_sql,0,"state");
-				$rule_notification=mysqli_result($rule_sql,0,"notificationnumber");
-				$rule_timeperiod=mysqli_result($rule_sql,0,"timeperiod");
-				$rule_timeperiod_id=mysqli_result($rule_sql,0,"timeperiod_id");
-				$rule_method_names=mysqli_result($rule_sql,0,"methods");
-				$rule_track=mysqli_result($rule_sql,0,"tracking");
+			if($rule_sql[0]["id"]) {
+				$rule_id=$rule_sql[0]["id"];
+				$rule_name=$rule_sql[0]["name"];
+				$rule_name_old=$rule_sql[0]["name"];
+				$rule_type=$rule_sql[0]["type"];
+				$rule_debug=$rule_sql[0]["debug"];
+				$rule_contact=$rule_sql[0]["contact"];
+				$rule_host=$rule_sql[0]["host"];
+				$rule_service=$rule_sql[0]["service"];
+				$rule_state=$rule_sql[0]["state"];
+				$rule_notification=$rule_sql[0]["notificationnumber"];
+				$rule_timeperiod=$rule_sql[0]["timeperiod"];
+				$rule_timeperiod_id=$rule_sql[0]["timeperiod_id"];
+				$rule_method_names=$rule_sql[0]["methods"];
+				$rule_track=$rule_sql[0]["tracking"];
 			} else {
 				message(7," : Rule does not exist",'warning');
 			}
@@ -268,9 +268,9 @@ function get_field($field1, $base=false, $field2=false) {
 		}
 	}
 	
-	$timeperiod=sqlrequest($database_notifier,"SELECT id from timeperiods");
-	$methodhost=sqlrequest($database_notifier,"select id from methods where type='host'");
-	$methodService=sqlrequest($database_notifier,"select id from methods where type='service'");	
+	$timeperiod=sql($database_notifier,"SELECT id from timeperiods");
+	$methodhost=sql($database_notifier,"select id from methods where type='host'");
+	$methodService=sql($database_notifier,"select id from methods where type='service'");	
 	?>
 		
 	<form id="form-rules" action="./rules.php" method="POST" name="form">

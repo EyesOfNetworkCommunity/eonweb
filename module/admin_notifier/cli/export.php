@@ -54,8 +54,8 @@ $node_rules = $notifier_rules->createElement("rules");
 $notifier_rules->appendchild($node_rules);
 
 // Export configs
-$configs_req = sqlrequest($database_notifier,"SELECT name,value,type from configs order by name");
-while($config = mysqli_fetch_array($configs_req)) {
+$configs_req = sql($database_notifier,"SELECT name,value,type from configs order by name");
+foreach($configs_req as $config) {
 	if($config["type"]=="cfg") {
 		$node_configs->appendchild($notifier_methods->createElement($config["name"],$config["value"]));
 	}
@@ -72,8 +72,8 @@ $node_commands->appendchild($node_host);
 $node_service = $notifier_methods->createElement("service");
 $node_commands->appendchild($node_service);
 
-$methods_req = sqlrequest($database_notifier,"SELECT name,line,type from methods order by name");
-while($method = mysqli_fetch_array($methods_req)) {
+$methods_req = sql($database_notifier,"SELECT name,line,type from methods order by name");
+foreach($methods_req as $method) {
 	$method_line="\n\t".$method["name"]." = ".$method["line"];
 	if($method["type"]=="host") {
 		$method_host = $notifier_methods->createTextNode($method_line);
@@ -104,8 +104,8 @@ $rules_sql="SELECT rules.id,rules.name as name,rules.type as type,debug,contact,
 	GROUP BY rules.name
 	ORDER by rules.sort_key";
 
-$rules_req = sqlrequest($database_notifier,$rules_sql);
-while($rule = mysqli_fetch_array($rules_req)) {
+$rules_req = sql($database_notifier,$rules_sql);
+foreach($rules_req as $rule) {
 	$rule_line="\n\t".$rule["debug"].":".$rule["contact"].":".$rule["host"].":".$rule["service"].":".$rule["state"];
 	$rule_line.=":".$rule["daysofweek"].":".$rule["timeperiod"].":".$rule["notificationnumber"].":".$rule["methods"].":".$rule["tracking"];
 	if($rule["type"]=="host") {
@@ -120,8 +120,8 @@ while($rule = mysqli_fetch_array($rules_req)) {
 
 $contacts_sql="SELECT DISTINCT name,debug from contacts ORDER BY name";
 
-$contacts_req = sqlrequest($database_notifier,$contacts_sql);
-while($contact = mysqli_fetch_array($contacts_req)) {
+$contacts_req = sql($database_notifier,$contacts_sql);
+foreach($contacts_req as $contact) {
 	$rule_line_host = "\n\t".$contact["debug"].":".$contact["name"].":*:-:*:*:*:*:-";
 	$rule_host = $notifier_rules->createTextNode($rule_line_host);
 	$node_host->appendchild($rule_host);

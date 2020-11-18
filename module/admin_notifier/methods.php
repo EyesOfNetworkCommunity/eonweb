@@ -47,9 +47,9 @@ include("../../side.php");
 		
 		// Check if method exists
 		if($method_name){
-			$sql_test = "SELECT count(name) FROM methods WHERE name='".$method_name."' AND type='".$method_type."'";
-			$test_exist = sqlrequest($database_notifier,$sql_test);
-			$method_exist=mysqli_result($test_exist,0);
+			$sql_test = "SELECT count(name) FROM methods WHERE name=? AND type=?";
+			$test_exist = sql($database_notifier, $sql_test, array($method_name, $method_type));
+			$method_exist=$test_exist[0][0];
 		}
 
 		// Tests
@@ -60,13 +60,13 @@ include("../../side.php");
 		}elseif((isset($_POST["add"]) && $method_exist!=0) || (isset($_POST["update"]) && $method_exist!=0 && $method_name != $method_name_old)){
 			message(7," : This method name already exist",'warning');
 		}elseif(isset($_POST["add"])){
-			$sql_add = "INSERT INTO methods VALUES('','".$method_name."','".$method_type."','".addslashes($method_line)."')";
-			$method_id = sqlrequest($database_notifier,$sql_add,true);
+			$sql_add = "INSERT INTO methods VALUES('',? , ?, ?)";
+			$method_id = sql($database_notifier, $sql_add, array($method_name, $method_type, addslashes($method_line)));
 			message(6," : Method have been added",'ok');
 			$method_name_old=$method_name;
 		}elseif(isset($_POST["update"])){
-			$sql_update = "UPDATE methods SET name='".$method_name."', type='".$method_type."', line='".addslashes($method_line)."' WHERE id='".$method_id."' AND type='".$_POST['type']."'";
-			sqlrequest($database_notifier,$sql_update,true);
+			$sql_update = "UPDATE methods SET name=?, type=?, line=? WHERE id=? AND type=?";
+ 			sql($database_notifier, $sql_update, array($method_name, $method_type, addslashes($method_line), $method_id, $_POST['type']));
 			message(6," : Method have been updated",'ok');
 			$method_name_old=$method_name;
 		}
@@ -74,14 +74,14 @@ include("../../side.php");
 	// DISPLAY
 	elseif(isset($_GET["id"])) {
 		if(is_numeric($_GET["id"])) {
-			$method_sql=sqlrequest($database_notifier,"SELECT * from methods where id='".$_GET["id"]."'");
+ 			$method_sql = sql($database_notifier, "SELECT * from methods where id=?", array($_GET["id"]));
 			
-			if(mysqli_result($method_sql,0,"id")) {
-				$method_id=mysqli_result($method_sql,0,"id");
-				$method_name=mysqli_result($method_sql,0,"name");
-				$method_name_old=mysqli_result($method_sql,0,"name");
-				$method_type=mysqli_result($method_sql,0,"type");
-				$method_line=mysqli_result($method_sql,0,"line");
+			if($method_sql[0]["id"]) {
+				$method_id = $method_sql[0]["id"];
+				$method_name = $method_sql[0]["name"];
+				$method_name_old = $method_sql[0]["name"];
+				$method_type = $method_sql[0]["type"];
+				$method_line = $method_sql[0]["line"];
 			} else {
 				message(7," : Method does not exist",'warning');
 			}
