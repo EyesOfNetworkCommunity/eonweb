@@ -27,11 +27,11 @@ include("../../include/function.php");
 extract($_POST);
 
 $where_clause = "";
-$where_prepare=array("");
-if($user != ""){ $where_clause .= " AND user LIKE ?"; $where_prepare[0].="s" ; $where_prepare[]="%$user%"; }
-if($module != ""){ $where_clause .= " AND module LIKE ?"; $where_prepare[0].="s" ; $where_prepare[]="%$module%"; }
-if($description != ""){ $where_clause .= " AND description LIKE ?"; $where_prepare[0].="s" ; $where_prepare[]="%$description%"; }
-if($source != ""){ $where_clause .= " AND source LIKE ?"; $where_prepare[0].="s" ; $where_prepare[]="%$source%"; }
+$where_prepare=array();
+if($user != ""){ $where_clause .= " AND user LIKE ?" ; $where_prepare[]="%$user%"; }
+if($module != ""){ $where_clause .= " AND module LIKE ?" ; $where_prepare[]="%$module%"; }
+if($description != ""){ $where_clause .= " AND description LIKE ?" ; $where_prepare[]="%$description%"; }
+if($source != ""){ $where_clause .= " AND source LIKE ?" ; $where_prepare[]="%$source%"; }
 
 // period clause
 if($date != ""){
@@ -39,14 +39,12 @@ if($date != ""){
 	$start = strtotime($times[0]);
 	$end = strtotime($times[1]) + 86400;
 	$where_clause .= " AND date >= ? AND date < ?";
-	$where_prepare[0].="ss"; 
 	$where_prepare[]=(string)$start;
 	$where_prepare[]=(string)$end;
 }
 
-
 $sql = "SELECT * FROM logs WHERE id!=0".$where_clause." ORDER BY date DESC";
-$results = sqlrequest($database_eonweb,$sql,false,$where_prepare);
+$results = sql($database_eonweb,$sql,$where_prepare);
 
 ?>
 
@@ -62,7 +60,7 @@ $results = sqlrequest($database_eonweb,$sql,false,$where_prepare);
 			</tr>
 		</thead>
 		<tbody>
-			<?php while( $log = mysqli_fetch_assoc($results) ) { ?>
+			<?php foreach( $results as $log ) { ?>
 				<tr>
 					<td><?php echo date($dateformat, $log["date"]); ?></td>
 					<td><?php echo $log["user"]; ?></td>
