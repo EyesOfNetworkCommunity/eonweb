@@ -46,25 +46,26 @@ include_once("./request.php");
 
 		$file=fopen("/tmp/".$name.".csv","w");
 		
-		$result = sqlrequest($database_lilac, $request);
-		
+		$result = sql($database_lilac, $request);
 		echo "<div class='dataTable_wrapper'>";
 		echo "<table class='table table-striped datatable-eonweb'>
 				<thead>
 					<tr>";
 						$line="";
-						while($i = mysqli_fetch_field($result)){
-							echo "<th>".$i->name."</th>";
-							$line=$line.";".$i->name;
+						foreach($result[0] as $key => $i ){
+							if(!is_int($key)){
+								echo "<th>".$key."</th>";
+								$line=$line.";".$key;
+							}
 						}
 						fwrite($file,str_replace("\\","",utf8_decode(substr($line,1)))."\n");
 		echo "		</tr>
 				</thead>
 				<tbody>";
-					while($i=mysqli_fetch_row($result)){
+					foreach($result as $i){
 						echo "<tr>";
 						$line="";
-						for($j=0;$j<count($i);$j++){
+						for($j=0;$j<count($i)/2;$j++){
 							$line="$line;$i[$j]";
 							echo "<td>".$i[$j]."</td>";
 						}
@@ -76,9 +77,7 @@ include_once("./request.php");
 			  </div>";
 
 		fclose($file);
-		if( isset($connect) ){
-			mysqli_close($connect);
-		}
+		
 	}
 	
 	// Get object
