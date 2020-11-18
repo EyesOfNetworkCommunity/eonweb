@@ -65,8 +65,9 @@ elseif ($action == 'check_app_exists'){
 }
 
 function verify_services($bp,$host,$bdd){
-	$sql = "select COUNT(*),service from bp_services where bp_name = '" . $bp . "' and host = '". $host . "'";
-	$req = $bdd->query($sql);
+	$sql = "select COUNT(*),service from bp_services where bp_name = ? and host = ?";
+	$req = $bdd->prepare($sql);
+	$informations = $req->execute(array($bp, $host));
 	$informations = $req->fetch();
 	$number_services = intval($informations['COUNT(*)']);
 	$service = $informations['service'];

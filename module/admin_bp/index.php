@@ -46,10 +46,12 @@ include("../../side.php");
 		global $database_host;
 		global $database_username;
 		global $database_password;
-		$db = new mysqli($database_host, $database_username, $database_password, $database_nagios);
 
-		if($db->connect_errno > 0){
-			die('Unable to connect to database [' . $db->connect_error . ']');
+		try {
+			$db = new PDO('mysql:host='.$database_host.';dbname='.$database_nagios, $database_username, $database_password);
+		} catch(Exception $e) {
+			echo "Connection failed: " . $e->getMessage();
+			exit('Unable to connect to database.');
 		}
 
 		$rule_type = "";
@@ -57,17 +59,14 @@ include("../../side.php");
 		$min_value = "";
 		$priority = "";
 
-		$sql_type = "
-		SELECT type, description, min_value , priority
-		FROM bp 
-		WHERE name='".$bp."'
-		";
+		$sql_type = "SELECT type, description, min_value , priority FROM bp WHERE name=?";
+		$req = $db->prepare($sql_type);
 
-		if(!$result_type = $db->query($sql_type)){
-			die('There was an error running the query [' . $db->error . ']');
+		if(!$result_type = $req->execute(array($bp))){
+			die('There was an error running the query');
 		}
 
-		while($row = $result_type->fetch_assoc()){   
+		while($row = $req->fetch()){   
 			$rule_type = $row['type'];
 			$desc_bp = $row['description'];
 			$min_value = $row['min_value'];
@@ -78,9 +77,8 @@ include("../../side.php");
 			$min_value = " ".$min_value;
 		}
 
-		$result_type->free();
-		mysqli_close($db);
-
+		$req = null;
+		$db = null;
 ?>	
 		<li>
 			<div id="<?php echo $bp; ?>" class="tree-toggle">
@@ -120,46 +118,41 @@ include("../../side.php");
 		global $database_host;
 		global $database_username;
 		global $database_password;
-		$db = new mysqli($database_host, $database_username, $database_password, $database_nagios);
-
-		if($db->connect_errno > 0){
-			die('Unable to connect to database [' . $db->connect_error . ']');
+		try {
+			$db = new PDO('mysql:host='.$database_host.';dbname='.$database_nagios, $database_username, $database_password);
+		} catch(Exception $e) {
+			echo "Connection failed: " . $e->getMessage();
+			exit('Unable to connect to database.');
 		}
 
 		$t_bp_son = array();
 		$t_service_son = array();
 
-		$sql_bp = "
-		SELECT bp_link 
-		FROM bp_links 
-		WHERE bp_name = '".$bp_racine."'
-		";
+		$sql_bp = "SELECT bp_link FROM bp_links WHERE bp_name = ?";
 
-		$sql_service = "
-		SELECT host,service 
-		FROM bp_services 
-		WHERE bp_name = '".$bp_racine."'  ORDER BY host,service
-		";
+		$sql_service = "SELECT host,service FROM bp_services WHERE bp_name = ? ORDER BY host,service";
+		$req = $db->prepare($sql_bp);
 
-		if(!$result_bp = $db->query($sql_bp)){
-			die('There was an error running the query [' . $db->error . ']');
+		if(!$result_bp = $req->execute(array($bp_racine))){
+			die('There was an error running the query');
 		}
 
-		while($row = $result_bp->fetch_assoc()){   
+		while($row = $req->fetch()){   
 			array_push($t_bp_son,$row['bp_link']);
 		} 
 
-		$result_bp->free();
+		$req = null;
+		$req = $db->prepare($sql_service);
 
-		if(!$result_service = $db->query($sql_service)){
-			die('There was an error running the query [' . $db->error . ']');
+		if(!$result_service = $req->execute(array($bp_racine))){
+			die('There was an error running the query');
 		}
 
-		while($row = $result_service->fetch_assoc()){   
+		while($row = $req->fetch()){   
 			array_push($t_service_son,$row['host'].";".$row['service']);
 		}
-		$result_service->free();
-		mysqli_close($db);
+		$req = null;
+		$db = null;
 
 		if(sizeof($t_bp_son) > 0 ) {
 			for ($i = 0; $i < sizeof($t_bp_son); $i++) {
@@ -183,29 +176,24 @@ include("../../side.php");
 	}
 
 	$HTMLTREE ="";
-	$db = new mysqli($database_host, $database_username, $database_password, $database_nagios);
-
-	if($db->connect_errno > 0){
-		die('Unable to connect to database [' . $db->connect_error . ']');
+	try {
+		$db = new PDO('mysql:host='.$database_host.';dbname='.$database_nagios, $database_username, $database_password);
+	} catch(Exception $e) {
+		echo "Connection failed: " . $e->getMessage();
+		exit('Unable to connect to database.');
 	}
 
-	$sql = "
-	  SELECT name 
-	  FROM bp  
-	  WHERE name 
-	  NOT IN (SELECT bp_link FROM bp_links) 
-	  ORDER BY priority, name
-	";
+	$sql = "SELECT name FROM bp WHERE name NOT IN (SELECT bp_link FROM bp_links) ORDER BY priority, name";
 
 	if(!$result = $db->query($sql)){
-		die('There was an error running the query [' . $db->error . ']');
+		die('There was an error running the query');
 	}
-	while($row = $result->fetch_assoc()){   
+	while($row = $result->fetch()){   
 		array_push($t_bp_racine,$row['name']);
 	} 
 
-	$result->free();
-	mysqli_close($db);
+	$result = null;
+	$db = null;
 
 	?>
     
