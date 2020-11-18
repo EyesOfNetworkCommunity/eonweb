@@ -53,14 +53,15 @@ include("../../side.php");
 					for ($i = 0; $i < count($user_selected); $i++)
  					{
 						// Get user name
-						$user_res=sqlrequest("$database_eonweb","select user_name from users where user_id='$user_selected[$i]'");
-						$user_name=mysqli_result($user_res,0,"user_name");
+						$user_res = sql($database_eonweb,"select user_name from users where user_id=?", array($user_selected[$i]));
+						$user_name = $user_res[0]["user_name"];
 
 						// Delete user in eonweb
-						sqlrequest("$database_eonweb","delete from users where user_id='$user_selected[$i]'");
+						sql($database_eonweb,"delete from users where user_id=?", array($user_selected[$i]));
 
 						// Delete user in lilac
-						$lilac_contactid=mysqli_result(sqlrequest("$database_lilac","select id from nagios_contact where name='$user_name'"),0,"id");
+						$lilac_contactid = sql($database_lilac,"select id from nagios_contact where name=?", array($user_name));
+						$lilac_contactid = $lilac_contactid[0]["id"];
 						require_once('/srv/eyesofnetwork/lilac/includes/config.inc');
 						$lilac->delete_contact($lilac_contactid);
 						
@@ -70,22 +71,23 @@ include("../../side.php");
 
 						// delete user in nagvis
 						$bdd = new PDO('sqlite:/srv/eyesofnetwork/nagvis/etc/auth.db');
-						$req = $bdd->query("SELECT userId FROM users WHERE name = '$user_name'");
+						$req = $bdd->prepare("SELECT userId FROM users WHERE name = ?");
+						$req->execute(array($user_name));
 						$nagvis_user_exist = $req->fetch();
 						if($nagvis_user_exist > 0){
 							$userId = $nagvis_user_exist['userId'];
-							$bdd->exec("DELETE FROM users2roles WHERE userId = $userId");
-							$bdd->exec("DELETE FROM users WHERE userId = $userId");
-
+							$req = $bdd->prepare("DELETE FROM users2roles WHERE userId = ?");
+							$req->execute(array($userId));
+							$req = $bdd->prepare("DELETE FROM users WHERE userId = ?");
+							$req->execute(array($userId));
 						}
 
 						// delete user in cacti
-						$bdd = new PDO('mysql:host='.$database_host.';dbname='.$database_cacti, $database_username, $database_password);
-						$req = $bdd->query("SELECT id FROM user_auth WHERE username = '$user_name'");
-						$cacti_user_exist = $req->fetch();
+						$cacti_user_exist = sql($database_cacti, "SELECT id FROM user_auth WHERE username = ?", array($user_name));
+						$cacti_user_exist = $cacti_user_exist[0];
 						if ($cacti_user_exist["id"] > 0){
 							$userId = $cacti_user_exist["id"];
-							$bdd->exec("DELETE FROM user_auth WHERE id = $userId");
+							sql($database_cacti,"DELETE FROM user_auth WHERE id = ?", array($userId));
 						}
 
 						// Logging action
@@ -98,7 +100,7 @@ include("../../side.php");
 	}
         
 	// Get the name user and description group
-	$user_name_descr=sqlrequest("$database_eonweb"," SELECT user_name,user_descr,user_id,group_name,user_type,user_limitation FROM users LEFT OUTER JOIN groups ON groups.group_id = users.group_id ORDER BY user_name");
+	$user_name_descr = sql($database_eonweb, "SELECT user_name,user_descr,user_id,group_name,user_type,user_limitation FROM users LEFT OUTER JOIN groups ON groups.group_id = users.group_id ORDER BY user_name");
 	?>
 
 	<form action="./index.php" method="GET" class="form-inline">
@@ -117,8 +119,9 @@ include("../../side.php");
 				</thead>
 				<tbody>
 				<?php
-				while ($line = mysqli_fetch_array($user_name_descr)) {
-					$user_mail=mysqli_result(sqlrequest("$database_lilac","SELECT email FROM nagios_contact WHERE name='$line[0]'"),0,"email");
+				foreach($user_name_descr as $line){
+					$user_mail=sql($database_lilac,"SELECT email FROM nagios_contact WHERE name=?", array($line[0]));
+					$user_mail = $user_mail[0]["email"];
 				?>
 				<tr>
 					<td class="text-center">
