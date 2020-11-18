@@ -32,6 +32,7 @@ $login = $_COOKIE["user_name"];
 
 if($_POST["action"] == "add_external_itsm"){
     $message ="<div id='log'>";
+    $already = 0;
     $itsmPeer= new ItsmPeer();
     if(!empty($_POST["itsm_url_id"])){
         $itsm = $itsmPeer->getItsmById($_POST["itsm_url_id"]);
@@ -41,10 +42,11 @@ if($_POST["action"] == "add_external_itsm"){
             $itsm = new Itsm();
         }else{
             $message .= "<div class=\"alert alert-danger\" role=\"alert\">You try to create an Itsm with an url already used.</div>";
+            $already = 1;
         }
     }
 
-    if($itsm != false){
+    if($itsm != false && $already == 0){
         $itsm->setItsm_type_request($_POST["itsm_type_request"]);
 
         if(!empty($_POST["itsm_url"])){
@@ -86,13 +88,20 @@ if($_POST["action"] == "add_external_itsm"){
         if($itsm->getItsm_order()==null){
             $itsm->setItsm_order(intval($nb_itsm)+1);
         }
+        $itsm_update = $itsmPeer->getItsmByUrl($_POST["itsm_url"]);
+        if($itsm_update == false){
+            $save = $itsm->save();
+            $id = $itsm->getItsm_id();
 
-        $id = $itsm->save();
-        if($id > 0 ){
-            $message .= "<div class=\"alert alert-success\" role=\"alert\">".$itsm->getItsm_url()." succesfully saved.</div>";
-        }else {
-            $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$_POST["itsm_url"]." failed to saved.".$id."</div>";
+            if($save > 0 ){
+                $message .= "<div class=\"alert alert-success\" role=\"alert\">".$itsm->getItsm_url()." succesfully saved. id : ".$id."</div>";
+            }else {
+                $message .= "<div class=\"alert alert-danger\" role=\"alert\">".$_POST["itsm_url"]." failed to saved.".$id."</div>";
+            }
+        }else{
+            $message .= "<div class=\"alert alert-danger\" role=\"alert\">You try to edit an Itsm with an url already used.</div>";
         }
+        
     }
 
     echo $message."</div>";

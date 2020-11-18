@@ -42,33 +42,32 @@ class Itsm{
         global $database_eonweb;
         if(isset($this->itsm_id)){
             //update 
-            $prepare = ["ssss","".$this->itsm_url,"".$this->itsm_file,"".$this->itsm_return_champ,"".$this->itsm_type_request];
+            $prepare = [$this->itsm_url,"".$this->itsm_file,"".$this->itsm_return_champ,"".$this->itsm_type_request];
             
             $sql    = 'UPDATE itsm SET itsm_url =?, itsm_file=? , itsm_return_champ = ? , itsm_type_request = ? ';
             $end = 'WHERE itsm_id = ?';
             if($this->insert_sql($this->itsm_order) != "NULL" ){
                 $sql = $sql.', itsm_ordre=? ';
-                $prepare[0] = $prepare[0]."i";
+                $prepare[0] = $prepare[0];
                 array_push($prepare,"".$this->insert_sql($this->itsm_order));
             }
             if($this->insert_sql($this->itsm_parent)!= "NULL"){
                 $sql = $sql.', itsm_parent = ? ';
-                $prepare[0] = $prepare[0]."i";
+                $prepare[0] = $prepare[0];
                 array_push($prepare,"".$this->insert_sql($this->itsm_parent));
             }
 
             $sql = $sql.$end;
             array_push($prepare,"".$this->itsm_id);
-            $prepare[0] = $prepare[0]."i";
-            $result = sqlrequest($database_eonweb,$sql,false,$prepare);
+            $prepare[0] = $prepare[0];
+            $result = sql($database_eonweb,$sql,$prepare);
             $this->maj_headers_db();
             $this->maj_vars_db();
             $description = "itsm config: " . $this->itsm_url . " was updated"; 
             logging("itsm", $description, $_COOKIE['user_name']);
-            $result = 1;
         }else{
             //insert
-            $prepare = ["ssss", "$this->itsm_url", "$this->itsm_file",  "$this->itsm_return_champ", "$this->itsm_type_request"];
+            $prepare = [ "$this->itsm_url", "$this->itsm_file",  "$this->itsm_return_champ", "$this->itsm_type_request"];
             
             $sql = 'INSERT INTO itsm(itsm_url, itsm_file, itsm_return_champ, itsm_type_request';
             $end = ') VALUES(?, ?, ?, ?';
@@ -76,19 +75,20 @@ class Itsm{
             if($this->insert_sql($this->itsm_order) != "NULL" ){
                 $sql = $sql.', itsm_ordre';
                 $end = $end.', ? ';
-                $prepare[0] = $prepare[0]."i";
+                $prepare[0] = $prepare[0];
                 array_push($prepare,"".$this->insert_sql($this->itsm_order));
             }
             if($this->insert_sql($this->itsm_parent)!= "NULL"){
                 $sql = $sql.', itsm_parent';
                 $end = $end.', ? ';
-                $prepare[0] = $prepare[0]."i";
+                $prepare[0] = $prepare[0];
                 array_push($prepare,"".$this->insert_sql($this->itsm_parent));
             }
             $sql = $sql.$end.")";
-            $result = sqlrequest($database_eonweb,$sql,true,$prepare);
+            $result = sql($database_eonweb,$sql, $prepare);
             if($result){
-                $this->itsm_id = $result;
+                $id = sql($database_eonweb,"SELECT itsm_id FROM itsm WHERE itsm_url = ?", array($this->itsm_url)); 
+                $this->itsm_id = $id[0][0];          
                 $this->maj_headers_db();
                 $this->maj_vars_db();
             }
@@ -102,7 +102,7 @@ class Itsm{
     function delete(){
         global $database_eonweb;
         $sql = 'DELETE FROM itsm WHERE itsm_id = ?';
-        $result = sqlrequest($database_eonweb,$sql,false,["i",''.$this->itsm_id]);
+        $result = sql($database_eonweb,$sql, array($this->itsm_id));
         return $result;
     }
 
@@ -164,15 +164,15 @@ class Itsm{
         $old_headers        = $this->itsmPeer->getItsmHeadersByItsmId($this->itsm_id);
         $headers_to_delete  = array_diff($old_headers, $this->itsm_headers);
         $headers_to_add     = array_diff($this->itsm_headers, $old_headers);
-        $sql_delete         = 'DELETE FROM itsm_header WHERE itsm_header_id=';
-        $sql_add            = 'INSERT INTO itsm_header(header,itsm_id) VALUES';
+        $sql_delete         = 'DELETE FROM itsm_header WHERE itsm_header_id=?';
+        $sql_add            = 'INSERT INTO itsm_header(header,itsm_id) VALUES (?, ?)';
         
         foreach($headers_to_delete as $key=>$value){
-            sqlrequest($database_eonweb,$sql_delete.$key);
+            sql($database_eonweb,$sql_delete, array($key));
         }
 
         foreach($headers_to_add as $key=>$value){ 
-            sqlrequest($database_eonweb,$sql_add.'(\''.$value.'\', '.$this->itsm_id.')');
+            sql($database_eonweb,$sql_add, array($value, $this->itsm_id));
         }
     }
 
@@ -180,19 +180,19 @@ class Itsm{
         global $database_eonweb;
         $old_vars       = $this->itsmPeer->getItsmVarByItsmId($this->itsm_id);
         $vars_to_delete = array_diff($old_vars, $this->itsm_vars);
-        $sql_delete     = 'DELETE FROM itsm_var WHERE itsm_id = '.$this->itsm_id.' AND itsm_var_name=\'';
-        $sql_add        = 'INSERT INTO itsm_var(itsm_id, itsm_var_name, champ_ged_id) VALUES';
+        $sql_delete     = 'DELETE FROM itsm_var WHERE itsm_id = ? AND itsm_var_name= ?';
+        $sql_add        = 'INSERT INTO itsm_var(itsm_id, itsm_var_name, champ_ged_id) VALUES (?,?,?)';
 
         foreach($vars_to_delete as $key=>$value){
-            sqlrequest($database_eonweb,$sql_delete.$key.'\'');
+            sql($database_eonweb ,$sql_delete, array($this->itsm_id, $key));
         }
 
         foreach($this->itsm_vars as $key=>$value){
             // $value = id champ_ged
             if(array_key_exists($key,$old_vars)){
-                sqlrequest($database_eonweb,'UPDATE itsm_var SET champ_ged_id =? WHERE itsm_var_name=? AND itsm_id=?',false,["isi","$value","$key","$this->itsm_id"]);
+                sql($database_eonweb,'UPDATE itsm_var SET champ_ged_id =? WHERE itsm_var_name=? AND itsm_id=?',array($value,$key,$this->itsm_id));
             }else{
-                sqlrequest($database_eonweb,$sql_add.'(?,?,?)',false,["isi","$this->itsm_id","$key","$value"]);
+                sql($database_eonweb,$sql_add,array($this->itsm_id,$key,$value));
             }
         }
 
@@ -201,20 +201,20 @@ class Itsm{
     public function up(){
         global $database_eonweb;
         $order = intval($this->itsm_order)-1;
-        $sql1='UPDATE itsm SET itsm_ordre = itsm_ordre+1 WHERE itsm_ordre='.$order;
-        $sql2='UPDATE itsm SET itsm_ordre = itsm_ordre-1 WHERE itsm_id='.$this->itsm_id;
-        sqlrequest($database_eonweb,$sql1);
-        sqlrequest($database_eonweb,$sql2);
+        $sql1='UPDATE itsm SET itsm_ordre = itsm_ordre+1 WHERE itsm_ordre= ?';
+        $sql2='UPDATE itsm SET itsm_ordre = itsm_ordre-1 WHERE itsm_id= ?';
+        sql($database_eonweb,$sql1, array($order));
+        sql($database_eonweb,$sql2, array($this->itsm_id));
     }
 
     public function down(){
         global $database_eonweb;
         $order = intval($this->itsm_order)+1;
-        $sql1='UPDATE itsm SET itsm_ordre = itsm_ordre-1 WHERE itsm_ordre='.$order;
-        $sql2='UPDATE itsm SET itsm_ordre = itsm_ordre+1 WHERE itsm_id='.$this->itsm_id;
+        $sql1='UPDATE itsm SET itsm_ordre = itsm_ordre-1 WHERE itsm_ordre= ?';
+        $sql2='UPDATE itsm SET itsm_ordre = itsm_ordre+1 WHERE itsm_id= ?';
 
-        sqlrequest($database_eonweb,$sql1);
-        sqlrequest($database_eonweb,$sql2);
+        sql($database_eonweb,$sql1, array($order));
+        sql($database_eonweb,$sql2, array($this->itsm_id));
     }
 
     function insert_sql($var){

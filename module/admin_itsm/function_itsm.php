@@ -48,7 +48,7 @@ function insert_config_var($name,$value){
     global $database_eonweb;
     $var = get_config_var($name);
     $rq = "";
-    $prepare=["ss","$value","$name"];
+    $prepare=["$value","$name"];
     if($var != false){
         $rq = 'UPDATE configs SET value=? WHERE name=?'; 
     }else{
@@ -56,7 +56,7 @@ function insert_config_var($name,$value){
     }
 
     try{
-        $res = sqlrequest("$database_eonweb",$rq,false,$prepare);
+        $res = sql($database_eonweb, $rq, $prepare);
         return $res;
     }catch(Exception $e) {
         return 'Exception reçue : '.$e->getMessage().'\n';
@@ -65,19 +65,19 @@ function insert_config_var($name,$value){
 
 function get_config_var($name){
     global $database_eonweb;
-    $res = sqlrequest("$database_eonweb",'SELECT value FROM configs WHERE name=?',false,["s","$name"]);
+    $res = sql($database_eonweb, 'SELECT value FROM configs WHERE name=?', array($name));
+
     $val = false;
-    if(mysqli_num_rows($res) == 1 ){
-        $val = mysqli_result($res , 0);
+    if(!empty($res)){
+        $val = $res[0][0];
     }
     return $val;
 }
 
-
 function change_itsm_state($state){
     if($state != get_config_var("itsm")){
         global $database_eonweb;
-        sqlrequest("$database_eonweb",'UPDATE configs set value=? WHERE name="itsm"',false,["s","$state"]);
+        sql($database_eonweb, 'UPDATE configs set value=? WHERE name="itsm"', array($state));
     }
     return get_itsm_state();
 }
@@ -90,7 +90,7 @@ function get_itsm_state(){
         return '<button class="btn btn-danger" id="btn_activate" value="on">'.getLabel("label.admin_itsm.off").'</button>';
     }else{
         global $database_eonweb;
-        sqlrequest("$database_eonweb",'INSERT INTO configs VALUES("itsm","off")');
+        sql($database_eonweb, 'INSERT INTO configs VALUES("itsm","off")');
         return '<button class="btn btn-danger" value="on" id="btn_activate">'.getLabel("label.admin_itsm.off").'</button>';
     }
 }
@@ -125,10 +125,10 @@ function report_itsm($ged_type=NULL, $queue=NULL, $id_ged=NULL, $array_vars=arra
 
 function get_champ_ged($champ, $ged_type, $queue, $id_ged){
     global $database_ged;
-    $prepare =["i", intval($id_ged)];
+    $prepare =array($id_ged);
     $sql = "SELECT $champ FROM ".$ged_type."_queue_".$queue." WHERE id = ?";
-    $result = sqlrequest($database_ged, $sql, false,$prepare);
-    $event = mysqli_fetch_assoc($result);
+    $result = sql($database_ged, $sql, $prepare);
+    $event = $result[0];
     return $event[$champ];
 }
 
@@ -144,7 +144,7 @@ function get_champ_ged($champ, $ged_type, $queue, $id_ged){
 function curl_call($headers,$url,$file,$type="get",$ssl=false){
     $ch = curl_init();
     curl_setopt( $ch, CURLOPT_URL, $url );
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);    // TODO create a variable in database
     curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 
@@ -183,14 +183,14 @@ function get_all_events(){
     global $database_ged;
     $events = array();
     $sql = "SELECT id FROM nagios_queue_active";
-    $result = sqlrequest($database_ged, $sql);
-    while ($row = mysqli_fetch_assoc($result)){
+    $result = sql($database_ged, $sql);
+    foreach($result as $row){
         array_push($events,$row["id"].":nagios");
     }
     $result = null;
     $sql = "SELECT id FROM snmptrap_queue_active";
-    $result = sqlrequest($database_ged, $sql);
-    while ($row = mysqli_fetch_assoc($result)){
+    $result = sql($database_ged, $sql);
+    foreach($result as $row){
         array_push($events,$row["id"].":snmptrap");
     }
 
