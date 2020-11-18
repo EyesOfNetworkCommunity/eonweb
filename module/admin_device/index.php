@@ -43,9 +43,10 @@ include("../../side.php");
 				$host_name=$_REQUEST['hosts'][$i];
 				
 				# ---Get ip address
-				$request="select address from nagios_host where name='".$host_name."'";
-				$result=sqlrequest($database_lilac,$request);
-				$host_address=mysqli_result($result,"0");
+				$request = "select address from nagios_host where name=?";
+				$result = sql($database_lilac, $request, array($host_name));
+				$result = $result[0];
+				$host_address=$result["0"];
 				
 				if($_REQUEST['cacti_hostname']!="0") { $host_name=$host_address; }
 				
@@ -100,10 +101,9 @@ include("../../side.php");
 					<div class="col-md-8">
 						<?php
 							# --- Retrieve Host template from cacti
-							$result=sqlrequest($database_cacti,"SELECT id,name FROM host_template ORDER BY name ASC");
+							$result=sql($database_cacti,"SELECT id,name FROM host_template ORDER BY name ASC");
 							echo "<select class='form-control' name='snmp_template'>";
-							while ($line = mysqli_fetch_array($result))
-							{
+							foreach($result as $line){
 								echo "<option value='$line[0]'>$line[1]</option>";
 							}
 							echo "</select>";
@@ -115,9 +115,9 @@ include("../../side.php");
 					<div class="col-md-8">
 						<?php
 							# --- Retrieve SNMP community from cacti
-							$result=sqlrequest($database_cacti,"SELECT value FROM settings where name='snmp_community'");
+							$result=sql($database_cacti,"SELECT value FROM settings where name='snmp_community'");
 						?>
-						<input class="form-control" type="text" name="snmp_community" value='<?php echo mysqli_result($result,0,'value')?>'>
+						<input class="form-control" type="text" name="snmp_community" value='<?php echo $result[0]["value"]?>'>
 					</div>
 				</div>
 				<div class="row form-group">
@@ -198,11 +198,10 @@ include("../../side.php");
 								  and nagios_host.name NOT IN (select hostname from cacti.host) 
 								  and nagios_host.address NOT IN (select hostname from cacti.host) 
 								  order by nagios_host_template.name,nagios_host.name;";
-						$result=sqlrequest($database_cacti,$request);
+						$result=sql($database_cacti,$request);
 						
 						echo "<select name='hosts[]' class='form-control' size=15 multiple='multiple'>";
-						while ($line = mysqli_fetch_array($result))
-						{
+						foreach($result as $line){
 							echo "<option value='$line[0]'>&nbsp;$line[1] ($line[0])&nbsp;</option>\n";
 						}
 						echo "</select>";
@@ -219,10 +218,9 @@ include("../../side.php");
 				<div class="form-group">
 				<?php
 					# --- Retrieve host array from cacti
-					$result=sqlrequest($database_cacti,"SELECT DISTINCT host.id,hostname,description FROM host ORDER BY hostname ASC");
+					$result=sql($database_cacti,"SELECT DISTINCT host.id,hostname,description FROM host ORDER BY hostname ASC");
 					echo "<select class='form-control' name='hosts_cacti[]' size=15 multiple='multiple'>";
-					while ($line = mysqli_fetch_array($result))
-					{
+					foreach($result as $line){
 						echo "<option value='$line[0]'>$line[1] ($line[2])</option>";
 					}
 					echo "</select>";
