@@ -167,8 +167,9 @@ if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 						// loop on each menutab
 						foreach($menus["menutab"] as $menutab) { 	
 							// Verify group rights
-							$tab_request = "SELECT tab_".$menutab["id"]." FROM groupright WHERE group_id=".$_COOKIE['group_id'].";";
-							$tab_right = mysqli_result(sqlrequest($database_eonweb, $tab_request),0);				
+							$tab_request = "SELECT tab_".$menutab["id"]." FROM groupright WHERE group_id=?";
+							$tab_right = sql($database_eonweb, $tab_request, array($_COOKIE['group_id']));				
+							$tab_right = $tab_right[0];				
 							if($tab_right == 0){ continue; }
 						?>
 						<li>
