@@ -305,7 +305,7 @@ function editAllEvents($selected_events, $queue, $comments)
 		$ged_type = $value_parts[1];
 
 		$sql = "UPDATE ".$ged_type."_queue_".$queue." SET comments=? WHERE id = ?";
-		$result = sqlrequest($database_ged, $sql, false, array("ss",(string)$comments,(string)$id));
+		$result = sqlrequest($database_ged, $sql, false, array("ss",htmlentities((string)$comments),(string)$id));
 		if(!$result){
 			$success = false;
 		}
