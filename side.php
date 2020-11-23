@@ -35,6 +35,7 @@ $navbar_menus = false;
 if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 	if(isset($_GET["url"])){
 		// define module name
+		$_GET["url"] = htmlentities($_GET["url"]);
 		$ref_url = urldecode($_GET["url"]);
 		$ref_url = trim($ref_url, "/");
 		$ref_url_parts = explode("/", $ref_url);
