@@ -285,6 +285,7 @@ include("../../side.php");
 		}
 		else{
 			$user_name = retrieve_form_data("user_name",null);
+			$user_name = strtolower($user_name);
 			$user_password1 = retrieve_form_data("user_password1","");
 			$user_password2 = retrieve_form_data("user_password2","");
 		}
