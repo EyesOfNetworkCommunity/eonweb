@@ -1,7 +1,7 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
 Version: 5.3
-Release: 8
+Release: 9
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
@@ -77,6 +77,17 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
+* Thu Dec 03 2020 Sebastien DAVOULT <d@vou.lt> - 5.3-9.eon
+- Add unused commands #33af6d2
+- Change SQL interrogation (mysqli to PDO)
+- Secure SQL Requests
+- fix security issue CVE-2020-27886 #76
+- fix XSS security vulnerability #67
+- fix uppercase issue when adding a user #61
+- fix search bar issue 
+- fix issues with comments and reports #73
+- fix image that wouldn't load with some themes #66
+
 * Thu Oct 15 2020 Sebastien DAVOULT <d@vou.lt> - 5.3-8.eon
 - fix itsm rights and repositories
 - fix theme manager (when using AD)
