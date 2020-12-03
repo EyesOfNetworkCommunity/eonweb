@@ -35,6 +35,7 @@ $navbar_menus = false;
 if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 	if(isset($_GET["url"])){
 		// define module name
+		$_GET["url"] = htmlentities($_GET["url"]);
 		$ref_url = urldecode($_GET["url"]);
 		$ref_url = trim($ref_url, "/");
 		$ref_url_parts = explode("/", $ref_url);
@@ -167,8 +168,9 @@ if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 						// loop on each menutab
 						foreach($menus["menutab"] as $menutab) { 	
 							// Verify group rights
-							$tab_request = "SELECT tab_".$menutab["id"]." FROM groupright WHERE group_id=".$_COOKIE['group_id'].";";
-							$tab_right = mysqli_result(sqlrequest($database_eonweb, $tab_request),0);				
+							$tab_request = "SELECT tab_".$menutab["id"]." FROM groupright WHERE group_id=?";
+							$tab_right = sql($database_eonweb, $tab_request, array($_COOKIE['group_id']));				
+							$tab_right = $tab_right[0];				
 							if($tab_right == 0){ continue; }
 						?>
 						<li>

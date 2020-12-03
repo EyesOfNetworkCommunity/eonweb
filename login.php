@@ -140,27 +140,25 @@ else {
 			exit;
 		}
 
-		#$usersql=sqlrequest($database_eonweb,"select * from users where user_name like '$login'");
-		$usersql=sqlrequest($database_eonweb,"select U.user_id as user_id, U.group_id as group_id ,U.user_name as user_name, U.user_passwd as user_passwd, U.user_descr as user_descr, U.user_type as user_type, L.dn as user_location, U.user_limitation as user_limitation  from users as U left join ldap_users_extended as L on U.user_name = L.login  where U.user_name = '$login'");
-		$username = mysqli_result($usersql,0,"user_name");
+		$usersql=sql($database_eonweb,"select U.user_id as user_id, U.group_id as group_id ,U.user_name as user_name, U.user_passwd as user_passwd, U.user_descr as user_descr, U.user_type as user_type, L.dn as user_location, U.user_limitation as user_limitation  from users as U left join ldap_users_extended as L on U.user_name = L.login  where U.user_name = ?", array($login));
+		$username = $usersql[0]["user_name"];
 		
 		// if not in eonweb DB
 		if ($login != strtolower($username)) {
 			// check if there is a LDAP conf
-			$ldapsql=sqlrequest($database_eonweb,"SELECT * FROM auth_settings WHERE auth_type=1");
+			$ldapsql=sql($database_eonweb,"SELECT * FROM auth_settings WHERE auth_type=1");
 			
 			//if there is a ldap conf in database
-			if($ldapsql->num_rows > 0){
+			if($ldapsql != null){
 				//get ldap conf informations
-				$ldap_ip=mysqli_result($ldapsql,0,"ldap_ip");
-				$ldap_port=mysqli_result($ldapsql,0,"ldap_port");
-				$ldap_rdn=mysqli_result($ldapsql,0,"ldap_rdn");
-				$ldap_user = mysqli_result($ldapsql,0,"ldap_user");
-				$ldap_password = base64_decode(mysqli_result($ldapsql,0,"ldap_password"));
-
-				$ldap_search=mysqli_result($ldapsql,0,"ldap_search");
+				$ldap_ip= $ldapsql[0]["ldap_ip"];
+				$ldap_port= $ldapsql[0]["ldap_port"];
+				$ldap_rdn= $ldapsql[0]["ldap_rdn"];
+				$ldap_user = $ldapsql[0]["ldap_user"];
+				$ldap_password = base64_decode($ldapsql[0]["ldap_password"]);
+				$ldap_search= $ldapsql[0]["ldap_search"];
 				//$ldap_filter = mysqli_result($ldapsql,0,"ldap_filter");
-				$user_location=str_replace("\\\\","\\",mysqli_result($usersql,0,"user_location"));
+				$user_location=str_replace("\\\\","\\",$usersql[0]["user_location"]);
 
 				// connection to ldap
 				$ldapconn=ldap_connect($ldap_ip,$ldap_port);
@@ -202,11 +200,11 @@ else {
 						}
 						
 						$sql = "SELECT * FROM groups WHERE group_type=1 AND group_dn IN ".$in_clause;
-						$sql_results = sqlrequest($database_eonweb, $sql);
+						$sql_results = sql($database_eonweb, $sql);
 						
 						// we've found the user's group in eonweb DB!
-						if(mysqli_num_rows($sql_results) > 0){
-							$group_id = mysqli_result($sql_results,0,"group_id");
+						if( $sql_results != null){
+							$group_id = $sql_results[0]["group_id"];
 							
 							// check user's connection to ldap
 							$ldapbind = ldap_bind($ldapconn, ldap_escape($user_dn,true), $mdp);
@@ -216,7 +214,8 @@ else {
 								insert_user($login, $user_descr, $group_id, $mdp, $mdp, 1, ldap_escape($user_dn), "", 0, false);
 								
 								// we can login now. And don't forget to take the new user's id (for session)
-								$usersql=sqlrequest($database_eonweb,"select * from users where user_name = '$login'");
+								$usersql=sql($database_eonweb,"select * from users where user_name = ?", array($login));
+								var_dump($usersql);
 								$LOGIN = true;
 							}
 						}
@@ -226,13 +225,13 @@ else {
 		}
 		else {
 			// IF LDAP USER
-			if(mysqli_result($usersql,0,"user_type")=="1"){
-				$ldapsql=sqlrequest($database_eonweb,"select * from auth_settings");
-				$ldap_ip=mysqli_result($ldapsql,0,"ldap_ip");
-				$ldap_port=mysqli_result($ldapsql,0,"ldap_port");
-				$ldap_rdn=mysqli_result($ldapsql,0,"ldap_rdn");
-				$ldap_search=mysqli_result($ldapsql,0,"ldap_search");
-				$user_location=ldap_escape(mysqli_result($usersql,0,"user_location"),true);
+			if($usersql[0]["user_type"]=="1"){
+				$ldapsql= sql($database_eonweb,"select * from auth_settings");
+				$ldap_ip= $ldapsql[0]["ldap_ip"];
+				$ldap_port= $ldapsql[0]["ldap_port"];
+				$ldap_rdn= $ldapsql[0]["ldap_rdn"];
+				$ldap_search= $ldapsql[0]["ldap_search"];
+				$user_location=ldap_escape($ldapsql[0]["user_location"],true);
 
 				$ldapconn=ldap_connect($ldap_ip,$ldap_port);
 				ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);
@@ -245,7 +244,7 @@ else {
 			}
 			// IF NOT A LDAP USER
 			else{
-				$userpasswd = mysqli_result($usersql,0,"user_passwd");
+				$userpasswd = $usersql[0]["user_passwd"];
 				$mdp=md5($mdp);
 
 				if($userpasswd == $mdp)
@@ -256,13 +255,13 @@ else {
 		// trying to log
 		if($LOGIN){
 			// Get user & group ids + filter
-			$grpid = mysqli_result($usersql,0,"group_id");
-			$usrid = mysqli_result($usersql,0,"user_id");
-			$usrlimit = mysqli_result($usersql,0,"user_limitation");
+			$grpid = $usersql[0]["group_id"];
+			$usrid = $usersql[0]["user_id"];
+			$usrlimit = $usersql[0]["user_limitation"];
 
 			// Create session ID
 			$sessid=rand();
-			sqlrequest($database_eonweb,"INSERT INTO sessions (session_id,user_id) VALUES ('$sessid','$usrid')");
+			sql($database_eonweb,"INSERT INTO sessions (session_id,user_id) VALUES (?,?)", array($sessid, $usrid));
 			
 			// Send cookie
 			$cookie_time = ($cookie_time=="0") ? 0 : time() + $cookie_time;

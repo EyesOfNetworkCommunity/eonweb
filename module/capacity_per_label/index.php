@@ -73,17 +73,14 @@ include("../../side.php");
 	</div>
 	
 	<?php
-		if(count($_GET)>0 && $error == false)
-		{
+		if(count($_GET)>0 && $error == false){
 			echo '<div class="row">';
 			# --- Get the graph id from the graph_template id
 			if(isset($graphlocal_graph_id)){
-				$result_graph=  sqlrequest($database_cacti,"SELECT id FROM graph_local WHERE graph_template_id='$graphlocal_graph_id' ");
-				$nbr_ligne_graph = mysqli_num_rows($result_graph);
-				for ($i=0;$i<$nbr_ligne_graph;$i++)
-				{
+				$result_graph = sql($database_cacti,"SELECT id FROM graph_local WHERE graph_template_id=?", array($graphlocal_graph_id));
+				foreach($result_graph as $graph){
 					# --- Print the graph
-					$graph_id = mysqli_result($result_graph,$i,"id");
+					$graph_id = $graph["id"];
 					echo "<img class='img-responsive center-block' src='../../../cacti/graph_image.php?local_graph_id=$graph_id&rra_id=$graphlocal_dateid' alt='cacti_graph'>";
 				}
 			}

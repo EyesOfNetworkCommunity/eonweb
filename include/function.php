@@ -70,71 +70,14 @@ function message($id, $text, $type){
 }
 
 function username_available(){
-	$request = sqlrequest("eonweb","SELECT * FROM users WHERE user_name = ".$_COOKIE["user_name"]);
-	$result = mysqli_result($request,0,"user_name");
+	$request = sql("eonweb","SELECT * FROM users WHERE user_name = ?", array($_COOKIE["user_name"]));
+	$result = $request[0]["user_name"];
 	if(isset($result))
 		return true;
 	else return false;
 }
 
-// Connect to Database
-function sqlrequest($database,$sql,$id=false,$prepare=false){
-
-	// Get the global value
-	global $database_host;
-	global $database_username;
-	global $database_password;
-
-	$connexion = mysqli_connect($database_host, $database_username, $database_password, $database);
-	if (!$connexion) {
-		echo "<ul>";
-		echo "<li class='msg_title'>Alert EyesOfNetwork - Message EON-database connect</li>";
-		echo "<li class='msg'> Could not connect to database : $database ($database_host)</li>";
-		echo "</ul>";
-		exit(1);
-	}
-
-	if ( $database == "eonweb" ) {
-		// Force UTF-8
-		mysqli_query($connexion, "SET NAMES 'utf8'");
-	}
-	
-	if(is_array($prepare)) {
-		$stmt = mysqli_prepare($connexion,$sql);
-		
-		if(isset($prepare[0]) && isset($prepare[1])) {
-			$ref = new ReflectionClass('mysqli_stmt');
-			$method = $ref->getMethod("bind_param");
-			$method->invokeArgs($stmt,$prepare);
-		}
-		
-		mysqli_stmt_execute($stmt);
-		$result = mysqli_stmt_get_result($stmt);
-	} else {
-		$result=mysqli_query($connexion, "$sql");
-	}
-		
-	if($id==true)
-		$result=mysqli_insert_id($connexion);
-		
-	mysqli_close($connexion);
-	return $result;
-}
-
-function connexionDB($database){
-    global $database_host;
-    global $database_username;
-    global $database_password;
-    try {
-        $dbh = new PDO("mysql:host=$database_host;dbname=$database", $database_username, $database_password);
-        return $dbh;
-    } catch (PDOException $e) {
-        print "Erreur !: " . $e->getMessage() . "<br/>";
-        die();
-    }
-}
-
-function sql($database, $sql, $datas = false){
+function sql($database, $sql = null, $datas = null, $arg = null){
 	global $database_host;
 	global $database_username;
 	global $database_password;
@@ -143,25 +86,34 @@ function sql($database, $sql, $datas = false){
 
 	try {
 		$dbh = new PDO("mysql:host=$database_host;dbname=$database", $database_username, $database_password);
-		$stmt = $dbh->prepare($sql);
-		
-	 	if(is_array($datas)){
-			$result = $stmt->execute($datas);
+		if($sql != null){
+			$stmt = $dbh->prepare($sql);
+			
+			if(is_array($datas)){
+				$result = $stmt->execute($datas);
+			} else {
+				$result = $stmt->execute();
+			}
+
+			if($type == "SELECT"){
+				if($arg != null){
+					$result = $stmt->fetchAll($arg);
+				} else {
+					$result = $stmt->fetchAll();
+
+				}
+			}
+			
+			$dbh = null;
+			$stmt = null;
+
+			return $result;
 		} else {
-			$result = $stmt->execute();
+			return $dbh;
 		}
-
-		if($type == "SELECT"){
-			$result = $stmt->fetch();
-		}
-		
-		$dbh = null;
-		$stmt = null;
-
-		return $result;
 		
     } catch (PDOException $e) {
-        return $e->getMessage();
+        print "Erreur !: " . $e->getMessage() . "<br/>";
     }
 }
 
@@ -233,8 +185,8 @@ function get_host_list_from_nagios($field=false, $queue = false){
 		$db = $database_lilac;
 	}
 
-	$result=sqlrequest($db,$request);
- 	while ($line = mysqli_fetch_array($result)){ 
+	$result=sql($db,$request);
+	foreach($result as $line){
 		array_push($hosts, $line[0]);
 	}
 	echo json_encode($hosts);
@@ -245,9 +197,9 @@ function get_host_list(){
 	global $database_lilac;
 	$hosts=array();
 
-	$result=sqlrequest($database_lilac,"SELECT name,address FROM nagios_host ORDER BY name");
-
- 	while ($line = mysqli_fetch_array($result)){ 
+	$result=sql($database_lilac,"SELECT name,address FROM nagios_host ORDER BY name");
+	
+	foreach($result as $line){
 		$hosts[]=$line[0];
 		$hosts[]=$line[1];
 	}
@@ -260,10 +212,9 @@ function get_host_listbox_from_nagios(){
 	
 	// create input autocomplete with all nagios host values
 	echo "<label>Host</label>";
-	$result=sqlrequest($database_lilac,"SELECT DISTINCT name FROM nagios_host UNION ALL SELECT DISTINCT address FROM nagios_host");
+	$result=sql($database_lilac,"SELECT DISTINCT name FROM nagios_host UNION ALL SELECT DISTINCT address FROM nagios_host");
 	$input = "<input id='host_list' class='form-control' type='text' name='host_list' onFocus='$(this).autocomplete({source: [";
-	while ($line = mysqli_fetch_array($result))
-	{
+	foreach($result as $line){
 		$input .= '"'.$line[0].'",';
 	}
 	$input = rtrim($input, ",");
@@ -285,8 +236,8 @@ function get_title_list_from_cacti(){
 
 	$titles=array();
 	$request="SELECT DISTINCT graph_templates_graph.title FROM graph_local,graph_templates_graph WHERE graph_templates_graph.local_graph_id=graph_local.id ORDER BY title";
-	$result=sqlrequest($database_cacti,$request);
-	while ($line = mysqli_fetch_array($result)){
+	$result=sql($database_cacti,$request);
+	foreach($result as $line){
 	$line[0]=str_replace("|host_description| - ","",$line[0]);
 		$titles[]=$line[0];
 	}
@@ -303,15 +254,14 @@ function get_host_listbox_from_cacti(){
 		$ref = $_GET['host'];
 	}
 	
-	$result=sqlrequest($database_cacti,"SELECT DISTINCT host.id,hostname,description FROM host INNER JOIN graph_local ON host.id = graph_local.host_id ORDER BY hostname ASC");
+	$result=sql($database_cacti,"SELECT DISTINCT host.id,hostname,description FROM host INNER JOIN graph_local ON host.id = graph_local.host_id ORDER BY hostname ASC");
 	echo "<SELECT name='host' class='form-control' size=7>";
-        while ($line = mysqli_fetch_array($result))
-        {
-			echo "<OPTION value='$line[0]' ";
-			if($ref == $line[0]){echo 'selected="selected"';}
-			echo ">&nbsp;$line[1] ($line[2])&nbsp;</OPTION>";
-        }
-        echo "</SELECT><br>";
+	foreach($result as $line){
+		echo "<OPTION value='$line[0]' ";
+		if($ref == $line[0]){echo 'selected="selected"';}
+		echo ">&nbsp;$line[1] ($line[2])&nbsp;</OPTION>";
+	}
+	echo "</SELECT><br>";
 }
 
 // system function : CUT
@@ -329,10 +279,9 @@ function get_graph_listbox_from_cacti(){
 		$ref = $_GET['graph'];
 	}
 	
-	$result=sqlrequest($database_cacti,"SELECT DISTINCT graph_templates.id,name FROM graph_templates INNER JOIN graph_local ON graph_local.graph_template_id = graph_templates.id ORDER BY name ASC");
+	$result=sql($database_cacti,"SELECT DISTINCT graph_templates.id,name FROM graph_templates INNER JOIN graph_local ON graph_local.graph_template_id = graph_templates.id ORDER BY name ASC");
 	echo "<SELECT name='graph' class='form-control' size=7>";
-	while ($line = mysqli_fetch_array($result))
-	{
+	foreach($result as $line){
 		echo "<OPTION value='$line[0]' ";
 		if($ref == $line[0]){echo 'selected="selected"';}
 		echo ">&nbsp;$line[1]&nbsp;</OPTION>";
@@ -374,11 +323,10 @@ function get_user_listbox(){
 	echo "<h2>Select user : </h2>";
         global $database_eonweb;
 
-        $result=sqlrequest($database_eonweb,"SELECT DISTINCT user_name,user_id,group_id,user_descr FROM users ORDER BY user_name");
+        $result=sql($database_eonweb,"SELECT DISTINCT user_name,user_id,group_id,user_descr FROM users ORDER BY user_name");
         print "<SELECT name='users_list' class='select' size=15>";
-        while ($line = mysqli_fetch_array($result))
-        {
-                print "<OPTION value='$line[1]'>$line[0] : $line[3]</OPTION>";
+		foreach($result as $line){
+			print "<OPTION value='$line[1]'>$line[0] : $line[3]</OPTION>";
         }
         print "</SELECT>";
 }
@@ -410,11 +358,9 @@ function logging($module,$command,$user=false){
 	global $database_eonweb;
 	global $dateformat;
 	if($user){
-		$user = htmlspecialchars($user);
-		sqlrequest($database_eonweb,"insert into logs values ('','".time()."','$user','$module','$command','".$_SERVER["REMOTE_ADDR"]."');");
+		sql($database_eonweb,"insert into logs values ('',?,?,?,?,?)", array(time(), $user, $module, $command, $_SERVER["REMOTE_ADDR"]));
 	}elseif(isset($_COOKIE['user_name'])){
-		$user = htmlspecialchars($_COOKIE['user_name']);
-		sqlrequest($database_eonweb,"insert into logs values ('','".time()."','".$user."','$module','$command','".$_SERVER["REMOTE_ADDR"]."');");
+		sql($database_eonweb,"insert into logs values ('',?,?,?,?,?)", array(time(), $user, $module, $command, $_SERVER["REMOTE_ADDR"]));
 	}
 }
 
@@ -521,9 +467,9 @@ function formatFile(){
 
 		write_file($path_nagiosbpcfg,array_merge($file,$lines),"w"," : File updated");
 
-		sqlrequest($database_nagios,"DELETE FROM bp");
-		sqlrequest($database_nagios,"DELETE FROM bp_services");
-		sqlrequest($database_nagios,"DELETE FROM bp_links");
+		sql($database_nagios,"DELETE FROM bp");
+		sql($database_nagios,"DELETE FROM bp_services");
+		sql($database_nagios,"DELETE FROM bp_links");
 		$tabName = array();
 		$tabDef = array();			
 
@@ -583,7 +529,7 @@ function formatFile(){
 			}
 
 			if ($prio == "" ) $prio = "null";
-			sqlrequest($database_nagios,"INSERT INTO bp VALUES('$name','$desc','$prio','$type','$cmd','$url','$val','1')");
+			sql($database_nagios,"INSERT INTO bp VALUES(?,?,?,?,?,?,?,'1')", array($name, $desc, $prio, $type, $cmd, $url, $val));
 
 			switch ($type){
 				case "ET": $vals = explode("&",$serv);
@@ -596,9 +542,9 @@ function formatFile(){
 			foreach ($vals as $v) {
 				if ( strpos($v,";") !== false ){
 					$val = explode(";",$v); $host=trim($val[0]); $service=trim($val[1]);
-					sqlrequest($database_nagios,"INSERT INTO bp_services VALUES('','$name','$host','$service')");
+					sql($database_nagios,"INSERT INTO bp_services VALUES('',?,?,?)", array($name, $host, $service));
 				}
-				else sqlrequest($database_nagios,"INSERT INTO bp_links VALUES('','$name','".trim($v)."')");
+				else sql($database_nagios,"INSERT INTO bp_links VALUES('',?,?)", array($name, trim($v)));
 			}
 		}
 		message(6," : Database updated with configuration file","ok");
@@ -630,9 +576,11 @@ function write_file($file,$contenu,$mode,$message = null){
 // MySQL request in php array 
 function sqlArrayNagios($request){
 	global $database_nagios;
-	$result = sqlrequest($database_nagios,$request);
+	$result = sql($database_nagios,$request);
 	$values = array();
-	for ($i=0; $i<mysqli_num_rows($result); ++$i) $values[] = mysqli_fetch_assoc($result);
+	foreach($result as $row){
+		$values[] = $result;
+	}
 	return $values ;
 }
 
@@ -805,8 +753,8 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 	$user_id=null;
 
 	// Check if user exist
-	$user_exist=mysqli_result(sqlrequest("$database_eonweb","SELECT count('user_name') from users where user_name='$user_name';"),0);
-
+	$user_exist = sql($database_eonweb,"SELECT count('user_name') from users where user_name=?", array($user_name));
+	$user_exist = $user_exist[0][0];
 	// Check user descr
 	if($user_descr=="")
 		$user_descr=$user_name;
@@ -829,12 +777,14 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 			$user_password = md5($user_password1);
 			
 			// Insert into eonweb
-			sqlrequest("$database_eonweb","INSERT INTO users (user_name,user_descr,group_id,user_passwd,user_type,user_location,user_limitation,user_language,theme) VALUES('$user_name', '$user_descr', '$user_group', '$user_password', '$user_type', '$user_location', '$user_limitation', '$user_language', '$theme')");
-			$user_id=mysqli_result(sqlrequest("$database_eonweb","SELECT user_id FROM users WHERE user_name='$user_name'"),0,"user_id");
-			$group_name=mysqli_result(sqlrequest("$database_eonweb","SELECT group_name FROM groups WHERE group_id='$user_group'"),0,"group_name");
-
+			sql($database_eonweb,"INSERT INTO users (user_name,user_descr,group_id,user_passwd,user_type,user_location,user_limitation,user_language,theme) VALUES(?,?,?,?,?,?,?,?,?)", array($user_name, $user_descr, $user_group, $user_password, $user_type, $user_location, $user_limitation, $user_language, $theme));
+			$user_id = sql($database_eonweb,"SELECT user_id FROM users WHERE user_name=?", array($user_name));
+			$user_id = $user_id[0]["user_id"];
+			$group_name = sql($database_eonweb,"SELECT group_name FROM groups WHERE group_id=?", array($user_group));
+			$group_name = $group_name[0]["group_name"];
 			// Insert into lilac
-			$lilac_period=mysqli_result(sqlrequest("$database_lilac","SELECT id FROM nagios_timeperiod limit 1"),0,"id");
+			$lilac_period = sql($database_lilac,"SELECT id FROM nagios_timeperiod limit 1");
+			$lilac_period = $lilac_period[0]["id"];
 			
 			require_once('/srv/eyesofnetwork/lilac/includes/config.inc');
 			$contact_array = array(
@@ -862,10 +812,12 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 			$lilac->add_contact($contact_array);
 
 			// Lilac contact_group_member
-			$lilac_contactgroupid=mysqli_result(sqlrequest("$database_lilac","SELECT id FROM nagios_contact_group WHERE name='$group_name'"),0,"id");
-			$lilac_contactid=mysqli_result(sqlrequest("$database_lilac","SELECT id FROM nagios_contact where name='$user_name'"),0,"id");
+			$lilac_contactgroupid = sql($database_lilac,"SELECT id FROM nagios_contact_group WHERE name=?", array($group_name));
+			$lilac_contactgroupid = $lilac_contactgroupid[0]["id"];
+			$lilac_contactid = sql($database_lilac,"SELECT id FROM nagios_contact where name=?", array($user_name));
+			$lilac_contactid = $lilac_contactid[0]["id"];
 			if($lilac_contactgroupid!="" and $lilac_contactid!="" and $user_limitation!="1")
-				sqlrequest("$database_lilac","INSERT INTO nagios_contact_group_member (contactgroup, contact) VALUES ('$lilac_contactgroupid', '$lilac_contactid')");
+				sql($database_lilac,"INSERT INTO nagios_contact_group_member (contactgroup, contact) VALUES (?, ?)", array($lilac_contactgroupid, $lilac_contactid));
 
 			// Insert into nagvis
 			if($in_nagvis == "yes"){
@@ -908,14 +860,16 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 			if($message){ message(8," : User Inserted",'ok'); }
 
 			// Lilac contact_commands
-			$lilac_contact_hcommand=mysqli_result(sqlrequest("$database_lilac","select id from nagios_command where name like 'notify-by-email-host'"),0,"id");
-			$lilac_contact_scommand=mysqli_result(sqlrequest("$database_lilac","select id from nagios_command where name like 'notify-by-email-service'"),0,"id");
+			$lilac_contact_hcommand = sql($database_lilac,"select id from nagios_command where name like 'notify-by-email-host'");
+			$lilac_contact_hcommand = $lilac_contact_hcommand[0]["id"];
+			$lilac_contact_scommand = sql($database_lilac,"select id from nagios_command where name like 'notify-by-email-service'");
+			$lilac_contact_scommand = $lilac_contact_scommand[0]["id"];
 			if($lilac_contactid!="" and $lilac_contact_hcommand!="")
-				sqlrequest("$database_lilac","INSERT INTO nagios_contact_notification_command (contact_id,command,type) values ('$lilac_contactid','$lilac_contact_hcommand','host')");
+				sql($database_lilac,"INSERT INTO nagios_contact_notification_command (contact_id,command,type) values (?, ?,'host')", array($lilac_contactid, $lilac_contact_hcommand));
 			elseif($lilac_contact_hcommand=="")
 				message(8," : Verify contact 'notify-by-email-host' command in nagios configurator",'warning');
 			if($lilac_contactid!="" and $lilac_contact_scommand!="")
-				sqlrequest("$database_lilac","INSERT INTO nagios_contact_notification_command (contact_id,command,type) values ('$lilac_contactid','$lilac_contact_scommand','service')");
+				sql($database_lilac, "INSERT INTO nagios_contact_notification_command (contact_id,command,type) values (?, ?,'service')", array($lilac_contactid, $lilac_contact_scommand));
 			elseif($lilac_contact_scommand=="")
 				message(8," : Verify contact 'notify-by-email-service' command in nagios configurator",'warning');
 		}
@@ -929,17 +883,6 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 	return $user_id;
 }
 
-// "mysqli" version of mysql_result
-function mysqli_result($res, $row, $field=0){
-    $res->data_seek($row);
-	if(gettype($field) == "string"){
-		$datarow = $res->fetch_assoc();
-	}
-    else{
-		$datarow = $res->fetch_array();
-	}
-    return $datarow[$field];
-}
 
 // get traduction words
 function getLabel($reference){
@@ -1022,7 +965,7 @@ function pieChart($queue, $field, $search, $period)
 	
 	$array_result = array();
 	$sql = "SELECT pkt_type_name FROM pkt_type WHERE pkt_type_id!='0' AND pkt_type_id<'100'";
-	$pkt_result = sqlrequest($database_ged, $sql);
+	$pkt_result = sql($database_ged, $sql);
 	
 	// set the search clause (according to field and value)
 	$search_clause = "";
@@ -1058,8 +1001,7 @@ function pieChart($queue, $field, $search, $period)
 		}
 	}
 	
-	while( $pkt = mysqli_fetch_row($pkt_result) )
-	{
+	foreach($pkt_result as $pkt){
 		foreach($array_ged_states as $key => $state)
 		{
 			if($key == "ok")
@@ -1067,16 +1009,15 @@ function pieChart($queue, $field, $search, $period)
 				continue;
 			}
 			
-			if( !isset($array_result["$key"]) ){
-				$array_result["$key"] = 0;
+			if( !isset($array_result[$key]) ){
+				$array_result[$key] = 0;
 			}
-			$sql = "SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue{0},0,1)."'";
+			$sql = "SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state=? AND queue=?";
 			$sql .= $search_clause;
 			$sql .= $period_clause;
 			
-			$result = sqlrequest($database_ged, $sql);
-			$result = mysqli_fetch_row($result);
-			$array_result["$key"] += $result[0];
+			$result = sql($database_ged, $sql, array($state, substr($queue{0},0,1)));
+			$array_result[$key] += $result[0][0];
 		}
 	}
 	return json_encode($array_result);
@@ -1091,7 +1032,7 @@ function barChart($queue, $field, $search)
 	
 	
 	$sql = "SELECT pkt_type_name FROM pkt_type WHERE pkt_type_id!='0' AND pkt_type_id<'100'";
-	$pkt_result = sqlrequest($database_ged, $sql);
+	$pkt_result = sql($database_ged, $sql);
 	
 	$array_result = array();
 	$array_now_day = array();
@@ -1121,8 +1062,7 @@ function barChart($queue, $field, $search)
 		$search_clause = " AND $field LIKE $like";
 	}
 	
-	while( $pkt = mysqli_fetch_row($pkt_result) )
-	{
+	foreach($pkt_result as $pkt){
 		foreach($array_ged_states as $key => $state)
 		{
 			if($key == "ok")
@@ -1130,11 +1070,11 @@ function barChart($queue, $field, $search)
 				continue;
 			}
 			
-			if( !isset($array_now_day["$key"]) ){$array_now_day["$key"] = 0;}
-			if( !isset($array_day_week["$key"]) ){$array_day_week["$key"] = 0;}
-			if( !isset($array_week_month["$key"]) ){$array_week_month["$key"] = 0;}
-			if( !isset($array_month_year["$key"]) ){$array_month_year["$key"] = 0;}
-			if( !isset($array_year_more["$key"]) ){$array_year_more["$key"] = 0;}
+			if( !isset($array_now_day[$key]) ){$array_now_day[$key] = 0;}
+			if( !isset($array_day_week[$key]) ){$array_day_week[$key] = 0;}
+			if( !isset($array_week_month[$key]) ){$array_week_month[$key] = 0;}
+			if( !isset($array_month_year[$key]) ){$array_month_year[$key] = 0;}
+			if( !isset($array_year_more[$key]) ){$array_year_more[$key] = 0;}
 			$sql = "
 				SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue{0},0,1)."' AND o_sec >= $day".$search_clause.
 				" UNION ALL
@@ -1145,18 +1085,17 @@ function barChart($queue, $field, $search)
 				SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue{0},0,1)."' AND o_sec >= $year AND o_sec < $month".$search_clause.
 				" UNION ALL
 				SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue{0},0,1)."' AND o_sec < $year".$search_clause;
-			$result = sqlrequest($database_ged, $sql);
+			$result = sql($database_ged, $sql);
 			
 			$cpt = 0;
-			while( $row = mysqli_fetch_row($result) )
-			{
+			foreach($result as $row){
 				switch($cpt)
 				{
-					case 0: $array_now_day["$key"] += $row[0]; break;
-					case 1: $array_day_week["$key"] += $row[0]; break;
-					case 2: $array_week_month["$key"] += $row[0]; break;
-					case 3: $array_month_year["$key"] += $row[0]; break;
-					case 4: $array_year_more["$key"] += $row[0]; break;
+					case 0: $array_now_day[$key] += $row[0]; break;
+					case 1: $array_day_week[$key] += $row[0]; break;
+					case 2: $array_week_month[$key] += $row[0]; break;
+					case 3: $array_month_year[$key] += $row[0]; break;
+					case 4: $array_year_more[$key] += $row[0]; break;
 				}
 				$cpt++;
 			}
@@ -1182,7 +1121,7 @@ function slaPieChart($field, $search, $period)
 	
 	$array_result = array();
 	$sql = "SELECT pkt_type_name FROM pkt_type WHERE pkt_type_id!='0' AND pkt_type_id<'100'";
-	$pkt_result = sqlrequest($database_ged, $sql);
+	$pkt_result = sql($database_ged, $sql);
 	
 	// set the search clause (according to field and value)
 	$search_clause = "";
@@ -1218,12 +1157,11 @@ function slaPieChart($field, $search, $period)
 		}
 	}
 	
-	while( $pkt = mysqli_fetch_row($pkt_result) )
-	{
+	foreach($pkt_result as $pkt){
 		foreach($ged_sla_intervals as $key => $value)
 		{
-			if( !isset($array_result["$key"]) ){
-				$array_result["$key"] = 0;
+			if( !isset($array_result[$key]) ){
+				$array_result[$key] = 0;
 			}
 			
 			$sla_clause = "";
@@ -1238,9 +1176,8 @@ function slaPieChart($field, $search, $period)
 			$sql .= $search_clause;
 			$sql .= $period_clause;
 			
-			$result = sqlrequest($database_ged, $sql);
-			$result = mysqli_fetch_row($result);
-			$array_result["$key"] += $result[0];
+			$result = sql($database_ged, $sql);
+			$array_result[$key] += $result[0];
 		}
 	}
 	return json_encode($array_result);
@@ -1265,7 +1202,7 @@ function slaBarChart($field, $search)
 	
 	$array_result = array();
 	$sql = "SELECT pkt_type_name FROM pkt_type WHERE pkt_type_id!='0' AND pkt_type_id<'100'";
-	$pkt_result = sqlrequest($database_ged, $sql);
+	$pkt_result = sql($database_ged, $sql);
 	
 	// set the search clause (according to field and value)
 	$search_clause = "";
@@ -1288,15 +1225,14 @@ function slaBarChart($field, $search)
 		$search_clause = " AND $field LIKE $like";
 	}
 	
-	while( $pkt = mysqli_fetch_row($pkt_result) )
-	{
+	foreach($pkt_result as $pkt){
 		foreach($ged_sla_intervals as $key => $value)
 		{
-			if( !isset($array_now_day["$key"]) ){$array_now_day["$key"] = 0;}
-			if( !isset($array_day_week["$key"]) ){$array_day_week["$key"] = 0;}
-			if( !isset($array_week_month["$key"]) ){$array_week_month["$key"] = 0;}
-			if( !isset($array_month_year["$key"]) ){$array_month_year["$key"] = 0;}
-			if( !isset($array_year_more["$key"]) ){$array_year_more["$key"] = 0;}
+			if( !isset($array_now_day[$key]) ){$array_now_day[$key] = 0;}
+			if( !isset($array_day_week[$key]) ){$array_day_week[$key] = 0;}
+			if( !isset($array_week_month[$key]) ){$array_week_month[$key] = 0;}
+			if( !isset($array_month_year[$key]) ){$array_month_year[$key] = 0;}
+			if( !isset($array_year_more[$key]) ){$array_year_more[$key] = 0;}
 			
 			switch($key)
 			{
@@ -1314,18 +1250,17 @@ function slaBarChart($field, $search)
 				SELECT count(id) FROM ".$pkt[0]."_queue_history WHERE queue='h' AND state !='0' AND o_sec >= $year AND o_sec < $month".$sla_clause.$search_clause.
 				" UNION ALL
 				SELECT count(id) FROM ".$pkt[0]."_queue_history WHERE queue='h' AND state !='0' AND o_sec < $year".$sla_clause.$search_clause;
-			$result = sqlrequest($database_ged, $sql);
+			$result = sql($database_ged, $sql);
 			
 			$cpt = 0;
-			while( $row = mysqli_fetch_row($result) )
-			{
+			foreach($result as $row){
 				switch($cpt)
 				{
-					case 0: $array_now_day["$key"] += $row[0]; break;
-					case 1: $array_day_week["$key"] += $row[0]; break;
-					case 2: $array_week_month["$key"] += $row[0]; break;
-					case 3: $array_month_year["$key"] += $row[0]; break;
-					case 4: $array_year_more["$key"] += $row[0]; break;
+					case 0: $array_now_day[$key] += $row[0]; break;
+					case 1: $array_day_week[$key] += $row[0]; break;
+					case 2: $array_week_month[$key] += $row[0]; break;
+					case 3: $array_month_year[$key] += $row[0]; break;
+					case 4: $array_year_more[$key] += $row[0]; break;
 				}
 				$cpt++;
 			}
@@ -1376,9 +1311,9 @@ function getEonConfig($name,$type=false)
 	global ${$name};
 	
 	// mysql request	
-	$sql = "SELECT value FROM configs WHERE name='".$name."'";
-	$value = sqlrequest($database_eonweb, $sql);
-	$result = mysqli_fetch_row($value);
+	$sql = "SELECT value FROM configs WHERE name=?";
+	$value = sql($database_eonweb, $sql, array($name));
+	$result = $value;
 	
 	// return value if exists
 	if(count($result)==0) {
@@ -1396,34 +1331,17 @@ function startSessionTheme(){
 
 	if(isset($_COOKIE["user_name"])){
 
-			$conn = connexionDB($database_eonweb);
-			$sql = $conn->prepare("SELECT `theme` FROM users WHERE user_name = :userName");
-			$sql->bindParam("userName", $_COOKIE["user_name"]);
-			$sql->execute();
-			$result = $sql->fetch();
-			$conn = null;
-			$sql = null;
-			$theme_value = $result["theme"];
-			if($theme_value == "Default"){
-				$conn = connexionDB($database_eonweb);
-				$sql = "SELECT value FROM configs WHERE name = 'theme'";
-				$result = $conn->query($sql);
-				$data = $result->fetch();
-				$theme_value = $data["value"];
-				$conn = null;
-				$sql = null;
+			$theme_value = sql($database_eonweb, "SELECT `theme` FROM users WHERE user_name = ?", array($_COOKIE["user_name"]));
+			$theme_value = $theme_value[0];
+			if($theme_value[0] == "Default"){
+				$theme_value = sql($database_eonweb, "SELECT value FROM configs WHERE name = 'theme'");
+				$theme_value = $theme_value[0];
 			} 
 
-			$_SESSION["theme"] = $theme_value;
-
+			$_SESSION["theme"] = $theme_value[0];
 	} else {
-		$conn = connexionDB($database_eonweb);
-		$sql = "SELECT value FROM configs WHERE name = 'theme'";
-		$result = $conn->query($sql);
-		$data = $result->fetch();
-		$theme_value = $data["value"];
-		$conn = null;
-		$sql = null;
+		$theme_value = sql($database_eonweb, "SELECT value FROM configs WHERE name = 'theme'");
+		$theme_value = $theme_value[0]["value"];
 		$_SESSION["theme"] = $theme_value;
 	}
 }
@@ -1437,9 +1355,9 @@ function checkUpdateDB(){
 	$database_username="root";
 	$dir=$path_eon."conf/eonweb/updates/";
 
-	$version_sql = sqlrequest($database_eonweb,"SELECT count(value) as value FROM configs WHERE name='version'");
-	if(mysqli_result($version_sql,0,"value") == 0){
-		$version_sql = sqlrequest($database_eonweb,"INSERT INTO configs (name, value) VALUES('version', '".$version."')");
+	$version_sql = sql($database_eonweb,"SELECT count(value) as value FROM configs WHERE name='version'");
+	if($version_sql[0]["value"] == 0){
+		$version_sql = sql($database_eonweb,"INSERT INTO configs (name, value) VALUES('version', ?)", array($version));
 
 		// execution de tous les .sql jusqu'à la version donné dans config
 		$SQL_Files = array_slice(scandir($dir), 2);
@@ -1451,7 +1369,8 @@ function checkUpdateDB(){
 		}
 	}
 	}else{
-		$versionBD = mysqli_result(sqlrequest($database_eonweb,"SELECT value FROM configs WHERE name='version'"),0,"value");
+		$versionBD = sql($database_eonweb,"SELECT value FROM configs WHERE name='version'");
+		$versionBD = $versionBD[0]["value"];
 
 		// execution des .sql entre version en BD et celle config
 		$SQL_Files = array_slice(scandir($dir), 2);
@@ -1464,7 +1383,7 @@ function checkUpdateDB(){
 					exec("mysql -f -u $database_username --password=$database_password < $dir$file");
 				}
 			}
-			sqlrequest($database_eonweb,"UPDATE configs SET value='$version' WHERE name='version'");
+			sql($database_eonweb,"UPDATE configs SET value= ? WHERE name='version'", array($version));
 		}
 	}
 }

@@ -30,10 +30,10 @@ class ItsmPeer {
     function getItsmByUrl($url_name){
         global $database_eonweb;
         try{
-            $result = sqlrequest("$database_eonweb","SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_type_request, itsm_return_champ FROM itsm WHERE itsm_url = \"".$url_name."\"");
-           
-            if(mysqli_num_rows($result)>0 ){
-                $row = $result->fetch_assoc();
+            $result = sql($database_eonweb,"SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_type_request, itsm_return_champ FROM itsm WHERE itsm_url = ?", array($url_name));
+
+            if($result != null ){
+                $row = $result[0];
                 $itsm = new Itsm();
                 $itsm->setItsm_id($row["itsm_id"]);
                 $itsm->setItsm_url($row["itsm_url"]);
@@ -58,9 +58,9 @@ class ItsmPeer {
     function getItsmById($itsm_id){
         global $database_eonweb;
         try{
-            $result = sqlrequest("$database_eonweb","SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_type_request, itsm_return_champ FROM itsm WHERE itsm_id = ".$itsm_id);
-            if(mysqli_num_rows($result)>0){
-                $row = $result->fetch_assoc();
+            $result = sql($database_eonweb,"SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_type_request, itsm_return_champ FROM itsm WHERE itsm_id = ?", array($itsm_id));
+            if($result != null){
+                $row = $result[0];
                 $itsm = new Itsm();
                 $itsm->setItsm_id($row["itsm_id"]);
                 $itsm->setItsm_url($row["itsm_url"]);
@@ -84,10 +84,10 @@ class ItsmPeer {
      */
     function getListChampGed(){
         global $database_eonweb;
-        $sql = 'SELECT *  FROM itsm_champ_ged ';
-        $result = sqlrequest($database_eonweb, $sql);
+        $sql = 'SELECT * FROM itsm_champ_ged';
+        $result = sql($database_eonweb, $sql);
         $champs = array();
-        while($row = $result->fetch_assoc()){
+        foreach($result as $row){
             $champs[$row["champ_ged_id"]] = $row["champ_ged_name"];
         }
         return $champs;
@@ -98,11 +98,11 @@ class ItsmPeer {
      */
     function getItsmVarByItsmId($itsm_id){
         global $database_eonweb;
-        $sql = 'SELECT itsm_var_name, champ_ged_name, itsm_champ_ged.champ_ged_id as champ_ged_id FROM itsm_var, itsm_champ_ged WHERE itsm_id ='.$itsm_id.' AND itsm_var.champ_ged_id = itsm_champ_ged.champ_ged_id';
-        $result = sqlrequest($database_eonweb, $sql);
+        $sql = 'SELECT itsm_var_name, champ_ged_name, itsm_champ_ged.champ_ged_id as champ_ged_id FROM itsm_var, itsm_champ_ged WHERE itsm_id = ? AND itsm_var.champ_ged_id = itsm_champ_ged.champ_ged_id';
+        $result = sql($database_eonweb, $sql, array($itsm_id));
         $itsm_vars = array();
-        if(mysqli_num_rows($result)>0){
-            while($row = $result->fetch_assoc()){
+        if($result != null){
+            foreach($result as $row){
                 $itsm_vars[$row["itsm_var_name"]] = $row["champ_ged_id"];
             }
         }
@@ -114,11 +114,11 @@ class ItsmPeer {
      */
     function getItsmHeadersByItsmId($itsm_id){
         global $database_eonweb;
-        $sql = 'SELECT itsm_header_id, header FROM itsm_header WHERE itsm_id ='.$itsm_id;
-        $result = sqlrequest($database_eonweb, $sql);
+        $sql = 'SELECT itsm_header_id, header FROM itsm_header WHERE itsm_id = ?';
+        $result = sql($database_eonweb, $sql, array($itsm_id));
         $itsm_headers = array();
-        if(mysqli_num_rows($result)>0){
-            while($row = $result->fetch_assoc()){
+        if($result != null){
+            foreach($result as $row){
                 $itsm_headers[$row["itsm_header_id"]] = $row["header"];
             }
         }
@@ -131,13 +131,13 @@ class ItsmPeer {
     function getItsmChilds(){
         global $database_eonweb;
         try{
-            $result = sqlrequest($database_eonweb,"SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_type_request, itsm_return_champ FROM itsm WHERE itsm_id NOT IN (SELECT DISTINCT itsm_parent FROM itsm WHERE itsm_parent <> NULL)");
+            $result = sql($database_eonweb,"SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_type_request, itsm_return_champ FROM itsm WHERE itsm_id NOT IN (SELECT DISTINCT itsm_parent FROM itsm WHERE itsm_parent <> NULL)");
             $tab_itsm = array();
-            $nb = mysqli_num_rows($result);
+            $nb = $result[0];
             //error_log("itsmPeer.php : $nb \n", 3 , "/srv/eyesofnetwork/eonweb/module/admin_itsm/uploaded_file/log");
 
-            if(mysqli_num_rows($result)>0){
-                while($row = $result->fetch_assoc()){
+            if($result != null){
+                foreach($result as $row){
                     $itsm = new Itsm();
                     $itsm->setItsm_id($row["itsm_id"]);
                     $itsm->setItsm_url($row["itsm_url"]);
@@ -164,8 +164,8 @@ class ItsmPeer {
     function count_itsm(){
         global $database_eonweb;
         try{
-            $result = sqlrequest("$database_eonweb","SELECT COUNT(*) AS nb FROM itsm ORDER BY itsm_ordre");
-            $row = mysqli_fetch_assoc($result);
+            $result = sql($database_eonweb,"SELECT COUNT(*) AS nb FROM itsm ORDER BY itsm_ordre");
+            $row = $result[0];
             return intval($row["nb"]);
         }catch(Exception $e) {
             return 'Exception reçue : '.$e->getMessage().'\n';
@@ -178,10 +178,10 @@ class ItsmPeer {
     function get_all_itsm(){
         global $database_eonweb;
         try{
-            $result = sqlrequest("$database_eonweb","SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_type_request, itsm_return_champ FROM itsm ORDER BY itsm_ordre");
+            $result = sql($database_eonweb,"SELECT itsm_id, itsm_url, itsm_file, itsm_ordre, itsm_parent, itsm_type_request, itsm_return_champ FROM itsm ORDER BY itsm_ordre");
             $tab_itsm = array();
             if($result != false){
-                while($row = $result->fetch_assoc()){
+                foreach($result as $row){
                     $itsm = new Itsm();
                     $itsm->setItsm_id($row["itsm_id"]);
                     $itsm->setItsm_url($row["itsm_url"]);

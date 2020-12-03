@@ -79,9 +79,9 @@ include("../../side.php");
 	
 		// Check if timeperiod exists
 		if($timeperiod_name){
-			$sql_test = "SELECT count(name) FROM timeperiods where name = '".$timeperiod_name."'";
-			$timeperiod_exist = sqlrequest($database_notifier,$sql_test);
-			$ajout=mysqli_result($timeperiod_exist,0); 
+			$sql_test = "SELECT count(name) FROM timeperiods where name = ?";
+			$timeperiod_exist = sql($database_notifier, $sql_test, array($timeperiod_name));
+			$ajout=$timeperiod_exist[0][0]; 
 		}
 	
 		//Tests
@@ -91,27 +91,27 @@ include("../../side.php");
 			message(6," : Your notifperiod name already exist",'warning');
 		}elseif(isset($_POST["add"])){	
 			message(6," : Notifperiod have been added",'ok');
-			$sql_add = "INSERT INTO timeperiods VALUES('','".$timeperiod_name."','".$timeperiod_daysofweek."','".$timeperiod_timeperiod."')";
-			$timeperiod_id = sqlrequest($database_notifier,$sql_add,true);
+			$sql_add = "INSERT INTO timeperiods VALUES('', ?, ? , ?)";
+			$timeperiod_id = sql($database_notifier, $sql_add, array($timeperiod_name, $timeperiod_daysofweek, $timeperiod_timeperiod));
 			$timeperiod_name_old=$timeperiod_name;
 		}elseif($_POST["update"]){
 			message(6," : Notifperiod have been updated",'ok');	
-			$sql_update = "UPDATE timeperiods SET name='".$timeperiod_name."', daysofweek='".$timeperiod_daysofweek."', timeperiod='".$timeperiod_timeperiod."' WHERE id='".$timeperiod_id."'";
-			sqlrequest($database_notifier,$sql_update);
+			$sql_update = "UPDATE timeperiods SET name=?, daysofweek=?, timeperiod=? WHERE id=?";
+			sql($database_notifier, $sql_update, array($timeperiod_name, $timeperiod_daysofweek, $timeperiod_timeperiod, $timeperiod_id));
 			$timeperiod_name_old=$timeperiod_name;
 		}
 	}
 	// DISPLAY
 	elseif(isset($_GET["id"])) {
 		if(is_numeric($_GET["id"])) {
-			$timeperiod_sql=sqlrequest($database_notifier,"SELECT * from timeperiods where id='".$_GET["id"]."'");
+			$timeperiod_sql=sql($database_notifier,"SELECT * from timeperiods where id=?", array($_GET["id"]));
 			
-			if(mysqli_result($timeperiod_sql,0,"id")) {
-				$timeperiod_id=mysqli_result($timeperiod_sql,0,"id");
-				$timeperiod_name=mysqli_result($timeperiod_sql,0,"name");
-				$timeperiod_name_old=mysqli_result($timeperiod_sql,0,"name");
-				$timeperiod_daysofweek=mysqli_result($timeperiod_sql,0,"daysofweek");
-				$timeperiod_timeperiod=mysqli_result($timeperiod_sql,0,"timeperiod");
+			if($timeperiod_sql[0]["id"]) {
+				$timeperiod_id = $timeperiod_sql[0]["id"];
+				$timeperiod_name = $timeperiod_sql[0]["name"];
+				$timeperiod_name_old = $timeperiod_sql[0]["name"];
+				$timeperiod_daysofweek = $timeperiod_sql[0]["daysofweek"];
+				$timeperiod_timeperiod = $timeperiod_sql[0]["timeperiod"];
 			} else {
 				message(7," : Notifperiod does not exist",'warning');
 			}

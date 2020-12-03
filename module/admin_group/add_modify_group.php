@@ -79,16 +79,16 @@ function retrieve_allowed_menu($array_tabs,$group_id)
 	
 	$sql_req = "$sql_req FROM groupright";
 	if ($group_id !="")
-		$sql_req = "$sql_req WHERE group_id='$group_id'";
+		$sql_req = "$sql_req WHERE group_id=?";
 
-	$grp_right_result=sqlrequest("$database_eonweb","$sql_req");
+	$grp_right_result=sql($database_eonweb, $sql_req, array($group_id));
 	
 	$check =1;
 	if ($group_id !=null)
 	{
 		for ($i=1;$i < $count_item +1;$i++)
 		{
-			check_uncheck("tab_$i",$array_tabs[$i-1],mysqli_result($grp_right_result,0,"tab_$i"),1);
+			check_uncheck("tab_$i",$array_tabs[$i-1], $grp_right_result[0]["tab_$i"],1);
 		}
 	}
 	else
@@ -107,7 +107,7 @@ function retrieve_allowed_menu($array_tabs,$group_id)
 function retrieve_group_info($group_id)
 {
 	global $database_eonweb;
-	return sqlrequest("$database_eonweb","SELECT group_name, group_descr, group_type, group_dn FROM groups WHERE group_id='$group_id'");
+	return sql($database_eonweb,"SELECT group_name, group_descr, group_type, group_dn FROM groups WHERE group_id=?", array($group_id));
 }
 
 // Update Group Information & Right
@@ -122,11 +122,12 @@ function update_group($count_menu_item,$group_id,$group_name,$group_descr,$group
 	}
 	
 	// Check if group exist
-	if($group_name!=$old_group)
-			$group_exist=mysqli_result(sqlrequest("$database_eonweb","SELECT count('group_name') from groups where group_name='$group_name';"),0);
-	else
+	if($group_name!=$old_group){
+			$group_exist=sql($database_eonweb, "SELECT count('group_name') from groups where group_name=?", array($group_name));
+			$group_exist = $group_exist[0][0];
+	} else {
 			$group_exist=0;
-
+	}
 	// Check group descr
 	if($group_descr=="")
 			$group_descr=$group_name;
@@ -135,24 +136,25 @@ function update_group($count_menu_item,$group_id,$group_name,$group_descr,$group
 	{
 		for ($i=1;$i<$count_menu_item +1;$i++)
 		{
-			if (isset ($_POST["tab_$i"]))
-				sqlrequest("$database_eonweb","UPDATE groupright set tab_$i='1' where group_id='$group_id'");
-			else
-				sqlrequest("$database_eonweb","UPDATE groupright set tab_$i='0' where group_id='$group_id'");
+			if (isset ($_POST["tab_$i"])){
+				sql($database_eonweb, "UPDATE groupright set tab_$i='1' where group_id=?", array($group_id));
+			} else {
+				sql($database_eonweb, "UPDATE groupright set tab_$i='0' where group_id=?", array($group_id));
+			}
 		}
 		
 		// get the DN of the ldap group !
 		$group_dn = "";
-		$group_ldap=sqlrequest("$database_eonweb","SELECT dn from ldap_groups_extended where group_name='$group_name';");
-		if(mysqli_num_rows($group_ldap) > 0){
-			$group_dn = mysqli_result($group_ldap, 0);
+		$group_ldap = sql($database_eonweb, "SELECT dn from ldap_groups_extended where group_name=?", array($group_name));
+		if(!empty($group_ldap)){
+			$group_dn = $group_ldap[0][0];
 		}
 		if($group_dn == ""){
 			$group_type = 0;
 		}
 		
 		// Update into eonweb
-		sqlrequest("$database_eonweb","UPDATE groups set group_name='$group_name', group_descr='$group_descr', group_type='$group_type', group_dn='$group_dn' where group_id='$group_id'");
+		sql($database_eonweb, "UPDATE groups set group_name=?, group_descr=?, group_type=?, group_dn=? where group_id=?", array($group_name, $group_descr, $group_type, $group_dn, $group_id));
 		// Update into lilac
 		require_once('/srv/eyesofnetwork/lilac/includes/config.inc');
 		$ncg = NagiosContactGroupPeer::getByName($old_group);
@@ -183,28 +185,29 @@ function insert_group($group_name,$group_descr,$group_type,$ldap_group_name)
 	{
 		$group_name = $ldap_group_name;
 	}
-	$group_exist=mysqli_result(sqlrequest("$database_eonweb","SELECT count('group_name') from groups where group_name='$group_name';"),0);
-	
+	$group_exist = sql($database_eonweb, "SELECT count('group_name') from groups where group_name=?", array($group_name));
+	$group_exist = $group_exist[0][0];
 	// Check group descr
 	if($group_descr=="")
-		$group_descr=$group_name;
+		$group_descr = $group_name;
 	
 	if (($group_name != "") && ($group_name != null) && ($group_exist == 0))
 	{
 		// get the DN of the ldap group !
 		$group_dn = "";
-		$group_ldap=sqlrequest("$database_eonweb","SELECT dn from ldap_groups_extended where group_name='$group_name';");
-		if(mysqli_num_rows($group_ldap) > 0){
-			$group_dn = ldap_escape(mysqli_result($group_ldap,0));
+		$group_ldap = sql($database_eonweb, "SELECT dn from ldap_groups_extended where group_name=?", array($group_name));
+		if(!empty($group_ldap)){
+			$group_dn = ldap_escape($group_ldap[0][0]);
 		}
 		if($group_dn == ""){
 			$group_type = 0;
 		}
 		
 		// Insert into eonweb
-		sqlrequest("$database_eonweb","INSERT INTO groups (group_name,group_descr,group_type,group_dn) VALUES('$group_name', '$group_descr', '$group_type', '$group_dn')");
-		$group_id=mysqli_result(sqlrequest("$database_eonweb","SELECT group_id, group_descr FROM groups WHERE group_name='$group_name'"),0,"group_id");
-		sqlrequest("$database_eonweb","INSERT INTO groupright (group_id) VALUES('$group_id')");
+		sql($database_eonweb, "INSERT INTO groups (group_name,group_descr,group_type,group_dn) VALUES(?, ?, ?, ?)", array($group_name, $group_descr, $group_type, $group_dn));
+		$group_id = sql($database_eonweb, "SELECT group_id, group_descr FROM groups WHERE group_name=?", array($group_name));
+		$group_id = $group_id[0]["group_id"];
+		sql($database_eonweb, "INSERT INTO groupright (group_id) VALUES(?)", array($group_id));
 		// Insert into lilac
 		require_once('/srv/eyesofnetwork/lilac/includes/config.inc');
 		$contact_grp_array = array(
@@ -230,10 +233,14 @@ $count_menu_item=count($array_tabs);
 
 // Get parameter
 $group_id = retrieve_form_data("group_id",null);
-$group_name = mysqli_result(sqlrequest("$database_eonweb","SELECT group_name FROM groups WHERE group_id='$group_id'"),0,"group_name");
-$group_descr = mysqli_result(sqlrequest("$database_eonweb","SELECT group_descr FROM groups WHERE group_id='$group_id'"),0,"group_descr");
-$group_type = mysqli_result(sqlrequest("$database_eonweb","SELECT group_type FROM groups WHERE group_id='$group_id'"),0,"group_type");
-$group_location = mysqli_result(sqlrequest("$database_eonweb","SELECT group_name FROM groups WHERE group_id='$group_id'"),0,"group_name");
+$group_name = sql($database_eonweb, "SELECT group_name FROM groups WHERE group_id=?", array($group_id));
+$group_name = $group_name[0]["group_name"];
+$group_descr = sql($database_eonweb, "SELECT group_descr FROM groups WHERE group_id=?", array($group_id));
+$group_descr = $group_descr[0]["group_descr"];
+$group_type = sql($database_eonweb, "SELECT group_type FROM groups WHERE group_id=?", array($group_id));
+$group_type = $group_type[0]["group_type"];
+$group_location = sql($database_eonweb, "SELECT group_name FROM groups WHERE group_id=?", array($group_id));
+$group_location = $group_location[0]["group_name"];
 
 if ($group_id == null) 
 {
@@ -273,10 +280,10 @@ else
 
 // Retrieve Group Information from database
 $group_name_descr = retrieve_group_info($group_id);
-$group_name=mysqli_result($group_name_descr,0,"group_name");
-$group_descr=mysqli_result($group_name_descr,0,"group_descr");
-$group_type=mysqli_result($group_name_descr,0,"group_type");
-$group_location=mysqli_result($group_name_descr,0,"group_name");
+$group_name=$group_name_descr[0]["group_name"];
+$group_descr=$group_name_descr[0]["group_descr"];
+$group_type=$group_name_descr[0]["group_type"];
+$group_location=$group_name_descr[0]["group_name"];
 if($group_type == 0){
 	$group_location = "";
 }

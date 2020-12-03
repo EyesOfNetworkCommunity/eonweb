@@ -24,8 +24,10 @@ include("../../header.php");
 include("../../side.php");
 include("ged_functions.php");
 
-$nagios_default =  mysqli_result(sqlrequest("eonweb", "SELECT value FROM configs WHERE name=\"itsm_thruk\""));
-$itsm =  mysqli_result(sqlrequest("eonweb", "SELECT value FROM configs WHERE name=\"itsm\""));
+$nagios_default = sql("eonweb", "SELECT value FROM configs WHERE name=\"itsm_thruk\"");
+$nagios_default = $nagios_default[0];
+$itsm = sql("eonweb", "SELECT value FROM configs WHERE name=\"itsm\"");
+$itms = $itsm[0];
 
 $queue = "active";
 if(isset($_GET["q"]) && $_GET["q"] == "history"){

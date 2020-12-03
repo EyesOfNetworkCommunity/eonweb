@@ -36,7 +36,9 @@ include("../../side.php");
 		function retrieve_user_info($user_id)
 		{
 			global $database_eonweb;
-			return sqlrequest("$database_eonweb","SELECT user_name, user_descr, group_id, user_passwd, user_type, user_location, user_limitation, user_language, theme FROM users WHERE user_id='$user_id'");
+			$user = sql($database_eonweb,"SELECT user_name, user_descr, group_id, user_passwd, user_type, user_location, user_limitation, user_language, theme FROM users WHERE user_id=?", array($user_id));
+			$user = $user[0];
+			return $user; 
 		}
 
 		// Display user language selection  
@@ -63,7 +65,8 @@ include("../../side.php");
 			$files = array_unique($files);
 
 			// creation of a select and catch values
-			$langtmp = mysqli_result(sqlrequest("$database_eonweb","SELECT user_language FROM users WHERE user_id='".$user_id."'"),0);
+			$langtmp = sql($database_eonweb,"SELECT user_language FROM users WHERE user_id=?", array($user_id));
+			$langtmp = $langtmp[0][0];
 			$res = '<select class="form-control" name="user_language">';
 			foreach($files as $v) {
 				if($v == $langtmp){
@@ -83,16 +86,8 @@ include("../../side.php");
 
 			global $database_eonweb;
 			global $user_id;
-
-			// creation of a select and catch values
-			$conn = connexionDB($database_eonweb);
-			$sql = $conn->prepare("SELECT `theme` FROM users WHERE user_id = :userId");
-			$sql->bindParam("userId", $user_id);
-			$sql->execute();
-			$result = $sql->fetch();
-			$conn = null;
-			$sql = null;
-
+			$result = sql($database_eonweb, "SELECT `theme` FROM users WHERE user_id = ?", array($user_id));
+			$result = $result[0];
 			$dir = "/srv/eyesofnetwork/eonweb/themes/";
 			$listTheme = scandir($dir);
 			$res = '<select class="form-control" name="theme">';
@@ -132,11 +127,12 @@ include("../../side.php");
 			global $dir_imgcache;
 
 			// Check if user exist
-			if($user_name!=$old_name)	
-				$user_exist=mysqli_result(sqlrequest("$database_eonweb","SELECT count('user_name') from users where user_name='$user_name';"),0);
-			else
+			if($user_name!=$old_name){	
+				$user_exist=sql($database_eonweb,"SELECT count('user_name') from users where user_name=?", array($user_name));
+				$user_exist = $user_exist[0][0];
+			} else {
 				$user_exist=0;
-
+			}
 			// Check user_descr
 			if($user_descr=="")
 				$user_descr=$user_name;
@@ -144,22 +140,50 @@ include("../../side.php");
 			if (($user_name != "") && ($user_name != null) && ($user_id != null) && ($user_id != "") && ($user_exist == 0)) {
 				if (($user_password1 != "") && ($user_password1 != null) && ($user_password1 == $user_password2)) {
 
-					$eonweb_groupname=mysqli_result(sqlrequest("$database_eonweb","SELECT group_name FROM groups WHERE group_id='$user_group'"),0,"group_name");			
-					$eonweb_oldgroupname=mysqli_result(sqlrequest("$database_eonweb","SELECT group_name FROM groups WHERE group_id='$old_group_id'"),0,"group_name");			
+					$eonweb_groupname=sql($database_eonweb,"SELECT group_name FROM groups WHERE group_id=?", array($user_group));
+					$eonweb_groupname = $eonweb_groupname[0]["group_name"];			
+					$eonweb_oldgroupname=sql($database_eonweb,"SELECT group_name FROM groups WHERE group_id=?", array($old_group_id));
+					$eonweb_oldgroupname = $eonweb_oldgroupname[0]["group_name"];			
 					if ($user_password1 != "abcdefghijklmnopqrstuvwxyz") {
 						$passwd_temp = md5($user_password1);
 						// Update into eonweb
-						sqlrequest("$database_eonweb","UPDATE users set user_name='$user_name', user_descr='$user_descr',group_id='$user_group',user_passwd='$passwd_temp',user_type='$user_type',user_location='$user_location',user_limitation='$user_limitation',user_language='$user_language', theme='$theme' WHERE user_id ='$user_id'");
+						$datas = array(
+							$user_name,
+							$user_descr,
+							$user_group,
+							$passwd_temp,
+							$user_type,
+							$user_location,
+							$user_limitation,
+							$user_language,
+							$theme,
+							$user_id
+						);
+						sql($database_eonweb,"UPDATE users set user_name=?, user_descr=?,group_id=?,user_passwd=?,user_type=?,user_location=?,user_limitation=?,user_language=?, theme=? WHERE user_id =?", $datas);
 					}
 					else {
 						// Update into eonweb
-						sqlrequest("$database_eonweb","UPDATE users set user_name='$user_name', user_descr='$user_descr',group_id='$user_group',user_type='$user_type',user_location='$user_location',user_limitation='$user_limitation',user_language='$user_language', theme='$theme' WHERE user_id ='$user_id'");
+						$datas = array(
+							$user_name,
+							$user_descr,
+							$user_group,
+							$user_type,
+							$user_location,
+							$user_limitation,
+							$user_language,
+							$theme,
+							$user_id
+						);
+						sql($database_eonweb,"UPDATE users set user_name=?, user_descr=?,group_id=?,user_type=?,user_location=?,user_limitation=?,user_language=?, theme=? WHERE user_id =?", $datas);
 					}
 			
 					// Update into lilac
-					$lilac_userid=mysqli_result(sqlrequest("$database_lilac","SELECT id FROM nagios_contact WHERE name='$old_name'"),0,"id");
-					$lilac_groupid=mysqli_result(sqlrequest("$database_lilac","SELECT id FROM nagios_contact_group WHERE name='$eonweb_groupname'"),0,"id");
-					$lilac_oldgroupid=mysqli_result(sqlrequest("$database_lilac","SELECT id FROM nagios_contact_group WHERE name='$eonweb_oldgroupname'"),0,"id");
+					$lilac_userid=sql($database_lilac,"SELECT id FROM nagios_contact WHERE name=?", array($old_name));
+					$lilac_userid = $lilac_userid[0]["id"];
+					$lilac_groupid=sql($database_lilac,"SELECT id FROM nagios_contact_group WHERE name=?", array($eonweb_groupname));
+					$lilac_groupid = $lilac_groupid[0]["id"];
+					$lilac_oldgroupid = sql($database_lilac, "SELECT id FROM nagios_contact_group WHERE name=?", array($eonweb_oldgroupname));
+					$lilac_oldgroupid = $lilac_oldgroupid[0]["id"];
 					
 					require_once('/srv/eyesofnetwork/lilac/includes/config.inc');
 					$nc = NagiosContactPeer::getByName($old_name);
@@ -170,16 +194,17 @@ include("../../side.php");
 						$nc->save();
 					}
 
-					sqlrequest("$database_lilac","DELETE from nagios_contact_group_member WHERE contact='$lilac_userid' and contactgroup='$lilac_groupid'");
-					sqlrequest("$database_lilac","DELETE from nagios_contact_group_member WHERE contact='$lilac_userid' and contactgroup='$lilac_oldgroupid'");
+					sql($database_lilac,"DELETE from nagios_contact_group_member WHERE contact=? and contactgroup=?", array($lilac_userid, $lilac_groupid));
+					sql($database_lilac,"DELETE from nagios_contact_group_member WHERE contact=? and contactgroup=?", array($lilac_userid, $lilac_oldgroupid));
 					if($lilac_groupid!="" and $lilac_userid!="" and $user_limitation!="1")
-						sqlrequest("$database_lilac","INSERT into nagios_contact_group_member (contactgroup,contact) values('$lilac_groupid','$lilac_userid')");
+						sql($database_lilac,"INSERT into nagios_contact_group_member (contactgroup,contact) values(?, ?)", array($lilac_groupid, $lilac_userid));
 
 					
 					
 					// update user into nagvis :
 					$bdd = new PDO('sqlite:/srv/eyesofnetwork/nagvis/etc/auth.db');
-					$req = $bdd->query("SELECT userId, name FROM users WHERE name='".$_POST["user_name_old"]."'");
+					$req = $bdd->prepare("SELECT userId, name FROM users WHERE name=?");
+					$req->execute(array($_POST["user_name_old"]));
                     $nagvis_user_exist = $req->fetch();
 
                     // this is nagvis default salt for password encryption security
@@ -189,38 +214,49 @@ include("../../side.php");
 						// update in nagvis
 						if($create_user_in_nagvis=="yes"){
 							$nagvis_id = $nagvis_user_exist["userId"];
-							$bdd->exec("UPDATE users SET name = '$user_name', password = '".sha1($nagvis_salt.$passwd_temp)."' WHERE userId = $nagvis_id");
-							$bdd->exec("UPDATE users2roles SET roleId = $nagvis_role_id WHERE userId = $nagvis_id");
+							$req = $bdd->prepare("UPDATE users SET name = ?, password = ? WHERE userId = ?");
+							$req->execute(array($user_name, sha1($nagvis_salt.$passwd_temp), $nagvis_id));
+							$req = $bdd->prepare("UPDATE users2roles SET roleId = ? WHERE userId = ?");
+							$req->execute(array($nagvis_role_id, $nagvis_id));
 						} else { // delete in nagvis
-							$bdd->exec("DELETE FROM users WHERE userId = ".$nagvis_user_exist["userId"]);
-							$bdd->exec("DELETE FROM users2roles WHERE userId = ".$nagvis_user_exist["userId"]);
+							$req = $bdd->prepare("DELETE FROM users WHERE userId = ?");
+							$req->execute(array($nagvis_user_exist["userId"]));
+							$req = $bdd->prepare("DELETE FROM users2roles WHERE userId = ?");
+							$req->execute(array($nagvis_user_exist["userId"]));
 						}
 					} else{ // no user found in nagvis, so if checkbox is checked, we create
 						if($create_user_in_nagvis=="yes"){
-							$bdd->exec("INSERT INTO users (name, password) VALUES ('$user_name', '".sha1($nagvis_salt.$passwd_temp)."')");
+							$req = $bdd->prepare("INSERT INTO users (name, password) VALUES (?, ?)");
+							$req->execute(array($user_name, sha1($nagvis_salt.$passwd_temp)));
 							$nagvis_id = $bdd->lastInsertId();
-							$bdd->exec("INSERT INTO users2roles (userId, roleId) VALUES ('$nagvis_id', $nagvis_role_id)");
+							$req = $bdd->prepare("INSERT INTO users2roles (userId, roleId) VALUES (?, ?)");
+							$req->execute(array($nagvis_id, $nagvis_role_id));
 						}
 					}
 
                      // Update user into cacti
                     $bdd = new PDO('mysql:host='.$database_host.';dbname='.$database_cacti, $database_username, $database_password);
-                    $req = $bdd->query("SELECT id FROM user_auth WHERE username='".$_POST["user_name_old"]."'");
+					$req = $bdd->prepare("SELECT id FROM user_auth WHERE username=?");
+					$req->execute(array($_POST["user_name_old"]));
                     $cacti_user_exist = $req->fetch();
 
                     if($cacti_user_exist["id"] > 0){
                     	$cacti_id = $cacti_user_exist["id"];
                     	if($create_user_in_cacti == "yes"){
-                    		$bdd->exec("UPDATE user_auth SET username = '$user_name' WHERE id = $cacti_id");
+							$req = $bdd->prepare("UPDATE user_auth SET username = ? WHERE id = ?");
+							$req->execute(array($user_name, $cacti_id));
                     	} else {
-                    		$bdd->exec("DELETE FROM user_auth WHERE id = $cacti_id");
+							$req = $bdd->prepare("DELETE FROM user_auth WHERE id = ?");
+							$req->execute(array($cacti_id));
                     	}
                     } else {
                     	if($create_user_in_cacti == "yes"){
-        					$bdd->exec("INSERT INTO user_auth (username,realm,full_name,show_tree,show_list,show_preview,graph_settings,login_opts,policy_graphs,policy_trees,policy_hosts,policy_graph_templates,enabled) VALUES ('$user_name',2,'$user_descr','on','on','on','on',3,2,2,2,2,'on')");
-                    	}
+        					$req = $bdd->prepare("INSERT INTO user_auth (username,realm,full_name,show_tree,show_list,show_preview,graph_settings,login_opts,policy_graphs,policy_trees,policy_hosts,policy_graph_templates,enabled) VALUES (?,2,?,'on','on','on','on',3,2,2,2,2,'on')");
+							$req->execute(array($user_name, $user_descr));
+						}
                     }
-					
+					$bdd = null;
+					$req = null;
 					// logging action
 					logging("admin_user","UPDATE : $user_id $user_name $user_descr $user_limitation $user_group $user_type $user_location");
 
@@ -266,7 +302,8 @@ include("../../side.php");
 		$user_type = retrieve_form_data("user_type","");
 		$user_limitation = retrieve_form_data("user_limitation","");
 		$user_language = retrieve_form_data("user_language","");
-		$old_group_id = mysqli_result(sqlrequest($database_eonweb,"select group_id from users where user_id='$user_id'"),0,"group_id");
+		$old_group_id = sql($database_eonweb,"select group_id from users where user_id=?", array($user_id));
+		$old_group_id = $old_group_id[0]["group_id"];
 		$old_name = retrieve_form_data("user_name_old","");
 		$theme = retrieve_form_data("theme","");
 
@@ -275,8 +312,8 @@ include("../../side.php");
 		$create_user_in_cacti = retrieve_form_data("create_user_in_cacti","");
 
 		if($user_type=="1"){
-			$result = sqlrequest($database_eonweb,"select login from ldap_users_extended where dn='$user_location'");
-			$username = mysqli_result($result,0,"login");
+			$result = sql($database_eonweb,"select login from ldap_users_extended where dn=?", array($user_location));
+			$username = $result[0]["login"];
 			$user_name = strtolower($username);
 			//message(8,"User location1: $user_location",'ok');	// For debug pupose, to be removed
 			//message(8,"User name1: $user_name",'ok');		// For debug pupose, to be removed
@@ -318,14 +355,15 @@ include("../../side.php");
 				// Retrieve Group Information from database
 				if($user_id){
 					$user_name_descr = retrieve_user_info($user_id);
-					$user_name=mysqli_result($user_name_descr,0,"user_name");
-					$user_mail=mysqli_result(sqlrequest("$database_lilac","SELECT email FROM nagios_contact WHERE name='$user_name'"),0,"email");
-					$user_descr=mysqli_result($user_name_descr,0,"user_descr");
-					$user_group=mysqli_result($user_name_descr,0,"group_id");
-					$user_type=mysqli_result($user_name_descr,0,"user_type");
+					$user_name=$user_name_descr["user_name"];
+					$user_mail=sql($database_lilac,"SELECT email FROM nagios_contact WHERE name=?", array($user_name));
+					$user_mail = $user_mail[0]["email"];
+					$user_descr=$user_name_descr["user_descr"];
+					$user_group=$user_name_descr["group_id"];
+					$user_type=$user_name_descr["user_type"];
 					$user_limitation = retrieve_form_data("user_limitation","");
 					$user_language = retrieve_form_data("user_language","");
-					$user_location=mysqli_result($user_name_descr,0,"user_location");
+					$user_location=$user_name_descr["user_location"];
 					$user_password1= "abcdefghijklmnopqrstuvwxyz";
 					$user_password2= "abcdefghijklmnopqrstuvwxyz";
 					$theme = retrieve_form_data("theme","");
@@ -342,8 +380,8 @@ include("../../side.php");
 				</div>';
 
 			//------------------------------------------------------------------------------------------------
-						// ACCOUNT UPDATE (and retrieve parameters)
-						//------------------------------------------------------------------------------------------------
+			// ACCOUNT UPDATE (and retrieve parameters)
+			//------------------------------------------------------------------------------------------------
 			if (isset($_POST['update'])){
 				update_user($user_id, stripAccents($user_name), $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location, $user_mail, $user_limitation, $old_group_id, $old_name, $create_user_in_nagvis, $create_user_in_cacti, $nagvis_role_id, $user_language, $theme);	
 				//message(8,"Update: User location = $user_location",'ok');	// For debug pupose, to be removed
@@ -352,25 +390,28 @@ include("../../side.php");
 
 			// Retrieve Group Information from database
 			$user_name_descr = retrieve_user_info($user_id);
-			$user_name=mysqli_result($user_name_descr,0,"user_name");
-			$user_mail=mysqli_result(sqlrequest("$database_lilac","SELECT email FROM nagios_contact WHERE name='$user_name'"),0,"email");
-			$user_descr=mysqli_result($user_name_descr,0,"user_descr");
-			$user_group=mysqli_result($user_name_descr,0,"group_id");
-			$user_type=mysqli_result($user_name_descr,0,"user_type");
-			$user_limitation=mysqli_result($user_name_descr,0,"user_limitation");
-			$user_location=mysqli_result($user_name_descr,0,"user_location");
+			$user_name=$user_name_descr["user_name"];
+			$user_mail=sql($database_lilac,"SELECT email FROM nagios_contact WHERE name=?", array($user_name));
+			$user_mail = $user_mail[0]["email"];
+			$user_descr=$user_name_descr["user_descr"];
+			$user_group=$user_name_descr["group_id"];
+			$user_type=$user_name_descr["user_type"];
+			$user_limitation=$user_name_descr["user_limitation"];
+			$user_location=$user_name_descr["user_location"];
 			$user_password1="abcdefghijklmnopqrstuvwxyz";
 			$user_password2="abcdefghijklmnopqrstuvwxyz";
 
 			// search the user in Cacti (to check the checkbox if he's found)
-			$cacti_user = sqlrequest($database_cacti, "SELECT id FROM user_auth WHERE username = '$user_name'");
-			$cacti_user_found = mysqli_num_rows($cacti_user);
-			if($cacti_user_found > 0){ $cacti_user = true; }
+			$cacti_user = sql($database_cacti, "SELECT id FROM user_auth WHERE username =?", array($user_name));
+			$cacti_user = $cacti_user[0];
+			$cacti_user_found = $cacti_user;
+			if($cacti_user_found != NULL){ $cacti_user = true; }
 			else { $cacti_user = false; }
 
 			// search the user in Nagvis (to check the checkbox if he's found)
 			$bdd = new PDO('sqlite:/srv/eyesofnetwork/nagvis/etc/auth.db');
-            $req = $bdd->query("SELECT count(*) FROM users WHERE name='$user_name'");
+			$req = $bdd->prepare("SELECT count(*) FROM users WHERE name=?");
+			$req->execute(array($user_name));
             $nagvis_user_exist = $req->fetch();
             if ($nagvis_user_exist["count(*)"] > 0){ $nagvis_user = true; }
             else { $nagvis_user = false; }
@@ -387,14 +428,16 @@ include("../../side.php");
 		$nagvis_groups = $req->fetchAll(PDO::FETCH_OBJ);
 
 		// get userId in Nagvis
-		$req = $bdd->query("SELECT userId from users WHERE name = '$user_name'");
+		$req = $bdd->prepare("SELECT userId from users WHERE name = ?");
+		$req->execute(array($user_name));
 		$result = $req->fetch(PDO::FETCH_OBJ);
 
 		$id_nagvis = false;
 		$role_id = false;
 		if($result){
 			$id_nagvis = $result->userId;
-			$req = $bdd->query("SELECT roleId FROM users2roles WHERE userId = $id_nagvis");
+			$req = $bdd->prepare("SELECT roleId FROM users2roles WHERE userId = ?");
+			$req->execute(array($id_nagvis));
 			$result = $req->fetch(PDO::FETCH_OBJ);
 
 			if($result){
@@ -504,9 +547,8 @@ include("../../side.php");
 			<div class="col-md-9">
 				<select class="form-control" name='user_group' size=1>
 					<?php
-						$result=sqlrequest("$database_eonweb","SELECT group_id,group_name from groups");
-						while ($line = mysqli_fetch_array($result))
-						{
+						$result=sql($database_eonweb,"SELECT group_id,group_name from groups");
+						foreach($result as $line){
 							if ($user_group == $line[0])
 								echo "<OPTION value='$line[0]' SELECTED>$line[1] </OPTION>";
 							else

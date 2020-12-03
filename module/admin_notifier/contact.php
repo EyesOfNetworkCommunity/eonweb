@@ -30,10 +30,9 @@ function get_field($field1, $base, $field2=false) {
 	
 	if($field2){
 		$request="SELECT name FROM nagios_$field1 UNION SELECT name FROM nagios_$field2";
-		$result=sqlrequest($database_lilac,$request);
+		$result=sql($database_lilac,$request);
 	}
-	
- 	while ($line = mysqli_fetch_array($result)){ 
+	foreach($result as $line){
 		$hosts[]=$line[0];
 	}
 	$hosts= array_unique($hosts);
@@ -54,9 +53,9 @@ function get_field($field1, $base, $field2=false) {
 		$contact_old=retrieve_form_data("contact_old",null);
 		
 		if($contact){
-			$sql_test = "SELECT count(name) FROM contacts where name = '".$contact."'";
-			$timeperiod_exist = sqlrequest($database_notifier,$sql_test);
-			$ajout=mysqli_result($timeperiod_exist,0); 
+			$sql_test = "SELECT count(name) FROM contacts where name = ?";
+			$timeperiod_exist = sql($database_notifier,$sql_test, array($contact));
+			$ajout= $timeperiod_exist[0]; 
 		}
 		
 		// ADD or UPDATE Contacts
@@ -66,30 +65,29 @@ function get_field($field1, $base, $field2=false) {
 			}elseif((isset($_POST["add"]) && $ajout!=0)||(isset($_POST["update"]) && $ajout!=0 && $contact != $contact_old)){
 					message(7," : This contact is already disabled",'warning');
 			}elseif(isset($_POST["add"])){	
-				sqlrequest($database_notifier,"INSERT INTO contacts VALUES('".$contact."','".$rule_debug."')");
+				sql($database_notifier,"INSERT INTO contacts VALUES(?,?)", array($contact, $rule_debug));
 				message(6," : Contact have been added",'ok');
 				$contact_old=$contact;
 			}elseif($_POST["update"]){
 				message(6," : Contact have been updated",'ok');	
-				$sql_update = "UPDATE contacts SET name='".$contact."', debug='".$rule_debug."' WHERE name='".$contact."'";
-				sqlrequest($database_notifier,$sql_update,true);
+				$sql_update = "UPDATE contacts SET name=?, debug=? WHERE name=?";
+				sql($database_notifier,$sql_update, array($contact, $rule_debug, $contact));
 				$contact_old=$contact;
 			}
 		}
 		// DISPLAY
 		elseif(isset($_GET["name"])) {
-			$contact_sql=sqlrequest($database_notifier,"SELECT * from contacts where name='".$_GET["name"]."'");
-			if(mysqli_result($contact_sql,0,"name")) {
-				$contact=mysqli_result($contact_sql,0,"name");
-				$contact_old=mysqli_result($contact_sql,0,"name");
-				$rule_debug=mysqli_result($contact_sql,0,"debug");
+			$contact_sql=sql($database_notifier,"SELECT * from contacts where name=?", array($_GET["name"]));
+			if($contact_sql[0]["name"]) {
+				$contact = $contact_sql[0]["name"];
+				$contact_old = $contact_sql[0]["name"];
+				$rule_debug = $contact_sql[0]["debug"];
 			} else {
 				message(7," : Contact does not exist",'warning');
 			}
 		}
-		
-		
-		$sql=sqlrequest($database_notifier,"select name from contacts order by name");
+
+		$sql=sql($database_notifier,"select name from contacts order by name");
 	?>
 	
 	<form action="./contact.php" method="POST" name="form">

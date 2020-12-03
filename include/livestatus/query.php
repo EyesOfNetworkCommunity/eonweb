@@ -235,8 +235,8 @@ function getEventStateNbr($return=false)
 	$nbr_critical = 0;
 	$nbr_unknown = 0;
 	
-	$pkt_type = sqlrequest("ged", "SELECT pkt_type_name FROM pkt_type WHERE pkt_type_id != 0 AND pkt_type_id < 100");
-	while($row = mysqli_fetch_row($pkt_type))
+	$pkt_type = sql("ged", "SELECT pkt_type_name FROM pkt_type WHERE pkt_type_id != 0 AND pkt_type_id < 100");
+	foreach($pkt_type as $row)
 	{
 		$unknown = 0;
 		// will construct the SQL request
@@ -276,13 +276,13 @@ function getEventStateNbr($return=false)
 				$requete_finale = $requete_finale." AND (".preg_replace("/OR $/", "", $requete_filter).")";
 			}
 			#echo "<br>" . $requete_finale . "<br>";
-			$query_result = sqlrequest($database_ged, $requete_finale);
+			$query_result = sql($database_ged, $requete_finale);
 			switch($i)
 			{
-				case 0: $nbr_ok += intval(mysqli_result($query_result, 0, 0)); break;
-				case 1: $nbr_warning += intval(mysqli_result($query_result, 0, 0)); break;
-				case 2: $nbr_critical += intval(mysqli_result($query_result, 0, 0)); break;
-				case 3: $nbr_unknown += intval(mysqli_result($query_result, 0, 0)); break;
+				case 0: $nbr_ok += intval($query_result[0][0]); break;
+				case 1: $nbr_warning += intval($query_result[0][0]); break;
+				case 2: $nbr_critical += intval($query_result[0][0]); break;
+				case 3: $nbr_unknown += intval($query_result[0][0]); break;
 			}
 		}
 
@@ -371,8 +371,8 @@ function getNumberEventByStateAndTime()
 	$result_1h = array();
 	
 	$cpt = 0;
-	$pkt_type = sqlrequest($database_ged, "SELECT pkt_type_name FROM pkt_type WHERE pkt_type_id != 0 AND pkt_type_id < 100");
-	while($row = mysqli_fetch_row($pkt_type))
+	$pkt_type = sql($database_ged, "SELECT pkt_type_name FROM pkt_type WHERE pkt_type_id != 0 AND pkt_type_id < 100");
+	foreach($pkt_type as $row)
 	{
 		$temp_result_0_5 = array();
 		$temp_result_5_15 = array();
@@ -410,28 +410,32 @@ function getNumberEventByStateAndTime()
 		UNION ALL SELECT COUNT(*) FROM ".$row[0]."_queue_active WHERE ".$milieu_requete." state IN (1,2,3) AND owner='' AND o_sec <= ". $one_hour ."
 		UNION ALL SELECT COUNT(*) FROM ".$row[0]."_queue_active WHERE ".$milieu_requete." state IN (1,2,3) AND owner!='' AND o_sec <= ". $one_hour;
 
-		$query_result = sqlrequest($database_ged, $sql);
+		$query_result = sql($database_ged, $sql);
 		
 		if($cpt == 0)
-		{
-			for($i = 0; $i < $query_result->num_rows; $i++)
+		{	
+			$i = 0;
+			foreach($query_result as $row)
 			{
-				if($i >= 0 && $i < 4) { array_push($result_0_5, intval(mysqli_result($query_result, $i, 0))); }
-				elseif($i >= 4 && $i < 8) { array_push($result_5_15, intval(mysqli_result($query_result, $i, 0))); }
-				elseif($i >= 8 && $i < 12) { array_push($result_15_30, intval(mysqli_result($query_result, $i, 0))); }
-				elseif($i >= 12 && $i < 16){	array_push($result_30_1h, intval(mysqli_result($query_result, $i, 0))); }
-				elseif($i >= 16 && $i < 20){	array_push($result_1h, intval(mysqli_result($query_result, $i, 0))); }
+				if($i >= 0 && $i < 4) { array_push($result_0_5, intval($row[0])); }
+				elseif($i >= 4 && $i < 8) { array_push($result_5_15, intval($row[0])); }
+				elseif($i >= 8 && $i < 12) { array_push($result_15_30, intval($row[0])); }
+				elseif($i >= 12 && $i < 16){	array_push($result_30_1h, intval($row[0])); }
+				elseif($i >= 16 && $i < 20){	array_push($result_1h, intval($row[0])); }
+				$i++;
 			}
 		}
 		else
 		{
-			for($i = 0; $i < $query_result->num_rows; $i++)
+			$i = 0;
+			foreach($query_result as $row)
 			{
-				if($i >= 0 && $i < 4) { $result_0_5[$i] += intval(mysqli_result($query_result, $i, 0)); }
-				elseif($i >= 4 && $i < 8) { $result_5_15[$i%4] += intval(mysqli_result($query_result, $i, 0)); }
-				elseif($i >= 8 && $i < 12) { $result_15_30[$i%4] += intval(mysqli_result($query_result, $i, 0)); }
-				elseif($i >= 12 && $i < 16){	$result_30_1h[$i%4] += intval(mysqli_result($query_result, $i, 0)); }
-				elseif($i >= 16 && $i < 20){	$result_1h[$i%4] += intval(mysqli_result($query_result, $i, 0)); }
+				if($i >= 0 && $i < 4) { $result_0_5[$i] += intval($row[0]); }
+				elseif($i >= 4 && $i < 8) { $result_5_15[$i%4] += intval($row[0]); }
+				elseif($i >= 8 && $i < 12) { $result_15_30[$i%4] += intval($row[0]); }
+				elseif($i >= 12 && $i < 16){	$result_30_1h[$i%4] += intval($row[0]); }
+				elseif($i >= 16 && $i < 20){	$result_1h[$i%4] += intval($row[0]); }
+				$i++;
 			}
 		
 		}

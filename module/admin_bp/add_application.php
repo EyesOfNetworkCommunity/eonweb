@@ -48,8 +48,9 @@ if(! empty($bp_name)){
     	exit('Impossible de se connecter à la base de données.');
 	}
 
-	$sql = "select * from bp where name = '" . $bp_name . "'";
-	$req = $bdd->query($sql);
+	$sql = "select * from bp where name = ?";    
+    $req = $bdd->prepare($sql);
+    $info = $req->execute(array($bp_name));
 	$info = $req->fetch();
 	$bp_desc = $info['description'];
 	$bp_url = $info['url'];

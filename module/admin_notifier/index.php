@@ -44,24 +44,24 @@ if(isset($_GET["action"])) {
 	if(isset($_POST["actions"])) {
 		switch($_POST["actions"]) {
 			case "move_rule":
-				$rule_sql = sqlrequest($database_notifier,"SELECT sort_key,type FROM rules WHERE id='".$_POST["rule_id"]."'");
-				$rule_sort_key = mysqli_result($rule_sql,0,"sort_key");
-				$rule_type = mysqli_result($rule_sql,0,"type");
+				$rule_sql = sql($database_notifier, "SELECT sort_key,type FROM rules WHERE id=?", array($_POST["rule_id"]));
+				$rule_sort_key = $rule_sql[0]["sort_key"];
+				$rule_type = $rule_sql[0]["type"];
 				if($_POST["move"] == "up") { 
 					$new_pos=$rule_sort_key-1; 
 				}
 				elseif($_POST["move"] == "down") { 
 					$new_pos=$rule_sort_key+1; 
 				}
-				sqlrequest($database_notifier,"UPDATE rules SET sort_key='".$rule_sort_key."' WHERE type='".$rule_type."' and id!='".$_POST["rule_id"]."' and sort_key='".$new_pos."'");
-				sqlrequest($database_notifier,"UPDATE rules SET sort_key='".$new_pos."' WHERE type='".$rule_type."' and id='".$_POST["rule_id"]."'");
+				sql($database_notifier, "UPDATE rules SET sort_key= ? WHERE type=? and id!=? and sort_key=?", array($rule_sort_key, $rule_type, $_POST["rule_id"], $new_pos));
+				sql($database_notifier, "UPDATE rules SET sort_key=? WHERE type=? and id=?", array($new_pos, $rule_sql, $_POST["rule_id"]));
 				break;
 			case "del_rule_host":
 				if(isset($_POST["rule_host_selected"])){
 					$i=0;
 					while(isset($_POST["rule_host_selected"][$i])){
-						sqlrequest($database_notifier,"DELETE FROM rule_method WHERE rule_id='".$_POST["rule_host_selected"][$i]."'");
-						sqlrequest($database_notifier,"DELETE FROM rules WHERE id='".$_POST["rule_host_selected"][$i]."'");
+ 						sql($database_notifier,"DELETE FROM rule_method WHERE rule_id=?", array($_POST["rule_host_selected"][$i]));
+						sql($database_notifier,"DELETE FROM rules WHERE id=?", array($_POST["rule_host_selected"][$i]));
 						$i++;
 					}
 					message(6," : Selected host rules have been deleted",'ok');
@@ -74,8 +74,8 @@ if(isset($_GET["action"])) {
 				if(isset($_POST["rule_service_selected"])){
 					$i=0;
 					while(isset($_POST["rule_service_selected"][$i])){
-						sqlrequest($database_notifier,"DELETE FROM rule_method WHERE rule_id='".$_POST["rule_service_selected"][$i]."'");
-						sqlrequest($database_notifier,"DELETE FROM rules WHERE type='service' and id='".$_POST["rule_service_selected"][$i]."'");
+ 						sql($database_notifier,"DELETE FROM rule_method WHERE rule_id=?", array($_POST["rule_service_selected"][$i]));
+ 						sql($database_notifier,"DELETE FROM rules WHERE type='service' and id=?", array($_POST["rule_service_selected"][$i]));
 						$i++;
 					}
 					message(6," : Selected service rules have been deleted",'ok');
@@ -88,9 +88,9 @@ if(isset($_GET["action"])) {
 				if(isset($_POST["timeperiod_selected"])){
 					$i=0;
 					while(isset($_POST["timeperiod_selected"][$i])){
-						sqlrequest($database_notifier,"DELETE FROM timeperiods WHERE id='".$_POST["timeperiod_selected"][$i]."'");
-						$sql=sqlrequest($database_notifier,"SELECT count(name) FROM rules WHERE timeperiod_id='".$_POST["timeperiod_selected"][$i]."'");
-						$select=mysqli_result($sql,0);
+						sql($database_notifier,"DELETE FROM timeperiods WHERE id=?", array($_POST["timeperiod_selected"][$i]));
+						$sql=sql($database_notifier,"SELECT count(name) FROM rules WHERE timeperiod_id=?", array($_POST["timeperiod_selected"][$i]));
+						$select=$sql[0];
 						if($select!=0){
 							message(8," : One of the selected timeperiods couldn't be deleted because at least a rule is using it",'warning');
 						}else{
@@ -108,9 +108,9 @@ if(isset($_GET["action"])) {
 				if(isset($_POST["method_selected"])){
 					$i=0;
 					while(isset($_POST["method_selected"][$i])){
-						sqlrequest($database_notifier,"DELETE FROM methods WHERE id='".$_POST["method_selected"][$i]."'");
-						$sql=sqlrequest($database_notifier,"SELECT count(rule_id) FROM rule_method WHERE method_id='".$_POST["method_selected"][$i]."'");
-						$select=mysqli_result($sql,0);
+						sql($database_notifier,"DELETE FROM methods WHERE id=?", array($_POST["method_selected"][$i]));
+						$sql=sql($database_notifier,"SELECT count(rule_id) FROM rule_method WHERE method_id=?", array($_POST["method_selected"][$i]));
+						$select=$sql[0];
 						if($select!=0){
 							message(8," : One of the selected method couldn't be deleted because at least a rule is using it",'warning');
 						}else{
@@ -128,9 +128,9 @@ if(isset($_GET["action"])) {
 				if(isset($_POST["contact_selected"])){
 					$i=0;
 					while(isset($_POST["contact_selected"][$i])){
-						sqlrequest($database_notifier,"DELETE FROM contacts WHERE name='".$_POST["contact_selected"][$i]."'");
-						$sql=sqlrequest($database_notifier,"SELECT count(name) FROM contacts WHERE name='".$_POST["contact_selected"][$i]."'");
-						$select=mysqli_result($sql,0);
+						sql($database_notifier,"DELETE FROM contacts WHERE name=?", array($_POST["contact_selected"][$i]));
+						$sql=sql($database_notifier,"SELECT count(name) FROM contacts WHERE name=?", array($_POST["contact_selected"][$i]));
+						$select= $sql[0];
 						if($select!=0){
 							message(8," : One of the selected method couldn't be deleted because at least a rule is using it",'warning');
 						}else{
@@ -192,9 +192,9 @@ if(isset($_GET["action"])) {
 					<tbody>
 					<?php
 					// Get host rules
-					$rules_host=sqlrequest($database_notifier,$rules_sql." AND rules.type='host' GROUP BY name ORDER BY sort_key");
-
-					while ($line = mysqli_fetch_array($rules_host)) {
+					$rules_host=sql($database_notifier,$rules_sql." AND rules.type='host' GROUP BY name ORDER BY sort_key");
+				
+					foreach($rules_host as $line) {
 					?>
 						<tr>
 							<td class="text-center"><label><input type="checkbox" class="checkbox" name="rule_host_selected[]" value="<?php echo $line["id"]; ?>"></label></td>
@@ -256,9 +256,9 @@ if(isset($_GET["action"])) {
 					<tbody>
 					<?php
 					// Get service rules
-					$rules_service=sqlrequest($database_notifier,$rules_sql." AND rules.type='service' GROUP BY name ORDER BY sort_key");
+					$rules_service=sql($database_notifier,$rules_sql." AND rules.type='service' GROUP BY name ORDER BY sort_key");
 					
-					while ($line = mysqli_fetch_array($rules_service)) {
+					foreach($rules_service as $line) {
 					?>
 						<tr>
 							<td class="text-center"><label><input type="checkbox" class="checkbox" name="rule_service_selected[]" value="<?php echo $line["id"]; ?>"></label></td>
@@ -317,9 +317,9 @@ if(isset($_GET["action"])) {
 					<tbody>
 					<?php
 					// Get service rules
-					$methods=sqlrequest($database_notifier,"select id,type,name,line from methods where type='host' order by name");
-
-					while ($line = mysqli_fetch_array($methods)) {
+					$methods=sql($database_notifier,"select id,type,name,line from methods where type='host' order by name");
+					
+					foreach($methods as $line) {
 					?>
 						<tr>
 							<td class="text-center"><label><input type="checkbox" class="checkbox" name="method_selected[]" value="<?php echo $line["id"]; ?>"></label></td>
@@ -360,9 +360,9 @@ if(isset($_GET["action"])) {
 					<tbody>
 					<?php
 					// Get service rules
-					$methods=sqlrequest($database_notifier,"select id,type,name,line from methods where type='service' order by name");
+					$methods=sql($database_notifier,"select id,type,name,line from methods where type='service' order by name");
 
-					while ($line = mysqli_fetch_array($methods)) {
+					foreach($methods as $line) {
 					?>
 						<tr>
 							<td class="text-center"><label><input type="checkbox" class="checkbox" name="method_selected[]" value="<?php echo $line["id"]; ?>"></label></td>
@@ -408,9 +408,9 @@ if(isset($_GET["action"])) {
 					<tbody>
 					<?php
 					// Get service rules
-					$timeperiods=sqlrequest($database_notifier,"select id,name,daysofweek,timeperiod from timeperiods order by name");
+					$timeperiods=sql($database_notifier,"select id,name,daysofweek,timeperiod from timeperiods order by name");
 
-					while ($line = mysqli_fetch_array($timeperiods)) {
+					foreach($timeperiods as $line) {
 					?>
 						<tr>
 							<td class="text-center"><label><input type="checkbox" class="checkbox" name="timeperiod_selected[]" value="<?php echo $line["id"]; ?>"></label></td>
@@ -456,9 +456,9 @@ if(isset($_GET["action"])) {
 						<tbody>
 						<?php
 						// Get service rules
-						$contacts=sqlrequest($database_notifier,"select * from contacts order by name");
+						$contacts=sql($database_notifier,"select * from contacts order by name");
 
-						while ($line = mysqli_fetch_array($contacts)) {
+						foreach($contacts as $line) {
 						?>
 							<tr>
 								<td class="text-center"><label><input type="checkbox" class="checkbox" name="contact_selected[]" value="<?php echo $line["name"]; ?>"></label></td>

@@ -25,19 +25,20 @@ include('../../include/arrays.php');
 include('../../include/function.php');
 
 // Retrieve authentification backend settings
-$sqlresult1=sqlrequest("$database_eonweb","select * from auth_settings;");
-$backend_selected=mysqli_result($sqlresult1,0,"auth_type");
+$sqlresult1=sql($database_eonweb,"select * from auth_settings");
+$sqlresult1 = $sqlresult1[0];
+$backend_selected=$sqlresult1["auth_type"];
 
 if($backend_selected=="1"){
 
-	$ldap_ip=mysqli_result($sqlresult1,0,"ldap_ip");
-	$ldap_port=mysqli_result($sqlresult1,0,"ldap_port");
-	$ldap_search=mysqli_result($sqlresult1,0,"ldap_search");
-	$ldap_user_filter=mysqli_result($sqlresult1,0,"ldap_user_filter");
-	$ldap_group_filter=mysqli_result($sqlresult1,0,"ldap_group_filter");
-	$ldap_user=mysqli_result($sqlresult1,0,"ldap_user");
-	$ldap_password=mysqli_result($sqlresult1,0,"ldap_password");
-	$ldap_rdn=mysqli_result($sqlresult1,0,"ldap_rdn");
+	$ldap_ip=$sqlresult1["ldap_ip"];
+	$ldap_port=$sqlresult1["ldap_port"];
+	$ldap_search=$sqlresult1["ldap_search"];
+	$ldap_user_filter=$sqlresult1["ldap_user_filter"];
+	$ldap_group_filter=$sqlresult1["ldap_group_filter"];
+	$ldap_user=$sqlresult1["ldap_user"];
+	$ldap_password=$sqlresult1["ldap_password"];
+	$ldap_rdn=$sqlresult1["ldap_rdn"];
 
 	// Connection au LDAP
 	$ldapconn=ldap_connect($ldap_ip,$ldap_port);
@@ -54,9 +55,11 @@ if($backend_selected=="1"){
 		
 		$ldap_users = array();
 		foreach ($group_names as $group_name) {
-			$sql = "SELECT group_dn FROM groups WHERE group_name = '$group_name'";
-			$result = sqlrequest("$database_eonweb", "$sql");
-			$group_dn = ldap_escape(mysqli_result($result,0,"group_dn"),true,true);
+			$sql = "SELECT group_dn FROM groups WHERE group_name = ?";
+			$result = sql($database_eonweb, $sql, array($group_name));
+			$result = $result[0];
+
+			$group_dn = ldap_escape($result["group_dn"],true,true);
 
 			$mini_array = array();
 			foreach ($ldap_search_begins as $c){

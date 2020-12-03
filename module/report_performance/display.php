@@ -70,31 +70,27 @@ include("../../include/function.php");
 	echo '</p>';
 	
 	# --- For each host
-	$result_host=sqlrequest($database_cacti,"select id,hostname from host");
-	$nbr_ligne_host = mysqli_num_rows($result_host);
-	if($nbr_ligne_host == 0) message(0,"No host find in database","critical");
-	for($j=0;$j<$nbr_ligne_host;$j++)
-	{
+	$result_host=sql($database_cacti,"select id,hostname from host");
+	
+	if($result_host == NULL) message(0,"No host find in database","critical");
+	foreach($result_host as $host){
 		# -- Get the infos
-		$hostname=mysqli_result($result_host,$j,"hostname");
-		$hostid=mysqli_result($result_host,$j,"id");
-		
+		$hostname=$host["hostname"];
+		$hostid=$host["id"];
 		# --- Get the graph id from the host id
-	        $result_graph=  sqlrequest($database_cacti,"SELECT graph_local.id FROM graph_local,graph_templates_graph WHERE host_id='$hostid' and graph_templates_graph.local_graph_id=graph_local.id and graph_templates_graph.title like '%$title%' ");
-	        $nbr_ligne_graph = mysqli_num_rows($result_graph);
+	        $result_graph = sql($database_cacti,"SELECT graph_local.id FROM graph_local,graph_templates_graph WHERE host_id=? and graph_templates_graph.local_graph_id=graph_local.id and graph_templates_graph.title like '%?%' ", array($hostid, $title));
 
 		# --- Display info
-		if($nbr_ligne_graph != 0) {
+		if($result_graph != NULL) {
 			echo '
 				<div class="panel panel-default">
 					<div class="panel-heading">'.$hostname.'</div>
 					<div class="panel-body">';
 
 			# --- For each graph of the host
-			for ($i=0;$i<$nbr_ligne_graph;$i++)
-			{	
+			foreach($result_graph as $graph){
 				# --- Print the graph
-					$graph_id = mysqli_result($result_graph,$i,"id");
+					$graph_id = $graph["id"];
 					echo "<img class='img-responsive center-block' alt='graph cacti' src='../../../cacti/graph_image.php?local_graph_id=$graph_id&rra_id=1&graph_height=100&graph_width=300&graph_nolegend=true&graph_start=$start_date&graph_end=$end_date'>";
 			}
 			echo 	'</div>';

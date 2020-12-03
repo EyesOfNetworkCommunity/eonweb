@@ -116,8 +116,10 @@ print "<div id=\"page-wrapper\">";
 				
 					if($display_actually_bp > 0){
 											
-						$sql = "select bp_link from bp_links where bp_name = '" . $bp_name . "'";
-						$req = $bdd->query($sql);
+						$sql = "select bp_link from bp_links where bp_name = ?";
+						$req = $bdd->prepare($sql);
+						$req->execute(array($bp_name));
+						
 						$count = 0;
 
 						while($row = $req->fetch()){
@@ -140,8 +142,9 @@ print "<div id=\"page-wrapper\">";
 					else{
 						$old_host = "";
 						$old_host_count = 0;
-						$sql = "select host,service from bp_services where bp_name = '" . $bp_name . "' ORDER BY host, service";
-						$req = $bdd->query($sql);
+						$sql = "select host,service from bp_services where bp_name = ? ORDER BY host, service";
+						$req = $bdd->prepare($sql);
+						$req->execute(array($bp_name));
 						
 						if($req->rowCount() != 0){
 							while($row = $req->fetch()){

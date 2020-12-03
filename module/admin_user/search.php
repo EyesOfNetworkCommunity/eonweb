@@ -26,10 +26,10 @@ include("../../include/function.php");
 // Search function for Jquery an exit
 if(isset($_GET['term']) && isset($_GET['request']) && $_GET['request'] == "search_user") {
 	$sql="select * from ldap_users_extended where (user LIKE ?) OR (login LIKE ?) order by user";
-	$result=sqlrequest($database_eonweb,$sql,false,array("ss","%".$_GET['term']."%","%".$_GET['term']."%"));
+	$result=sql($database_eonweb,$sql,array("%".$_GET['term']."%","%".$_GET['term']."%"));
 	
 	$array = array();
-	while ($line = mysqli_fetch_array($result)){
+	foreach($result as $line){
 		array_push($array, $line[0]);
 	}
 	echo json_encode($array);

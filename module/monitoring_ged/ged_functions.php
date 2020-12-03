@@ -25,7 +25,7 @@ include("../../include/arrays.php");
 
 function getEventState($event)
 {
-	switch ($event->state) {
+	switch ($event) {
 		case 0: $event_state = "OK";		break;
 		case 1: $event_state = "WARNING";	break;
 		case 2: $event_state = "CRITICAL";	break;
@@ -131,7 +131,7 @@ function createSelectClause($ged_type, $queue)
 function createWhereClause($owner, $filter, $search, $daterange, $ok, $warning, $critical, $unknown)
 {
 	
-	global $mysqli_prepare;
+	global $mysql_prepare;
 	
 	$where_clause = "";
 	
@@ -151,8 +151,8 @@ function createWhereClause($owner, $filter, $search, $daterange, $ok, $warning, 
 		}
 
 		$where_clause .= " AND $filter LIKE ?";
-		$mysqli_prepare[0].="s";
-		$mysqli_prepare[]=(string)$like;
+		$mysql_prepare[0].="s";
+		$mysql_prepare[]=(string)$like;
 	}
 
 	// daterange
@@ -168,24 +168,24 @@ function createWhereClause($owner, $filter, $search, $daterange, $ok, $warning, 
 		$end = strtotime($end);
 		$end += 86400 + 3600;
 		$where_clause .= " AND o_sec > ? AND o_sec < ?";
-		$mysqli_prepare[0].="ii";
-		$mysqli_prepare[]=(int)$start;
-		$mysqli_prepare[]=(int)$end;
+		$mysql_prepare[0].="ii";
+		$mysql_prepare[]=(int)$start;
+		$mysql_prepare[]=(int)$end;
 	}
 
 	// states
 	$states_list = "";
-	if($ok != "")		{ $states_list .= "?,"; $mysqli_prepare[0].="i"; $mysqli_prepare[]=0; }
-	if($warning != "")	{ $states_list .= "?,"; $mysqli_prepare[0].="i"; $mysqli_prepare[]=1; }
-	if($critical != "")	{ $states_list .= "?,"; $mysqli_prepare[0].="i"; $mysqli_prepare[]=2; }
-	if($unknown != "")	{ $states_list .= "?,"; $mysqli_prepare[0].="i"; $mysqli_prepare[]=3; }
+	if($ok != "")		{ $states_list .= "?,"; $mysql_prepare[0].="i"; $mysql_prepare[]=0; }
+	if($warning != "")	{ $states_list .= "?,"; $mysql_prepare[0].="i"; $mysql_prepare[]=1; }
+	if($critical != "")	{ $states_list .= "?,"; $mysql_prepare[0].="i"; $mysql_prepare[]=2; }
+	if($unknown != "")	{ $states_list .= "?,"; $mysql_prepare[0].="i"; $mysql_prepare[]=3; }
 	$states_list = trim($states_list, ",");
 	
 	if($states_list != ""){
 		$where_clause .= " AND state IN ($states_list)";
 	}
 
-	$where_clause .= " ORDER BY l_sec DESC LIMIT ".getEonConfig("maxlines").";";
+	$where_clause .= " ORDER BY l_sec DESC LIMIT ".getEonConfig("maxlines");
 	return $where_clause;
 }
 
@@ -231,10 +231,18 @@ function details($selected_events, $queue)
 	$value_parts = explode(":", $selected_events);
 	$id = $value_parts[0];
 	$ged_type = $value_parts[1];
+	if($ged_type == "nagios" || $ged_type == "snmptrap" ){
+	} else {
+		$ged_type = null;
+	}
+	if($queue == "active" || $queue == "history" || $queue == "sync"){
+	} else {
+		$queue = null;
+	}
 
 	$sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = ?";
-	$result = sqlrequest($database_ged, $sql, false, array("s",(string)$id));
-	$event = mysqli_fetch_assoc($result);
+	$result = sql($database_ged, $sql, array($id));
+	$event = $result[0];
 
 	// display event's details
 	echo '<table class="table table-hover table-condensed">';
@@ -270,9 +278,17 @@ function edit($selected_events, $queue)
 	$id = $value_parts[0];
 	$ged_type = $value_parts[1];
 
+	if($ged_type == "nagios" || $ged_type == "snmptrap" ){
+	} else {
+		$ged_type = null;
+	}
+	if($queue == "active" || $queue == "history" || $queue == "sync"){
+	} else {
+		$queue = null;
+	}
 	$sql = "SELECT comments FROM ".$ged_type."_queue_".$queue." WHERE id = ?";
-	$result = sqlrequest($database_ged, $sql, false, array("s",(string)$id));
-	$event = mysqli_fetch_assoc($result);
+	$result = sql($database_ged, $sql, array($id));
+	$event = $result[0];
 	// <label for='group'>Affectation : </label>
 	// 		<select class='form-control' id='group'>
     //                  	   <option value='2' selected>GROUPE_SYSTEME</option>
@@ -303,9 +319,16 @@ function editAllEvents($selected_events, $queue, $comments)
 		$value_parts = explode(":", $value);
 		$id = $value_parts[0];
 		$ged_type = $value_parts[1];
-
+		if($ged_type == "nagios" || $ged_type == "snmptrap" ){
+		} else {
+			$ged_type = null;
+		}
+		if($queue == "active" || $queue == "history" || $queue == "sync"){
+		} else {
+			$queue = null;
+		}
 		$sql = "UPDATE ".$ged_type."_queue_".$queue." SET comments=? WHERE id = ?";
-		$result = sqlrequest($database_ged, $sql, false, array("ss",htmlentities((string)$comments),(string)$id));
+		$result = sql($database_ged, $sql, array($comments, $id));
 		if(!$result){
 			$success = false;
 		}
@@ -345,10 +368,17 @@ function ownDisown($selected_events, $queue, $global_action)
 		$ged_type = $value_parts[1];
 		if($ged_type == "nagios"){ $ged_type_nbr = 1; }
 		if($ged_type == "snmptrap"){ $ged_type_nbr = 2; }
-
+		if($ged_type == "nagios" || $ged_type == "snmptrap" ){
+		} else {
+			$ged_type = null;
+		}
+		if($queue == "active" || $queue == "history" || $queue == "sync"){
+		} else {
+			$queue = null;
+		}
 		$sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = ?";
-		$result = sqlrequest($database_ged, $sql, false, array("s",(string)$id));
-		$event = mysqli_fetch_assoc($result);
+		$result = sql($database_ged, $sql, array($id));
+		$event = $result[0];
 
 		$ged_command = "-update -type $ged_type_nbr ";
 		foreach ($array_ged_packets as $key => $value) {
@@ -428,10 +458,17 @@ function acknowledge($selected_events, $queue, $checkBoxNagios)
 
 		$event_to_delete = [];
 		array_push($event_to_delete, $value);
-
+		if($ged_type == "nagios" || $ged_type == "snmptrap" ){
+		} else {
+			$ged_type = null;
+		}
+		if($queue == "active" || $queue == "history" || $queue == "sync"){
+		} else {
+			$queue = null;
+		}
 		$sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = ?";
-		$result = sqlrequest($database_ged, $sql, false, array("s",(string)$id));
-		$event = mysqli_fetch_assoc($result);
+		$result = sql($database_ged, $sql, array($id));
+		$event = $result[0];
 
 		$ged_command = "-update -type $ged_type_nbr ";
 		foreach ($array_ged_packets as $key => $value) {
@@ -472,10 +509,17 @@ function delete($selected_events, $queue)
 		$ged_type_nbr = 0;
 		if($ged_type == "nagios"){ $ged_type_nbr = 1; }
 		if($ged_type == "snmptrap"){ $ged_type_nbr = 2; }
-
+		if($ged_type == "nagios" || $ged_type == "snmptrap" ){
+		} else {
+			$ged_type = null;
+		}
+		if($queue == "active" || $queue == "history" || $queue == "sync"){
+		} else {
+			$queue = null;
+		}
 		$sql = "SELECT * FROM ".$ged_type."_queue_".$queue." WHERE id = $id";
-		$result = sqlrequest($database_ged, $sql);
-		$event = mysqli_fetch_assoc($result);
+		$result = sql($database_ged, $sql);
+		$event = $result[0];
 
 		if($queue == "active"){
 			$ged_command = "-drop -type $ged_type_nbr -queue $queue ";
@@ -538,7 +582,12 @@ function advancedFilterSearch($queue, $filter)
 	global $array_ged_queues;
 	global $database_ged;
 	$datas = array();
-	
+	$filter = htmlspecialchars($filter);
+	if($queue == "active" || $queue == "history" || $queue == "sync"){
+	} else {
+		$queue = null;
+	}
+
 	if(!in_array($queue,$array_ged_queues)) { $queue=$array_ged_queues[0]; }
 
 	if($filter == "description"){
@@ -546,14 +595,19 @@ function advancedFilterSearch($queue, $filter)
 		return false;
 	}
 
-	$gedsql_result1=sqlrequest($database_ged,"SELECT pkt_type_id,pkt_type_name FROM pkt_type WHERE pkt_type_id!='0' AND pkt_type_id<'100';");
+	$gedsql_result1=sql($database_ged,"SELECT pkt_type_id,pkt_type_name FROM pkt_type WHERE pkt_type_id!='0' AND pkt_type_id<'100'");
 	
 	if(isset($array_ged_packets[$filter])) {
-		while($ged_type = mysqli_fetch_assoc($gedsql_result1)){
+		foreach($gedsql_result1 as $ged_type){
+			if($ged_type["pkt_type_name"] == "nagios" || $ged_type["pkt_type_name"] == "snmptrap" ){
+			} else {
+				$ged_type["pkt_type_name"] = null;
+			}
+			
 			$sql = "SELECT DISTINCT $filter FROM ".$ged_type["pkt_type_name"]."_queue_".$queue;
 
-			$results = sqlrequest($database_ged, $sql);
-			while($result = mysqli_fetch_array($results)){
+			$results = sql($database_ged, $sql);
+			foreach($results as $result){
 				if( !in_array($result[$filter], $datas) && $result[$filter] != "" ){
 					array_push($datas, $result[$filter]);
 				}
@@ -567,7 +621,9 @@ function advancedFilterSearch($queue, $filter)
 function edit_button(){
 	global $database_eonweb;
 	$itsm_button = "";
-	$itsm = mysqli_result(sqlrequest("$database_eonweb","SELECT value FROM configs WHERE name=\"itsm\""),0);
+	$itsm = sql($database_eonweb,"SELECT value FROM configs WHERE name=\"itsm\"");
+	$itsm = $itsm[0][0];
+
 	if(isset($itsm) && $itsm == "on" && isset($_GET["q"]) && $_GET["q"] == "active" ){
 		echo "
 		<div id=\"itsm-btns\" class=\"btn-group\">

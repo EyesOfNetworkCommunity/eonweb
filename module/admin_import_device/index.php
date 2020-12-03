@@ -37,44 +37,48 @@ include("../../side.php");
 		# -- Verify if host from CSV is in nagios (hostname)
 		function verify_hosts_in_nagios($host_name) {
 			global $database_lilac;
-
-			$result=sqlrequest($database_lilac,"SELECT name FROM nagios_host WHERE UPPER(name) LIKE '".$host_name."'");
-
+			$result=sql($database_lilac,"SELECT name FROM nagios_host WHERE UPPER(name) LIKE ?", array($host_name));
 			# --- Check if the template exist in lilac, returns 1 if not exists
-			if (mysqli_num_rows($result) == 0){
+			if($result == null){
 				return 0;
 			}
-			return mysqli_result($result,0,"name");
+			return $result[0]["name"];
 		}
 
 # --- Import host from CSV to nagios (hostname, host ip, host description, host template name)
 		function import_hosts_to_nagios($host_name,$host_ip,$host_desc,$host_template){
 			global $database_lilac;
 
-			$result=sqlrequest($database_lilac,"SELECT id from nagios_host_template where name like '".$host_template."'");
-
+			$result=sql($database_lilac,"SELECT id from nagios_host_template where name like ?", array($host_template));
 			# --- Check if the template exist in lilac
-			if (mysqli_num_rows($result) == 0){
+			if ($result == null){
 				return "Template $host_template not found";
 			}
 			else{
 				# --- Check if the host is already present in lilac database
-				$template_id = mysqli_result($result,0,"id");
-				$result2=sqlrequest($database_lilac,"SELECT id from nagios_host where name like '".$host_name."'");
-				if (mysqli_num_rows($result2) == 0){ 
-					$id=sqlrequest($database_lilac,"INSERT INTO nagios_host (name,address,alias) values ('".$host_name."','".$host_ip."','".$host_desc."');",true);
+				$template_id = $result[0]["id"];
+				$result2=sql($database_lilac,"SELECT id from nagios_host where name like ?", array($host_name));
+				if ($result2 == null){
+					$datas = array(
+						$host_name,
+						$host_ip,
+						$host_desc
+					);
+					$id=sql($database_lilac,"INSERT INTO nagios_host (name,address,alias) values (?, ?, ?)", $datas);
 				}
 				else{
-					$id=mysqli_result($result2,0,"id");
+					$id=$result2[0]["id"];
 				}
 				if(!$id)
 					return "Error in host $host_name definition";
 
 				# --- Check if the host + template link already exists
-				$nbr=mysqli_result(sqlrequest($database_lilac,"SELECT count(id) from nagios_host_template_inheritance where source_host='".$id."' and target_template='".$template_id."';"),0,0);
-				if($nbr==0){
-					$order=mysqli_result(sqlrequest($database_lilac,"SELECT count(id) from nagios_host_template_inheritance where source_host='".$id."';"),0,0);
-						sqlrequest($database_lilac,"INSERT INTO nagios_host_template_inheritance values ('','".$id."',NULL,'".$template_id."','".$order."');");
+				$nbr = sql($database_lilac,"SELECT count(id) from nagios_host_template_inheritance where source_host=? and target_template=?", array($id, $template_id));
+				
+				if($nbr[0][0]==0){
+					$order[0][0] = sql($database_lilac,"SELECT count(id) from nagios_host_template_inheritance where source_host=?", array($id));
+
+					sql($database_lilac,"INSERT INTO nagios_host_template_inheritance values ('', ?, NULL, ?, ?)", array($id, $template_id, $order));
 					return "ok";
 				}
 				return "Host $host_name already associated with template $host_template";
