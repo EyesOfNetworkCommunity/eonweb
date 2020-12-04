@@ -215,7 +215,6 @@ else {
 								
 								// we can login now. And don't forget to take the new user's id (for session)
 								$usersql=sql($database_eonweb,"select * from users where user_name = ?", array($login));
-								var_dump($usersql);
 								$LOGIN = true;
 							}
 						}
@@ -231,7 +230,7 @@ else {
 				$ldap_port= $ldapsql[0]["ldap_port"];
 				$ldap_rdn= $ldapsql[0]["ldap_rdn"];
 				$ldap_search= $ldapsql[0]["ldap_search"];
-				$user_location=ldap_escape($ldapsql[0]["user_location"],true);
+				$user_location=ldap_escape($usersql[0]["user_location"],true);
 
 				$ldapconn=ldap_connect($ldap_ip,$ldap_port);
 				ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);
