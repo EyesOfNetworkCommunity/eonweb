@@ -96,7 +96,7 @@ include("../../side.php");
 					message(8," : ".getLabel("message.monitoring_passwd.error"),'warning');
 				}
 			} else {
-				sqlrequest("$database_eonweb","UPDATE users set theme='$theme' WHERE user_id='$usrid';");
+				sql($database_eonweb,"UPDATE users set theme=? WHERE user_id=?", array($theme, $userid));
 				logging("admin_user","UPDATE THEME : $usrid $login");
 				message(8," : ".getLabel("message.monitoring_passwd.ok"),'ok');
 			}
