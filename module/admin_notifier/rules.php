@@ -181,9 +181,9 @@ function get_field($field1, $base=false, $field2=false) {
 		}
 	
 		if($rule_name){
-			$sql_test = "SELECT count(name) FROM rules WHERE name=?";
+			$sql_test = "SELECT count(name) as count FROM rules WHERE name=?";
 			$rule_exist = sql($database_notifier,$sql_test, array($rule_name));
-			$ajout=$rule_exist[0]; 
+			$ajout=$rule_exist[0]['count']; 
 		}
 		
 		if(!$rule_notification || $rule_notification=="") {
