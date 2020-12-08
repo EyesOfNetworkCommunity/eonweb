@@ -1,7 +1,7 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
 Version: 5.3
-Release: 9
+Release: 10
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
@@ -77,6 +77,10 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
+* Tue Dec 08 2020 Sebastien DAVOULT <d@vou.lt> - 5.3-10.eon
+- fix issue when we trying to rename rules in Advance Notifier #81
+- fix gathering SQL Response in Advance Notifier #80
+
 * Thu Dec 03 2020 Sebastien DAVOULT <d@vou.lt> - 5.3-9.eon
 - Add unused commands #33af6d2
 - Change SQL interrogation (mysqli to PDO)
