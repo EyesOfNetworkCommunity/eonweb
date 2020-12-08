@@ -112,9 +112,9 @@ function get_field($field1, $base=false, $field2=false) {
 		foreach($_POST['methods'] as $selected){
 			$sql=sql($database_notifier,"SELECT id,name FROM methods WHERE name=? AND type=?", array($selected, $_POST['type']));
 			if($sql[0]!=FALSE) {
-				$select=$sql[0];
+				$select=$sql[0]['id'];
 				$rule_method_ids.=$select.",";
-				$select=$sql[1];
+				$select=$sql[0]['name'];
 				$rule_method_names.=$select.",";
 			}
 		}
@@ -219,7 +219,7 @@ function get_field($field1, $base=false, $field2=false) {
 			$sql_add = "UPDATE rules SET name=?, type=?, debug=?, contact=?,
 			host=?, service=?, state=?, notificationnumber=?,timeperiod_id=?, tracking=?
 			WHERE id=?";
-			sql($database_notifier,$sql_add, array($rule_name, $rule_type, $rule_debug, $rule_contact, $rule_host, $rule_service, $rule_state, $rule_notification, $rule_timeperiod_id, $rule_track));
+			sql($database_notifier,$sql_add, array($rule_name, $rule_type, $rule_debug, $rule_contact, $rule_host, $rule_service, $rule_state, $rule_notification, $rule_timeperiod_id, $rule_track, $rule_id));
 			sql($database_notifier,"DELETE FROM rule_method WHERE rule_id=?", array($rule_id));
 			$methodze=explode(",",$rule_method_ids);
 			foreach($methodze as $selected){
