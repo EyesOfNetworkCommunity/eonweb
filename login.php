@@ -259,7 +259,7 @@ else {
 			$usrlimit = $usersql[0]["user_limitation"];
 
 			// Create session ID
-			$sessid=rand();
+			$sessid=$key = substr(strtolower(md5(microtime().rand(1000, 9999))), 0, 25);
 			sql($database_eonweb,"INSERT INTO sessions (session_id,user_id) VALUES (?,?)", array($sessid, $usrid));
 			
 			// Send cookie
