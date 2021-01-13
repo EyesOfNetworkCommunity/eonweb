@@ -62,6 +62,8 @@ case "$1" in
     systemctl restart httpd
     # Update EON 5.3.8
     /usr/bin/chown apache:apache /srv/eyesofnetwork/eonweb/module/admin_itsm/uploaded_file
+    # Update EON 5.3.11
+    /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.11.sql 2>/dev/null
   ;;
 esac
 
@@ -77,6 +79,9 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
+* Mon Jan 11 2021 Oscar POELS <o.poels@gmail.com> - 5.3-11.eon
+- fix security issue with sessions_id by renforcing generation to prevent force brut
+
 * Tue Dec 08 2020 Sebastien DAVOULT <d@vou.lt> - 5.3-10.eon
 - fix issue when we trying to rename rules in Advance Notifier #81
 - fix gathering SQL Response in Advance Notifier #80
