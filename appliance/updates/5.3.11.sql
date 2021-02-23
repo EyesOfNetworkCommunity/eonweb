@@ -1,1 +1,1 @@
-ALTER TABLE sessions modify session_id char(25);
+ALTER TABLE sessions modify session_id char(30);
