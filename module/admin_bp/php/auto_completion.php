@@ -8,14 +8,12 @@ $q = $_GET['query'];
 $table_name = $_GET['table_name'];
 
 // Requête SQL
-$datas = array(
-	$table_name,
-	$q
-);
-$requete = sql($database_lilac, "SELECT name FROM ? WHERE name LIKE '?%' LIMIT 0, 10", $datas);
+$datas = array($q."%");
+$requete = sql($database_lilac, "SELECT name FROM " . $table_name .  " WHERE name LIKE ? LIMIT 0, 10", $datas);
 $requete = $requete[0];
-foreach($requete as $row) {
-	$suggestions['suggestions'][] = $row['name'];
+for($i = 0; $i<count($requete)/2; $i++){
+	$suggestions['suggestions'][] = $requete[$i];
+
 }
 echo json_encode($suggestions);
 
