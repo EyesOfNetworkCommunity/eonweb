@@ -226,8 +226,7 @@ LOCK TABLES `logs` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `
-`
+-- Table structure for table `sessions`
 --
 
 DROP TABLE IF EXISTS `sessions`;
