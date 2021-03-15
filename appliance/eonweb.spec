@@ -1,7 +1,7 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
 Version: 5.3
-Release: 10
+Release: 11
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
@@ -79,8 +79,10 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
-* Mon Jan 11 2021 Oscar POELS <o.poels@gmail.com> - 5.3-11.eon
-- fix security issue with sessions_id by renforcing generation to prevent force brut
+* Mon Mar 15 2021 Oscar POELS <o.poels@gmail.com> - 5.3-11.eon
+- fix security issue CVE-2021-27514 (sessions_id by renforcing generation to prevent force brut) #82 #87
+- fix security issue CVE-2021-27513 (admin_ITSM, allows remote authenticated users to upload arbitrary .xml.php) #87
+- fix regression in admin_bp #85
 
 * Tue Dec 08 2020 Sebastien DAVOULT <d@vou.lt> - 5.3-10.eon
 - fix issue when we trying to rename rules in Advance Notifier #81
