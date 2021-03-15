@@ -26,18 +26,21 @@
  * @return boolean
  */
 function upload_file($url, $file, $dir="uploaded_file"){
+    $path_part = pathinfo($file["name"]);
     if(preg_match('#[\x00-\x1F\x7F-\x9F/\\\\]#', basename($file["name"]))){
         return false;
     }else{
-        $path_file = __DIR__."/".$dir."/".basename($file["name"]);
-        if(file_exists($path_file)){
-            unlink($path_file);
-        }
+        if($path_part['extension'] == "json" || $path_part['extension'] == "xml"){
+            $path_file = __DIR__."/".$dir."/".basename($file["name"]);
+            if(file_exists($path_file)){
+                unlink($path_file);
+            }
 
-        $path_file = __DIR__."/".$dir."/".basename($file["name"]);
-         
-        if(move_uploaded_file($file["tmp_name"], $path_file)){
-            return true;
+            $path_file = __DIR__."/".$dir."/".basename($file["name"]);
+
+            if(move_uploaded_file($file["tmp_name"], $path_file)){
+                return true;
+            }
         }
         return false;
     }
