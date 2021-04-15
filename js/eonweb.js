@@ -29,7 +29,7 @@ var graph_color = {
 	ok: "#00CC33",
 	warning: "#FFA500",
 	critical: "#FF3300",
-	unknown: "#CC77C6"
+	unknown: "#CC66FF"
 }
 
 var barChart_active_categories = [
