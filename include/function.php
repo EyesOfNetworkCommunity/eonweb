@@ -301,7 +301,7 @@ function get_tool_listbox(){
 
 	// Display the list of tool
 	echo "<SELECT id='tool_list' name='tool_list' class='form-control'>";
- 	while (list($tool_name, $tool_url) = each($array_tools)) 
+	foreach($array_tools as $tool_name => $tool_url)
 	{
 		echo "<OPTION value='$tool_url'>$tool_name</OPTION>";
 	}
@@ -723,7 +723,7 @@ function build($pRequest,&$file,$pWritenBP){
 }
 
 // Ldap escape special caracters
-function ldap_escape($str, $login=false, $escape=false){
+function _ldap_escape($str, $login=false, $escape=false){
 
 	$str = trim($str);
 	if ( $login ) {
@@ -1016,7 +1016,7 @@ function pieChart($queue, $field, $search, $period)
 			$sql .= $search_clause;
 			$sql .= $period_clause;
 			
-			$result = sql($database_ged, $sql, array($state, substr($queue{0},0,1)));
+			$result = sql($database_ged, $sql, array($state, substr($queue[0],0,1)));
 			$array_result[$key] += $result[0][0];
 		}
 	}
@@ -1076,15 +1076,15 @@ function barChart($queue, $field, $search)
 			if( !isset($array_month_year[$key]) ){$array_month_year[$key] = 0;}
 			if( !isset($array_year_more[$key]) ){$array_year_more[$key] = 0;}
 			$sql = "
-				SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue{0},0,1)."' AND o_sec >= $day".$search_clause.
+				SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue[0],0,1)."' AND o_sec >= $day".$search_clause.
 				" UNION ALL
-				SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue{0},0,1)."' AND o_sec >= $week AND o_sec < $day".$search_clause.
+				SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue[0],0,1)."' AND o_sec >= $week AND o_sec < $day".$search_clause.
 				" UNION ALL
-				SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue{0},0,1)."' AND o_sec >= $month AND o_sec < $week".$search_clause.
+				SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue[0],0,1)."' AND o_sec >= $month AND o_sec < $week".$search_clause.
 				" UNION ALL
-				SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue{0},0,1)."' AND o_sec >= $year AND o_sec < $month".$search_clause.
+				SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue[0],0,1)."' AND o_sec >= $year AND o_sec < $month".$search_clause.
 				" UNION ALL
-				SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue{0},0,1)."' AND o_sec < $year".$search_clause;
+				SELECT count(id) FROM ".$pkt[0]."_queue_".$queue." WHERE state='".$state."' AND queue='".substr($queue[0],0,1)."' AND o_sec < $year".$search_clause;
 			$result = sql($database_ged, $sql);
 			
 			$cpt = 0;
