@@ -29,7 +29,14 @@ include_once("../../include/function.php");
 include("./ged_functions.php");
 
 // create variables from $_GET
-extract($_GET);
+$action = $_GET["action"] ?? null;
+$selected_events = $_GET["selected_events"] ?? null;
+$queue = $_GET["queue"] ??  null;
+$global_action =  $_GET["global_action"] ?? null;
+$checkBoxNagios =  $_GET["checkBoxNagios"] ?? null;
+$comments =  $_GET["comments"] ?? null;
+$filter_name =  $_GET["filter_name"] ?? null;
+
 if(!isset($queue)) { $queue="active"; } 
 elseif(!in_array($queue,$array_ged_queues)) { $queue="active"; }
 
@@ -45,7 +52,7 @@ if(!isset($group)) { $group=null; }
  * 5 = delete
  */
 
- if(isset($action) && $action != "" && (isset($selected_events) && count($selected_events) > 0) || isset($filter_name) || isset($filter) ){
+ if(isset($action) && $action != "" && (isset($selected_events) && !empty($selected_events)) || isset($filter_name) || isset($filter) ){
 	//error_log("ged_action.php :".$action." \n", 3 , "/srv/eyesofnetwork/eonweb/module/admin_itsm/uploaded_file/log");
 	switch ($action) {
 		case "0":
