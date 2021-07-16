@@ -180,7 +180,8 @@ include("../../side.php");
 			reset($array_user_mgt);
 
 			// Display the list of management choices
-			while (list($mgt_name, $mgt_url) = each($array_user_mgt)) {
+			foreach($array_user_mgt as $mgt) {
+				list($mgt_name, $mgt_url) = $mgt;
 				echo "<option value='$mgt_url'>".getLabel($mgt_name)."</option>";
 			}
 			?>

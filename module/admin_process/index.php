@@ -59,8 +59,8 @@ include("../../side.php");
 		
 		echo "<tbody>";
 		// Display the list of process
-		while (list($proc_name,$array_proc) = each($array_serv_system))
-		{
+		foreach($array_serv_system as $serv) {
+			list($proc_name, $array_proc) = $serv;
 			$cmd_status=$array_proc["status"];
 			exec($cmd_status,$result_cmd);
 
