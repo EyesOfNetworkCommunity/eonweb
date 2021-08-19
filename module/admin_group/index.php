@@ -207,7 +207,7 @@ include("../../side.php");
 
 			// Display the list of management choices
 			$cpt = 1;
-			foreach($array_group_mgt as $mgt) {
+			foreach($array_group_mgt as $mgt_name => $mgt_url) {
 				list($mgt_name, $mgt_url) = $mgt;
 				if($cpt == 3){
 					if($ldap_conf){
