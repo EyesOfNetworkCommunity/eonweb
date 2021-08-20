@@ -64,21 +64,24 @@ include("../../include/function.php");
 	echo '<p class="alert alert-info text-info">';
 	if($title!="")
 		echo "Title : $title <br>";
-
+        else $title = '';
         echo "Periode : ";
         echo "from <i>" . date("l d M Y - h:i A",intval($start_date)) . "</i> to <i>" .  date("l d M Y - h:i A",intval($end_date)) . "</i>";
 	echo '</p>';
 	
 	# --- For each host
-	$result_host=sql($database_cacti,"select id,hostname from host");
-	
+	$result_host=sql($database_cacti, "SELECT id, hostname FROM host");
+
 	if($result_host == NULL) message(0,"No host find in database","critical");
 	foreach($result_host as $host){
 		# -- Get the infos
 		$hostname=$host["hostname"];
 		$hostid=$host["id"];
+
 		# --- Get the graph id from the host id
-	        $result_graph = sql($database_cacti,"SELECT graph_local.id FROM graph_local,graph_templates_graph WHERE host_id=? and graph_templates_graph.local_graph_id=graph_local.id and graph_templates_graph.title like '%?%' ", array($hostid, $title));
+                // EON 5.4 - fix sql query
+	        // $result_graph = sql($database_cacti,"SELECT graph_local.id FROM graph_local,graph_templates_graph WHERE host_id=? and graph_templates_graph.local_graph_id=graph_local.id and graph_templates_graph.title like '%?%' ", array($hostid, $title));
+	        $result_graph = sql($database_cacti,"SELECT graph_local.id FROM graph_local,graph_templates_graph WHERE host_id=? and graph_templates_graph.local_graph_id=graph_local.id and graph_templates_graph.title like CONCAT('%', ?, '%') ", array($hostid, $title));
 
 		# --- Display info
 		if($result_graph != NULL) {
@@ -90,8 +93,8 @@ include("../../include/function.php");
 			# --- For each graph of the host
 			foreach($result_graph as $graph){
 				# --- Print the graph
-					$graph_id = $graph["id"];
-					echo "<img class='img-responsive center-block' alt='graph cacti' src='../../../cacti/graph_image.php?local_graph_id=$graph_id&rra_id=1&graph_height=100&graph_width=300&graph_nolegend=true&graph_start=$start_date&graph_end=$end_date'>";
+                                $graph_id = $graph["id"];
+                                echo "<img class='img-responsive center-block' alt='graph cacti' src='../../../cacti/graph_image.php?local_graph_id=$graph_id&rra_id=1&graph_height=100&graph_width=300&graph_nolegend=true&graph_start=$start_date&graph_end=$end_date'>";
 			}
 			echo 	'</div>';
 			echo '</div>';
