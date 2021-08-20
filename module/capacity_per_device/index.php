@@ -76,7 +76,10 @@ include("../../side.php");
 		if(count($_GET)>0 && $error == false){
 			# --- Get the graph id from the host id
 			if(isset($graphlocal_hostid)){
-				$result_graph = sql($database_cacti,"SELECT id FROM graph_local WHERE host_id=1", array($graphlocal_hostid));
+				// EON 5.4 - fix sql query
+				// $result_graph = sql($database_cacti,"SELECT id FROM graph_local WHERE host_id=1", array($graphlocal_hostid));
+				$result_graph = sql($database_cacti,"SELECT id FROM graph_local WHERE host_id=?", array($graphlocal_hostid));
+
 				foreach($result_graph as $graph){
 					# --- Print the graph
 					$graph_id = $graph["id"];
