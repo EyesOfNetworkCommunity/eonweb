@@ -50,6 +50,33 @@ include("../../side.php");
 			message(0," : ".getLabel("message.no_date_value"),"critical");
 			$error = true;
 		}
+
+		// EON 5.4 - define graph range
+		$curr_time = time();
+        switch($graphlocal_dateid)
+        {
+			case 1: // Jour
+				$start_date = strtotime(date('Y-m-d', $curr_time));
+				$end_date = strtotime('+1 day', $start_date) - 1;
+				break;
+			case 2: // Semaine
+				$first_weekdayid = 1;
+				$offset = (date('w',$curr_time) - $first_weekdayid + 7) % 7;
+				$start_date = strtotime( '-' . $offset . ' days' . date('Y-m-d', $curr_time));
+				$end_date = strtotime('+1 week', $start_date) - 1;
+				break;
+			case 3: // Mois
+				$start_date = strtotime(date('Y-m-01', $curr_time));
+				$end_date = strtotime('+1 month', $start_date) - 1;
+				break;
+			case 4: // Année
+				$start_date = strtotime(date('Y-01-01', $curr_time));
+				$end_date = strtotime('+1 year', $start_date) - 1;
+				break;
+			default:
+				$start_date = strtotime(date('Y-m-d', $curr_time));
+				$end_date = strtotime('+1 day', $start_date) - 1;
+        }
 	}
 	?>
 	
@@ -83,7 +110,10 @@ include("../../side.php");
 				foreach($result_graph as $graph){
 					# --- Print the graph
 					$graph_id = $graph["id"];
-					echo "<img class='img-responsive center-block' src='../../../cacti/graph_image.php?local_graph_id=$graph_id&rra_id=$graphlocal_dateid' alt='graph_cacti'/>";
+
+					// EON 5.4 - fix image call
+					// echo "<img class='img-responsive center-block' src='../../../cacti/graph_image.php?local_graph_id=$graph_id&rra_id=$graphlocal_dateid' alt='graph_cacti'/>";
+					echo "<img class='img-responsive center-block' src='../../../cacti/graph_image.php?local_graph_id=$graph_id&graph_start=$start_date&graph_end=$end_date' alt='graph_cacti'/>";
 				}
 			}
 		}
