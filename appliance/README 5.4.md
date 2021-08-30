@@ -3,6 +3,10 @@
 
 module/capacity_per_device/index.php
     \-> Correction de la requête SQL pour prendre en compte l'équipement sélectionné
+    \-> Correction du lien pour récupérer l'image du graphique
+
+module/capacity_per_label/index.php
+    \-> Correction du lien pour récupérer l'image du graphique
 
 module/report_performance/display.php
     \-> Correction de la requête SQL pour prendre en compte tous les paramètres du rapport
