@@ -84,11 +84,16 @@ include("../../side.php");
 
 						// delete user in cacti
 						$cacti_user_exist = sql($database_cacti, "SELECT id FROM user_auth WHERE username = ?", array($user_name));
-						$cacti_user_exist = $cacti_user_exist[0];
-						if ($cacti_user_exist["id"] > 0){
-							$userId = $cacti_user_exist["id"];
-							sql($database_cacti,"DELETE FROM user_auth WHERE id = ?", array($userId));
+						// EON 5.4 - Fix code
+						if (count($cacti_user_exist) > 0)
+						{
+							$cacti_user_exist = $cacti_user_exist[0];
+							if ($cacti_user_exist["id"] > 0){
+								$userId = $cacti_user_exist["id"];
+								sql($database_cacti,"DELETE FROM user_auth WHERE id = ?", array($userId));
+							}
 						}
+						
 
 						// Logging action
 						logging("admin_user","DELETE : $user_selected[$i]");
@@ -180,8 +185,7 @@ include("../../side.php");
 			reset($array_user_mgt);
 
 			// Display the list of management choices
-			foreach($array_user_mgt as $mgt) {
-				list($mgt_name, $mgt_url) = $mgt;
+			foreach($array_user_mgt as $mgt_name => $mgt_url) {
 				echo "<option value='$mgt_url'>".getLabel($mgt_name)."</option>";
 			}
 			?>

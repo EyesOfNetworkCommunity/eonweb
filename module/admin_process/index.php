@@ -59,8 +59,7 @@ include("../../side.php");
 		
 		echo "<tbody>";
 		// Display the list of process
-		foreach($array_serv_system as $serv) {
-			list($proc_name, $array_proc) = $serv;
+		foreach($array_serv_system as $proc_name => $array_proc) {
 			$cmd_status=$array_proc["status"];
 			exec($cmd_status,$result_cmd);
 
@@ -85,7 +84,7 @@ include("../../side.php");
 			// Display actions		
 			echo "<td>";
 			$array_act=$array_proc["proc_act"];
-			while (list($act_name,$act_cmd) = each($array_act))
+			foreach($array_act as $act_name => $act_cmd)
 			{
 				if ( ($result_cmd[0] == NULL && $act_name != 'stop') || ($result_cmd[0] != NULL && $act_name != 'start' ) )
 				{

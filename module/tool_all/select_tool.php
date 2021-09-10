@@ -25,7 +25,22 @@ include("../../include/arrays.php");
 include("../../include/function.php");
 
 // create variables from $_POST
-extract($_POST);
+// extract($_POST);
+// EON 5.4 - Fix code, function extract can cause errors
+$tool_list = $_POST["tool_list"] ?? "";
+$page = $_POST["page"] ?? "";
+$host_list = $_POST["host_list"] ?? "";
+$tool_list = $_POST["tool_list"] ?? "";
+$snmp_com = $_POST["snmp_com"] ?? "";
+$snmp_version = $_POST["snmp_version"] ?? "";
+$min_port = $_POST["min_port"] ?? "";
+$max_port = $_POST["max_port"] ?? "";
+$username = $_POST["username"] ?? "";
+$password = $_POST["password"] ?? "";
+$snmp_auth_protocol = $_POST["snmp_auth_protocol"] ?? "";
+$snmp_priv_passphrase = $_POST["snmp_priv_passphrase"] ?? "";
+$snmp_priv_protocol = $_POST["snmp_priv_protocol"] ?? "";
+$snmp_context = $_POST["snmp_contex"] ?? "";
 
 //url where the tool is searched.
 if($tool_list != "")
