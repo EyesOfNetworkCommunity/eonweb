@@ -72,7 +72,9 @@ include("../../side.php");
 
 							// Delete in lilac
 							require_once('/srv/eyesofnetwork/lilac/includes/config.inc');
-							$ncg = NagiosContactGroupPeer::getByName($group_name);
+							// EON 5.4 - fix non-static method call 
+							// $ncg = NagiosContactGroupPeer::getByName($group_name);
+							$ncg = (new NagiosContactGroupPeer())->getByName($group_name);
 							if($ncg){
 								$ncg->delete();
 							}
@@ -207,8 +209,7 @@ include("../../side.php");
 
 			// Display the list of management choices
 			$cpt = 1;
-			foreach($array_group_mgt as $mgt) {
-				list($mgt_name, $mgt_url) = $mgt;
+			foreach($array_group_mgt as $mgt_name => $mgt_url) {
 				if($cpt == 3){
 					if($ldap_conf){
 						echo "<option value='$mgt_url'>".getLabel($mgt_name)."</option>";
