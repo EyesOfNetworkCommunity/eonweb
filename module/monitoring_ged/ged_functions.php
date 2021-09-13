@@ -151,7 +151,6 @@ function createWhereClause($owner, $filter, $search, $daterange, $ok, $warning, 
 		}
 
 		$where_clause .= " AND $filter LIKE ?";
-		$mysql_prepare[0].="s";
 		$mysql_prepare[]=(string)$like;
 	}
 
@@ -168,17 +167,16 @@ function createWhereClause($owner, $filter, $search, $daterange, $ok, $warning, 
 		$end = strtotime($end);
 		$end += 86400 + 3600;
 		$where_clause .= " AND o_sec > ? AND o_sec < ?";
-		$mysql_prepare[0].="ii";
 		$mysql_prepare[]=(int)$start;
 		$mysql_prepare[]=(int)$end;
 	}
 
 	// states
 	$states_list = "";
-	if($ok != "")		{ $states_list .= "?,"; $mysql_prepare[0].="i"; $mysql_prepare[]=0; }
-	if($warning != "")	{ $states_list .= "?,"; $mysql_prepare[0].="i"; $mysql_prepare[]=1; }
-	if($critical != "")	{ $states_list .= "?,"; $mysql_prepare[0].="i"; $mysql_prepare[]=2; }
-	if($unknown != "")	{ $states_list .= "?,"; $mysql_prepare[0].="i"; $mysql_prepare[]=3; }
+	if($ok != "")		{ $states_list .= "?,"; $mysql_prepare[]=0; }
+	if($warning != "")	{ $states_list .= "?,"; $mysql_prepare[]=1; }
+	if($critical != "")	{ $states_list .= "?,"; $mysql_prepare[]=2; }
+	if($unknown != "")	{ $states_list .= "?,"; $mysql_prepare[]=3; }
 	$states_list = trim($states_list, ",");
 	
 	if($states_list != ""){
