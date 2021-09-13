@@ -1,15 +1,15 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
-Version: 5.3
-Release: 11
+Version: 5.4
+Release: 0
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
 Requires: backup-manager, cacti0, ged, ged-mysql, eon4apps, lilac >= 3.1-2, snmptt, thruk 
-Requires: httpd, mariadb-server, mod_auth_eon, mod_perl
-Requires: php, php-mysqlnd, php-ldap, php-process, php-xml
+Requires: httpd, mariadb-server >= 10.6.3, mod_auth_eon, mod_perl
+Requires: php >= 8.0, php-mysqlnd, php-ldap, php-process, php-xml
 Requires: nagios >= 3.0, nagios-plugins >= 1.4.0, nagvis, nagiosbp, notifier, nagios-plugins-nrpe
-Requires: grafana, histou
+Requires: grafana
 Requires: net-snmp,net-snmp-perl
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
@@ -64,9 +64,10 @@ case "$1" in
     /usr/bin/chown apache:apache /srv/eyesofnetwork/eonweb/module/admin_itsm/uploaded_file
     # Update EON 5.3.11
     /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.11.sql 2>/dev/null
+    # Update EON 5.4
+    /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.4.sql 2>/dev/null
   ;;
 esac
-
 
 %clean
 rm -rf %{buildroot}
@@ -77,8 +78,16 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/cron.d/eonbackup
 %config(noreplace) %{_sysconfdir}/cron.d/eonwebpurge
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
+echo "Apache ALL=NOPASSWD:/bin/systemctl * nagflux,/bin/systemctl * influxd,/bin/systemctl * grafana-server,/bin/systemctl * httpd,/bin/systemctl * mariadb" >> /etc/sudoers
 
 %changelog
+
+* Mon Sep 13 2021 Julien Gonzalez <julien.gonzalez1498@gmail.com> - 5.4.eon
+- Update code compatibility for PHP 8
+- Update code compatibility for Cacti v1.2.18
+- Fix process accessibility
+- Fix ged events not showing
+
 * Mon Mar 15 2021 Oscar POELS <o.poels@gmail.com> - 5.3-11.eon
 - fix security issue CVE-2021-27514 (sessions_id by renforcing generation to prevent force brut) #82 #87
 - fix security issue CVE-2021-27513 (admin_ITSM, allows remote authenticated users to upload arbitrary .xml.php) #87
