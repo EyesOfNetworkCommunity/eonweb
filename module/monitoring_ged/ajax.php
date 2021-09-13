@@ -97,7 +97,7 @@ if(file_exists($file)){
 						$gedsql_result1=sql($database_ged,$sql);
 					} else {
 						$sql = "SELECT pkt_type_id,pkt_type_name FROM pkt_type WHERE pkt_type_id=? AND pkt_type_id<'100'";
-						$prepare=array("i",(int)$_GET["type"]);
+						$prepare=array((int)$_GET["type"]);
 						$gedsql_result1=sql($database_ged,$sql,$prepare);
 					}
 										
@@ -105,7 +105,6 @@ if(file_exists($file)){
 
 						// request for ged events according to queue and filters
 						$sql = createSelectClause($ged_type["pkt_type_name"], $queue);
-						$mysql_prepare=array("");
 						
 						// time periods (only in active events);
 						if($time_period != ""){
@@ -119,31 +118,26 @@ if(file_exists($file)){
 							switch ($time_period) {
 								case '0-5m':
 									$sql .= " AND o_sec <= ? AND o_sec > ?";
-									$mysql_prepare[0].="ii";
 									$mysql_prepare[]=(int)$actual_time;
 									$mysql_prepare[]=(int)$five_minutes;
 									break;
 								case '5-15m':
 									$sql .= " AND o_sec <= ? AND o_sec > ?";
-									$mysql_prepare[0].="ii";
 									$mysql_prepare[]=(int)$five_minutes;
 									$mysql_prepare[]=(int)$fifteen_minutes;
 									break;
 								case '15-30m':
 									$sql .= " AND o_sec <= ? AND o_sec > ?";
-									$mysql_prepare[0].="ii";
 									$mysql_prepare[]=(int)$fifteen_minutes;
 									$mysql_prepare[]=(int)$thirty_minutes;
 									break;
 								case '30m-1h':
 									$sql .= " AND o_sec <= ? AND o_sec > ?";
-									$mysql_prepare[0].="ii";
 									$mysql_prepare[]=(int)$thirty_minutes;
 									$mysql_prepare[]=(int)$one_hour;
 									break;
 								case 'more':
 									$sql .= " AND o_sec <= ?";
-									$mysql_prepare[0].="i";
 									$mysql_prepare[]=(int)$one_hour;
 									break;
 							}
@@ -151,7 +145,7 @@ if(file_exists($file)){
 
 						if($ack_time != ""){
 							$sql .= " AND a_sec - o_sec >= ?";
-							$mysql_prepare=array("i",(int)$ack_time);
+							$mysql_prepare=array((int)$ack_time);
 						}
 
 						// if there's a default filter
@@ -186,7 +180,6 @@ if(file_exists($file)){
 										$middle_node="%,".$like.",%";
 										$last_node="%,".$like;
 										$sql .= " AND ($key LIKE ? OR $key LIKE ? OR $key LIKE ? OR $key LIKE ?";
-										$mysql_prepare[0].="ssss";
 										$mysql_prepare[]=(string)$like;
 										$mysql_prepare[]=(string)$first_node;
 										$mysql_prepare[]=(string)$middle_node;
@@ -198,7 +191,6 @@ if(file_exists($file)){
 											$middle_node="%,".$filter_group.",%";
 											$last_node="%,".$filter_group;
 											$sql .= " OR $key LIKE ? OR $key LIKE ? OR $key LIKE ? OR $key LIKE ?";
-											$mysql_prepare[0].="ssss";
 											$mysql_prepare[]=(string)$filter_group;
 											$mysql_prepare[]=(string)$first_node;
 											$mysql_prepare[]=(string)$middle_node;
@@ -212,7 +204,8 @@ if(file_exists($file)){
 						}
 
 						$sql .= createWhereClause($owner,$filter,$search,$daterange,$ok,$warning,$critical,$unknown);
-						$request = sql($database_ged, $sql, array($mysql_prepare[1], $mysql_prepare[2], $mysql_prepare[3], $mysql_prepare[4]), 2);
+						$request = sql($database_ged, $sql, $mysql_prepare, 2);
+						$mysql_prepare = null;
 						foreach($request as $event){
 							$event_state = getEventState($event["state"]);
 							$row_class = getClassRow($event_state);
