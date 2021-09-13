@@ -781,7 +781,6 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 
 			// Insert into eonweb
 			sql($database_eonweb,"INSERT INTO users (user_name,user_descr,group_id,user_passwd,user_type,user_location,user_limitation,user_language,theme) VALUES(?,?,?,?,?,?,?,?,?)", array($user_name, $user_descr, $user_group, $user_password, $user_type, $user_location, $user_limitation, $user_language, $theme));
-			error_log(" group".$user_group." \n", 3, "/opt/log/msg.log");  // EON - debug
 			$user_id = sql($database_eonweb,"SELECT user_id FROM users WHERE user_name=?", array($user_name));
 			$user_id = $user_id[0]["user_id"];
 			$group_name = sql($database_eonweb,"SELECT group_name FROM groups WHERE group_id=?", array($user_group));
