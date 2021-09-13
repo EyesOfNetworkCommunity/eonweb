@@ -36,6 +36,13 @@ setcookie("nagvis_session",FALSE,0,"/nagvis");
 setcookie("Cacti",FALSE);
 setcookie("clickedFolder",FALSE);
 setcookie("highlightedTreeviewLink",FALSE);
+
+// delete cacti cookie
+setcookie('Cacti', '', time() - 3600, '/cacti/');
+setcookie('cacti_remembers', '', time() - 3600, '/cacti/');
+
+unset($_COOKIE['Cacti']);
+
 session_unset();
 session_destroy(); 
 ?>
@@ -57,5 +64,5 @@ session_destroy();
 		</div>
 	</div>
 </div>
-		
+
 <?php include("footer.php"); ?>

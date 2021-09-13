@@ -19,7 +19,8 @@
 #
 #########################################
 */
-session_start();
+// EON 5.4 - Fix code
+if ( empty(session_id()) ) session_start();
 # Internationalization
 include("classes/Translator.class.php");
 
@@ -88,7 +89,6 @@ function sql($database, $sql = null, $datas = null, $arg = null){
 		$dbh = new PDO("mysql:host=$database_host;dbname=$database", $database_username, $database_password);
 		if($sql != null){
 			$stmt = $dbh->prepare($sql);
-			
 			if(is_array($datas)){
 				$result = $stmt->execute($datas);
 			} else {
@@ -301,7 +301,7 @@ function get_tool_listbox(){
 
 	// Display the list of tool
 	echo "<SELECT id='tool_list' name='tool_list' class='form-control'>";
-	foreach($array_tools as $tool_name => $tool_url)
+	foreach($array_tools as $tool_name => $tool_url) 
 	{
 		echo "<OPTION value='$tool_url'>$tool_name</OPTION>";
 	}
@@ -358,9 +358,12 @@ function logging($module,$command,$user=false){
 	global $database_eonweb;
 	global $dateformat;
 	if($user){
-		sql($database_eonweb,"insert into logs values ('',?,?,?,?,?)", array(time(), $user, $module, $command, $_SERVER["REMOTE_ADDR"]));
+		// EON 5.4 - fix date format
+		// sql($database_eonweb,"insert into logs values ('',?,?,?,?,?)", array(time(), $user, $module, $command, $_SERVER["REMOTE_ADDR"]));
+		sql($database_eonweb,"insert into logs (date, user, module, description, source) values (?,?,?,?,?)", array(time(), $user, $module, $command, $_SERVER["REMOTE_ADDR"]));
 	}elseif(isset($_COOKIE['user_name'])){
-		sql($database_eonweb,"insert into logs values ('',?,?,?,?,?)", array(time(), $user, $module, $command, $_SERVER["REMOTE_ADDR"]));
+		// sql($database_eonweb,"insert into logs values ('',?,?,?,?,?)", array(time(), $user, $module, $command, $_SERVER["REMOTE_ADDR"]));
+		sql($database_eonweb,"insert into logs (date, user, module, description, source) values (?,?,?,?,?)", array(time(), $user, $module, $command, $_SERVER["REMOTE_ADDR"]));
 	}
 }
 
@@ -775,9 +778,10 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 	if (($user_name != "") && ($user_name != null) && ($user_exist == 0)) {
 		if (($user_password1 != "") && ($user_password1 != null) && ($user_password1 == $user_password2)) {
 			$user_password = md5($user_password1);
-			
+
 			// Insert into eonweb
 			sql($database_eonweb,"INSERT INTO users (user_name,user_descr,group_id,user_passwd,user_type,user_location,user_limitation,user_language,theme) VALUES(?,?,?,?,?,?,?,?,?)", array($user_name, $user_descr, $user_group, $user_password, $user_type, $user_location, $user_limitation, $user_language, $theme));
+			error_log(" group".$user_group." \n", 3, "/opt/log/msg.log");  // EON - debug
 			$user_id = sql($database_eonweb,"SELECT user_id FROM users WHERE user_name=?", array($user_name));
 			$user_id = $user_id[0]["user_id"];
 			$group_name = sql($database_eonweb,"SELECT group_name FROM groups WHERE group_id=?", array($user_group));
@@ -787,6 +791,8 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 			$lilac_period = $lilac_period[0]["id"];
 			
 			require_once('/srv/eyesofnetwork/lilac/includes/config.inc');
+			
+			// EON 5.4 - fix array keys
 			$contact_array = array(
 				"contact_name"=>$user_name,
 				"alias"=>$user_descr,
@@ -795,19 +801,19 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 				"service_notifications_enabled"=>1,
 				"host_notification_period"=>$lilac_period,
 				"service_notification_period"=>$lilac_period,
-				"host_notification_on_down"=>1,
-				"host_notification_on_unreachable"=>1,
-				"host_notification_on_recovery"=>1,
-				"host_notification_on_flapping"=>1,
-				"service_notification_on_warning"=>1,
-				"service_notification_on_unknown"=>1,
-				"service_notification_on_critical"=>1,
-				"service_notification_on_recovery"=>1,
-				"service_notification_on_flapping"=>1,
+				"host_notification_options_down"=>1,
+				"host_notification_options_unreachable"=>1,
+				"host_notification_options_recovery"=>1,
+				"host_notification_options_flapping"=>1,
+				"service_notification_options_warning"=>1,
+				"service_notification_options_unknown"=>1,
+				"service_notification_options_critical"=>1,
+				"service_notification_options_recovery"=>1,
+				"service_notification_options_flapping"=>1,
 				"can_submit_commands"=>1,
 				"retain_status_information"=>1,
 				"retain_nonstatus_information"=>1,
-				"host_notification_on_scheduled_downtime"=>1
+				"host_notification_options_scheduled_downtime"=>1
 			);
 			$lilac->add_contact($contact_array);
 
@@ -851,7 +857,14 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 				$req = $bdd->query("SELECT count(*) FROM user_auth WHERE username='$user_name'");
 				$cacti_user_exist = $req->fetch();
 				if ($cacti_user_exist["count(*)"] == 0){
-					$bdd->exec("INSERT INTO user_auth (username,password,realm,full_name,show_tree,show_list,show_preview,graph_settings,login_opts,policy_graphs,policy_trees,policy_hosts,policy_graph_templates,enabled) VALUES ('$user_name','',2,'$user_descr','on','on','on','on',3,2,2,2,2,'on')");
+					// EON 5.4 - Fix parameters
+					// $bdd->exec("INSERT INTO user_auth (username,password,realm,full_name,show_tree,show_list,show_preview,graph_settings,login_opts,policy_graphs,policy_trees,policy_hosts,policy_graph_templates,enabled) VALUES ('$user_name','',2,'$user_descr','on','on','on','on',3,2,2,2,2,'on')");
+					$bdd->exec("INSERT INTO user_auth (username,password,realm,full_name,show_tree,show_list,show_preview,graph_settings,login_opts,policy_graphs,policy_trees,policy_hosts,policy_graph_templates,enabled) VALUES ('$user_name','',2,'$user_descr','on','on','on','on',3,1,1,1,1,'on')");
+					// EON 5.4 - Add value for user to have admin rights - Can be change is necessary
+					$req2 = $bdd->query("SELECT id FROM user_auth WHERE username='$user_name'");
+					$cacti_user_id = $req2->fetch();
+					$bdd->exec("INSERT INTO user_auth_realm VALUES (1,".$cacti_user_id["id"]."), (2,".$cacti_user_id["id"]."), (3,".$cacti_user_id["id"]."), (4,".$cacti_user_id["id"]."), (5,".$cacti_user_id["id"]."), (6,".$cacti_user_id["id"]."), (7,".$cacti_user_id["id"]."), (8,".$cacti_user_id["id"]."), (9,".$cacti_user_id["id"]."), (10,".$cacti_user_id["id"]."), (11,".$cacti_user_id["id"]."), (12,".$cacti_user_id["id"]."), (13,".$cacti_user_id["id"]."), (14,".$cacti_user_id["id"]."), (15,".$cacti_user_id["id"]."), (16,".$cacti_user_id["id"]."), (17,".$cacti_user_id["id"]."), (18,".$cacti_user_id["id"]."), (19,".$cacti_user_id["id"]."), (20,".$cacti_user_id["id"]."), (21,".$cacti_user_id["id"]."), (22,".$cacti_user_id["id"]."), (23,".$cacti_user_id["id"]."), (24,".$cacti_user_id["id"]."), (25,".$cacti_user_id["id"]."), (26,".$cacti_user_id["id"]."), (27,".$cacti_user_id["id"]."), (28,".$cacti_user_id["id"].") ");
+					$bdd->exec("INSERT INTO user_auth_realm VALUES (101,".$cacti_user_id["id"]."), (105,".$cacti_user_id["id"]."), (106,".$cacti_user_id["id"]."), (111,".$cacti_user_id["id"]."), (112,".$cacti_user_id["id"]."), (113,".$cacti_user_id["id"]."), (1043,".$cacti_user_id["id"].") ");
 				}
 			}
 
@@ -1175,9 +1188,10 @@ function slaPieChart($field, $search, $period)
 			$sql = "SELECT count(id) FROM ".$pkt[0]."_queue_history WHERE queue='h' AND state!='0'".$sla_clause;
 			$sql .= $search_clause;
 			$sql .= $period_clause;
-			
+
 			$result = sql($database_ged, $sql);
-			$array_result[$key] += $result[0];
+			// EON 5.4 - Fix code
+			$array_result[$key] += $result[0][0];
 		}
 	}
 	return json_encode($array_result);

@@ -58,7 +58,8 @@ function createTableRow($event, $event_state, $queue)
 		$class = "";
 
 		if($key == "equipment"){
-			if($event->src == "0.0.0.0" || $event->src == "0.0.0.0/0") {
+			// EON 5.4 - Fix code
+			if($event["src"] == "0.0.0.0" || $event["src"] == "0.0.0.0/0") {
 				$url_host = preg_replace("/^".getEonConfig("ged_prefix")."/","",$value,1);
 				$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=1&host=$url_host");
 				$value = '<a href="../module_frame/index.php?url='.$thruk_url.'">'.$value.'</a>';
@@ -68,8 +69,9 @@ function createTableRow($event, $event_state, $queue)
 			$class = 'class="host"';
 		}
 		if($key == "service"){
-			if($event->src == "0.0.0.0" || $event->src == "0.0.0.0/0") {
-				$url_host = preg_replace("/^".getEonConfig("ged_prefix")."/","",$event->equipment,1);
+			// EON 5.4 - Fix code
+			if($event["src"] == "0.0.0.0" || $event["src"] == "0.0.0.0/0") {
+				$url_host = preg_replace("/^".getEonConfig("ged_prefix")."/","",$event["equipment"],1);
 				$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=2&host=".$url_host."&service=$value");
 				$value = '<a href="../module_frame/index.php?url='.$thruk_url.'">'.$value.'</a>';
 			} else {
@@ -90,10 +92,11 @@ function createTableRow($event, $event_state, $queue)
 		if($key == "id"){
 			$value = "<input type='hidden' value='".$value."'>";
 			$class = 'class="text-center"';
-			if($event->comments != ""){
+			// EON 5.4 - Fix code
+			if($event["comments"] != ""){
 				$value .= ' <i class="glyphicon glyphicon-comment" title="'.$event->comments.'"></i>';
 			}
-			if($event->owner != ""){
+			if($event["owner"] != ""){
 				$value .= ' <i class="glyphicon glyphicon-floppy-disk"></i>';
 			}
 		}
