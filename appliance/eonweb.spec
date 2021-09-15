@@ -5,8 +5,8 @@ Release: 0
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
-Requires: backup-manager, cacti0, ged, ged-mysql, eon4apps, lilac >= 3.1-2, snmptt, thruk 
-Requires: httpd, mariadb-server >= 10.6.3, mod_auth_eon, mod_perl
+Requires: backup-manager, cacti0, ged, ged-mysql, eon4apps, lilac >= 3.2, snmptt, thruk 
+Requires: httpd, MariaDB-server >= 10.6.3, mod_auth_eon, mod_perl
 Requires: php >= 8.0, php-mysqlnd, php-ldap, php-process, php-xml
 Requires: nagios >= 3.0, nagios-plugins >= 1.4.0, nagvis, nagiosbp, notifier, nagios-plugins-nrpe
 Requires: grafana
@@ -35,11 +35,14 @@ install -d -m0755 %{buildroot}%{eonconfdir}
 install -d -m0755 %{buildroot}%{_sysconfdir}/cron.d
 install -d -m0755 %{buildroot}%{_sysconfdir}/httpd/conf.d
 mv ./appliance/* %{buildroot}%{eonconfdir}
+rpm -e --nodeps "histou-0.4.3-0.eon.x86_64"
+install -D -m 0644 %{buildroot}%{eonconfdir}/_histou_graph.tt %{buildroot}/usr/share/thruk/themes/themes-available/EyesOfNetwork/templates/_histou_graph.tt
 rm -rf ./appliance
 cp -afv ./* %{buildroot}%{datadir}
 cp -afv %{buildroot}%{eonconfdir}/eonbackup %{buildroot}%{_sysconfdir}/cron.d/
 cp -afv %{buildroot}%{eonconfdir}/eonwebpurge %{buildroot}%{_sysconfdir}/cron.d/
 cp -afv %{buildroot}%{eonconfdir}/eonweb.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
+echo "Apache ALL=NOPASSWD:/bin/systemctl * nagflux,/bin/systemctl * influxd,/bin/systemctl * grafana-server,/bin/systemctl * httpd,/bin/systemctl * mariadb" >> /etc/sudoers
 
 %post
 case "$1" in
@@ -75,10 +78,10 @@ rm -rf %{buildroot}
 %files
 %{datadir}
 %{eonconfdir}
+/usr/share/thruk/themes/themes-available/EyesOfNetwork/templates/
 %config(noreplace) %{_sysconfdir}/cron.d/eonbackup
 %config(noreplace) %{_sysconfdir}/cron.d/eonwebpurge
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
-echo "Apache ALL=NOPASSWD:/bin/systemctl * nagflux,/bin/systemctl * influxd,/bin/systemctl * grafana-server,/bin/systemctl * httpd,/bin/systemctl * mariadb" >> /etc/sudoers
 
 %changelog
 
