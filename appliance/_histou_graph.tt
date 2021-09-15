@@ -154,6 +154,9 @@
         jQuery('#histou_source_select').append('<option value="11">check_disk /sys/fs/cgroup<\/option>');
         break;
     } 
+  } else {
+    jQuery('#histou_source_select').append('<option value="13">hostcheckcheck-host-alive pl<\/option>');
+    jQuery('#histou_source_select').append('<option value="14">hostcheckcheck-host-alive rta<\/option>');
   }
   jQuery('#histou_source_select').show();
 </script>
