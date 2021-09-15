@@ -11,6 +11,7 @@ Requires: php >= 8.0, php-mysqlnd, php-ldap, php-process, php-xml
 Requires: nagios >= 3.0, nagios-plugins >= 1.4.0, nagvis, nagiosbp, notifier, nagios-plugins-nrpe
 Requires: grafana
 Requires: net-snmp,net-snmp-perl
+Obsoletes: histou
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
@@ -35,7 +36,6 @@ install -d -m0755 %{buildroot}%{eonconfdir}
 install -d -m0755 %{buildroot}%{_sysconfdir}/cron.d
 install -d -m0755 %{buildroot}%{_sysconfdir}/httpd/conf.d
 mv ./appliance/* %{buildroot}%{eonconfdir}
-rpm -e --nodeps "histou-0.4.3-0.eon.x86_64"
 install -D -m 0644 %{buildroot}%{eonconfdir}/_histou_graph.tt %{buildroot}/usr/share/thruk/themes/themes-available/EyesOfNetwork/templates/_histou_graph.tt
 rm -rf ./appliance
 cp -afv ./* %{buildroot}%{datadir}
