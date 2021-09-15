@@ -132,4 +132,8 @@ $path_notifier_methods="$path_notifier/etc/notifier.cfg";
 $default_minport=1;
 $default_maxport=1024;
 
+// # API TOKEN
+$eon_api_token = "";
+$grafana_api_token = "";
+
 ?>
