@@ -42,7 +42,6 @@ cp -afv ./* %{buildroot}%{datadir}
 cp -afv %{buildroot}%{eonconfdir}/eonbackup %{buildroot}%{_sysconfdir}/cron.d/
 cp -afv %{buildroot}%{eonconfdir}/eonwebpurge %{buildroot}%{_sysconfdir}/cron.d/
 cp -afv %{buildroot}%{eonconfdir}/eonweb.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
-echo "Apache ALL=NOPASSWD:/bin/systemctl * nagflux,/bin/systemctl * influxd,/bin/systemctl * grafana-server,/bin/systemctl * httpd,/bin/systemctl * mariadb" >> /etc/sudoers
 
 %post
 case "$1" in
@@ -69,6 +68,7 @@ case "$1" in
     /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.11.sql 2>/dev/null
     # Update EON 5.4
     /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.4.sql 2>/dev/null
+    echo "Apache ALL=NOPASSWD:/bin/systemctl * nagflux,/bin/systemctl * influxd,/bin/systemctl * grafana-server,/bin/systemctl * httpd,/bin/systemctl * mariadb" >> /etc/sudoers
   ;;
 esac
 
