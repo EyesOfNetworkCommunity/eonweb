@@ -85,7 +85,7 @@ rm -rf %{buildroot}
 
 %changelog
 
-* Mon Sep 13 2021 Julien Gonzalez <julien.gonzalez1498@gmail.com> - 5.4.eon
+* Mon Sep 13 2021 Julien GONZALEZ <julien.gonzalez1498@gmail.com> - 5.4.eon
 - Update code compatibility for PHP 8
 - Update code compatibility for Cacti v1.2.18
 - Fix process accessibility
