@@ -381,8 +381,8 @@ include("../../side.php");
 				else { $nagvis_user = false; }
 				if($create_user_in_cacti == "yes"){ $cacti_user = true; }
 				else { $cacti_user = false; }
-				
-				$user_group = retrieve_form_data("user_group","");
+				// EON 5.4 - fix default value
+				$user_group = retrieve_form_data("user_group",0);
 				$nagvis_grp = retrieve_form_data("nagvis_group", "");
 				$user_id=insert_user(stripAccents($user_name), $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location,$user_mail,$user_limitation, true, $create_user_in_nagvis, $create_user_in_cacti, $nagvis_grp, $user_language, $theme);
 				//message(8,"User location: $user_location",'ok');	// For debug pupose, to be removed
