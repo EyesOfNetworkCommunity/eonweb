@@ -42,13 +42,13 @@ cp -afv ./* %{buildroot}%{datadir}
 cp -afv %{buildroot}%{eonconfdir}/eonbackup %{buildroot}%{_sysconfdir}/cron.d/
 cp -afv %{buildroot}%{eonconfdir}/eonwebpurge %{buildroot}%{_sysconfdir}/cron.d/
 cp -afv %{buildroot}%{eonconfdir}/eonweb.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
+/bin/chmod 775 %{datadir}/cache
+/bin/chown -R root:eyesofnetwork %{datadir}
 
 %post
 case "$1" in
   1)
     # Initial install
-    /bin/chmod 775 %{datadir}/cache
-    /bin/chown -R root:eyesofnetwork %{datadir}
     ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatDark/thruk/EONFlatDark/ /etc/thruk/themes/themes-enabled/EONFlatDark
     ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatLight/thruk/EONFlatLight/ /etc/thruk/themes/themes-enabled/EONFlatLight
     /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.5.sql 2>/dev/null
