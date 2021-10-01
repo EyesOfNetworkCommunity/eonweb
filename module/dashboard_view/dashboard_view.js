@@ -121,7 +121,7 @@ function drawPieChart(div_id, title, datas, column_type, link)
 		var begin_url = path_nagios_status+'?';
 		var columns = [ 
 			["pending", "up", "down", "unreachable"],
-			['#2CC6F7', '#00e00f', '#db0f00', '#99A2A8'],
+			['#2CC6F7', '#00e00f', '#db0f00', '#bf44b2'],
 			['hostgroup=all&style=hostdetail&hoststatustypes=1', 'hostgroup=all&style=hostdetail&hoststatustypes=2', 'hostgroup=all&style=hostdetail&hoststatustypes=4', 'hostgroup=all&style=hostdetail&hoststatustypes=8']
 		];
 	}
@@ -130,7 +130,7 @@ function drawPieChart(div_id, title, datas, column_type, link)
 		var begin_url = path_nagios_status+'?';
 		var columns = [ 
 			["pending", "ok", "warning", "critical", "unknown"],
-			['#2CC6F7', '#03c700', '#ff9500', '#ff2d55', '#99A2A8'],
+			['#2CC6F7', '#03c700', '#ff9500', '#ff2d55', '#bf44b2'],
 			['host=all&hoststatustypes=15&servicestatustypes=1&style=detail', 'host=all&hoststatustypes=15&servicestatustypes=2&style=detail', 'host=all&hoststatustypes=15&servicestatustypes=4&style=detail', 'host=all&hoststatustypes=15&servicestatustypes=16&style=detail', 'host=all&_=1467375869340&hoststatustypes=15&servicestatustypes=8&style=detail']
 		];
 	}
@@ -139,7 +139,7 @@ function drawPieChart(div_id, title, datas, column_type, link)
 		var begin_url = '/module/monitoring_ged/index.php?';
 		var columns = [ 
 			["ok", "warning", "critical", "unknown"],
-			['#03c700', '#ff9500', '#ff2d55', '#99A2A8'],
+			['#03c700', '#ff9500', '#ff2d55', '#bf44b2'],
 			["q=active&status=0", "q=active&status=1", "q=active&status=2", "q=active&status=3"]
 		];
 	}
