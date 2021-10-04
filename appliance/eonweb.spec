@@ -72,6 +72,23 @@ case "$1" in
   ;;
 esac
 
+# mariadb variables
+echo "
+[mysql]
+default-character-set=utf8mb4
+
+[mysqld]
+collation-server = utf8mb4_unicode_ci
+character-set-server = utf8mb4
+join_buffer_size = 31000000
+innodb_buffer_pool_size = 237380000
+innodb_flush_log_at_timeout = 3
+innodb_read_io_threads = 32
+innodb_write_io_threads = 16
+innodb_io_capacity = 5000
+innodb_io_capacity_max = 10000
+bind-address = 127.0.0.1" > /etc/my.cnf
+
 %clean
 rm -rf %{buildroot}
 
