@@ -1,11 +1,11 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
-Version: 5.4
-Release: 0
+Version: 6
+Release: 1
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
-Requires: backup-manager, cacti0, ged, ged-mysql, eon4apps, lilac >= 3.2, snmptt, thruk 
+Requires: backup-manager, cacti0 >= 1.2.18, ged, ged-mysql, eon4apps, lilac >= 3.2, snmptt, thruk 
 Requires: httpd, MariaDB-server >= 10.6.3, mod_auth_eon, mod_perl
 Requires: php >= 8.0, php-mysqlnd, php-ldap, php-process, php-xml
 Requires: nagios >= 3.0, nagios-plugins >= 1.4.0, nagvis, nagiosbp, notifier, nagios-plugins-nrpe
@@ -66,7 +66,7 @@ case "$1" in
     /usr/bin/chown apache:apache /srv/eyesofnetwork/eonweb/module/admin_itsm/uploaded_file
     # Update EON 5.3.11
     /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.11.sql 2>/dev/null
-    # Update EON 5.4
+    # Update EON 6
     /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.4.sql 2>/dev/null
     echo "Apache ALL=NOPASSWD:/bin/systemctl * nagflux,/bin/systemctl * influxd,/bin/systemctl * grafana-server,/bin/systemctl * httpd,/bin/systemctl * mariadb" >> /etc/sudoers
   ;;
@@ -89,6 +89,11 @@ innodb_io_capacity = 5000
 innodb_io_capacity_max = 10000
 bind-address = 127.0.0.1" > /etc/my.cnf
 
+/bin/systemctl restart mariadb
+
+# change password hash
+php -f %{eonconfdir}/updates/6.0.1.sql 
+
 %clean
 rm -rf %{buildroot}
 
@@ -101,8 +106,12 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
+* Mon Oct 04 2021 Julien GONZALEZ <julien.gonzalez1498@gmail.com> - 6-1.eon
+- fix mariadb config #62
+- fix directories rights
+- upgrade password hash
 
-* Mon Sep 13 2021 Julien GONZALEZ <julien.gonzalez1498@gmail.com> - 5.4.eon
+* Mon Sep 13 2021 Julien GONZALEZ <julien.gonzalez1498@gmail.com> - 6.eon
 - Update code compatibility for PHP 8
 - Update code compatibility for Cacti v1.2.18
 - Fix process accessibility
