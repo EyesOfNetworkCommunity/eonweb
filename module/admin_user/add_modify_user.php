@@ -166,7 +166,10 @@ include("../../side.php");
 					else $eonweb_oldgroupname = "";
 
 					if ($user_password1 != "abcdefghijklmnopqrstuvwxyz") {
-						$passwd_temp = md5($user_password1);
+						// $passwd_temp = md5($user_password1);
+						// EON 6.0.1 - upgrade password hash
+						$passwd_temp = password_hash(md5($user_password1), PASSWORD_DEFAULT);
+						
 						// Update into eonweb
 						$datas = array(
 							$user_name,
@@ -225,8 +228,6 @@ include("../../side.php");
 					sql($database_lilac,"DELETE from nagios_contact_group_member WHERE contact=? and contactgroup=?", array($lilac_userid, $lilac_oldgroupid));
 					if($lilac_groupid!="" and $lilac_userid!="" and $user_limitation!="1")
 						sql($database_lilac,"INSERT into nagios_contact_group_member (contactgroup,contact) values(?, ?)", array($lilac_groupid, $lilac_userid));
-
-					
 					
 					// update user into nagvis :
 					$bdd = new PDO('sqlite:/srv/eyesofnetwork/nagvis/etc/auth.db');
@@ -242,9 +243,11 @@ include("../../side.php");
 						// update in nagvis
 						if($create_user_in_nagvis=="yes"){
 							$nagvis_id = $nagvis_user_exist["userId"];
-							$req = $bdd->prepare("UPDATE users SET name = ?, password = ? WHERE userId = ?");
-							// TO FIX : add verification when $passwd_temp is empty
-							$req->execute(array($user_name, sha1($nagvis_salt.$passwd_temp), $nagvis_id));
+							// EON 6.0.1 - Upgrade password hash
+							if (isset($passwd_temp)){
+								$req = $bdd->prepare("UPDATE users SET name = ?, password = ? WHERE userId = ?");
+								$req->execute(array($user_name, sha1($nagvis_salt.password_hash($user_password1, PASSWORD_DEFAULT)), $nagvis_id));
+							}
 							$req = $bdd->prepare("UPDATE users2roles SET roleId = ? WHERE userId = ?");
 							$req->execute(array($nagvis_role_id, $nagvis_id));
 						} else { // delete in nagvis
@@ -381,8 +384,8 @@ include("../../side.php");
 				else { $nagvis_user = false; }
 				if($create_user_in_cacti == "yes"){ $cacti_user = true; }
 				else { $cacti_user = false; }
-				// EON 5.4 - fix default value
-				$user_group = retrieve_form_data("user_group",0);
+				
+				$user_group = retrieve_form_data("user_group","");
 				$nagvis_grp = retrieve_form_data("nagvis_group", "");
 				$user_id=insert_user(stripAccents($user_name), $user_descr, $user_group, $user_password1, $user_password2, $user_type, $user_location,$user_mail,$user_limitation, true, $create_user_in_nagvis, $create_user_in_cacti, $nagvis_grp, $user_language, $theme);
 				//message(8,"User location: $user_location",'ok');	// For debug pupose, to be removed

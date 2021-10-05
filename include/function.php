@@ -777,7 +777,10 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 	
 	if (($user_name != "") && ($user_name != null) && ($user_exist == 0)) {
 		if (($user_password1 != "") && ($user_password1 != null) && ($user_password1 == $user_password2)) {
-			$user_password = md5($user_password1);
+			// $user_password = md5($user_password1);
+
+			// EON 6.0.1 - upgrade password hash
+			$user_password = password_hash(md5($user_password1), PASSWORD_DEFAULT);
 
 			// Insert into eonweb
 			sql($database_eonweb,"INSERT INTO users (user_name,user_descr,group_id,user_passwd,user_type,user_location,user_limitation,user_language,theme) VALUES(?,?,?,?,?,?,?,?,?)", array($user_name, $user_descr, $user_group, $user_password, $user_type, $user_location, $user_limitation, $user_language, $theme));
@@ -836,8 +839,11 @@ function insert_user($user_name, $user_descr, $user_group, $user_password1, $use
 					$nagvis_salt = '29d58ead6a65f5c00342ae03cdc6d26565e20954';
 					
 					// insert user in nagvis SQLite DB
-					$sql = "INSERT INTO users (name, password) VALUES ('$user_name', '".sha1($nagvis_salt.$user_password1)."')";
-					$bdd->exec($sql);
+					// $sql = "INSERT INTO users (name, password) VALUES ('$user_name', '".sha1($nagvis_salt.$user_password1)."')";
+					// $bdd->exec($sql);
+					// EON 6.0.1 - Upgrade password hash
+					$req_pwd = $bdd->prepare("INSERT INTO users (name, password) VALUES (?, ?)");
+					$req_pwd->execute(array($user_name, sha1($nagvis_salt.password_hash($user_password1, PASSWORD_DEFAULT))));
 
 					// insert user's right as "Guest" by default
 					$sql = "SELECT userId FROM users WHERE name = '$user_name'";

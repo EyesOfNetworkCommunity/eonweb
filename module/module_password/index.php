@@ -53,7 +53,10 @@ include("../../side.php");
 
 				if (($user_password1 != "") && ($user_password1 != null) && ($user_password1 == $user_password2)) {
 					if($user_password1!="abcdefghijklmnopqrstuvwxyz") {
-						$user_password = md5($user_password1);
+						// $user_password = md5($user_password1);
+
+						// EON 6.0.1 - upgrade password hash
+						$user_password = password_hash(md5($user_password), PASSWORD_DEFAULT);
 
 						// Insert into eonweb
 						$datas = array(
@@ -74,7 +77,10 @@ include("../../side.php");
 
 						if($nagvis_user_exist["userId"] > 0){
 							$nagvis_id = $nagvis_user_exist["userId"];
-							$hashed_password = sha1($nagvis_salt.$user_password1);
+							// $hashed_password = sha1($nagvis_salt.$user_password1);
+							// EON 6.0.1 - Upgrade password hash
+							$hashed_password = sha1($nagvis_salt.password_hash($user_password1, PASSWORD_DEFAULT));
+
 							$req = $bdd->prepare("UPDATE users SET password = ? WHERE userId = ?");
 							$req->execute(array($hashed_password, $nagvis_id));
 						}
