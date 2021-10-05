@@ -1,6 +1,6 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
-Version: 6
+Version: 6.0
 Release: 1
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
 Group: Applications/System
@@ -106,7 +106,7 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
-* Mon Oct 04 2021 Julien GONZALEZ <julien.gonzalez1498@gmail.com> - 6-1.eon
+* Mon Oct 04 2021 Julien GONZALEZ <julien.gonzalez1498@gmail.com> - 6.0-1.eon
 - fix mariadb config #62
 - fix directories rights
 - upgrade password hash
