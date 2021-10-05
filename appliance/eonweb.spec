@@ -92,7 +92,7 @@ bind-address = 127.0.0.1" > /etc/my.cnf
 /bin/systemctl restart mariadb
 
 # change password hash
-php -f %{eonconfdir}/updates/6.0.1.sql 
+php -f %{eonconfdir}/updates/6.0.1.php 
 
 %clean
 rm -rf %{buildroot}
