@@ -42,8 +42,8 @@ cp -afv ./* %{buildroot}%{datadir}
 cp -afv %{buildroot}%{eonconfdir}/eonbackup %{buildroot}%{_sysconfdir}/cron.d/
 cp -afv %{buildroot}%{eonconfdir}/eonwebpurge %{buildroot}%{_sysconfdir}/cron.d/
 cp -afv %{buildroot}%{eonconfdir}/eonweb.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
-/bin/chmod 775 %{datadir}/cache
-/bin/chown -R root:eyesofnetwork %{datadir}
+/bin/chmod 775 %{buildroot}%{datadir}/cache
+/bin/chown -R root:eyesofnetwork %{buildroot}%{datadir}
 
 %post
 case "$1" in
