@@ -267,7 +267,7 @@ td.outageUnimportantProblem a,td.hostUnimportantProblem a,td.serviceUnimportantP
 }
 
 .serviceUNKNOWN {
-  background-color:#ffcd00;
+  background-color:#CC66FF;
   color: #333;
 }
 
@@ -813,7 +813,8 @@ TD.notificationsWARNING {
 }
 
 TD.serviceTotalsUNKNOWN {
-  background-color:#ffcd00;
+  background-color:#CC66FF;
+  color:#333;
 }
 
 TD.serviceTotalsWARNING, TD.serviceTotalsPROBLEMS, TD.hostTotalsPROBLEMS {
@@ -871,8 +872,8 @@ TD.statusEven {
 }
 
 .statusUNKNOWN {
-  background-color:#ffcd00 !important;
-  color:#5f6268;
+  background-color:#CC66FF !important;
+  color:#333;
   height:22px;
   padding:1px;
 }
