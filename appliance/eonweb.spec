@@ -67,7 +67,7 @@ case "$1" in
     # Update EON 5.3.11
     /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.11.sql 2>/dev/null
     # Update EON 6
-    /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.4.sql 2>/dev/null
+    /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/6.sql 2>/dev/null
     echo "Apache ALL=NOPASSWD:/bin/systemctl * nagflux,/bin/systemctl * influxd,/bin/systemctl * grafana-server,/bin/systemctl * httpd,/bin/systemctl * mariadb" >> /etc/sudoers
   ;;
 esac
@@ -92,7 +92,7 @@ bind-address = 127.0.0.1" > /etc/my.cnf
 /bin/systemctl restart mariadb
 
 # change password hash
-php -f %{eonconfdir}/updates/6.0.1.php 
+php -f %{eonconfdir}/updates/6.php 
 
 %clean
 rm -rf %{buildroot}
@@ -106,16 +106,14 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
-* Mon Oct 04 2021 Julien GONZALEZ <julien.gonzalez1498@gmail.com> - 6.0-1.eon
-- fix mariadb config #62
-- fix directories rights
-- upgrade password hash
-
-* Mon Sep 13 2021 Julien GONZALEZ <julien.gonzalez1498@gmail.com> - 6.eon
+* Mon Oct 04 2021 Julien GONZALEZ <julien.gonzalez1498@gmail.com> - 6.eon
 - Update code compatibility for PHP 8
 - Update code compatibility for Cacti v1.2.18
 - Fix process accessibility
 - Fix ged events not showing
+- fix mariadb config #62
+- fix directories rights
+- upgrade password hash
 
 * Mon Mar 15 2021 Oscar POELS <o.poels@gmail.com> - 5.3-11.eon
 - fix security issue CVE-2021-27514 (sessions_id by renforcing generation to prevent force brut) #82 #87
