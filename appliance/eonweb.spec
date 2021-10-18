@@ -1,11 +1,11 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
 Version: 6.0
-Release: 1
+Release: 0
 Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
-Requires: backup-manager, cacti0 >= 1.2.18, ged, ged-mysql, eon4apps, lilac >= 3.2, snmptt, thruk 
+Requires: backup-manager, cacti0, ged, ged-mysql, eon4apps, lilac >= 3.2, snmptt, thruk 
 Requires: httpd, MariaDB-server >= 10.6.3, mod_auth_eon, mod_perl
 Requires: php >= 8.0, php-mysqlnd, php-ldap, php-process, php-xml
 Requires: nagios >= 3.0, nagios-plugins >= 1.4.0, nagvis, nagiosbp, notifier, nagios-plugins-nrpe
@@ -106,7 +106,7 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
-* Mon Oct 04 2021 Julien GONZALEZ <julien.gonzalez1498@gmail.com> - 6.eon
+* Mon Oct 04 2021 Julien GONZALEZ <julien.gonzalez1498@gmail.com> - 6.0-0.eon
 - Update code compatibility for PHP 8
 - Update code compatibility for Cacti v1.2.18
 - Fix process accessibility
