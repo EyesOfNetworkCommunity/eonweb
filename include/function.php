@@ -1177,7 +1177,7 @@ function slaPieChart($field, $search, $period)
 			$sql .= $period_clause;
 			
 			$result = sql($database_ged, $sql);
-			$array_result[$key] += $result[0];
+			$array_result[$key] += $result[0][0];
 		}
 	}
 	return json_encode($array_result);
