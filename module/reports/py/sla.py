@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 def getStatusByMonths(filters):
     # url should not be static
-    url = "https://localhost/eonapi/listNagiosObjects?username=admin&apiKey=fc9240d0e5f693322805af565d5e9691bc65676324b83cfb2567b6fc51b92038"
+    url = "https://localhost/eonapi/listNagiosObjects?username=admin&apiKey=84e14067f22247fa6336fcf9bbdc032e14741e057915eb868fbbcef88f279342"
 
     myobj = '''{ 
                 "object": "log", 
@@ -52,8 +52,10 @@ def getSlaByMonths(filters):
             date["Sla"].append(0)
     return date
 
-def renderPlotPng(filters):
+def renderPlotPng(filters, dashId):
     slaMonths = getSlaByMonths(filters)
     ss = pd.DataFrame.from_dict(slaMonths)
-    ax = ss.plot.bar(x='Months', y='Sla', rot=0)
-    plt.savefig("sla.png")
+    ss.plot.bar(x='Months', y='Sla', rot=0)
+
+    plt.savefig("ressources/" + dashId + "_sla.png")
+    

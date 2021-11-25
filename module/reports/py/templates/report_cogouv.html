@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8">
+  <title>A4</title>
+
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+
+  <!-- Set page size here: A5, A4 or A3 -->
+  <!-- Set also "landscape" if you need -->
+  <style>
+@page { margin: 0;  } body { margin: 0 }
+.sheet {  margin: 0;  position: relative; box-sizing: border-box; }
+.sheet.padding-10mm { padding: 10mm;  }
+body.A4 .sheet { width: 210mm; height: 296mm;   -webkit-print-color-adjust: exact !important;}
+@page { size: A4; page-break-after: auto;}
+
+h1 {font-family: 'Vinci Sans'; color: white; text-align: center; background-color: #005EB8;padding-left: 24px;padding-right: 24px;padding-top: 24px;padding-bottom: 24px;}
+h2 {font-family: 'Vinci Sans'; color: #005EB8; }
+h4.title_changelog {font-family: Helvetica, Arial, sans-serif;margin-top: 0px;margin-bottom: 4px;color: #242b3d;font-size: 16px;line-height: 23px;}
+h4.type_changelog {font-family: Helvetica, Arial, sans-serif;margin-top: 0px;margin-bottom: 0px;font-size: 16px;line-height: 24px;color: #82899a;text-align: left;}
+p {color: #424651;margin-top: 0px;margin-bottom: 8px;}
+img {max-width: 100%;}
+li {list-style: none;}
+
+.table { display : flex; flex-direction : column;}
+
+
+.tg .tg-6kdv{background-color:#efefef;border-color:#efefef;color:#000000;text-align:left;vertical-align:top; font-weight: 800;}
+.tg  {border-collapse:collapse;border-color:#ccc;border-spacing:0;width:100%}
+.tg td{background-color:#fff;border-bottom-width:1px;border-color:#ccc;border-style:solid;border-top-width:1px;
+  border-width:0px;color:#333;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;
+  word-break:normal;}
+.tg th{background-color:#f0f0f0;border-bottom-width:1px;border-color:#ccc;border-style:solid;border-top-width:1px;
+  border-width:0px;color:#333;font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;
+  padding:10px 5px;word-break:normal;}
+.tg .tg-btxf{background-color:#f9f9f9;border-color:inherit;text-align:left;vertical-align:top}
+.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
+   
+}
+
+
+  </style>
+</head>
+
+<!-- Set "A5", "A4" or "A3" for class name -->
+<!-- Set also "landscape" if you need -->
+<body class="A4">
+
+  <!-- Each sheet element should have the class "sheet" -->
+  <!-- "padding-**mm" is optional: you can set 10, 15, 20 or 25 -->
+  <section class="sheet padding-10mm">
+  
+  <img src="https://support.axians.fr/iwscommonfiles/iwsprod/customimages/axians.png" />
+
+	<h1>Rapport d'EYESOFNETWORK</h1>
+  
+  {% for item in graph %}
+	  <h2>{{item.hostname}}</h2>
+    <li><img src="{{item.sla_url}}" alt=""></a></li>
+    {% for key, url in item.dash_url.items() %}
+      <li><img src="{{url}}" alt=""></a></li>
+    {% endfor %} 
+  {% endfor %}
+  </section>
+</body>
+
+</html>

@@ -24,6 +24,14 @@
 
 include("../../header.php");
 include("../../side.php");
+include("classes/ReportService.php");
+$report = new Report;
+$report->setId(71);
+
+$report->setName(bin2hex(random_bytes(6)));
+$report->setHosts(array("lkocalhosfft", "test1"));
+$report->setServices(array("memory", "processor"));
+ReportService::save($report);
 ?>
 
 <div id="page-wrapper">
@@ -43,6 +51,30 @@ include("../../side.php");
         </div>
         <div class="panel-body">
             <form  class="form-horizontal" id="myForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="report_name">Nom :</label>
+                    <div class="col-sm-6"> 
+                        <input type="text" class="form-control" id="report_name" name="report_name" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="report_name">Nom :</label>
+                    <div class="col-sm-6"> 
+                        <input type="text" class="form-control" id="report_name" name="report_name" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="report_name">Nom :</label>
+                    <div class="col-sm-6"> 
+                        <input type="text" class="form-control" id="report_name" name="report_name" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="report_name">Nom :</label>
+                    <div class="col-sm-6"> 
+                        <input type="text" class="form-control" id="report_name" name="report_name" required>
+                    </div>
+                </div>
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="report_name">Nom :</label>
                     <div class="col-sm-6"> 
