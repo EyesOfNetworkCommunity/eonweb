@@ -4,58 +4,56 @@ import datetime
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def getStatusByMonths(filters):
-    # url should not be static
-    url = "https://localhost/eonapi/listNagiosObjects?username=admin&apiKey=84e14067f22247fa6336fcf9bbdc032e14741e057915eb868fbbcef88f279342"
+def getStatus(filters, type, key):
 
+    url = "https://localhost/eonapi/listNagiosObjects?username=admin&apiKey=" + key
     myobj = '''{ 
                 "object": "log", 
                 "columns": ["state","time","host_name"] 
             }'''
             
     myobj = json.loads(myobj)
-    
     myobj["filters"] = filters
     myobj = json.dumps(myobj)
 
     x = requests.post(url, data = myobj, verify=False).json()
-    date = {
-    1 : [],
-    2 : [],
-    3 : [],
-    4 : [],
-    5 : [],
-    6 : [],
-    7 : [],
-    8 : [],
-    9 : [],
-    10 : [],
-    11 : [],
-    12 : [],
-    }
-
     y = x["result"]["default"]
-    for val in y:
-        date[datetime.date.fromtimestamp(val["time"]).month].append(val["state"])
-    return date
+    date = {}
 
-def getSlaByMonths(filters):
-    date = {
-        "Months" : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        "Sla" : []
-        }
-    status = getStatusByMonths(filters)
-    for val in status:
-        if len(status[val]) != 0:
-            date["Sla"].append(status[val].count(0) / len(status[val]) * 100)
+    if not y:
+        return None
+
+    y.reverse()
+    result = {
+        "Date": [],
+        "Sla": []
+    }
+    for key, val in enumerate(y):
+        q = datetime.date.fromtimestamp(val["time"])
+        if type == "lastDay" or type == "thisDay" or type == "lastWeek" or type == "thisWeek":
+            y[key]["time"] = q.strftime("%Y-%m-%d")
         else:
-            date["Sla"].append(0)
-    return date
+            y[key]["time"] = q.strftime("%Y-%m")
+        if y[key]["time"] not in date:
+            date[y[key]["time"]] = []
+        else:
+            date[y[key]["time"]].append(val["state"])
+        
+    for key, val in enumerate(date.items()):
+        result["Date"].append( val[0])
+        result["Sla"].append(val[1].count(0) / len(val[1]) *100)
+    return result
 
-def renderPlotPng(filters, dashId):
-    slaMonths = getSlaByMonths(filters)
-    ss = pd.DataFrame.from_dict(slaMonths)
-    ss.plot.bar(x='Months', y='Sla', rot=0)
 
-    plt.savefig("ressources/" + dashId + "_sla.png")
-    
+
+def renderPlotPng(filters, dashId, type, key):
+    slaMonths = getStatus(filters, type, key)
+    if slaMonths == None:
+        return None
+    df = pd.DataFrame(slaMonths)
+
+    plt.rcParams["figure.figsize"] = (13, 8)
+    plt.rcParams.update({'font.size': 13})
+    df.plot.bar(x='Date', y='Sla', rot=0)
+    plt.savefig("ressources/" + dashId + "_sla.png", bbox_inches='tight')
+    plt.close()

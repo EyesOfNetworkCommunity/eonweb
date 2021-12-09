@@ -1,51 +1,69 @@
 # -*- coding: utf-8 -*-
 from flask import request, Flask
 import sla
-import test
+import graf
 import jinja2
-import json
+import pdfkit
+import os
 
 app = Flask(__name__)
 
 @app.route("/report", methods=["POST"])
 def create_report():
-    if not request.json or not 'hostname' in request.json or not 'period' in request.json:
-        return "not ok"
-    # filters = ["host_name = " + request.json['hostname'], "time > " + request.json['period'][0], "time < " + request.json['period'][1]]
+    reportname = request.json['reportname']
     hostname = request.json['hostname']
     dashId = request.json['dashId']
     serviceId = request.json['serviceId']
     period = request.json['period']
-    # sla.renderPlotPng(filters, dashId, serviceId)
-    graphs = []
-    slaGraphs = []
-    dada = []
+    type = request.json['type']
+    key = request.json["key"]
+    eDash = []
     for i, dash in enumerate(dashId):
-        # dada[i] = hostname[i]
-        dada.append({})
-        dada[i]["hostname"] = hostname[i]
-        dada[i]["dash_url"] = {}
+        eDash.append({})
+        eDash[i]["hostname"] = hostname[i]
+        eDash[i]["dash_url"] = {}
         for service in serviceId:
-            test.grafanaGraph(dash, hostname[i], period, service)
-            # graphs.append("ressources/" + dash + "_" + service + ".png")
-            dada[i]["dash_url"][service] = "ressources/" + dash + "_" + service + ".png"
+            graf.grafanaGraph(dash, hostname[i], period, service)
+            eDash[i]["dash_url"][service] = "../" + dash + "_" + service + ".png"
 
         filters = ["host_name = " + hostname[i], "time > " + period[0], "time < " + period[1]]
-        sla.renderPlotPng(filters, dash)
-        dada[i]["sla_url"] = "ressources/" + dash + "_sla.png"
-        # slaGraphs.append("ressources/" + dash + "_sla.png")
+        sla.renderPlotPng(filters, dash, type, key)
+        eDash[i]["sla_url"] = "../" + dash + "_sla.png"
 
 
     templateLoader = jinja2.FileSystemLoader(searchpath="./templates/")
     templateEnv = jinja2.Environment(loader=templateLoader)
-    TEMPLATE_FILE = "report_cogouv.html"
+    TEMPLATE_FILE = "report.html"
     template = templateEnv.get_template(TEMPLATE_FILE)
     
-    output = template.render(sla=slaGraphs, graph = dada)
-    html_file = open('rapport.html', 'w')
+    output = template.render(graph = eDash)
+    report_html_path = 'ressources/reports/' + reportname + '_report.html'
+    html_file = open(report_html_path, 'w')
     html_file.write(output)
     html_file.close()
-    return "Ok"
+
+    # OPTIONS
+    options = {
+        'page-size':'A4',
+        'encoding':'utf-8', 
+        'margin-top':'0cm',
+        'margin-bottom':'0cm',
+        'margin-left':'0cm',
+        'margin-right': '0cm'
+    }
+
+    # transform html to pdf with pdfkit
+    pdfkit.from_file(report_html_path, 'ressources/reports/' + reportname + '_report.pdf', options=options, verbose=True)
+    if os.path.exists(os.getcwd() + "/" + report_html_path):
+        os.remove(os.getcwd() + "/" + report_html_path)
+
+    for i, da in enumerate(eDash):
+        if os.path.exists(os.getcwd() + "/ressources/reports/" + da["sla_url"]):
+            os.remove(os.getcwd() + "/ressources/reports/" + da["sla_url"])
+        for url in da["dash_url"].items(): 
+            if os.path.exists(os.getcwd() + "/ressources/reports/" + url[1]):
+                os.remove(os.getcwd() + "/ressources/reports/" + url[1])
+    return "Report generated"
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='127.0.0.1')

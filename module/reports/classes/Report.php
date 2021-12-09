@@ -25,7 +25,10 @@ class Report {
     private $name;
     private $hosts = array();
     private $services = array();
-
+    private $period;
+    private $cron;
+    private $emails = array();
+    
     //===============GETTER AND SETTER ==========================
 
     /**
@@ -104,6 +107,66 @@ class Report {
     public function setServices($services)
     {
         $this->services = $services;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of period
+     */ 
+    public function getPeriod()
+    {
+        return $this->period;
+    }
+
+    /**
+     * Set the value of period
+     *
+     * @return  self
+     */ 
+    public function setPeriod($period)
+    {
+        $this->period = $period;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of cron
+     */ 
+    public function getCron()
+    {
+        return $this->cron;
+    }
+
+    /**
+     * Set the value of cron
+     *
+     * @return  self
+     */ 
+    public function setCron($cron)
+    {
+        $this->cron = $cron;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of emails
+     */ 
+    public function getEmails()
+    {
+        return $this->emails;
+    }
+
+    /**
+     * Set the value of emails
+     *
+     * @return  self
+     */ 
+    public function setEmails($emails)
+    {
+        $this->emails = $emails;
 
         return $this;
     }
