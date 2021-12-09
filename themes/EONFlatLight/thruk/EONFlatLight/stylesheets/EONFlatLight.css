@@ -266,7 +266,8 @@ td.outageUnimportantProblem a,td.hostUnimportantProblem a,td.serviceUnimportantP
 }
 
 .serviceUNKNOWN {
-  background-color:#ffcd00;
+  background-color:#CC66FF;
+  color:#FFFFFF;
 }
 
 TD.statusEven.tableRowSelected, TR.commentEven TD.tableRowSelected, TR.downtimeEven TD.tableRowSelected {
@@ -808,7 +809,8 @@ TD.notificationsWARNING {
 }
 
 TD.serviceTotalsUNKNOWN {
-  background-color:#ffcd00;
+  background-color:#CC66FF;
+  color:#FFFFFF
 }
 
 TD.serviceTotalsWARNING, TD.serviceTotalsPROBLEMS, TD.hostTotalsPROBLEMS {
@@ -865,8 +867,8 @@ TD.statusEven {
 }
 
 .statusUNKNOWN {
-  background-color:#ffcd00 !important;
-  color:#5f6268;
+  background-color:#CC66FF !important;
+  color:#FFFFFF;
   height:22px;
   padding:1px;
 }

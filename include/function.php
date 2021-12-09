@@ -1195,7 +1195,7 @@ function slaPieChart($field, $search, $period)
 			$sql .= $period_clause;
 
 			$result = sql($database_ged, $sql);
-			// EON 5.4 - Fix code
+			// EON 6.0 - Fix code
 			$array_result[$key] += $result[0][0];
 		}
 	}
