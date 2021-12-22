@@ -70,8 +70,8 @@ if(!empty($_POST["report_name"])) {
         }
         $report->setEmails(explode(",", $_POST["report_mail"]));
 
-        ReportService::generateCron();
         ReportService::save($report);
+        ReportService::generateCron();
     }
 }
 
