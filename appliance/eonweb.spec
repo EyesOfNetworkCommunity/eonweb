@@ -45,7 +45,6 @@ cp -afv %{buildroot}%{eonconfdir}/eonwebpurge %{buildroot}%{_sysconfdir}/cron.d/
 cp -afv %{buildroot}%{eonconfdir}/eonweb.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
 /bin/chmod 775 %{buildroot}%{datadir}/cache
 /bin/chown -R root:eyesofnetwork %{buildroot}%{datadir}
-/usr/bin/chown apache:apache %{buildroot}%{datadir}/module/reports/py/cron/eyesofnetwork.cron
 
 %post
 case "$1" in
@@ -104,7 +103,6 @@ ExecStart = /usr/bin/python3 /srv/eyesofnetwork/eonweb/module/reports/py/app.py
 WantedBy = multi-user.target" > /etc/systemd/system/reports.service
 
 /bin/systemctl enable reports
-/bin/systemctl restart reports
 
 # change password hash
 php -f %{eonconfdir}/updates/6.php 

@@ -23,9 +23,9 @@
 // #######################################
 // # General Information
 // #######################################
-$version="5";
-$release="3";
-$surname="Zélie";
+$version="6";
+$release="0";
+$surname="Alopex";
 
 // #######################################
 // # Database config information
