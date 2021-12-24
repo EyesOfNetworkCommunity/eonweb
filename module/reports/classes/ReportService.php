@@ -327,6 +327,9 @@ class ReportService {
                 case "everyYear":
                     $cronTab .= "0 0 1 1 * /usr/bin/php /srv/eyesofnetwork/eonweb/module/reports/cron.php " . $cron["id"] . "\n";
                     break;
+                default:
+                    $cronTab .= $cron["cron"] . " /usr/bin/php /srv/eyesofnetwork/eonweb/module/reports/cron.php " . $cron["id"] . "\n";
+                    break;
             }
         }
         $filename = 'py/cron/eyesofnetwork.cron';
