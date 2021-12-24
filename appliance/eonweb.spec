@@ -2,7 +2,7 @@ Summary: EyesOfNetwork Web Interface
 Name: eonweb
 Version: 6.0
 Release: 0
-Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
+Source: /data/eonsrc/SOURCES/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
 Requires: backup-manager, cacti0, ged, ged-mysql, eon4apps, lilac >= 3.2, snmptt, thruk 
@@ -10,6 +10,7 @@ Requires: httpd, MariaDB-server >= 10.6.3, mod_auth_eon, mod_perl
 Requires: php >= 8.0, php-mysqlnd, php-ldap, php-process, php-xml
 Requires: nagios >= 3.0, nagios-plugins >= 1.4.0, nagvis, nagiosbp, notifier, nagios-plugins-nrpe
 Requires: grafana
+Requires: python3, wkhtmltopdf, xorg-x11-server-Xvfb, alsa-lib, atk, cups-libs, gtk3, ipa-gothic-fonts, libXcomposite, libXcursor, libXdamage, libXext, libXi, libXrandr, libXScrnSaver, libXtst, pango, xorg-x11-fonts-100dpi, xorg-x11-fonts-75dpi, xorg-x11-fonts-cyrillic, xorg-x11-fonts-misc, xorg-x11-fonts-Type1, xorg-x11-utils
 Requires: net-snmp,net-snmp-perl
 Obsoletes: histou
 
@@ -44,6 +45,7 @@ cp -afv %{buildroot}%{eonconfdir}/eonwebpurge %{buildroot}%{_sysconfdir}/cron.d/
 cp -afv %{buildroot}%{eonconfdir}/eonweb.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
 /bin/chmod 775 %{buildroot}%{datadir}/cache
 /bin/chown -R root:eyesofnetwork %{buildroot}%{datadir}
+/usr/bin/chown apache:apache %{buildroot}%{datadir}/module/reports/py/cron/eyesofnetwork.cron
 
 %post
 case "$1" in
@@ -91,6 +93,20 @@ bind-address = 127.0.0.1" > /etc/my.cnf
 
 /bin/systemctl restart mariadb
 
+echo "
+[Unit]
+Description = handling reports generation
+After = network.target
+
+[Service]
+ExecStart = /usr/bin/python3 /srv/eyesofnetwork/eonweb/module/reports/py/app.py
+
+[Install]
+WantedBy = multi-user.target" > /etc/systemd/system/reports.service
+
+/bin/systectl enable reports
+/bin/systectl restart reports
+
 # change password hash
 php -f %{eonconfdir}/updates/6.php 
 
@@ -107,13 +123,16 @@ rm -rf %{buildroot}
 
 %changelog
 * Mon Oct 04 2021 Julien GONZALEZ <julien.gonzalez1498@gmail.com> - 6.0-0.eon
+- Add new report module
 - Update code compatibility for PHP 8
 - Update code compatibility for Cacti v1.2.18
-- Fix process accessibility
-- Fix ged events not showing
+- fix process accessibility
+- fix ged events not showing
 - fix mariadb config #62
 - fix directories rights
 - upgrade password hash
+- fix technical SLA reporting not displaying
+- fix design
 
 * Mon Mar 15 2021 Oscar POELS <o.poels@gmail.com> - 5.3-11.eon
 - fix security issue CVE-2021-27514 (sessions_id by renforcing generation to prevent force brut) #82 #87
