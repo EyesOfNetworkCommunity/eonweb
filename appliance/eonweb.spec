@@ -93,8 +93,7 @@ bind-address = 127.0.0.1" > /etc/my.cnf
 
 /bin/systemctl restart mariadb
 
-echo "
-[Unit]
+echo "[Unit]
 Description = handling reports generation
 After = network.target
 
@@ -104,8 +103,8 @@ ExecStart = /usr/bin/python3 /srv/eyesofnetwork/eonweb/module/reports/py/app.py
 [Install]
 WantedBy = multi-user.target" > /etc/systemd/system/reports.service
 
-/bin/systectl enable reports
-/bin/systectl restart reports
+/bin/systemctl enable reports
+/bin/systemctl restart reports
 
 # change password hash
 php -f %{eonconfdir}/updates/6.php 
