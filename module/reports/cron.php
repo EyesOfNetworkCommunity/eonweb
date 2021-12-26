@@ -31,6 +31,7 @@ include("/srv/eyesofnetwork/eonweb/module/reports/classes/ReportService.php");
 include("/srv/eyesofnetwork/eonweb/include/function.php");
 
 $report = ReportService::getById($argv[1]);
+ReportService::reportToHTML($report);
 $emails = $report->getEmails();
 
 /**

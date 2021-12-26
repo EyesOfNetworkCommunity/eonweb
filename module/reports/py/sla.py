@@ -55,5 +55,6 @@ def renderPlotPng(filters, dashId, type, key):
     plt.rcParams["figure.figsize"] = (13, 8)
     plt.rcParams.update({'font.size': 13})
     df.plot.bar(x='Date', y='Sla', rot=0)
-    plt.savefig("ressources/" + dashId + "_sla.png", bbox_inches='tight')
+    plt.savefig("/srv/eyesofnetwork/eonweb/module/reports/py/ressources/" + dashId + "_sla.png", bbox_inches='tight')
     plt.close()
+    
