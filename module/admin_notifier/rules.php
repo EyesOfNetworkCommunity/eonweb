@@ -207,7 +207,7 @@ function get_field($field1, $base=false, $field2=false) {
 		}elseif(isset($_POST["add"])){
 			$sql_sort_key = sql($database_notifier,"select max(sort_key+1) as sort_key from rules where type=?", array($rule_type));
 			$rule_sort_key = $sql_sort_key[0]["sort_key"];
-			$sql_add = "INSERT INTO rules VALUES('',?,?,?,?,?,?,?,?,?,?,?)";
+			$sql_add = "INSERT INTO rules (name, type, debug, contact, host, service,state, notificationnumber, timeperiod_id, tracking,sort_key) VALUES(?,?,?,?,?,?,?,?,?,?,?)";
 			sql($database_notifier,$sql_add, array($rule_name, $rule_type, $rule_debug, $rule_contact, $rule_host, $rule_service, $rule_state, $rule_notification, $rule_timeperiod_id, $rule_sort_key, $rule_track));
 			$rule_id = sql($database_notifier, "SELECT id FROM rules ORDER BY id DESC LIMIT 1");
 			$rule_id = $rule_id[0][0];
