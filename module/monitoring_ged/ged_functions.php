@@ -94,7 +94,7 @@ function createTableRow($event, $event_state, $queue)
 			$class = 'class="text-center"';
 			// EON 5.4 - Fix code
 			if($event["comments"] != ""){
-				$value .= ' <i class="glyphicon glyphicon-comment" title="'.$event->comments.'"></i>';
+				$value .= ' <i class="glyphicon glyphicon-comment" title="'.$event["comments"].'"></i>';
 			}
 			if($event["owner"] != ""){
 				$value .= ' <i class="glyphicon glyphicon-floppy-disk"></i>';
