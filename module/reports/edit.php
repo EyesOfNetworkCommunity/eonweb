@@ -19,21 +19,24 @@
 #
 #########################################
 */
-
 include("../../header.php");
 include("../../side.php");
 include("classes/ReportService.php");
 
 $periods = array("lastDay", "thisDay", "lastWeek", "thisWeek", "lastMonth", "last6Month", "thisMonth", "lastYear", "thisYear");
 $crons = array("never", "everyDay", "everyWeek", "everyMonth", "every6Month", "everyYear", "custom");
-$services = array("interfaces", "memory", "partitions", "processor");
+$services = HostService::getServices();
+$servicesName = array();
+foreach($services as $service) {
+    array_push($servicesName, $service["description"]);
+}
+$servicesName = array_unique($servicesName);
 $hosts = HostService::getHosts();
 $emails = array();
 $error = false;
 
 if(!empty($_POST["report_name"])) {
     $report = new Report;
-
     foreach($_POST["hosts"] as $host) {
         if(!in_array($host, array_column($hosts, 'name'))) {
             $error = true;
@@ -41,7 +44,7 @@ if(!empty($_POST["report_name"])) {
     }
 
     foreach($_POST["services"] as $service) {
-        if(!in_array($service, $services)) {
+        if(!in_array($service, $servicesName)) {
             $error = true;
         }
     }
@@ -66,12 +69,13 @@ if(!empty($_POST["report_name"])) {
         if(empty($_POST["report_cron_custom"])) {
             $report->setCron($_POST["cron"]);
         } else {
-            $report->setCron($_POST["report_cron_custom"]);
+            if(!preg_match('/([^0-9-\* ])/', $_POST["report_cron_custom"], $matches)) {
+                $report->setCron($_POST["report_cron_custom"]);
+            }
         }
         $report->setEmails(explode(",", $_POST["report_mail"]));
-
         ReportService::save($report);
-        ReportService::generateCron();
+        var_dump( ReportService::generateCron());
     }
 }
 
@@ -138,7 +142,7 @@ if(!empty($_GET["id"])) {
                         <div class="col-sm-6 select"> 
                             <select class="js-example-basic-multiple" name="services[]" multiple="multiple"  style="width:100%">
                             <?php 
-                                foreach($services as $service) {
+                                foreach($servicesName as $service) {
                                     if($report != null && in_array($service, $report->getServices())) {
                                         print("<option value=" . $service . " selected>" . $service . "</option>");
                                     } else {

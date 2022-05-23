@@ -29,7 +29,7 @@ if($_POST["action"] == "generateReport"){
         if($report == null) {
             return false;
         }
-        return ReportService::reportToHTML($report);
+        echo ReportService::reportToHTML($report);
     }
     return false;
 }

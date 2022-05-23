@@ -30,8 +30,7 @@ if (count($nagios_default) > 0)
 	$nagios_default = $nagios_default[0];
 else $nagios_default = false;
 $itsm = sql("eonweb", "SELECT value FROM configs WHERE name=\"itsm\"");
-$itms = $itsm[0];
-
+$itsm = $itsm[0];
 $queue = "active";
 if(isset($_GET["q"]) && $_GET["q"] == "history"){
 	$queue = "history";

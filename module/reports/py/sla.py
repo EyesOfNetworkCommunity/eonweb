@@ -44,8 +44,6 @@ def getStatus(filters, type, key):
         result["Sla"].append(val[1].count(0) / len(val[1]) *100)
     return result
 
-
-
 def renderPlotPng(filters, dashId, type, key):
     slaMonths = getStatus(filters, type, key)
     if slaMonths == None:

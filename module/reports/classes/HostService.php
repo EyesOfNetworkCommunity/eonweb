@@ -58,4 +58,83 @@ class HostService {
             return $th;
         }
     }
+
+    public static function getHost($name)
+    {
+        global $eon_api_token;
+        $ch = curl_init();
+        try {
+            curl_setopt($ch, CURLOPT_URL, "https://localhost/eonapi/listNagiosObjects?username=admin&apiKey=" . $eon_api_token);
+            curl_setopt($ch, CURLOPT_POST, true);
+            $params = '{
+                "object" : "hosts",
+                "columns" : ["name", "services", "custom_variables"],
+        		"filters": ["name = ' . $name . '"]
+            }';
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            
+            $response = curl_exec($ch);
+            
+            if (curl_errno($ch)) {
+                curl_close($ch);
+                return curl_error($ch);
+            }
+            
+            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            if($http_code == intval(200)){
+                curl_close($ch);
+                return json_decode($response, true)["result"]["default"];
+            }
+            else{
+                curl_close($ch);
+                return "Error : " . $http_code;
+            }
+        } catch (\Throwable $th) {
+            return $th;
+        }
+    }
+
+    public static function getServices()
+    {
+        global $eon_api_token;
+        $ch = curl_init();
+        try {
+            curl_setopt($ch, CURLOPT_URL, "https://localhost/eonapi/listNagiosObjects?username=admin&apiKey=" . $eon_api_token);
+            curl_setopt($ch, CURLOPT_POST, true);
+            $params = '{
+                "object" : "services",
+                "columns" : ["host_name", "description", "perf_data"],
+                "filters": ["perf_data != "]
+            }';
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            
+            $responses = curl_exec($ch);
+            
+            if (curl_errno($ch)) {
+                curl_close($ch);
+                return curl_error($ch);
+            }
+            
+            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            if($http_code == intval(200)){
+                curl_close($ch);
+                $listServices = array();
+                
+                $responses = json_decode($responses, true)["result"]["default"];
+                return $responses;
+            }
+            else{
+                curl_close($ch);
+                return "Error : " . $http_code;
+            }
+        } catch (\Throwable $th) {
+            return $th;
+        }
+    }
 }

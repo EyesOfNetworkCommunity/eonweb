@@ -30,24 +30,28 @@ class ReportService {
         global $database_eonweb;
         if(is_null($report->getId())){
             // Insert name
-            sql($database_eonweb, "INSERT INTO reports (reportName, period, cron) VALUES ( ?, ?, ? )", array($report->getName(), $report->getPeriod(), $report->getCron()));
+            sql($database_eonweb, "INSERT INTO reports (reportName, period, cron) VALUES ( ?, ?, ? )",
+             array($report->getName(), $report->getPeriod(), $report->getCron()));
 
             $savedReport = ReportService::getByName($report->getName());
             $report->setId($savedReport->getId());
 
             // Insert hosts
             foreach($report->getHosts() as $host){
-                sql($database_eonweb, "INSERT INTO reports_hosts (hostName, reportsID) VALUES ( ?, ? )", array($host, $report->getId()));
+                sql($database_eonweb, "INSERT INTO reports_hosts (hostName, reportsID) VALUES ( ?, ? )",
+                 array($host, $report->getId()));
             }
 
             // Insert services
             foreach($report->getServices() as $service){
-                sql($database_eonweb, "INSERT INTO reports_services (serviceName, reportsID) VALUES ( ?, ? )", array($service, $report->getId()));
+                sql($database_eonweb, "INSERT INTO reports_services (serviceName, reportsID) VALUES ( ?, ? )",
+                 array($service, $report->getId()));
             }
 
             // Insert emails
             foreach($report->getEmails() as $email){
-                sql($database_eonweb, "INSERT INTO reports_emails (email, reportsID) VALUES ( ?, ? )", array($email, $report->getId()));
+                sql($database_eonweb, "INSERT INTO reports_emails (email, reportsID) VALUES ( ?, ? )",
+                 array($email, $report->getId()));
             }
 
         } else {
@@ -55,7 +59,8 @@ class ReportService {
             if($savedReport != null) {
 
                 if($savedReport->getName() != $report->getName() || $savedReport->getPeriod() != $report->getPeriod() || $savedReport->getCron() != $report->getCron()){
-                    sql($database_eonweb, "UPDATE reports SET reportName = ?, period = ?, cron = ? WHERE id = ?", array($report->getName(), $report->getPeriod(), $report->getCron(), $report->getId()));
+                    sql($database_eonweb, "UPDATE reports SET reportName = ?, period = ?, cron = ? WHERE id = ?", 
+                     array($report->getName(), $report->getPeriod(), $report->getCron(), $report->getId()));
                 }
 
                 // Update hosts
@@ -68,7 +73,8 @@ class ReportService {
                 if($sortedSavedHosts != $sortedHosts){
                     sql($database_eonweb, "DELETE FROM reports_hosts WHERE reportsID = ?", array($report->getId()));
                     foreach($report->getHosts() as $host){
-                        sql($database_eonweb, "INSERT INTO reports_hosts (hostName, reportsID) VALUES ( ?, ? )", array($host, $report->getId()));
+                        sql($database_eonweb, "INSERT INTO reports_hosts (hostName, reportsID) VALUES ( ?, ? )",
+                         array($host, $report->getId()));
                     }
                 }
 
@@ -98,7 +104,8 @@ class ReportService {
                 if($sortedSavedEmails != $sortedEmails){
                     sql($database_eonweb, "DELETE FROM reports_emails WHERE reportsID = ?", array($report->getId()));
                     foreach($report->getEmails() as $email){
-                        sql($database_eonweb, "INSERT INTO reports_emails (email, reportsID) VALUES ( ?, ? )", array($email, $report->getId()));
+                        sql($database_eonweb, "INSERT INTO reports_emails (email, reportsID) VALUES ( ?, ? )",
+                         array($email, $report->getId()));
                     }
                 }      
             }
@@ -179,26 +186,55 @@ class ReportService {
         return $reports;
     }
 
-
     public static function reportToHTML($report, $return = true)
     {
         global $eon_api_token;
+        
+        // API URL
+        $url = 'https://127.0.0.1/eonapi/listNagiosObjects?username=admin&apiKey=' . $eon_api_token;
+        // Create a new cURL resource
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        // Setup request to send json via POST
+        $payload_service = '{"object": "services", "columns": ["description", "perf_data"], "filters": ["host_name = localhost", "perf_data != "]}';
 
+        // Attach encoded JSON string to the POST fields
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload_service);
+        // Set the content type to application/json
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+        // Return response instead of outputting
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // Execute the POST request
+        $result = curl_exec($ch);
+        $arr_service = json_decode($result, true);
+        // Close cURL resource
+        curl_close($ch);
         $panelIdServices = array();
-        foreach($report->getServices() as $service) {
-            switch($service) {
-                case "interfaces":
-                    array_push($panelIdServices, "1", "2");
-                    break;
-                case "memory":
-                    array_push($panelIdServices, "3", "4");
-                    break;
-                case "partitions":
-                    array_push($panelIdServices, "5", "6", "7", "8", "9", "10", "11");
-                    break;
-                case "processor":
-                    array_push($panelIdServices, "12");
-                    break;
+        $hostArray = array();
+        $hosts = $report->getHosts();
+        $services = $report->getServices();
+
+        foreach ($hosts as $key => $host) {
+            print($host);
+            $hostArray[$key]["name"] = $host;
+            $dashId = HostService::getHost($host)[0]["custom_variables"]["DASHID"];
+            $hostArray[$key]["dashId"] = $dashId;
+            $hostArray[$key]["dashPanelId"] = array();
+
+            foreach ($services as $service) {
+                $panelId = sql("lilac", "SELECT var_value FROM nagios_host_custom_object_var as NHCO INNER JOIN nagios_host as NH ON NHCO.host = NH.id WHERE NHCO.var_name = ? AND NH.name = ?", array($service . "_PANELID", $host) );
+                $panelId = $panelId[0][0];
+                foreach (HostService::getServices() as $api_service) {
+                    if ($host == $api_service["host_name"] && $service == $api_service["description"]) {
+                        $perfDatas = explode(" ", $api_service["perf_data"]);
+                        $perfDataLabel = array();
+                        foreach($perfDatas as $perfData) {
+                            array_push($hostArray[$key]["dashPanelId"], strval($panelId));
+                            $panelId++;
+                        }
+                    }
+                }
             }
         }
 
@@ -267,10 +303,8 @@ class ReportService {
                 'Content-Type: application/json'));
             
             $params = '{
-                "hostname": ' . json_encode($hosts) . ',
+                "equipement": ' . json_encode($hostArray) . ',
                 "period": ' . json_encode($period) . ',
-                "dashId": ' . json_encode($dashId) . ',
-                "serviceId": ' . json_encode($panelIdServices) . ',
                 "type": "' . $report->getPeriod() . '",
                 "reportname": "' . $report->getName() . '",
                 "key" : "'. $eon_api_token .'"
@@ -284,14 +318,13 @@ class ReportService {
             $response = curl_exec($ch);
             
             if (curl_errno($ch)) {
-                curl_close($ch);
-                return false;
+                return curl_errno($ch);
             }
             
             $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             if($http_code == intval(200)){
                 curl_close($ch);
-                return true;
+                return $response;
             }
             else{
                 curl_close($ch);
@@ -340,8 +373,8 @@ class ReportService {
         if (fwrite($handle, $cronTab) === FALSE) {
             exit;
         }
-        fclose($handle);
         
+        fclose($handle);
         exec('crontab py/cron/eyesofnetwork.cron', $output,$result);
     }
 }

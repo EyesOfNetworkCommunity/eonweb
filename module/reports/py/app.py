@@ -12,26 +12,24 @@ app = Flask(__name__)
 @app.route("/report", methods=["POST"])
 def create_report():
     reportname = request.json['reportname']
-    hostname = request.json['hostname']
-    dashId = request.json['dashId']
-    serviceId = request.json['serviceId']
+    equipement = request.json['equipement']
     period = request.json['period']
     type = request.json['type']
     key = request.json["key"]
     eDash = []
-    for i, dash in enumerate(dashId):
+
+    for i, dash in enumerate(equipement):
         eDash.append({})
-        eDash[i]["hostname"] = hostname[i]
+        eDash[i]["hostname"] = dash["name"]
         eDash[i]["dash_url"] = {}
-        for service in serviceId:
-            graf.grafanaGraph(dash, hostname[i], period, service)
-            eDash[i]["dash_url"][service] = "../" + dash + "_" + service + ".png"
+        for service in dash["dashPanelId"]:
+            graf.grafanaGraph(dash["dashId"], dash["name"], period, service)
+            eDash[i]["dash_url"][service] = "../" + dash["dashId"] + "_" + service + ".png"
 
-        filters = ["host_name = " + hostname[i], "time > " + period[0], "time < " + period[1]]
-        sla.renderPlotPng(filters, dash, type, key)
-        eDash[i]["sla_url"] = "../" + dash + "_sla.png"
-
-
+        filters = ["host_name = " + dash["name"], "time > " + period[0], "time < " + period[1]]
+        sla.renderPlotPng(filters, dash["dashId"], type, key)
+        eDash[i]["sla_url"] = "../" + dash["dashId"] + "_sla.png"
+    
     templateLoader = jinja2.FileSystemLoader(searchpath="/srv/eyesofnetwork/eonweb/module/reports/py/templates/")
     templateEnv = jinja2.Environment(loader=templateLoader)
     TEMPLATE_FILE = "report.html"
@@ -72,3 +70,5 @@ def create_report():
 
 if __name__ == "__main__":
     app.run(host='127.0.0.1')
+    app.run(debug=True)
+    

@@ -1,24 +1,16 @@
 [% USE date %]
 [% histou_frame_url = histou_url.replace('/dashboard/', '/dashboard-solo/') %]
 <script type="text/javascript">
-  function set_address() {
-    var queryParams = new URLSearchParams(histou_frame_url);
-    queryParams.set("panelId", histou_source);
-    histou_frame_url = decodeURIComponent(queryParams);
-    jQuery('#histou_iframe').attr('src', decodeURIComponent(histou_frame_url));
-  }
-
-
   var histou_url        = "[% histou_url %]";
   var histou_frame_url  = "[% histou_frame_url %]";
   var histou_source     = [% histou_source %];
-  var random            = Number(Math.random() * 100000).toFixed(0);  
+  var random            = Number(Math.random() * 100000).toFixed(0);
 
   /* try to fetch sources */
-  var source_url = histou_url.replace(/\/grafana\/dashboard\/script\/histou\.js\?/, '/histou/index.php?_='+random+'&');
+  var source_url = "/lilac/exporter/dashboards/dash.php?host=[% hst %]&service=[% svc %]";
   jQuery.ajax({
     url: source_url,
-    type: 'POST',
+    type: 'GET',
     xhrFields: {
       withCredentials: true
     },
@@ -29,15 +21,15 @@
       eval('data = '+data+";");
       var sources    = [];
       var has_graphs = false;
+      start = data.id;
       jQuery('#histou_source_select').find('option').remove();
-      jQuery(data.rows).each(function(i, row) {
-          jQuery(row.panels).each(function(j, panel) {
-            var title = panel.title;
+      jQuery(data.labels).each(function(i, row) {
+            var title = row;
             title = title.replace('[% hst %] ', '');
             title = title.replace('[% svc %] ', '');
-            jQuery('#histou_source_select').append('<option value="'+panel.id+'"'+(panel.id==histou_source ? ' selected' : '')+'>'+title+'<\/option>');
+            paneId = parseInt(start) + i;
+            jQuery('#histou_source_select').append('<option value="'+paneId +'"'+(paneId ==histou_source ? ' selected' : '')+'>'+title+'<\/option>');
             has_graphs = true;
-          });
       });
       /* only useful for multiple sources */
       if(has_graphs) {
@@ -52,7 +44,7 @@
         <div class='commentTitle'>Performance Graph</div>
         <div class='pnpSelector'>
           <form action="#">
-            <select onchange="histou_source=this.value; set_address();" id="histou_source_select" style="display: none;">
+            <select onchange="histou_source=this.value; set_histou_img();" id="histou_source_select" style="display: none;">
             </select>
           </form>
         </div>
@@ -128,35 +120,5 @@
   };
   jQuery(document).on('scroll', updateScroll);
   /* end of workaround */
-
-  docTitle = document.title;
-  myArr = docTitle.split(" ");
-  if(myArr.length > 1){
-    switch(myArr[0]) {
-      case "processor":
-        jQuery('#histou_source_select').append('<option value="12">linux_cpu cpu_prct_used<\/option>');
-        break;
-      case "interfaces":
-        jQuery('#histou_source_select').append('<option value="1">check_int_traffic ens33_in_octet<\/option>');
-        jQuery('#histou_source_select').append('<option value="2">check_int_traffic ens33_out_octet<\/option>');
-        break;
-      case "memory":
-        jQuery('#histou_source_select').append('<option value="3">linux_memory ram_used<\/option>');
-        jQuery('#histou_source_select').append('<option value="4">linux_memory swap_used<\/option>');
-        break;
-      case "partitions":
-        jQuery('#histou_source_select').append('<option value="5">check_disk /<\/option>');
-        jQuery('#histou_source_select').append('<option value="6">check_disk /boot<\/option>');
-        jQuery('#histou_source_select').append('<option value="7">check_disk /dev/shm<\/option>');
-        jQuery('#histou_source_select').append('<option value="8">check_disk /run<\/option>');
-        jQuery('#histou_source_select').append('<option value="9">check_disk /run/user/0<\/option>');
-        jQuery('#histou_source_select').append('<option value="10">check_disk /run/user/998<\/option>');
-        jQuery('#histou_source_select').append('<option value="11">check_disk /sys/fs/cgroup<\/option>');
-        break;
-    } 
-  } else {
-    jQuery('#histou_source_select').append('<option value="13">hostcheckcheck-host-alive pl<\/option>');
-    jQuery('#histou_source_select').append('<option value="14">hostcheckcheck-host-alive rta<\/option>');
-  }
-  jQuery('#histou_source_select').show();
 </script>
+
