@@ -24,12 +24,17 @@
       start = data.id;
       jQuery('#histou_source_select').find('option').remove();
       jQuery(data.labels).each(function(i, row) {
-            var title = row;
-            title = title.replace('[% hst %] ', '');
-            title = title.replace('[% svc %] ', '');
-            paneId = parseInt(start) + i;
-            jQuery('#histou_source_select').append('<option value="'+paneId +'"'+(paneId ==histou_source ? ' selected' : '')+'>'+title+'<\/option>');
+        var title = row;
+        title = title.replace('[% hst %] ', '');
+        title = title.replace('[% svc %] ', '');
+        paneId = parseInt(start) + i;
+        if(i == 0){
+          histou_source = paneId; set_histou_img();
+          jQuery('#histou_graph_link').attr("href", histou_url + "&panelId=" + paneId)
+        } else {
             has_graphs = true;
+        }
+        jQuery('#histou_source_select').append('<option value="'+paneId+'"'+(paneId == histou_source ? ' selected' : '')+'>'+title+'<\/option>');
       });
       /* only useful for multiple sources */
       if(has_graphs) {
