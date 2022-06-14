@@ -29,8 +29,10 @@ function get_field($field1, $base=false, $field2=false) {
 	$hosts=array();
 	
 	if($field2){
-		$request="SELECT name FROM nagios_$field1 UNION SELECT name FROM nagios_$field2";
-		$result=sql($database_lilac,$request);
+		if($field1 != "service") {
+			$request="SELECT name FROM nagios_$field1 UNION SELECT name FROM nagios_$field2";
+			$result=sql($database_lilac,$request);
+		}
 	}
 	else{
 		$request="SELECT name FROM $field1";
