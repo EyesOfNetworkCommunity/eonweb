@@ -170,7 +170,7 @@ if( strpos($_SERVER["PHP_SELF"], "/module/module_frame") !== false ){
 							// Verify group rights
 							$tab_request = "SELECT tab_".$menutab["id"]." FROM groupright WHERE group_id=?";
 							$tab_right = sql($database_eonweb, $tab_request, array($_COOKIE['group_id']));				
-							$tab_right = $tab_right[0];				
+							$tab_right = $tab_right[0][0];				
 							if($tab_right == 0){ continue; }
 						?>
 						<li>
