@@ -5,7 +5,7 @@ Release: 0
 Source: /data/eonsrc/SOURCES/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
-Requires: backup-manager, cacti0, ged, ged-mysql, eon4apps, lilac >= 3.2, snmptt, thruk 
+Requires: backup-manager, cacti1, ged, ged-mysql, eon4apps, lilac >= 3.2, snmptt, thruk 
 Requires: httpd, MariaDB-server >= 10.6.3, mod_auth_eon, mod_perl
 Requires: php >= 8.0, php-mysqlnd, php-ldap, php-process, php-xml
 Requires: nagios >= 3.0, nagios-plugins >= 1.4.0, nagvis, nagiosbp, notifier, nagios-plugins-nrpe
@@ -47,32 +47,20 @@ cp -afv %{buildroot}%{eonconfdir}/eonweb.conf %{buildroot}%{_sysconfdir}/httpd/c
 /bin/chown -R root:eyesofnetwork %{buildroot}%{datadir}
 
 %post
-case "$1" in
-  1)
-    # Initial install
-    ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatDark/thruk/EONFlatDark/ /etc/thruk/themes/themes-enabled/EONFlatDark
-    ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatLight/thruk/EONFlatLight/ /etc/thruk/themes/themes-enabled/EONFlatLight
-    /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.5.sql 2>/dev/null
-    systemctl restart httpd
-  ;;
-  2)
-    # Update EON 5.3.4
-    /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.4.sql 2>/dev/null
-    # Update EON 5.3.5
-    /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.5.sql 2>/dev/null
-    ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatDark/thruk/EONFlatDark/ /etc/thruk/themes/themes-enabled/EONFlatDark 2>/dev/null
-    ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatLight/thruk/EONFlatLight/ /etc/thruk/themes/themes-enabled/EONFlatLight 2>/dev/null
-    systemctl restart httpd
-    # Update EON 5.3.8
-    /usr/bin/chown apache:apache /srv/eyesofnetwork/eonweb/module/admin_itsm/uploaded_file
-    # Update EON 5.3.11
-    /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.11.sql 2>/dev/null
-    # Update EON 6
-    /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/6.sql 2>/dev/null
-    echo "Apache ALL=NOPASSWD:/bin/systemctl * nagflux,/bin/systemctl * influxd,/bin/systemctl * grafana-server,/bin/systemctl * httpd,/bin/systemctl * mariadb" >> /etc/sudoers
-  ;;
-esac
-
+# Update EON 5.3.4
+/usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.4.sql 2>/dev/null
+# Update EON 5.3.5
+/usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.5.sql 2>/dev/null
+ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatDark/thruk/EONFlatDark/ /etc/thruk/themes/themes-enabled/EONFlatDark 2>/dev/null
+ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatLight/thruk/EONFlatLight/ /etc/thruk/themes/themes-enabled/EONFlatLight 2>/dev/null
+systemctl restart httpd
+# Update EON 5.3.8
+/usr/bin/chown apache:apache /srv/eyesofnetwork/eonweb/module/admin_itsm/uploaded_file
+# Update EON 5.3.11
+/usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.11.sql 2>/dev/null
+# Update EON 6
+/usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/6.sql 2>/dev/null
+echo "Apache ALL=NOPASSWD:/bin/systemctl * nagflux,/bin/systemctl * influxd,/bin/systemctl * grafana-server,/bin/systemctl * httpd,/bin/systemctl * mariadb" >> /etc/sudoers
 # mariadb variables
 echo "
 [mysql]
@@ -90,6 +78,8 @@ innodb_io_capacity = 5000
 innodb_io_capacity_max = 10000
 bind-address = 127.0.0.1" > /etc/my.cnf
 
+sed -i "s/SSLProtocol all -SSLv2 -SSLv3/SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1/g" /etc/httpd/conf.d/ssl.conf
+
 /bin/systemctl restart mariadb
 
 echo "[Unit]
@@ -102,6 +92,9 @@ ExecStart = /usr/bin/python3 /srv/eyesofnetwork/eonweb/module/reports/py/app.py
 [Install]
 WantedBy = multi-user.target" > /etc/systemd/system/reports.service
 
+touch /etc/nagios/objects/thruk_bp_generated.cfg
+chown nagios:eyesofnetwork /etc/nagios/objects/thruk_bp_generated.cfg
+chmod 775 /etc/nagios/objects/thruk_bp_generated.cfg
 /bin/systemctl enable reports
 
 # change password hash
