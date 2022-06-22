@@ -88,10 +88,11 @@ include("../../side.php");
 			{
 				if ( ($result_cmd[0] == NULL && $act_name != 'stop') || ($result_cmd[0] != NULL && $act_name != 'start' ) )
 				{
-					if(isset($act_name) && $act_name == "stop"){ $class="btn btn-danger"; }
+					$css = "";
+					if(isset($act_name) && $act_name == "stop"){ if($proc_name == "MariaDB database server")$css="display:none";$class="btn btn-danger"; }
 					elseif(isset($act_name) && ($act_name == "start" || $act_name == "restart") ){ $class="btn btn-success"; }
 					else{ $class="btn btn-primary"; }
-					echo "<a class='$class' href='index.php?getname=".urlencode($proc_name)."&getact=$act_name' role='button'>". getLabel("action.".$act_name) ."</a> ";
+					echo "<a style='$css' class='$class' href='index.php?getname=".urlencode($proc_name)."&getact=$act_name' role='button'>". getLabel("action.".$act_name) ."</a> ";
 				}
 			}
 			echo "</td>";
