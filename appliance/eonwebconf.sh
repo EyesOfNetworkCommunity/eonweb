@@ -41,3 +41,5 @@ cp -rf ${eonconfdir}/eonwebpurge /etc/cron.d/
 # start the services
 /etc/init.d/httpd restart   > /dev/null 2>&1
 
+# Apply php file
+php /srv/eyesofnetworkconf/eonweb/updates/6.php
