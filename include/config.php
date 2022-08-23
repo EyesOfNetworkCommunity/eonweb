@@ -25,7 +25,7 @@
 // #######################################
 $version="6";
 $release="0";
-$surname="Alopex";
+$surname="Tigrou";
 
 // #######################################
 // # Database config information
