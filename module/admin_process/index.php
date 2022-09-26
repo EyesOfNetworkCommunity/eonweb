@@ -59,8 +59,7 @@ include("../../side.php");
 		
 		echo "<tbody>";
 		// Display the list of process
-		while (list($proc_name,$array_proc) = each($array_serv_system))
-		{
+		foreach($array_serv_system as $proc_name => $array_proc) {
 			$cmd_status=$array_proc["status"];
 			exec($cmd_status,$result_cmd);
 
@@ -85,14 +84,15 @@ include("../../side.php");
 			// Display actions		
 			echo "<td>";
 			$array_act=$array_proc["proc_act"];
-			while (list($act_name,$act_cmd) = each($array_act))
+			foreach($array_act as $act_name => $act_cmd)
 			{
 				if ( ($result_cmd[0] == NULL && $act_name != 'stop') || ($result_cmd[0] != NULL && $act_name != 'start' ) )
 				{
-					if(isset($act_name) && $act_name == "stop"){ $class="btn btn-danger"; }
+					$css = "";
+					if(isset($act_name) && $act_name == "stop"){ if($proc_name == "MariaDB database server")$css="display:none";$class="btn btn-danger"; }
 					elseif(isset($act_name) && ($act_name == "start" || $act_name == "restart") ){ $class="btn btn-success"; }
 					else{ $class="btn btn-primary"; }
-					echo "<a class='$class' href='index.php?getname=".urlencode($proc_name)."&getact=$act_name' role='button'>". getLabel("action.".$act_name) ."</a> ";
+					echo "<a style='$css' class='$class' href='index.php?getname=".urlencode($proc_name)."&getact=$act_name' role='button'>". getLabel("action.".$act_name) ."</a> ";
 				}
 			}
 			echo "</td>";

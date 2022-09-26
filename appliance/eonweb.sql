@@ -66,6 +66,7 @@ CREATE TABLE `configs` (
 
 LOCK TABLES `configs` WRITE;
 /*!40000 ALTER TABLE `configs` DISABLE KEYS */;
+INSERT INTO `configs` VALUE ('theme', 'Classic-v5');
 /*!40000 ALTER TABLE `configs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -233,7 +234,7 @@ DROP TABLE IF EXISTS `sessions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `sessions` (
-  `session_id` char(30) NOT NULL,
+  `session_id` char(32) NOT NULL,
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`session_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
@@ -298,6 +299,54 @@ UNLOCK TABLES;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+--
+-- Table structure for table `reports`
+--
+
+DROP TABLE IF EXISTS `reports`;
+CREATE TABLE reports
+(
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    reportName VARCHAR(100) UNIQUE,
+    period VARCHAR(20),
+    cron VARCHAR(20)
+);
+
+--
+-- Table structure for table `reports_hosts`
+--
+
+DROP TABLE IF EXISTS `reports_hosts`;
+CREATE TABLE reports_hosts
+(
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    hostName VARCHAR(100),
+    reportsID INT
+);
+
+--
+-- Table structure for table `reports_services`
+--
+
+DROP TABLE IF EXISTS `reports_services`;
+CREATE TABLE reports_services
+(
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    serviceName VARCHAR(100),
+    reportsID INT
+);
+
+--
+-- Table structure for table `reports_emails`
+--
+
+DROP TABLE IF EXISTS `reports_emails`;
+CREATE TABLE reports_emails
+(
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    email VARCHAR(100),
+    reportsID INT
+);
 
 --
 -- Table structure for table `itsm_champ_ged`

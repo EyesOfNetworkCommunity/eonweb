@@ -66,7 +66,10 @@ include("../../side.php");
 
 			// creation of a select and catch values
 			$langtmp = sql($database_eonweb,"SELECT user_language FROM users WHERE user_id=?", array($user_id));
-			$langtmp = $langtmp[0][0];
+			// EON 5.4 - case when $langtmp is empty
+			if (count($langtmp) > 0) 
+				$langtmp = $langtmp[0][0];
+			else $langtmp = NULL;
 			$res = '<select class="form-control" name="user_language">';
 			foreach($files as $v) {
 				if($v == $langtmp){
@@ -87,18 +90,28 @@ include("../../side.php");
 			global $database_eonweb;
 			global $user_id;
 			$result = sql($database_eonweb, "SELECT `theme` FROM users WHERE user_id = ?", array($user_id));
-			$result = $result[0];
+			// EON 5.4 - case when $result is empty
+			if (count($result) > 0) 
+				$result = $result[0];
+			else $result = NULL;
+
 			$dir = "/srv/eyesofnetwork/eonweb/themes/";
 			$listTheme = scandir($dir);
 			$res = '<select class="form-control" name="theme">';
 			foreach($listTheme as $value) {
 				if(is_dir($dir . $value)) {
 					if($value != "." && $value != "..") {
-						if($value == $result["theme"]){
-							$res.="<option value='".$value."' selected=selected>".$value."</option>";
-						}
-						else if($value == "Default" && $result["theme"] == NULL){
-							$res.="<option value='".$value."' id='aa' selected=selected>".$value."</option>";
+						// EON 5.4 - fix code
+						if ($result != null){
+							if($value == $result["theme"]){
+								$res.="<option value='".$value."' selected=selected>".$value."</option>";
+							}
+							else if($value == "Default" && $result["theme"] == NULL){
+								$res.="<option value='".$value."' id='aa' selected=selected>".$value."</option>";
+							}
+							else{
+								$res.="<option value='".$value."'>".$value."</option>";
+							}	
 						}
 						else{
 							$res.="<option value='".$value."'>".$value."</option>";
@@ -141,11 +154,22 @@ include("../../side.php");
 				if (($user_password1 != "") && ($user_password1 != null) && ($user_password1 == $user_password2)) {
 
 					$eonweb_groupname=sql($database_eonweb,"SELECT group_name FROM groups WHERE group_id=?", array($user_group));
-					$eonweb_groupname = $eonweb_groupname[0]["group_name"];			
-					$eonweb_oldgroupname=sql($database_eonweb,"SELECT group_name FROM groups WHERE group_id=?", array($old_group_id));
-					$eonweb_oldgroupname = $eonweb_oldgroupname[0]["group_name"];			
+					// EON 5.4 - Fix code
+					if(count($eonweb_groupname) > 0)
+						$eonweb_groupname = $eonweb_groupname[0]["group_name"];			
+					else $eonweb_groupname = "";
+
+					$eonweb_oldgroupname=sql($database_eonweb,"SELECT group_name FROM groups WHERE group_id=?", array($old_group_id));			
+					// // EON 5.4 - Fix code
+					if(count($eonweb_oldgroupname) > 0)
+						$eonweb_oldgroupname = $eonweb_oldgroupname[0]["group_name"];			
+					else $eonweb_oldgroupname = "";
+
 					if ($user_password1 != "abcdefghijklmnopqrstuvwxyz") {
-						$passwd_temp = md5($user_password1);
+						// $passwd_temp = md5($user_password1);
+						// EON 6.0.1 - upgrade password hash
+						$passwd_temp = password_hash(md5($user_password1), PASSWORD_DEFAULT);
+						
 						// Update into eonweb
 						$datas = array(
 							$user_name,
@@ -181,12 +205,18 @@ include("../../side.php");
 					$lilac_userid=sql($database_lilac,"SELECT id FROM nagios_contact WHERE name=?", array($old_name));
 					$lilac_userid = $lilac_userid[0]["id"];
 					$lilac_groupid=sql($database_lilac,"SELECT id FROM nagios_contact_group WHERE name=?", array($eonweb_groupname));
-					$lilac_groupid = $lilac_groupid[0]["id"];
+					// EON 5.4 - Fix code
+					if(count($lilac_groupid) > 0)
+						$lilac_groupid = $lilac_groupid[0]["id"];			
+					else $lilac_groupid = "";
 					$lilac_oldgroupid = sql($database_lilac, "SELECT id FROM nagios_contact_group WHERE name=?", array($eonweb_oldgroupname));
-					$lilac_oldgroupid = $lilac_oldgroupid[0]["id"];
+					// EON 5.4 - Fix code
+					if(count($lilac_oldgroupid) > 0)
+						$lilac_oldgroupid = $lilac_oldgroupid[0]["id"];			
+					else $lilac_oldgroupid = "''";
 					
 					require_once('/srv/eyesofnetwork/lilac/includes/config.inc');
-					$nc = NagiosContactPeer::getByName($old_name);
+					$nc = (new NagiosContactPeer())->getByName($old_name);
 					if($nc){
 						$nc->setName($user_name);
 						$nc->setAlias($user_descr);
@@ -198,8 +228,6 @@ include("../../side.php");
 					sql($database_lilac,"DELETE from nagios_contact_group_member WHERE contact=? and contactgroup=?", array($lilac_userid, $lilac_oldgroupid));
 					if($lilac_groupid!="" and $lilac_userid!="" and $user_limitation!="1")
 						sql($database_lilac,"INSERT into nagios_contact_group_member (contactgroup,contact) values(?, ?)", array($lilac_groupid, $lilac_userid));
-
-					
 					
 					// update user into nagvis :
 					$bdd = new PDO('sqlite:/srv/eyesofnetwork/nagvis/etc/auth.db');
@@ -210,12 +238,16 @@ include("../../side.php");
                     // this is nagvis default salt for password encryption security
 					$nagvis_salt = '29d58ead6a65f5c00342ae03cdc6d26565e20954';
 
-					if($nagvis_user_exist["userId"] > 0){
+					if (!empty($nagvis_user_exist["userId"]))
+					{
 						// update in nagvis
 						if($create_user_in_nagvis=="yes"){
 							$nagvis_id = $nagvis_user_exist["userId"];
-							$req = $bdd->prepare("UPDATE users SET name = ?, password = ? WHERE userId = ?");
-							$req->execute(array($user_name, sha1($nagvis_salt.$passwd_temp), $nagvis_id));
+							// EON 6.0.1 - Upgrade password hash
+							if (isset($passwd_temp)){
+								$req = $bdd->prepare("UPDATE users SET name = ?, password = ? WHERE userId = ?");
+								$req->execute(array($user_name, sha1($nagvis_salt.password_hash($user_password1, PASSWORD_DEFAULT)), $nagvis_id));
+							}
 							$req = $bdd->prepare("UPDATE users2roles SET roleId = ? WHERE userId = ?");
 							$req->execute(array($nagvis_role_id, $nagvis_id));
 						} else { // delete in nagvis
@@ -239,8 +271,8 @@ include("../../side.php");
 					$req = $bdd->prepare("SELECT id FROM user_auth WHERE username=?");
 					$req->execute(array($_POST["user_name_old"]));
                     $cacti_user_exist = $req->fetch();
-
-                    if($cacti_user_exist["id"] > 0){
+					// EON 5.4 - fix code
+                    if($cacti_user_exist != NULL){
                     	$cacti_id = $cacti_user_exist["id"];
                     	if($create_user_in_cacti == "yes"){
 							$req = $bdd->prepare("UPDATE user_auth SET username = ? WHERE id = ?");
@@ -298,12 +330,18 @@ include("../../side.php");
 		$user_mail = retrieve_form_data("user_mail","");
 		$user_descr = retrieve_form_data("user_descr","");
 		$user_descr = htmlspecialchars($user_descr, ENT_QUOTES);
-		$user_group = retrieve_form_data("user_group","");
-		$user_type = retrieve_form_data("user_type","");
-		$user_limitation = retrieve_form_data("user_limitation","");
+		// EON 5.4 - fix default value
+		$user_group = retrieve_form_data("user_group",0);
+		// EON 5.4 - fix default value
+		$user_type = retrieve_form_data("user_type",0);
+		// EON 5.4 - fix default value
+		$user_limitation = retrieve_form_data("user_limitation",0);
 		$user_language = retrieve_form_data("user_language","");
-		$old_group_id = sql($database_eonweb,"select group_id from users where user_id=?", array($user_id));
-		$old_group_id = $old_group_id[0]["group_id"];
+		// EON 5.4 - fix code
+		if ($user_id != null){
+			$old_group_id = sql($database_eonweb,"select group_id from users where user_id=?", array($user_id));
+			$old_group_id = $old_group_id[0]["group_id"];
+		}
 		$old_name = retrieve_form_data("user_name_old","");
 		$theme = retrieve_form_data("theme","");
 
@@ -403,9 +441,8 @@ include("../../side.php");
 
 			// search the user in Cacti (to check the checkbox if he's found)
 			$cacti_user = sql($database_cacti, "SELECT id FROM user_auth WHERE username =?", array($user_name));
-			$cacti_user = $cacti_user[0];
-			$cacti_user_found = $cacti_user;
-			if($cacti_user_found != NULL){ $cacti_user = true; }
+			// EON 5.4 - fixe code
+			if(count($cacti_user) > 0){ $cacti_user = true; }
 			else { $cacti_user = false; }
 
 			// search the user in Nagvis (to check the checkbox if he's found)

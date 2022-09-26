@@ -78,7 +78,9 @@ include("../../side.php");
 		# --- Section delete host and any other data (data source, graph) from cacti
 		if(isset($_POST['Remove'])){
 			for($i=0;isset($_POST['hosts_cacti'][$i]);$i++){
-				exec("/usr/bin/php $path_eon/cacti/cli/remove_device.php --device-id=".escapeshellarg($_REQUEST['hosts_cacti'][$i])."");
+				// EON 5.4 - change in parameters
+				// exec("/usr/bin/php $path_eon/cacti/cli/remove_device.php --device-id=".escapeshellarg($_REQUEST['hosts_cacti'][$i])."");
+				exec("/usr/bin/php $path_eon/cacti/cli/remove_device.php --confirm --deviceid=".escapeshellarg($_REQUEST['hosts_cacti'][$i])."");
 			}
 		}
 	?>

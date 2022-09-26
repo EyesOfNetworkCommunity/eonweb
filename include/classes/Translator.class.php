@@ -47,7 +47,7 @@ class Translator
 		// Check if user default lang is defined
 		if(isset($_COOKIE['user_id'])){
 			$idUser =$_COOKIE['user_id'];			
-			$lang=$result["user_language"];
+			// $lang=$result["user_language"];  // unused variable 
 			$lang = sql($database_eonweb, "SELECT user_language from users where user_id= ?", array($idUser));
 			$lang = $lang[0][0];
 		}

@@ -29,8 +29,10 @@ function get_field($field1, $base=false, $field2=false) {
 	$hosts=array();
 	
 	if($field2){
-		$request="SELECT name FROM nagios_$field1 UNION SELECT name FROM nagios_$field2";
-		$result=sql($database_lilac,$request);
+		if($field1 != "service") {
+			$request="SELECT name FROM nagios_$field1 UNION SELECT name FROM nagios_$field2";
+			$result=sql($database_lilac,$request);
+		}
 	}
 	else{
 		$request="SELECT name FROM $field1";
@@ -207,14 +209,25 @@ function get_field($field1, $base=false, $field2=false) {
 		}elseif(isset($_POST["add"])){
 			$sql_sort_key = sql($database_notifier,"select max(sort_key+1) as sort_key from rules where type=?", array($rule_type));
 			$rule_sort_key = $sql_sort_key[0]["sort_key"];
-			$sql_add = "INSERT INTO rules VALUES('',?,?,?,?,?,?,?,?,?,?,?)";
-			$rule_id = sql($database_notifier,$sql_add, array($rule_name, $rule_type, $rule_debug, $rule_contact, $rule_host, $rule_service, $rule_state, $rule_notification, $rule_timeperiod_id, $rule_sort_key, $rule_track));
-			$methodze=explode(",",$rule_method_ids);
-			foreach($methodze as $selected){
-				sql($database_notifier,"INSERT INTO rule_method VALUES(?, ?)", array($rule_id, $selected));
+			$sql_add = "INSERT INTO rules (name, type, debug, contact, host, service,state, notificationnumber, timeperiod_id, tracking,sort_key) VALUES(?,?,?,?,?,?,?,?,?,?,?)";
+			if(!isset($rule_sort_key)) {
+				$rule_sort_key = 0;
 			}
-			message(6," : Rule have been added",'ok');
-			$rule_name_old=$rule_name;
+			
+			$inserted = sql($database_notifier,$sql_add, array($rule_name, $rule_type, $rule_debug, $rule_contact, $rule_host, $rule_service, $rule_state, $rule_notification, $rule_timeperiod_id, $rule_track, $rule_sort_key ));
+			if($inserted) {
+				$rule_id = sql($database_notifier, "SELECT id FROM rules ORDER BY id DESC LIMIT 1");
+				$rule_id = $rule_id[0][0];
+				$methodze=explode(",",$rule_method_ids);
+				foreach($methodze as $selected){
+					sql($database_notifier,"INSERT INTO rule_method VALUES(?, ?)", array($rule_id, $selected));
+				}
+				message(6," : Rule have been added",'ok');
+				$rule_name_old=$rule_name;
+			} else { 
+				message(6," : Rule have not been added",'warning');
+			}
+			
 		}elseif(isset($_POST["update"])){
 			$sql_add = "UPDATE rules SET name=?, type=?, debug=?, contact=?,
 			host=?, service=?, state=?, notificationnumber=?,timeperiod_id=?, tracking=?

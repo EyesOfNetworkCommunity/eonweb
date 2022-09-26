@@ -70,22 +70,23 @@ function retrieve_allowed_menu($array_tabs,$group_id)
 	
 	$count_item=count($array_tabs);
 
-	$sql_req = "SELECT ";
-	for ($i=1;$i < $count_item;$i++)
-	{
-		$sql_req = "$sql_req tab_$i,";
-	}
-	$sql_req = "$sql_req tab_$i";
-	
-	$sql_req = "$sql_req FROM groupright";
-	if ($group_id !="")
-		$sql_req = "$sql_req WHERE group_id=?";
-
-	$grp_right_result=sql($database_eonweb, $sql_req, array($group_id));
-	
-	$check =1;
 	if ($group_id !=null)
 	{
+		// EON 5.4 - Fix code (warning message)
+		$sql_req = "SELECT ";
+		for ($i=1;$i < $count_item;$i++)
+		{
+			$sql_req = "$sql_req tab_$i,";
+		}
+		$sql_req = "$sql_req tab_$i";
+		
+		$sql_req = "$sql_req FROM groupright";
+		if ($group_id !="")
+			$sql_req = "$sql_req WHERE group_id=?";
+
+		$grp_right_result=sql($database_eonweb, $sql_req, array($group_id));
+		
+		$check =1;
 		for ($i=1;$i < $count_item +1;$i++)
 		{
 			check_uncheck("tab_$i",$array_tabs[$i-1], $grp_right_result[0]["tab_$i"],1);
@@ -157,7 +158,10 @@ function update_group($count_menu_item,$group_id,$group_name,$group_descr,$group
 		sql($database_eonweb, "UPDATE groups set group_name=?, group_descr=?, group_type=?, group_dn=? where group_id=?", array($group_name, $group_descr, $group_type, $group_dn, $group_id));
 		// Update into lilac
 		require_once('/srv/eyesofnetwork/lilac/includes/config.inc');
-		$ncg = NagiosContactGroupPeer::getByName($old_group);
+
+		// EON 5.4 - fix non-static method call 
+		// $ncg = NagiosContactGroupPeer::getByName($old_group);
+		$ncg = (new NagiosContactGroupPeer())->getByName($old_group);
 		if($ncg){
 			$ncg->setName($group_name);
 			$ncg->setAlias($group_descr);
@@ -233,14 +237,6 @@ $count_menu_item=count($array_tabs);
 
 // Get parameter
 $group_id = retrieve_form_data("group_id",null);
-$group_name = sql($database_eonweb, "SELECT group_name FROM groups WHERE group_id=?", array($group_id));
-$group_name = $group_name[0]["group_name"];
-$group_descr = sql($database_eonweb, "SELECT group_descr FROM groups WHERE group_id=?", array($group_id));
-$group_descr = $group_descr[0]["group_descr"];
-$group_type = sql($database_eonweb, "SELECT group_type FROM groups WHERE group_id=?", array($group_id));
-$group_type = $group_type[0]["group_type"];
-$group_location = sql($database_eonweb, "SELECT group_name FROM groups WHERE group_id=?", array($group_id));
-$group_location = $group_location[0]["group_name"];
 
 if ($group_id == null) 
 {
@@ -262,6 +258,16 @@ if ($group_id == null)
 }
 else
 {
+	// EON 5.4 - Fix code
+	$group_name = sql($database_eonweb, "SELECT group_name FROM groups WHERE group_id=?", array($group_id));
+	$group_name = $group_name[0]["group_name"];
+	$group_descr = sql($database_eonweb, "SELECT group_descr FROM groups WHERE group_id=?", array($group_id));
+	$group_descr = $group_descr[0]["group_descr"];
+	$group_type = sql($database_eonweb, "SELECT group_type FROM groups WHERE group_id=?", array($group_id));
+	$group_type = $group_type[0]["group_type"];
+	$group_location = sql($database_eonweb, "SELECT group_name FROM groups WHERE group_id=?", array($group_id));
+	$group_location = $group_location[0]["group_name"];
+	
 	echo '<div class="row">
 				<div class="col-lg-12">
 					<h1 class="page-header">'.getLabel("label.admin_group.title_upd").'</h1>
@@ -276,14 +282,26 @@ else
 		$ldap_group_name = retrieve_form_data("group_location", "");
 		update_group($count_menu_item,$group_id,$group_name,$group_descr,$group_type,$ldap_group_name,true,$old_group);
 	}
+	
 }
 
-// Retrieve Group Information from database
-$group_name_descr = retrieve_group_info($group_id);
-$group_name=$group_name_descr[0]["group_name"];
-$group_descr=$group_name_descr[0]["group_descr"];
-$group_type=$group_name_descr[0]["group_type"];
-$group_location=$group_name_descr[0]["group_name"];
+// EON 5.4 - Fix code
+if ($group_id != null) 
+{
+	// Retrieve Group Information from database
+	$group_name_descr = retrieve_group_info($group_id);
+	$group_name=$group_name_descr[0]["group_name"];
+	$group_descr=$group_name_descr[0]["group_descr"];
+	$group_type=$group_name_descr[0]["group_type"];
+	$group_location=$group_name_descr[0]["group_name"];
+}
+else {
+	$group_name="";
+	$group_descr="";
+	$group_type=0;
+	$group_location="";
+}
+
 if($group_type == 0){
 	$group_location = "";
 }

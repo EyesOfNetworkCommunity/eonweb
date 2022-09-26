@@ -23,9 +23,9 @@
 // #######################################
 // # General Information
 // #######################################
-$version="5";
-$release="3";
-$surname="Zélie";
+$version="6";
+$release="0";
+$surname="Tigrou";
 
 // #######################################
 // # Database config information
@@ -131,5 +131,9 @@ $path_notifier_methods="$path_notifier/etc/notifier.cfg";
 // # NetCAT
 $default_minport=1;
 $default_maxport=1024;
+
+// # API TOKEN
+$eon_api_token = "";
+$grafana_api_token = "";
 
 ?>

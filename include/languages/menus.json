@@ -196,6 +196,11 @@
                     "name":"menu.link.reporting",
                     "url":"/thruk/cgi-bin/reports2.cgi",
                     "target":"frame"
+                },
+                {
+                    "name":"label.report.title",
+                    "url":"/module/reports/",
+                    "target":"main"
                 }
             ],
             "menusubtab":[

@@ -37,10 +37,6 @@
 			"name":"label.tools",
 			"link":[
 				{
-					"name":"navbarlink.discovery",
-					"url":"/lilac/autodiscovery.php"
-				},
-				{
 					"name":"navbarlink.xml_import",
 					"url":"/lilac/importer.php"
 				},

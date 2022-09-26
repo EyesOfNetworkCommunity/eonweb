@@ -246,7 +246,11 @@ else {
 				$userpasswd = $usersql[0]["user_passwd"];
 				$mdp=md5($mdp);
 
-				if($userpasswd == $mdp)
+				// if($userpasswd == $mdp)
+				// 	$LOGIN=true;
+
+				// EON 6.0.1 - upgrade password hash
+				if (password_verify($mdp, $userpasswd))
 					$LOGIN=true;
 			}
 		}

@@ -58,7 +58,8 @@ function createTableRow($event, $event_state, $queue)
 		$class = "";
 
 		if($key == "equipment"){
-			if($event->src == "0.0.0.0" || $event->src == "0.0.0.0/0") {
+			// EON 5.4 - Fix code
+			if($event["src"] == "0.0.0.0" || $event["src"] == "0.0.0.0/0") {
 				$url_host = preg_replace("/^".getEonConfig("ged_prefix")."/","",$value,1);
 				$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=1&host=$url_host");
 				$value = '<a href="../module_frame/index.php?url='.$thruk_url.'">'.$value.'</a>';
@@ -68,8 +69,9 @@ function createTableRow($event, $event_state, $queue)
 			$class = 'class="host"';
 		}
 		if($key == "service"){
-			if($event->src == "0.0.0.0" || $event->src == "0.0.0.0/0") {
-				$url_host = preg_replace("/^".getEonConfig("ged_prefix")."/","",$event->equipment,1);
+			// EON 5.4 - Fix code
+			if($event["src"] == "0.0.0.0" || $event["src"] == "0.0.0.0/0") {
+				$url_host = preg_replace("/^".getEonConfig("ged_prefix")."/","",$event["equipment"],1);
 				$thruk_url = urlencode("/thruk/cgi-bin/extinfo.cgi?type=2&host=".$url_host."&service=$value");
 				$value = '<a href="../module_frame/index.php?url='.$thruk_url.'">'.$value.'</a>';
 			} else {
@@ -90,10 +92,11 @@ function createTableRow($event, $event_state, $queue)
 		if($key == "id"){
 			$value = "<input type='hidden' value='".$value."'>";
 			$class = 'class="text-center"';
-			if($event->comments != ""){
-				$value .= ' <i class="glyphicon glyphicon-comment" title="'.$event->comments.'"></i>';
+			// EON 5.4 - Fix code
+			if($event["comments"] != ""){
+				$value .= ' <i class="glyphicon glyphicon-comment" title="'.$event["comments"].'"></i>';
 			}
-			if($event->owner != ""){
+			if($event["owner"] != ""){
 				$value .= ' <i class="glyphicon glyphicon-floppy-disk"></i>';
 			}
 		}
@@ -151,7 +154,6 @@ function createWhereClause($owner, $filter, $search, $daterange, $ok, $warning, 
 		}
 
 		$where_clause .= " AND $filter LIKE ?";
-		$mysql_prepare[0].="s";
 		$mysql_prepare[]=(string)$like;
 	}
 
@@ -168,17 +170,16 @@ function createWhereClause($owner, $filter, $search, $daterange, $ok, $warning, 
 		$end = strtotime($end);
 		$end += 86400 + 3600;
 		$where_clause .= " AND o_sec > ? AND o_sec < ?";
-		$mysql_prepare[0].="ii";
 		$mysql_prepare[]=(int)$start;
 		$mysql_prepare[]=(int)$end;
 	}
 
 	// states
 	$states_list = "";
-	if($ok != "")		{ $states_list .= "?,"; $mysql_prepare[0].="i"; $mysql_prepare[]=0; }
-	if($warning != "")	{ $states_list .= "?,"; $mysql_prepare[0].="i"; $mysql_prepare[]=1; }
-	if($critical != "")	{ $states_list .= "?,"; $mysql_prepare[0].="i"; $mysql_prepare[]=2; }
-	if($unknown != "")	{ $states_list .= "?,"; $mysql_prepare[0].="i"; $mysql_prepare[]=3; }
+	if($ok != "")		{ $states_list .= "?,"; $mysql_prepare[]=0; }
+	if($warning != "")	{ $states_list .= "?,"; $mysql_prepare[]=1; }
+	if($critical != "")	{ $states_list .= "?,"; $mysql_prepare[]=2; }
+	if($unknown != "")	{ $states_list .= "?,"; $mysql_prepare[]=3; }
 	$states_list = trim($states_list, ",");
 	
 	if($states_list != ""){

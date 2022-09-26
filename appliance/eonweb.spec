@@ -1,16 +1,18 @@
 Summary: EyesOfNetwork Web Interface 
 Name: eonweb
-Version: 5.3
-Release: 11
-Source: https://github.com/EyesOfNetworkCommunity/%{name}/archive/%{version}-%{release}.tar.gz
+Version: 6.0
+Release: 0
+Source: /data/eonsrc/SOURCES/%{version}-%{release}.tar.gz
 Group: Applications/System
 License: GPL
-Requires: backup-manager, cacti0, ged, ged-mysql, eon4apps, lilac >= 3.1-2, snmptt, thruk 
-Requires: httpd, mariadb-server, mod_auth_eon, mod_perl
-Requires: php, php-mysqlnd, php-ldap, php-process, php-xml
+Requires: backup-manager, cacti1, ged, ged-mysql, eon4apps, lilac >= 3.2, snmptt, thruk 
+Requires: httpd, MariaDB-server >= 10.6.3, mod_auth_eon, mod_perl
+Requires: php >= 8.0, php-mysqlnd, php-ldap, php-process, php-xml
 Requires: nagios >= 3.0, nagios-plugins >= 1.4.0, nagvis, nagiosbp, notifier, nagios-plugins-nrpe
-Requires: grafana, histou
+Requires: grafana
+Requires: python3, wkhtmltopdf, xorg-x11-server-Xvfb, alsa-lib, atk, cups-libs, gtk3, ipa-gothic-fonts, libXcomposite, libXcursor, libXdamage, libXext, libXi, libXrandr, libXScrnSaver, libXtst, pango, xorg-x11-fonts-100dpi, xorg-x11-fonts-75dpi, xorg-x11-fonts-cyrillic, xorg-x11-fonts-misc, xorg-x11-fonts-Type1, xorg-x11-utils
 Requires: net-snmp,net-snmp-perl
+Obsoletes: histou
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
@@ -35,38 +37,68 @@ install -d -m0755 %{buildroot}%{eonconfdir}
 install -d -m0755 %{buildroot}%{_sysconfdir}/cron.d
 install -d -m0755 %{buildroot}%{_sysconfdir}/httpd/conf.d
 mv ./appliance/* %{buildroot}%{eonconfdir}
+install -D -m 0644 %{buildroot}%{eonconfdir}/_histou_graph.tt %{buildroot}/usr/share/thruk/themes/themes-available/EyesOfNetwork/templates/_histou_graph.tt
 rm -rf ./appliance
 cp -afv ./* %{buildroot}%{datadir}
 cp -afv %{buildroot}%{eonconfdir}/eonbackup %{buildroot}%{_sysconfdir}/cron.d/
 cp -afv %{buildroot}%{eonconfdir}/eonwebpurge %{buildroot}%{_sysconfdir}/cron.d/
 cp -afv %{buildroot}%{eonconfdir}/eonweb.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
+/bin/chmod 775 %{buildroot}%{datadir}/cache
+/bin/chown -R root:eyesofnetwork %{buildroot}%{datadir}
 
 %post
-case "$1" in
-  1)
-    # Initial install
-    /bin/chmod 775 %{datadir}/cache
-    /bin/chown -R root:eyesofnetwork %{datadir}
-    ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatDark/thruk/EONFlatDark/ /etc/thruk/themes/themes-enabled/EONFlatDark
-    ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatLight/thruk/EONFlatLight/ /etc/thruk/themes/themes-enabled/EONFlatLight
-    /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.5.sql 2>/dev/null
-    systemctl restart httpd
-  ;;
-  2)
-    # Update EON 5.3.4
-    /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.4.sql 2>/dev/null
-    # Update EON 5.3.5
-    /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.5.sql 2>/dev/null
-    ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatDark/thruk/EONFlatDark/ /etc/thruk/themes/themes-enabled/EONFlatDark 2>/dev/null
-    ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatLight/thruk/EONFlatLight/ /etc/thruk/themes/themes-enabled/EONFlatLight 2>/dev/null
-    systemctl restart httpd
-    # Update EON 5.3.8
-    /usr/bin/chown apache:apache /srv/eyesofnetwork/eonweb/module/admin_itsm/uploaded_file
-    # Update EON 5.3.11
-    /usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.11.sql 2>/dev/null
-  ;;
-esac
+# Update EON 5.3.4
+/usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.4.sql 2>/dev/null
+# Update EON 5.3.5
+/usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.5.sql 2>/dev/null
+ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatDark/thruk/EONFlatDark/ /etc/thruk/themes/themes-enabled/EONFlatDark 2>/dev/null
+ln -s /srv/eyesofnetwork/eonweb/themes/EONFlatLight/thruk/EONFlatLight/ /etc/thruk/themes/themes-enabled/EONFlatLight 2>/dev/null
+systemctl restart httpd
+# Update EON 5.3.8
+/usr/bin/chown apache:apache /srv/eyesofnetwork/eonweb/module/admin_itsm/uploaded_file
+# Update EON 5.3.11
+/usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/5.3.11.sql 2>/dev/null
+# Update EON 6
+/usr/bin/mysql -u root --password=root66 eonweb < %{eonconfdir}/updates/6.sql 2>/dev/null
+echo "Apache ALL=NOPASSWD:/bin/systemctl * nagflux,/bin/systemctl * influxd,/bin/systemctl * grafana-server,/bin/systemctl * httpd,/bin/systemctl * mariadb" >> /etc/sudoers
+# mariadb variables
+echo "
+[mysql]
+default-character-set=utf8mb4
 
+[mysqld]
+collation-server = utf8mb4_unicode_ci
+character-set-server = utf8mb4
+join_buffer_size = 31000000
+innodb_buffer_pool_size = 237380000
+innodb_flush_log_at_timeout = 3
+innodb_read_io_threads = 32
+innodb_write_io_threads = 16
+innodb_io_capacity = 5000
+innodb_io_capacity_max = 10000
+bind-address = 127.0.0.1" > /etc/my.cnf
+
+sed -i "s/SSLProtocol all -SSLv2 -SSLv3/SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1/g" /etc/httpd/conf.d/ssl.conf
+
+/bin/systemctl restart mariadb
+
+echo "[Unit]
+Description = handling reports generation
+After = network.target
+
+[Service]
+ExecStart = /usr/bin/python3 /srv/eyesofnetwork/eonweb/module/reports/py/app.py
+
+[Install]
+WantedBy = multi-user.target" > /etc/systemd/system/reports.service
+
+touch /etc/nagios/objects/thruk_bp_generated.cfg
+chown nagios:eyesofnetwork /etc/nagios/objects/thruk_bp_generated.cfg
+chmod 775 /etc/nagios/objects/thruk_bp_generated.cfg
+/bin/systemctl enable reports
+
+# change password hash
+php -f %{eonconfdir}/updates/6.php 
 
 %clean
 rm -rf %{buildroot}
@@ -74,11 +106,24 @@ rm -rf %{buildroot}
 %files
 %{datadir}
 %{eonconfdir}
+/usr/share/thruk/themes/themes-available/EyesOfNetwork/templates/
 %config(noreplace) %{_sysconfdir}/cron.d/eonbackup
 %config(noreplace) %{_sysconfdir}/cron.d/eonwebpurge
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 
 %changelog
+* Mon Oct 04 2021 Julien GONZALEZ <julien.gonzalez1498@gmail.com> - 6.0-0.eon
+- Add new report module
+- Update code compatibility for PHP 8
+- Update code compatibility for Cacti v1.2.18
+- fix process accessibility
+- fix ged events not showing
+- fix mariadb config #62
+- fix directories rights
+- upgrade password hash
+- fix technical SLA reporting not displaying
+- fix design
+
 * Mon Mar 15 2021 Oscar POELS <o.poels@gmail.com> - 5.3-11.eon
 - fix security issue CVE-2021-27514 (sessions_id by renforcing generation to prevent force brut) #82 #87
 - fix security issue CVE-2021-27513 (admin_ITSM, allows remote authenticated users to upload arbitrary .xml.php) #87
