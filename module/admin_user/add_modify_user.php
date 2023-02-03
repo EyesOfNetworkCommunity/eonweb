@@ -326,7 +326,7 @@ include("../../side.php");
 			message(0,"No Access Right","critical");
 
 		$user_location = retrieve_form_data("user_location","");
-		$user_location = ldap_escape($user_location);
+		// $user_location = ldap_escape($user_location);
 		$user_mail = retrieve_form_data("user_mail","");
 		$user_descr = retrieve_form_data("user_descr","");
 		$user_descr = htmlspecialchars($user_descr, ENT_QUOTES);

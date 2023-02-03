@@ -90,13 +90,18 @@ function sql($database, $sql = null, $datas = null, $arg = null){
 		if($sql != null){
 			$stmt = $dbh->prepare($sql);
 			if(is_array($datas)){
-				$result = $stmt->execute($datas);
+				$temp = array();
+				foreach($d in $datas){
+					array_push($temp, $dbh->quote($d));
+				}
+				$result = $stmt->execute($temp);
 			} else {
 				$result = $stmt->execute();
 			}
 
 			if($type == "SELECT"){
 				if($arg != null){
+					
 					$result = $stmt->fetchAll($arg);
 				} else {
 					$result = $stmt->fetchAll();

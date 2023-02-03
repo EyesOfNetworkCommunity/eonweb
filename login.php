@@ -193,7 +193,7 @@ else {
 								// idem, skip the first entry is it's an int
 								if(is_int($group_dn)){ continue; }
 								
-								$in_clause .= "'".ldap_escape($group_dn)."',";
+								$in_clause .= "'".$group_dn."',";
 							}
 							$in_clause = rtrim($in_clause, ",");
 							$in_clause .= ")";
@@ -207,11 +207,11 @@ else {
 							$group_id = $sql_results[0]["group_id"];
 							
 							// check user's connection to ldap
-							$ldapbind = ldap_bind($ldapconn, ldap_escape($user_dn,true), $mdp);
+							$ldapbind = ldap_bind($ldapconn,$user_dn, $mdp);
 							
 							if($ldapbind){
 								// insert the user in DB.
-								insert_user($login, $user_descr, $group_id, $mdp, $mdp, 1, ldap_escape($user_dn), "", 0, false);
+								insert_user($login, $user_descr, $group_id, $mdp, $mdp, 1, $user_dn, "", 0, false);
 								
 								// we can login now. And don't forget to take the new user's id (for session)
 								$usersql=sql($database_eonweb,"select * from users where user_name = ?", array($login));
@@ -230,7 +230,7 @@ else {
 				$ldap_port= $ldapsql[0]["ldap_port"];
 				$ldap_rdn= $ldapsql[0]["ldap_rdn"];
 				$ldap_search= $ldapsql[0]["ldap_search"];
-				$user_location=ldap_escape($usersql[0]["user_location"],true);
+				$user_location=$usersql[0]["user_location"];
 
 				$ldapconn=ldap_connect($ldap_ip,$ldap_port);
 				ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);
