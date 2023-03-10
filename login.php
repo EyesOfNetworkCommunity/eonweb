@@ -123,7 +123,7 @@ if(!empty($_COOKIE['user_name'])){
 else {
 	if( isset($_POST['login']) && isset($_POST['mdp']) ){
 		// Get login information
-		$login=strtolower($_POST['login']);
+		$login=strtolower(filter_input(INPUT_POST,'login'));
 		$mdp=$_POST['mdp'];
 		$_POST[]=array();
 		
@@ -243,7 +243,7 @@ else {
 			}
 			// IF NOT A LDAP USER
 			else{
-				$userpasswd = $usersql[0]["user_passwd"];
+				$userpasswd = password_hash($usersql[0]["user_passwd"], PASSWORD_DEFAULT);
 				$mdp=md5($mdp);
 
 				// if($userpasswd == $mdp)
