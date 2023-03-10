@@ -90,11 +90,7 @@ function sql($database, $sql = null, $datas = null, $arg = null){
 		if($sql != null){
 			$stmt = $dbh->prepare($sql);
 			if(is_array($datas)){
-				$temp = array();
-				foreach($d in $datas){
-					array_push($temp, $dbh->quote($d));
-				}
-				$result = $stmt->execute($temp);
+				$result = $stmt->execute($datas);
 			} else {
 				$result = $stmt->execute();
 			}
