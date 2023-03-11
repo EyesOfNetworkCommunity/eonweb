@@ -243,7 +243,7 @@ else {
 			}
 			// IF NOT A LDAP USER
 			else{
-				$userpasswd = password_hash($usersql[0]["user_passwd"], PASSWORD_DEFAULT);
+				$userpasswd = $usersql[0]["user_passwd"];
 				$mdp=md5($mdp);
 
 				// if($userpasswd == $mdp)
