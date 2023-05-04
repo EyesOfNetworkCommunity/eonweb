@@ -431,9 +431,7 @@ TD.tableRowHover, TH.tableRowHover, TABLE.hoverable TR:hover TD {
 }
 TD.tableRowSelected, TH.tableRowSelected {
   cursor: pointer;
-  background: none;
   background-color:#609FD2;
-  background-image: none;
 }
 
 /* command pane */
